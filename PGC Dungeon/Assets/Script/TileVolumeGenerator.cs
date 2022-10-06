@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Random = UnityEngine.Random;
 
 public class TileVolumeGenerator : MonoBehaviour
 {
@@ -110,16 +111,57 @@ public class TileVolumeGenerator : MonoBehaviour
 
         int offsetIndex = 0;
 
+        int currentFailures;
+
 
         for (int x = 0; x < volumeFloors; x++)
         {
             for (int i = 0; i < stratoSize; i++)
             {
-                //Tiles[i + offsetIndex].transform.GetComponent<MeshRenderer>().material.color = Color.black;
+                if (clearBlock == false)
+                    Tiles[i + offsetIndex].transform.GetComponent<MeshRenderer>().material.color = Color.black;
+
+                if (i == 140)
+                    ActuallySpawnRoom(i + offsetIndex);
+
+
+                 
             }
             offsetIndex = stratoSize * 3;
         }
         
+        
+    }
+
+
+
+
+    public void ActuallySpawnRoom(int originIndex) 
+    {
+
+        int width = Random.Range(1, 5);
+        int length = Random.Range(1, 5);
+
+        int targetindex = originIndex;
+
+        for (int i = 0; i < width; i++)
+        {
+
+            for (int x = 0; x < length; x++)
+            {
+
+                if (clearBlock == true)
+                {
+                    GameObject newRef = Instantiate(CubeBlock, this.gameObject.transform);
+                    newRef.transform.position = new Vector3(Tiles[targetindex].gameObject.transform.position.x, Tiles[targetindex].gameObject.transform.position.y, Tiles[targetindex].gameObject.transform.position.z);
+                }
+                else
+                    Tiles[targetindex].transform.GetComponent<MeshRenderer>().material.color = Color.red;
+                targetindex--;
+            }
+            targetindex -= volumeWidth;
+            targetindex += length;
+        }
         
     }
 
@@ -139,4 +181,18 @@ public class TileVolumeGenerator : MonoBehaviour
     {
 
     }
+}
+
+
+
+
+
+public class Room 
+{ 
+    public List<GameObject> roomTiles = new List<GameObject>();
+    public Vector2 pos2D;
+    public Vector3 pos3D;
+    
+
+    public Room() { }
 }
