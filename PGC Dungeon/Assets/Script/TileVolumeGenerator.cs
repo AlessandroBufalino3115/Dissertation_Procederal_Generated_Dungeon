@@ -135,21 +135,24 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
+    // needs to pick a random start index on then call this 
+    //half way it all prinintg that should be the middle so use that as the main connection node
 
+
+
+    // i need the origin point to be 1 away from any other room
     public void ActuallySpawnRoom(int originIndex) 
     {
 
-        int width = Random.Range(1, 5);
-        int length = Random.Range(1, 5);
+        int width = Random.Range(3, 9);
+        int length = Random.Range(3, 9);
 
         int targetindex = originIndex;
 
         for (int i = 0; i < width; i++)
         {
-
             for (int x = 0; x < length; x++)
             {
-
                 if (clearBlock == true)
                 {
                     GameObject newRef = Instantiate(CubeBlock, this.gameObject.transform);
@@ -170,17 +173,6 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
 
 
