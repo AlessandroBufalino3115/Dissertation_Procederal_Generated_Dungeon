@@ -7,14 +7,9 @@ public class CameraMovement : MonoBehaviour
     public float speed;
     
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
-
-    private void FixedUpdate()
+    
+    
+    private void Update()
     {
 
         Vector3 movement = Vector3.zero;
@@ -34,6 +29,14 @@ public class CameraMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             movement += Vector3.right * speed;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            movement += Vector3.up * speed;
+        }
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            movement += Vector3.down * speed;
         }
 
 
@@ -57,4 +60,9 @@ public class CameraMovement : MonoBehaviour
 
         transform.Translate(movement);
     }
+
+
+
+
+
 }
