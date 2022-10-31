@@ -16,7 +16,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
     public class CAtiles
     {
-        public TileVolumeGenerator.Tile tileCA;
+        public Tile tileCA;
 
         public bool empty;
 
@@ -25,7 +25,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         // when empty is true means white unliving
         // when balck means full living
 
-        public CAtiles(float perc, TileVolumeGenerator.Tile normTile)
+        public CAtiles(float perc, Tile normTile)
         {
             var ran = Random.Range(0f, 1f);
 
@@ -92,7 +92,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         instance = this;
     }
 
-    public void Init2DCallAuto(TileVolumeGenerator.Tile[][] _gridArray2D, int _length, int _height )
+    public void Init2DCallAuto(Tile[][] _gridArray2D, int _length, int _height )
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 
@@ -206,7 +206,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                     for (int row_offset = -1; row_offset < 2; row_offset++)
                     {
 
-                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length || x + row_offset >= gridArray2D[y].Length)
+                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset > gridArray2D.Length - 1 || x + row_offset > gridArray2D[y].Length -1)
                         {
 
 
@@ -226,18 +226,12 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                     }
                 }
 
-
-                //Debug.Log($"{neighbours}");
-
                 if (neighbours >= neighbours_var)
                 {
-                    //Debug.Log($"At {y * width + x} ");
                     gridArray2D[y ][x ].empty = false;
                 }
                 else
                 {
-
-                    //Debug.Log($"not at At {y * width + x} ");
                     gridArray2D[y][x].empty = true;
                 }
             }
@@ -265,12 +259,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
         StartCoroutine(Flood2D(text_x, text_y));
     }
-
-
-
-
-
-
 
 
     private IEnumerator Flood2D(int x, int y) 

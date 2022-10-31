@@ -8,35 +8,9 @@ using UnityEngine.UIElements;
 public class TileVolumeGenerator : MonoBehaviour
 {
 
-    public class Tile 
-    {
-        public GameObject arrayTileObj;
-        public int x_cord;
-        public int y_cord;
-        public int z_cord;
 
 
-
-
-        public Tile(GameObject _arrayTileObj, int _x_cord, int _y_cord)
-        {
-            arrayTileObj = _arrayTileObj;
-            x_cord = _x_cord;
-            y_cord = _y_cord;
-        }
-
-
-
-        public Tile (GameObject _arrayTileObj, int _x_cord, int _y_cord, int _z_cord) 
-        {
-            arrayTileObj = _arrayTileObj;
-            x_cord = _x_cord;
-            y_cord = _y_cord;
-            z_cord = _z_cord;
-        }
-    }
-
-
+    public bool scaleToggle;
 
     public int x_Length;
     public int y_Height;
@@ -111,7 +85,11 @@ public class TileVolumeGenerator : MonoBehaviour
                     }
 
                     newRef.transform.position = position;
-                    newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                    if (scaleToggle) 
+                    {
+                        newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                    }
+
                     newRef.transform.name = x.ToString() + " " + y.ToString();
 
                     gridArray3D[z][y][x] = new Tile(newRef, x, y,z);
@@ -167,7 +145,11 @@ public class TileVolumeGenerator : MonoBehaviour
                 }
 
                 newRef.transform.position = position;
-                newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+
+                if (scaleToggle)
+                {
+                    newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                }
                 newRef.transform.name = x.ToString() + " " + y.ToString();
 
                 gridArray2D[y][x] = new Tile(newRef, x,y);
@@ -224,6 +206,13 @@ public class TileVolumeGenerator : MonoBehaviour
     {
         A_StarPathFinding.instance.SolveA_StarPathfinding2D(gridArray2D);
     }
+
+    public void CallForVoronoi()
+    {
+        VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
+    }
+
+
 
 
     //public void RoomSpawner() 
@@ -291,7 +280,33 @@ public class TileVolumeGenerator : MonoBehaviour
     //}
 }
 
+public class Tile
+{
+    public GameObject arrayTileObj;
+    public int x_cord;
+    public int y_cord;
+    public int z_cord;
 
+
+
+
+    public Tile(GameObject _arrayTileObj, int _x_cord, int _y_cord)
+    {
+        arrayTileObj = _arrayTileObj;
+        x_cord = _x_cord;
+        y_cord = _y_cord;
+    }
+
+
+
+    public Tile(GameObject _arrayTileObj, int _x_cord, int _y_cord, int _z_cord)
+    {
+        arrayTileObj = _arrayTileObj;
+        x_cord = _x_cord;
+        y_cord = _y_cord;
+        z_cord = _z_cord;
+    }
+}
 
 
 

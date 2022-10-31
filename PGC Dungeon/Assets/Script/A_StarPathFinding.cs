@@ -9,14 +9,14 @@ public class A_StarPathFinding : MonoBehaviour
 public class Node 
     {
 
-        public TileVolumeGenerator.Tile refToGameObj;
+        public Tile refToGameObj;
         public Node parent;
         
         public float g = 0;
         public float f = 0;
         public float h = 0;
 
-        public Node(TileVolumeGenerator.Tile gameobject) 
+        public Node(Tile gameobject) 
         { 
             refToGameObj = gameobject;
         }
@@ -54,23 +54,23 @@ public class Node
 
     
 
-    public List<Node> SolveA_StarPathfinding2D(TileVolumeGenerator.Tile[][] tileArray2D) 
+    public List<Node> SolveA_StarPathfinding2D(Tile[][] tileArray2D) 
     {
         // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
         openList = new List<Node>();
         closedList = new List<Node>();
 
-        //int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
-        //int ran_x_e = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
+        int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
+        int ran_x_e = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
 
-        //int ran_y_s = Random.Range(1, TileVolumeGenerator.Instance.y_Height) ;
-        //int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height);
+        int ran_y_s = Random.Range(1, TileVolumeGenerator.Instance.y_Height) ;
+        int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height);
 
-        int ran_x_s = 1;
-        int ran_x_e = 99;
+        //int ran_x_s = 1;
+        //int ran_x_e = 99;
 
-        int ran_y_s = 1;
-        int ran_y_e = 99;
+        //int ran_y_s = 1;
+        //int ran_y_e = 99;
 
 
         tileArray2D[ran_y_s][ran_x_s].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
