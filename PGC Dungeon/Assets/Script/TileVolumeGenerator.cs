@@ -204,7 +204,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public void InitA_StarPathFinding()
     {
-        A_StarPathFinding.instance.SolveA_StarPathfinding2D(gridArray2D);
+        A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
     }
 
     public void CallForVoronoi()
@@ -212,7 +212,7 @@ public class TileVolumeGenerator : MonoBehaviour
         VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
     }
 
-
+    public void CallGenLinesRoom2D() { LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);  }
 
 
     //public void RoomSpawner() 

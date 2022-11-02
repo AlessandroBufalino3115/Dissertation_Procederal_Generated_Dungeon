@@ -14,5 +14,12 @@
  * Debug.Log($"<color=green></color>");      successs
  * 
  * 
- * 
+ *    wave function collaps
+ *    
+ *    tringular shit
+ *    
+ *    the room spacer 
+ *    
+ *    worm
+ *    
  */

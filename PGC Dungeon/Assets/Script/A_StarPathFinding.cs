@@ -6,39 +6,7 @@ using UnityEngine;
 public class A_StarPathFinding : MonoBehaviour
 {
    
-public class Node 
-    {
 
-        public Tile refToGameObj;
-        public Node parent;
-        
-        public float g = 0;
-        public float f = 0;
-        public float h = 0;
-
-        public Node(Tile gameobject) 
-        { 
-            refToGameObj = gameobject;
-        }
-
-        public void SetParent(Node _parent) 
-        {
-            parent = _parent;
-        }
-
-        
-
-
-
-
-    }
-
-    List<Node> openList = new List<Node>();
-    List<Node> closedList = new List<Node>();
-
-
-    public Node start_node;
-    public Node end_node;
 
     static public A_StarPathFinding instance;
 
@@ -54,46 +22,37 @@ public class Node
 
     
 
-    public List<Node> SolveA_StarPathfinding2D(Tile[][] tileArray2D) 
+    public List<AStar_Node> SolveA_StarPathfinding2DTest(Tile[][] tileArray2D) 
     {
         // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
-        openList = new List<Node>();
-        closedList = new List<Node>();
+        List<AStar_Node> openList = new List<AStar_Node>();
+        List<AStar_Node> closedList = new List<AStar_Node>();
 
-        int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
-        int ran_x_e = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
+        int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length-1);
+        int ran_x_e = Random.Range(1, TileVolumeGenerator.Instance.x_Length-1);
 
-        int ran_y_s = Random.Range(1, TileVolumeGenerator.Instance.y_Height) ;
-        int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height);
-
-        //int ran_x_s = 1;
-        //int ran_x_e = 99;
-
-        //int ran_y_s = 1;
-        //int ran_y_e = 99;
+        int ran_y_s = Random.Range(1, TileVolumeGenerator.Instance.y_Height-1);
+        int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height-1);
 
 
         tileArray2D[ran_y_s][ran_x_s].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
         tileArray2D[ran_y_e][ran_x_e].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.green;
 
-        start_node = new Node(tileArray2D[ran_y_s][ran_x_s]);
-        start_node.parent = null;
+        AStar_Node start_node = new AStar_Node(tileArray2D[ran_y_s][ran_x_s]);
+         start_node.parent = null;
 
-        end_node = new Node(tileArray2D[ran_y_e][ran_x_e]);
+        AStar_Node end_node = new AStar_Node(tileArray2D[ran_y_e][ran_x_e]);
 
 
         openList.Add(start_node);
 
 
 
-        int iter = 0;
-
         while (openList.Count > 0) 
         {
 
-            iter++;
 
-            Node currNode = openList[0];
+            AStar_Node currNode = openList[0];
             int currIndex = 0;
             for (int i = 0; i < openList.Count; i++)
             { 
@@ -111,9 +70,9 @@ public class Node
             if (currNode.refToGameObj.x_cord == end_node.refToGameObj.x_cord && currNode.refToGameObj.y_cord == end_node.refToGameObj.y_cord) 
             {
 
-                List<Node> path = new List<Node>();
+                List<AStar_Node> path = new List<AStar_Node>();
 
-                Node current = currNode;
+                AStar_Node current = currNode;
 
                 while (current.parent != null)
                 {
@@ -139,7 +98,7 @@ public class Node
             }
             else 
             {
-                List<Node> children = new List<Node>();
+                List<AStar_Node> children = new List<AStar_Node>();
 
 
                 for (int i = 0; i < childPosArry.Length/2; i++)
@@ -157,7 +116,7 @@ public class Node
                     else 
                     {
                         //here an if statment also saying that walkable 
-                        Node new_node = new Node(tileArray2D[node_position[1]][node_position[0]]);
+                        AStar_Node new_node = new AStar_Node(tileArray2D[node_position[1]][node_position[0]]);
                         children.Add(new_node);
                     }
                 }
@@ -213,35 +172,38 @@ public class Node
         
     }
 
-    public void RetrivePath(Node nodePath) 
+    
+
+
+
+
+
+    private float UcledianDistance2D(AStar_Node end_point, AStar_Node curr_node) 
     {
-        List<Node> path = new List<Node>();
-
-        Node current = nodePath;
-
-        while (current.parent != null) 
-        {
-            path.Add(current);
-            current = current.parent;
-        }
-        
-
-        foreach (var node in path) 
-        {
-            node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.blue;
-        }
-
-        //while current is not None:
-        //        path.append(current.position)
-        //        current = current.parent
-        //    return path[::- 1] # Return reversed path
-    }
-
-    private float UcledianDistance2D(Node end_point, Node curr_node) 
-    {
-
         float distance = Mathf.Pow((end_point.refToGameObj.x_cord - curr_node.refToGameObj.x_cord), 2) + Mathf.Pow((end_point.refToGameObj.y_cord - curr_node.refToGameObj.y_cord), 2);
         distance = Mathf.Sqrt(distance);
         return distance;
     }
+}
+
+public class AStar_Node
+{
+
+    public Tile refToGameObj;
+    public AStar_Node parent;
+
+    public float g = 0;
+    public float f = 0;
+    public float h = 0;
+
+    public AStar_Node(Tile gameobject)
+    {
+        refToGameObj = gameobject;
+    }
+
+    public void SetParent(AStar_Node _parent)
+    {
+        parent = _parent;
+    }
+
 }
