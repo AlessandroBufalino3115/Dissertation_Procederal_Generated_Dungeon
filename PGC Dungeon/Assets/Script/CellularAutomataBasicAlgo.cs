@@ -9,8 +9,8 @@ using Random = UnityEngine.Random;
 public class CellularAutomataBasicAlgo : MonoBehaviour
 {
 
-    public int text_x;
-    public int text_y;
+    public int test_x;
+    public int test_y;
 
 
 
@@ -116,7 +116,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 
         int totalTicks = timerEnd - timerStart;
-        Debug.Log($"<color=yellow>Performance: To run the iteration of CA it took {totalTicks}</color>");
+        Debug.Log($"<color=yellow>Performance: To run the drawing of CA it took {totalTicks}</color>");
 
 
         CalcRatio2D(gridArray2D);
@@ -152,10 +152,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
 
         Debug.Log($"<color=orange>Debug: There are {black} black tiles and {white} white tiles, the true % is {truePerc}</color>");
-
-
-
-
 
     }
 
@@ -199,14 +195,12 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
             {
                 int neighbours = 0;
 
-
-
                 for (int col_offset = -1; col_offset < 2; col_offset++)
                 {
                     for (int row_offset = -1; row_offset < 2; row_offset++)
                     {
 
-                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset > gridArray2D.Length - 1 || x + row_offset > gridArray2D[y].Length -1)
+                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length -1)
                         {
 
 
@@ -218,7 +212,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                         else
                         {
                             //Debug.Log($"needs to go in here {y + col_offset}   and for the x {x + row_offset}");
-                            if (!gridArray2D[y + col_offset][x+row_offset].empty)
+                            if (!copyArrayStorage[y + col_offset][x+row_offset])
                             {
                                 neighbours++;
                             }
@@ -228,7 +222,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
                 if (neighbours >= neighbours_var)
                 {
-                    gridArray2D[y ][x ].empty = false;
+                    gridArray2D[y][x].empty = false;
                 }
                 else
                 {
@@ -257,7 +251,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
         int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height);
 
-        StartCoroutine(Flood2D(text_x, text_y));
+        StartCoroutine(Flood2D(test_x, test_y));
     }
 
 

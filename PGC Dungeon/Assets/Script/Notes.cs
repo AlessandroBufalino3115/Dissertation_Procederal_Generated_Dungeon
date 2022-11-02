@@ -22,4 +22,9 @@
  *    
  *    worm
  *    
+ *    issues with the merging of meshes 
+ *    
+ *    
+ *    http://www.roguebasin.com/index.php/Basic_BSP_Dungeon_generation
+ *    
  */

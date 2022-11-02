@@ -5,6 +5,9 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.UIElements;
 
+
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class TileVolumeGenerator : MonoBehaviour
 {
 
@@ -51,7 +54,7 @@ public class TileVolumeGenerator : MonoBehaviour
         Instance = this;
     }
 
-    public void Gen3DVolume() 
+    public void Gen3DVolume()
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
@@ -85,14 +88,14 @@ public class TileVolumeGenerator : MonoBehaviour
                     }
 
                     newRef.transform.position = position;
-                    if (scaleToggle) 
+                    if (scaleToggle)
                     {
                         newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
                     }
 
                     newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                    gridArray3D[z][y][x] = new Tile(newRef, x, y,z);
+                    gridArray3D[z][y][x] = new Tile(newRef, x, y, z);
 
                     blockNum++;
                 }
@@ -111,7 +114,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
         int totalTicks = timerEnd - timerStart;
         Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
-        
+
     }
 
 
@@ -129,7 +132,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
             for (int x = 0; x < gridArray2D[y].Length; x++)
             {
-                Vector3 position = new Vector3( x, 0, y);
+                Vector3 position = new Vector3(x, 0, y);
 
 
 
@@ -152,7 +155,7 @@ public class TileVolumeGenerator : MonoBehaviour
                 }
                 newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                gridArray2D[y][x] = new Tile(newRef, x,y);
+                gridArray2D[y][x] = new Tile(newRef, x, y);
 
                 blockNum++;
             }
@@ -173,7 +176,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-    public void DestroyAllTiles() 
+    public void DestroyAllTiles()
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 
@@ -193,28 +196,65 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
         Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>");
-        
+
     }
 
 
-    public void Init2DCa() 
+
+
+    public void CombineMeshes()
     {
-        CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);  
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        int i = 0;
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
+
+            i++;
+        }
+        transform.GetComponent<MeshFilter>().mesh = new Mesh();
+        transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        transform.gameObject.SetActive(true);
+
     }
 
-    public void InitA_StarPathFinding()
-    {
-        A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
-    }
-
-    public void CallForVoronoi()
-    {
-        VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
-    }
-
-    public void CallGenLinesRoom2D() { LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);  }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
+
+    public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
+
+    public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
+
+    public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
+
+    public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
+    public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
     //public void RoomSpawner() 
     //{
 
@@ -310,12 +350,12 @@ public class Tile
 
 
 
-public class Room 
-{ 
+public class Room
+{
     public List<GameObject> roomTiles = new List<GameObject>();
     public Vector2 pos2D;
     public Vector3 pos3D;
-    
+
 
     public Room() { }
 }

@@ -50,17 +50,20 @@ public class TestingScript : MonoBehaviour
     //}
     private void Start()
     {
-        //for (int i = 0; i < 20; i++)
-        //{
-        //    Debug.Log($"in the first for loop");
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
-        //    for (int x = 0; x < 23; x++)
-        //    {
+        int i = 0;
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
 
-        //        continue;
-        //        Debug.Log($"int he second loop");
-
-        //    }
-        //}
+            i++;
+        }
+        transform.GetComponent<MeshFilter>().mesh = new Mesh();
+        transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        transform.gameObject.SetActive(true);
     }
 }
