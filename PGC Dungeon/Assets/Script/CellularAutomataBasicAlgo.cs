@@ -86,6 +86,10 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
     [SerializeField] int width;
     [SerializeField] int height;
 
+    List<int[]> openList2D = new List<int[]>();
+    List<int[]> closedList2D = new List<int[]>();
+
+
 
     private void Awake()
     {
@@ -157,11 +161,15 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
     public void Drawiteration()
     {
+        //saves the new iteration
+        openList2D.Clear();
+
         for (int y = 0; y < gridArray2D.Length; y++)
         {
             for (int x = 0; x < gridArray2D[y].Length; x++)
             {
                 gridArray2D[y][x].SetState();
+                openList2D.Add(new int[] {x,y} );
             }
         }
     }
@@ -203,7 +211,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                         if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length -1)
                         {
 
-
                         }
                         else if (col_offset == 0 && row_offset == 0)
                         {
@@ -211,7 +218,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                         }
                         else
                         {
-                            //Debug.Log($"needs to go in here {y + col_offset}   and for the x {x + row_offset}");
+                            
                             if (!copyArrayStorage[y + col_offset][x+row_offset])
                             {
                                 neighbours++;
@@ -251,12 +258,40 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         int ran_x_s = Random.Range(1, TileVolumeGenerator.Instance.x_Length);
         int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height);
 
-        StartCoroutine(Flood2D(test_x, test_y));
+        StartCoroutine(Flood2D(test_x, test_y,Color.red));
     }
 
 
-    private IEnumerator Flood2D(int x, int y) 
+    public void DeleteSmallRooms() 
     {
+        closedList2D.Clear();
+
+
+        // this coul be a while loop
+        if (openList2D.Count > 0) 
+        {
+            int ranStartingPoint = Random.Range(0, openList2D.Count);
+
+            Flood2D(openList2D[ranStartingPoint][0], openList2D[ranStartingPoint][1], Color.green);
+
+            //if (closedList2D.Count > minimumRoomSize) 
+            //{
+            //    //p
+            //}
+        }
+
+        //given a volume decide a random point from an open point list
+        // start the flood there save all the tiles in that iteration in a arr. check if its big enough or not if not delete the room, if it is connect to main land    
+        // dleete from the openlist the saved arr
+
+
+    }
+
+
+
+    private IEnumerator Flood2DCor(int x, int y, Color colToTurnTo) 
+    {
+
         WaitForSeconds wait = new WaitForSeconds(fillDelay);
 
         if (y >= 0 && x  >= 0 && y  < gridArray2D.Length && x < gridArray2D[y].Length)
@@ -264,20 +299,42 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
             yield return wait;
 
-            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color != Color.red) 
+            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo) 
             {
-                gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
 
-                StartCoroutine(Flood2D(x + 1, y));
-                StartCoroutine(Flood2D(x - 1, y));
-                StartCoroutine(Flood2D(x , y+1));
-                StartCoroutine(Flood2D(x, y-1));
+                StartCoroutine(Flood2DCor(x + 1, y,colToTurnTo));
+                StartCoroutine(Flood2DCor(x - 1, y,  colToTurnTo));
+                StartCoroutine(Flood2DCor(x , y+1,  colToTurnTo));
+                StartCoroutine(Flood2DCor(x, y-1,  colToTurnTo));
             }
         }
 
     }
 
+    private IEnumerator Flood2D(int x, int y, Color colToTurnTo)
+    {
+        closedList2D.Add(new int[] { x, y });
 
+        WaitForSeconds wait = new WaitForSeconds(fillDelay);
+
+        if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
+        {
+
+            yield return wait;
+
+            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo)
+            {
+                gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
+
+                StartCoroutine(Flood2D(x + 1, y, colToTurnTo));
+                StartCoroutine(Flood2D(x - 1, y, colToTurnTo));
+                StartCoroutine(Flood2D(x, y + 1, colToTurnTo));
+                StartCoroutine(Flood2D(x, y - 1, colToTurnTo));
+            }
+        }
+
+    }
 
 
 
