@@ -14,16 +14,20 @@
  * Debug.Log($"<color=green></color>");      successs
  * 
  * 
- *    wave function collaps
+ *   wave function collapse
+ *   
+ *   worm
+ *   
+ *   BSP 
+ *   
+ *   different ways of dealing with the zigzag from the a*pathfidng
+ *   
+ *   perlin noise or diamon
  *    
- *    tringular shit
- *    
- *    the room spacer 
- *    
- *    worm
- *    
- *    issues with the merging of meshes 
- *    
+ *   randomiser maybe idk
+ *   
+ *   
+ *   actually implement eveyrthing
  *    
  *    http://www.roguebasin.com/index.php/Basic_BSP_Dungeon_generation
  *    
