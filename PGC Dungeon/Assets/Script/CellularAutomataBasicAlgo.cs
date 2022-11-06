@@ -52,11 +52,11 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
             if (empty)
             {
 
-                tileCA.arrayTileObj.transform.GetComponent<MeshRenderer>().material.color = Color.white;
+                tileCA.tileObj.transform.GetComponent<MeshRenderer>().material.color = Color.white;
             }
             else
             {
-                tileCA.arrayTileObj.transform.GetComponent<MeshRenderer>().material.color = Color.black;
+                tileCA.tileObj.transform.GetComponent<MeshRenderer>().material.color = Color.black;
 
             }
 
@@ -299,9 +299,9 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
             yield return wait;
 
-            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo) 
+            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.tileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo) 
             {
-                gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
+                gridArray2D[y][x].tileCA.tileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
 
                 StartCoroutine(Flood2DCor(x + 1, y,colToTurnTo));
                 StartCoroutine(Flood2DCor(x - 1, y,  colToTurnTo));
@@ -323,9 +323,9 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
             yield return wait;
 
-            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo)
+            if (gridArray2D[y][x].empty && gridArray2D[y][x].tileCA.tileObj.GetComponent<MeshRenderer>().material.color != colToTurnTo)
             {
-                gridArray2D[y][x].tileCA.arrayTileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
+                gridArray2D[y][x].tileCA.tileObj.GetComponent<MeshRenderer>().material.color = colToTurnTo;
 
                 StartCoroutine(Flood2D(x + 1, y, colToTurnTo));
                 StartCoroutine(Flood2D(x - 1, y, colToTurnTo));

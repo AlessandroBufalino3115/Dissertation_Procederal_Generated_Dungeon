@@ -35,8 +35,8 @@ public class A_StarPathFinding : MonoBehaviour
         int ran_y_e = Random.Range(1, TileVolumeGenerator.Instance.y_Height-1);
 
 
-        tileArray2D[ran_y_s][ran_x_s].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
-        tileArray2D[ran_y_e][ran_x_e].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.green;
+        tileArray2D[ran_y_s][ran_x_s].tileObj.GetComponent<MeshRenderer>().material.color = Color.red;
+        tileArray2D[ran_y_e][ran_x_e].tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
 
         AStar_Node start_node = new AStar_Node(tileArray2D[ran_y_s][ran_x_s]);
          start_node.parent = null;
@@ -67,7 +67,7 @@ public class A_StarPathFinding : MonoBehaviour
 
             closedList.Add(currNode);
 
-            if (currNode.refToGameObj.x_cord == end_node.refToGameObj.x_cord && currNode.refToGameObj.y_cord == end_node.refToGameObj.y_cord) 
+            if (currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.y == end_node.refToGameObj.position.y) 
             {
 
                 List<AStar_Node> path = new List<AStar_Node>();
@@ -82,17 +82,17 @@ public class A_StarPathFinding : MonoBehaviour
                 foreach (var node in openList) 
                 {
 
-                    node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
                 }
 
                 foreach (var node in path)
                 {
-                    node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.blue;
+                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.blue;
                 }
 
 
-                tileArray2D[ran_y_s][ran_x_s].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
-                tileArray2D[ran_y_e][ran_x_e].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.green;
+                tileArray2D[ran_y_s][ran_x_s].tileObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                tileArray2D[ran_y_e][ran_x_e].tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
                 return path;
 
             }
@@ -106,7 +106,7 @@ public class A_StarPathFinding : MonoBehaviour
                     int x_buff = childPosArry[i, 0];
                     int y_buff = childPosArry[i, 1];
 
-                    int[] node_position = {currNode.refToGameObj.x_cord+x_buff, currNode.refToGameObj.y_cord+ y_buff};
+                    int[] node_position = {currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.y + y_buff};
 
 
                     if (node_position[0] < 0  || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height) 
@@ -125,7 +125,7 @@ public class A_StarPathFinding : MonoBehaviour
                 {
                     foreach (var closedListItem in closedList)
                     {
-                        if (child.refToGameObj.x_cord == closedListItem.refToGameObj.x_cord && child.refToGameObj.y_cord == closedListItem.refToGameObj.y_cord) 
+                        if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.y == closedListItem.refToGameObj.position.y) 
                         {
                             continue;
                         }
@@ -141,7 +141,7 @@ public class A_StarPathFinding : MonoBehaviour
 
                     foreach (var openListItem in openList)
                     {
-                        if (child.refToGameObj.x_cord == openListItem.refToGameObj.x_cord && child.refToGameObj.y_cord == openListItem.refToGameObj.y_cord && child.g > openListItem.g)// 
+                        if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.y == openListItem.refToGameObj.position.y && child.g > openListItem.g)// 
                         {
                             continue; 
                         }
@@ -161,12 +161,12 @@ public class A_StarPathFinding : MonoBehaviour
         foreach (var node in openList)
         {
 
-            node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+            node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
         }
 
 
-        tileArray2D[ran_y_s][ran_x_s].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.red;
-        tileArray2D[ran_y_e][ran_x_e].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.green;
+        tileArray2D[ran_y_s][ran_x_s].tileObj.GetComponent<MeshRenderer>().material.color = Color.red;
+        tileArray2D[ran_y_e][ran_x_e].tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
 
         return null;
         
@@ -180,7 +180,7 @@ public class A_StarPathFinding : MonoBehaviour
 
     private float UcledianDistance2D(AStar_Node end_point, AStar_Node curr_node) 
     {
-        float distance = Mathf.Pow((end_point.refToGameObj.x_cord - curr_node.refToGameObj.x_cord), 2) + Mathf.Pow((end_point.refToGameObj.y_cord - curr_node.refToGameObj.y_cord), 2);
+        float distance = Mathf.Pow((end_point.refToGameObj.position.x - curr_node.refToGameObj.position.x), 2) + Mathf.Pow((end_point.refToGameObj.position.y - curr_node.refToGameObj.position.y), 2);
         distance = Mathf.Sqrt(distance);
         return distance;
     }

@@ -118,15 +118,15 @@ public class DrunkWalkAlgo : MonoBehaviour
 
             if (DWtype) 
             {
-                if (_gridArray2d[(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color != Color.grey) 
+                if (_gridArray2d[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color != Color.grey) 
                 {
-                    _gridArray2d[(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                    _gridArray2d[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
                     iterationNum--;
                 }
             }
             else 
             {
-                _gridArray2d[(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                _gridArray2d[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
                 iterationNum--;
             }
         }
@@ -248,15 +248,15 @@ public class DrunkWalkAlgo : MonoBehaviour
 
             if (DWtype)
             {
-                if (_gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color != Color.grey)
+                if (_gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color != Color.grey)
                 {
-                    _gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                    _gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
                     iterationNum--;
                 }
             }
             else
             {
-                _gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                _gridArray3d[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
                 iterationNum--;
             }
         }

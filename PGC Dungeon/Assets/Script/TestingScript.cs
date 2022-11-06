@@ -75,24 +75,7 @@ public class TestingScript : MonoBehaviour
 
     private void Start()
     {
-        int[] array1 = new int[5] { 1, 2, 3, 4, 5 }; 
-        int[] array2 = new int[3] { 9,3,5 }; 
-        int[] array3 = new int[6] { 0,8,6,7,4,3 }; 
-        int[] array4 = new int[3] { 2,3,9 };
-
-
-        var commonElements1 = array1.Intersect(array2).ToArray();
-        var commonElements2 = array3.Intersect(array4).ToArray();
-
-        var commonElementsFinal = commonElements2.Intersect(commonElements1).ToArray();
-
-
-        //foreach (var element in commonElementsFinal) 
-        //{
-        //    Debug.Log($"{element}");
-        //}
-
-
+      
 
     }
 

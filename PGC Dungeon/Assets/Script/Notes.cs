@@ -14,7 +14,7 @@
  * Debug.Log($"<color=green></color>");      successs
  * 
  * 
- *   wave function collapse
+ *   wave function collapse   90%
  *   
  *   worm
  *   
@@ -22,9 +22,17 @@
  *   
  *   different ways of dealing with the zigzag from the a*pathfidng
  *   
- *   perlin noise or diamon
+ *   perlin noise or diamon   or fractal
  *    
- *   randomiser maybe idk
+ *   corridors first algo  
+ *   
+ *   walls stuff
+ *   
+ *   delete old rooms
+ *   
+ *   fix the code base
+ *   
+ *   
  *   
  *   
  *   actually implement eveyrthing

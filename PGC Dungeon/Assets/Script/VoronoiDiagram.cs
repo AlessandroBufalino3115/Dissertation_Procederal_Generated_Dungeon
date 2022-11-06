@@ -42,8 +42,8 @@ public class VoronoiDiagram : MonoBehaviour
         veronoiPoints2D = new List<Vector2>();
         listColor = new List<Color>();
 
-        GameObject topRight = _gridArray2D[TileVolumeGenerator.Instance.y_Height - 1][TileVolumeGenerator.Instance.x_Length - 1].arrayTileObj;
-        GameObject botLeft = _gridArray2D[0][0].arrayTileObj;
+        GameObject topRight = _gridArray2D[TileVolumeGenerator.Instance.y_Height - 1][TileVolumeGenerator.Instance.x_Length - 1].tileObj;
+        GameObject botLeft = _gridArray2D[0][0].tileObj;
 
 
         topRightCor_X = topRight.transform.position.x;
@@ -85,12 +85,12 @@ public class VoronoiDiagram : MonoBehaviour
                 {
                     if (closestDistance < 0)  //therefore minus therefoe we just started
                     {
-                        closestDistance = UcledianDistance2D(veronoiPoints2D[i], new Vector2( _gridArray2D[y][x].arrayTileObj.transform.position.x, _gridArray2D[y][x].arrayTileObj.transform.position.z));
+                        closestDistance = UcledianDistance2D(veronoiPoints2D[i], new Vector2( _gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
                     
                     }
                     else
                     {
-                        float newDist = UcledianDistance2D(veronoiPoints2D[i], new Vector2(_gridArray2D[y][x].arrayTileObj.transform.position.x, _gridArray2D[y][x].arrayTileObj.transform.position.z));
+                        float newDist = UcledianDistance2D(veronoiPoints2D[i], new Vector2(_gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
 
                         if (closestDistance > newDist)
                         {
@@ -103,7 +103,7 @@ public class VoronoiDiagram : MonoBehaviour
 
 
 
-                _gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color = listColor[closestIndex];
+                _gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = listColor[closestIndex];
 
 
 

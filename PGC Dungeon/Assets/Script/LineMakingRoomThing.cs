@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static CellularAutomataBasicAlgo;
 
 public class LineMakingRoomThing : MonoBehaviour
@@ -43,14 +44,14 @@ public class LineMakingRoomThing : MonoBehaviour
 
         for (int i = 0; i < lengthX; i++)
         {
-            _gridArray[0][i].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
-            _gridArray[lengthY - 1][i].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[0][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[lengthY - 1][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
         }
 
         for (int i = 0; i < lengthY; i++)
         {
-            _gridArray[i][0].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
-            _gridArray[i][lengthX - 1].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[i][0].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[i][lengthX - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
         }
 
 
@@ -142,13 +143,13 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int i = 1; i < lengthY; i++)
             {
-                if (_gridArray[i][item].arrayTileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                if (_gridArray[i][item].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
                 {
                     break;
                 }
                 else
                 {
-                    _gridArray[i][item].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                    _gridArray[i][item].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
                 }
             }
 
@@ -163,13 +164,13 @@ public class LineMakingRoomThing : MonoBehaviour
             {
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][i].arrayTileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                    if (_gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][i].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                            _gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
                         }
                         else
                         {
@@ -179,7 +180,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][i].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                        _gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
                     }
                 }
 
@@ -192,13 +193,13 @@ public class LineMakingRoomThing : MonoBehaviour
 
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][lengthX - i - 1].arrayTileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                    if (_gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][lengthX - i - 1].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                            _gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
                         }
                         else
                         {
@@ -207,7 +208,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][lengthX - i - 1].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                        _gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
                     }
                 }
             }
@@ -229,9 +230,9 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int x = 0; x < lengthX; x++)
             {
-                if (_gridArray[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                if (_gridArray[y][x].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
                 {
-                    takenPositions.Add(_gridArray[y][x].arrayTileObj.transform.name);
+                    takenPositions.Add(_gridArray[y][x].tileObj.transform.name);
                 }
             }
         }
@@ -330,10 +331,10 @@ public class LineMakingRoomThing : MonoBehaviour
             foreach (var node in corridor)
             {
 
-                Color col = node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color;
+                Color col = node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color;
 
                 if (col == Color.black || col == Color.white)
-                    node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
             }
 
             endX = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][0];
@@ -345,10 +346,10 @@ public class LineMakingRoomThing : MonoBehaviour
             foreach (var node in corridor)
             {
 
-                Color col = node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color;
+                Color col = node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color;
 
                 if (col == Color.black || col == Color.white)
-                    node.refToGameObj.arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
             }
 
 
@@ -371,12 +372,12 @@ public class LineMakingRoomThing : MonoBehaviour
         {
 
 
-            if (gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color != Color.black && gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color != col)
+            if (gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != Color.black && gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != col)
             {
 
                 roomsList[i].position.Add(new int[] { x, y });
 
-                gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color = col;
+                gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = col;
 
                 Flood2D(x + 1, y, col, i);
                 Flood2D(x - 1, y, col, i);
@@ -398,13 +399,13 @@ public class LineMakingRoomThing : MonoBehaviour
 
             yield return wait;
 
-            Color tileCol = gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color;
+            Color tileCol = gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color;
 
 
             if (tileCol != Color.black && tileCol != Color.white && tileCol != Color.green)
             {
 
-                gridArray2D[y][x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.green;
+                gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
 
                 StartCoroutine(Flood2DCor(x + 1, y));
                 StartCoroutine(Flood2DCor(x - 1, y));
@@ -459,10 +460,10 @@ public class LineMakingRoomThing : MonoBehaviour
 
 
 
-            Color tarColor = tileArray2D[currNode.refToGameObj.y_cord][currNode.refToGameObj.x_cord].arrayTileObj.GetComponent<MeshRenderer>().material.color;
+            Color tarColor = tileArray2D[currNode.refToGameObj.position.y][currNode.refToGameObj.position.x].tileObj.GetComponent<MeshRenderer>().material.color;
 
 
-            if (   (currNode.refToGameObj.x_cord == end_node.refToGameObj.x_cord && currNode.refToGameObj.y_cord == end_node.refToGameObj.y_cord)      ||   tarColor == targetCol  )
+            if (   (currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.y == end_node.refToGameObj.position.y)      ||   tarColor == targetCol  )
             {
 
                 List<AStar_Node> path = new List<AStar_Node>();
@@ -488,7 +489,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     int x_buff = childPosArry[i, 0];
                     int y_buff = childPosArry[i, 1];
 
-                    int[] node_position = { currNode.refToGameObj.x_cord + x_buff, currNode.refToGameObj.y_cord + y_buff };
+                    int[] node_position = { currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.y + y_buff };
 
 
                     if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height)
@@ -507,7 +508,7 @@ public class LineMakingRoomThing : MonoBehaviour
                 {
                     foreach (var closedListItem in closedList)
                     {
-                        if (child.refToGameObj.x_cord == closedListItem.refToGameObj.x_cord && child.refToGameObj.y_cord == closedListItem.refToGameObj.y_cord)
+                        if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.y == closedListItem.refToGameObj.position.y)
                         {
                             continue;
                         }
@@ -520,7 +521,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     // other colort costs 0.18
 
                     float addedCost = 0;
-                    Color childColor = tileArray2D[child.refToGameObj.y_cord][child.refToGameObj.x_cord].arrayTileObj.GetComponent<MeshRenderer>().material.color;
+                    Color childColor = tileArray2D[child.refToGameObj.position.y][child.refToGameObj.position.x].tileObj.GetComponent<MeshRenderer>().material.color;
 
 
                     if (childColor == roomCol)
@@ -547,7 +548,7 @@ public class LineMakingRoomThing : MonoBehaviour
 
                     foreach (var openListItem in openList)
                     {
-                        if (child.refToGameObj.x_cord == openListItem.refToGameObj.x_cord && child.refToGameObj.y_cord == openListItem.refToGameObj.y_cord && child.g > openListItem.g)
+                        if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.y == openListItem.refToGameObj.position.y && child.g > openListItem.g)
                         {
                             continue;
                         }
@@ -574,7 +575,7 @@ public class LineMakingRoomThing : MonoBehaviour
 
     private float UcledianDistance2D(AStar_Node end_point, AStar_Node curr_node)
     {
-        float distance = Mathf.Pow((end_point.refToGameObj.x_cord - curr_node.refToGameObj.x_cord), 2) + Mathf.Pow((end_point.refToGameObj.y_cord - curr_node.refToGameObj.y_cord), 2);
+        float distance = Mathf.Pow((end_point.refToGameObj.position.x - curr_node.refToGameObj.position.x), 2) + Mathf.Pow((end_point.refToGameObj.position.y - curr_node.refToGameObj.position.y), 2);
         distance = Mathf.Sqrt(distance);
         return distance;
     }

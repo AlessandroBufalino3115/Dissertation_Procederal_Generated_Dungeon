@@ -109,7 +109,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-        gridArray3D[half_z][half_y][half_x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        gridArray3D[half_z][half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 
         int totalTicks = timerEnd - timerStart;
@@ -165,7 +165,7 @@ public class TileVolumeGenerator : MonoBehaviour
         int half_x = (x_Length - 1) / 2;
         int half_y = (y_Height - 1) / 2;
 
-        gridArray2D[half_y][half_x].arrayTileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        gridArray2D[half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
 
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 
@@ -201,7 +201,7 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-
+    //testing
     public void CombineMeshes()
     {
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
@@ -255,101 +255,112 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
     public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
-    //public void RoomSpawner() 
-    //{
 
-    //    int stratoSize = volumeLength * volumeWidth;
+    /*
+    public void RoomSpawner()
+    {
 
-    //    int offsetIndex = 0;
+        int stratoSize = volumeLength * volumeWidth;
 
-    //    int currentFailures;
+        int offsetIndex = 0;
 
-
-    //    for (int x = 0; x < volumeFloors; x++)
-    //    {
-    //        for (int i = 0; i < stratoSize; i++)
-    //        {
-    //            if (clearBlock == false)
-    //                Tiles[i + offsetIndex].transform.GetComponent<MeshRenderer>().material.color = Color.black;
-
-    //            if (i == 140)
-    //                ActuallySpawnRoom(i + offsetIndex);
+        int currentFailures;
 
 
+        for (int x = 0; x < volumeFloors; x++)
+        {
+            for (int i = 0; i < stratoSize; i++)
+            {
+                if (clearBlock == false)
+                    Tiles[i + offsetIndex].transform.GetComponent<MeshRenderer>().material.color = Color.black;
 
-    //        }
-    //        offsetIndex = stratoSize * 3;
-    //    }
-
-
-    //}
+                if (i == 140)
+                    ActuallySpawnRoom(i + offsetIndex);
 
 
 
-    // needs to pick a random start index on then call this 
-    //half way it all prinintg that should be the middle so use that as the main connection node
+            }
+            offsetIndex = stratoSize * 3;
+        }
+
+
+    }
 
 
 
-    // i need the origin point to be 1 away from any other room
-    //to delete
-    //public void ActuallySpawnRoom(int originIndex) 
-    //{
+    needs to pick a random start index on then call this 
+    half way it all prinintg that should be the middle so use that as the main connection node
 
-    //    int width = Random.Range(3, 9);
-    //    int length = Random.Range(3, 9);
 
-    //    int targetindex = originIndex;
 
-    //    for (int i = 0; i < width; i++)
-    //    {
-    //        for (int x = 0; x < length; x++)
-    //        {
-    //            if (clearBlock == true)
-    //            {
-    //                GameObject newRef = Instantiate(CubeBlock, this.gameObject.transform);
-    //                newRef.transform.position = new Vector3(Tiles[targetindex].gameObject.transform.position.x, Tiles[targetindex].gameObject.transform.position.y, Tiles[targetindex].gameObject.transform.position.z);
-    //            }
-    //            else
-    //                Tiles[targetindex].transform.GetComponent<MeshRenderer>().material.color = Color.red;
-    //            targetindex--;
-    //        }
-    //        targetindex -= volumeWidth;
-    //        targetindex += length;
-    //    }
-    //}
+     i need the origin point to be 1 away from any other room
+    to delete
+    public void ActuallySpawnRoom(int originIndex)
+    {
+
+        int width = Random.Range(3, 9);
+        int length = Random.Range(3, 9);
+
+        int targetindex = originIndex;
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int x = 0; x < length; x++)
+            {
+                if (clearBlock == true)
+                {
+                    GameObject newRef = Instantiate(CubeBlock, this.gameObject.transform);
+                    newRef.transform.position = new Vector3(Tiles[targetindex].gameObject.transform.position.x, Tiles[targetindex].gameObject.transform.position.y, Tiles[targetindex].gameObject.transform.position.z);
+                }
+                else
+                    Tiles[targetindex].transform.GetComponent<MeshRenderer>().material.color = Color.red;
+                targetindex--;
+            }
+            targetindex -= volumeWidth;
+            targetindex += length;
+        }
+    }
+    */
 }
 
 public class Tile
 {
-    public GameObject arrayTileObj;
-    public int x_cord;
-    public int y_cord;
-    public int z_cord;
+    public GameObject tileObj;
+    public Vector3Int position = new Vector3Int();
 
 
-
-
-    public Tile(GameObject _arrayTileObj, int _x_cord, int _y_cord)
+    public Tile(GameObject _arrayTileObj, Vector2Int _pos)
     {
-        arrayTileObj = _arrayTileObj;
-        x_cord = _x_cord;
-        y_cord = _y_cord;
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_pos.x, 0, _pos.y);
+    }
+
+    public Tile(GameObject _arrayTileObj, Vector3Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = _pos;
     }
 
 
-
-    public Tile(GameObject _arrayTileObj, int _x_cord, int _y_cord, int _z_cord)
+    public Tile(GameObject _arrayTileObj, int _x, int _y, int _z)
     {
-        arrayTileObj = _arrayTileObj;
-        x_cord = _x_cord;
-        y_cord = _y_cord;
-        z_cord = _z_cord;
+        tileObj = _arrayTileObj;
+
+        position = new Vector3Int(_x, _y, _z);
     }
+
+
+    public Tile(GameObject _arrayTileObj, int _x, int _y)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_x,0,_y);
+    }
+
+    public void SetTileWorldPos() => tileObj.transform.position = position;
 }
 
 
-
+/*
 public class Room
 {
     public List<GameObject> roomTiles = new List<GameObject>();
@@ -359,3 +370,4 @@ public class Room
 
     public Room() { }
 }
+*/
