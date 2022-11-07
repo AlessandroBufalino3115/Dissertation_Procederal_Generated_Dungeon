@@ -566,6 +566,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295330996}
   m_CullTransparentMesh: 1
+--- !u!1 &324724345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 324724346}
+  - component: {fileID: 324724347}
+  m_Layer: 0
+  m_Name: WFCparent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &324724346
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324724345}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &324724347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324724345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c02563183ed55ad4cbf1357840f7b6e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainTile: {fileID: 0}
+  AllowedRight: []
+  AllowedLeft: []
+  AllowedDown: []
+  AllowedUp: []
 --- !u!1 &339181344
 GameObject:
   m_ObjectHideFlags: 0
@@ -3751,7 +3800,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463df7863fb68544f89ed6d764799c72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ruleBuilder: {fileID: 324724347}
   arrayOfModulesRules:
+  - mainAsset: {fileID: 678955658191626605, guid: 0fed434f16ab3b641b73a2fdf715c9c2, type: 3}
+    assetIdx: 0
+    allowedObjLeft: 010000000300000004000000
+    allowedObjRight: 0300000001000000
+    allowedObjForward: 040000000300000002000000
+    allowedObjBackwards: 0200000003000000
+  - mainAsset: {fileID: 803169312794120479, guid: 2b4669bb69e15234492ef0c1a675a26d, type: 3}
+    assetIdx: 1
+    allowedObjLeft: 0200000004000000
+    allowedObjRight: 000000000200000004000000
+    allowedObjForward: 030000000200000004000000
+    allowedObjBackwards: 0300000002000000
+  - mainAsset: {fileID: 919132149155446097, guid: d6dbf31496940624da70a88cd2962e1d, type: 3}
+    assetIdx: 2
+    allowedObjLeft: 010000000300000004000000
+    allowedObjRight: 0100000003000000
+    allowedObjForward: 0000000001000000
+    allowedObjBackwards: 040000000100000000000000
+  - mainAsset: {fileID: 982085485338188834, guid: 2233a88f0bdb7564c8c54b1c041b7ddc, type: 3}
+    assetIdx: 3
+    allowedObjLeft: 0200000000000000
+    allowedObjRight: 000000000200000004000000
+    allowedObjForward: 0000000001000000
+    allowedObjBackwards: 040000000100000000000000
+  - mainAsset: {fileID: 919132149155446097, guid: ecc984a3a6aaa924c8977504e81d444b, type: 3}
+    assetIdx: 4
+    allowedObjLeft: 030000000100000004000000
+    allowedObjRight: 040000000200000000000000
+    allowedObjForward: 030000000200000004000000
+    allowedObjBackwards: 040000000000000001000000
+  arrayOfModulesRulesCopy:
   - mainAsset: {fileID: 678955658191626605, guid: 0fed434f16ab3b641b73a2fdf715c9c2, type: 3}
     assetIdx: 0
     allowedObjLeft: 010000000300000004000000
@@ -3790,12 +3871,16 @@ MonoBehaviour:
   - {fileID: 919132149155446097, guid: ecc984a3a6aaa924c8977504e81d444b, type: 3}
   WFCon: 0
   WFCEditingMode: 0
+  WFCMapMode: 0
   currentHead: {x: 0, y: 0}
   mouseScrollWheel: 0
   maxXsize: 20
   maxYsize: 20
   ghostModule: {fileID: 0}
   pointer: {fileID: 1970408026}
+  WFCparent: {fileID: 324724345}
+  ruleModeDir: 0
+  ruleModeIdx: 0
 --- !u!114 &1344085608
 MonoBehaviour:
   m_ObjectHideFlags: 0

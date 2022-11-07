@@ -28,10 +28,20 @@ public class WaveFunctionCollaps : MonoBehaviour
 
 
     public static WaveFunctionCollaps instance;
+    public WFCRuleBuilder ruleBuilder;
+
+
 
 
     [SerializeField]
     public List<WFCTileRule> arrayOfModulesRules = new List<WFCTileRule>();
+
+
+
+
+
+    [SerializeField]
+    public List<WFCTileRule> arrayOfModulesRulesCopy = new List<WFCTileRule>();
 
     [SerializeField]
     public List<GameObject> ListOfAssets = new List<GameObject>();
@@ -46,7 +56,9 @@ public class WaveFunctionCollaps : MonoBehaviour
 
 
     public bool WFCon = false;
+
     public bool WFCEditingMode = false;
+    public bool WFCMapMode = false;
 
     public Vector2 currentHead = Vector2.zero;
     public int mouseScrollWheel = 0;
@@ -61,6 +73,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
 
     public GameObject pointer;
+    public GameObject WFCparent;
     // Start is called before the first frame update
     void Start()
     {
@@ -68,7 +81,183 @@ public class WaveFunctionCollaps : MonoBehaviour
         WFCEditingMode = true;
     }
 
-    // we need a base tile set
+
+
+
+    //up and down cycle in the index direction
+    //left and right in the decisions 
+    //mouse wheel the possible curr thing
+    //backspace or return to select
+
+    // keypar enter to cycle the main
+
+
+
+    public enum Dir
+    {
+        LEFT,
+        RIGHT,
+        FORWARD,
+        BACKWARD
+    }
+
+    public Dir ruleModeDir;
+   
+    public int ruleModeIdx;
+    public int ruleModeMainIdx;
+
+
+
+
+
+
+    public void PositionRuleBuilder()
+    {
+
+        switch (ruleModeDir)
+        {
+            case Dir.LEFT:
+
+                pointer.transform.position = new Vector3(-(ruleBuilder.AllowedLeft.Count * 1.25f) - 2, 1.1f, 0);
+
+                ruleModeIdx = ruleBuilder.AllowedLeft.Count;
+                break;
+
+            case Dir.RIGHT:
+
+                pointer.transform.position = new Vector3((ruleBuilder.AllowedRight.Count * 1.25f) + 2, 1.1f, 0);
+
+                ruleModeIdx = ruleBuilder.AllowedRight.Count;
+                break;
+
+            case Dir.FORWARD:
+
+                pointer.transform.position = new Vector3(0, 1.1f, (ruleBuilder.AllowedForwards.Count * 1.25f) + 2);
+
+                ruleModeIdx = ruleBuilder.AllowedForwards.Count;
+
+                break;
+
+            case Dir.BACKWARD:
+
+                pointer.transform.position = new Vector3(0, 1.1f, -(ruleBuilder.AllowedBackwards.Count * 1.25f) - 2);
+
+                ruleModeIdx = ruleBuilder.AllowedBackwards.Count;
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+
+
+    public void IDXRuleBuilder()
+    {
+
+        switch (ruleModeDir)
+        {
+            case Dir.LEFT:
+
+
+                if (ruleModeIdx > ruleBuilder.AllowedLeft.Count)
+                    ruleModeIdx = 0;
+                else if (ruleModeIdx < 0)
+                    ruleModeIdx = ruleBuilder.AllowedLeft.Count;
+
+                pointer.transform.position = new Vector3(-(ruleModeIdx * 1.25f) - 2, 1.1f, 0);
+
+                if (ruleModeIdx == ruleBuilder.AllowedLeft.Count)
+                {
+                    ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                    ghostModule.transform.position = new Vector3(-(ruleModeIdx * 1.25f) - 2, 0, 0);
+                }
+                else
+                {
+                    Destroy(ghostModule);
+                }
+
+                break;
+
+            case Dir.RIGHT:
+
+
+                if (ruleModeIdx > ruleBuilder.AllowedRight.Count)
+                    ruleModeIdx = 0;
+                else if (ruleModeIdx < 0)
+                    ruleModeIdx = ruleBuilder.AllowedRight.Count;
+
+
+                pointer.transform.position = new Vector3((ruleModeIdx * 1.25f) + 2, 1.1f, 0);
+
+                if (ruleModeIdx == ruleBuilder.AllowedRight.Count)
+                {
+                    ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                    ghostModule.transform.position = new Vector3((ruleModeIdx * 1.25f) + 2, 0, 0);
+
+                }
+                else
+                {
+                    Destroy(ghostModule);
+                }
+
+                break;
+
+            case Dir.FORWARD:
+
+                if (ruleModeIdx > ruleBuilder.AllowedForwards.Count)
+                    ruleModeIdx = 0;
+                else if (ruleModeIdx < 0)
+                    ruleModeIdx = ruleBuilder.AllowedForwards.Count;
+
+                pointer.transform.position = new Vector3(0, 1.1f, (ruleModeIdx * 1.25f) + 2);
+
+
+                if (ruleModeIdx == ruleBuilder.AllowedForwards.Count)
+                {
+                    ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                    ghostModule.transform.position = new Vector3(0, 0, (ruleModeIdx * 1.25f) + 2);
+                }
+                else
+                {
+                    Destroy(ghostModule);
+                }
+                break;
+
+            case Dir.BACKWARD:
+
+
+                if (ruleModeIdx > ruleBuilder.AllowedBackwards.Count)
+                    ruleModeIdx = 0;
+                else if (ruleModeIdx < 0)
+                    ruleModeIdx = ruleBuilder.AllowedBackwards.Count;
+
+
+                pointer.transform.position = new Vector3(0, 1.1f, -(ruleModeIdx * 1.25f) - 2);
+
+                if (ruleModeIdx == ruleBuilder.AllowedBackwards.Count)
+                {
+                    ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                    ghostModule.transform.position = new Vector3(0, 0, -(ruleModeIdx * 1.25f) - 2);
+                }
+                else
+                {
+                    Destroy(ghostModule);
+                }
+
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+
+
 
     // Update is called once per frame
     void Update()
@@ -76,15 +265,37 @@ public class WaveFunctionCollaps : MonoBehaviour
         if (WFCEditingMode)
         {
 
-            if (!pointer.activeSelf) { pointer.SetActive(true); ResetGhost(currentHead, mouseScrollWheel); }
-
-            if (ghostModule != null)
+            if (!WFCMapMode)
             {
-                if (!ghostModule.activeSelf)
+                if (!WFCparent.activeSelf)
                 {
+                    WFCparent.SetActive(true);
 
-                    ghostModule.SetActive(true);
+                    ruleBuilder.ChangeMainTile(0);
+
+                    IDXRuleBuilder();
                 }
+            }
+            else
+            {
+
+                ResetGhost(currentHead, mouseScrollWheel);
+
+                if (ghostModule != null)
+                {
+                    if (!ghostModule.activeSelf)
+                    {
+                        ghostModule.SetActive(true);
+                    }
+                }
+
+                pointer.transform.position = new Vector3(currentHead.x, 1.1f, currentHead.y);
+                if (WFCparent.activeSelf) { WFCparent.SetActive(false); }
+            }
+
+            if (!pointer.activeSelf)
+            {
+                pointer.SetActive(true);
 
             }
 
@@ -93,46 +304,114 @@ public class WaveFunctionCollaps : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (currentHead.y + 1 >= maxYsize)
+
+                if (!WFCMapMode)
                 {
+
+                    if (ruleModeDir == Dir.BACKWARD)
+                    {
+                        ruleModeDir = Dir.LEFT;
+                    }
+                    else
+                    {
+                        ruleModeDir = ruleModeDir + 1;
+                    }
+                    Destroy(ghostModule);
+                    PositionRuleBuilder();
+                    IDXRuleBuilder();
+
+
                 }
-                else { currentHead = new Vector2(currentHead.x, currentHead.y + 1); }
+                else
+                {
+                    if (currentHead.y + 1 >= maxYsize)
+                    {
+                    }
+                    else { currentHead = new Vector2(currentHead.x, currentHead.y + 1); }
 
 
-                ResetGhost(currentHead, mouseScrollWheel);
+                    ResetGhost(currentHead, mouseScrollWheel);
+                }
+
+
             }
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (currentHead.y - 1 < 0)
+
+
+                if (!WFCMapMode)
                 {
+                    if (ruleModeDir == Dir.LEFT)
+                    {
+                        ruleModeDir = Dir.BACKWARD;
+                    }
+                    else
+                    {
+                        ruleModeDir = ruleModeDir - 1;
+                    }
+                    Destroy(ghostModule);
+                    PositionRuleBuilder();
+                    IDXRuleBuilder();
+
+
                 }
-                else { currentHead = new Vector2(currentHead.x, currentHead.y - 1); }
+                else
+                {
+                    if (currentHead.y - 1 < 0)
+                    {
+                    }
+                    else { currentHead = new Vector2(currentHead.x, currentHead.y - 1); }
 
 
-                ResetGhost(currentHead, mouseScrollWheel);
+                    ResetGhost(currentHead, mouseScrollWheel);
+                }
             }
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                if (currentHead.x - 1 < 0)
-                {
-                }
-                else { currentHead = new Vector2(currentHead.x - 1, currentHead.y); }
 
-                ResetGhost(currentHead, mouseScrollWheel);
+                if (!WFCMapMode)
+                {
+                    ruleModeIdx++;
+                    IDXRuleBuilder();
+                }
+                else
+                {
+                    if (currentHead.x - 1 < 0)
+                    {
+                    }
+                    else { currentHead = new Vector2(currentHead.x - 1, currentHead.y); }
+
+                    ResetGhost(currentHead, mouseScrollWheel);
+
+                }
+
+
 
             }
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                if (currentHead.x + 1 >= maxXsize)
+
+                if (!WFCMapMode)
                 {
+                    ruleModeIdx--;
+
+                    IDXRuleBuilder();
                 }
-                else { currentHead = new Vector2(currentHead.x + 1, currentHead.y); }
+                else
+                {
+                    if (currentHead.x + 1 >= maxXsize)
+                    {
+                    }
+                    else { currentHead = new Vector2(currentHead.x + 1, currentHead.y); }
 
 
-                ResetGhost(currentHead, mouseScrollWheel);
+                    ResetGhost(currentHead, mouseScrollWheel);
+                }
+
+
             }
 
-            pointer.transform.position = new Vector3(currentHead.x, 1.1f, currentHead.y);
+
 
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
@@ -142,7 +421,21 @@ public class WaveFunctionCollaps : MonoBehaviour
                     mouseScrollWheel = 0;
                 }
 
-                ResetGhost(currentHead, mouseScrollWheel);
+                if (!WFCMapMode)
+                {
+                    if (ghostModule != null)
+                    {
+                        var pos = ghostModule.transform.position;
+                        Destroy(ghostModule);
+                        ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                        ghostModule.transform.position = pos;
+                    }
+                }
+                else
+                {
+                    ResetGhost(currentHead, mouseScrollWheel);
+                }
+
 
             }
             else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
@@ -154,7 +447,22 @@ public class WaveFunctionCollaps : MonoBehaviour
                     mouseScrollWheel = ListOfAssets.Count - 1;
                 }
 
-                ResetGhost(currentHead, mouseScrollWheel);
+
+                if (!WFCMapMode)
+                {
+                    if (ghostModule != null)
+                    {
+                        var pos = ghostModule.transform.position;
+                        Destroy(ghostModule);
+                        ghostModule = Instantiate(ListOfAssets[mouseScrollWheel]);
+                        ghostModule.transform.position = pos;
+                    }
+                }
+                else
+                {
+                    ResetGhost(currentHead, mouseScrollWheel);
+                }
+
             }
 
 
@@ -162,62 +470,86 @@ public class WaveFunctionCollaps : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                bool free = true;
-                int idx = 0;
 
-                for (int i = 0; i < ListOfPlacedAssets.Count; i++)
+
+                if (!WFCMapMode)
                 {
-                    if (ListOfPlacedAssets[i].xCords == currentHead.x && ListOfPlacedAssets[i].yCords == currentHead.y)
+                    ruleBuilder.InsertRule((int)ruleModeDir, mouseScrollWheel, mouseScrollWheel);
+                }
+                else
+                {
+
+                    bool free = true;
+                    int idx = 0;
+
+                    for (int i = 0; i < ListOfPlacedAssets.Count; i++)
                     {
-                        idx = i;
-                        free = false;
+                        if (ListOfPlacedAssets[i].xCords == currentHead.x && ListOfPlacedAssets[i].yCords == currentHead.y)
+                        {
+                            idx = i;
+                            free = false;
+                        }
                     }
+
+                    if (!free)
+                    {
+                        Destroy(ListOfPlacedAssets[idx].moduleAsset);
+
+                        ListOfPlacedAssets.RemoveAt(idx);
+
+                    }
+
+
+                    ListOfPlacedAssets.Add(new PlacedModule());
+
+                    PlacedModule newRef = ListOfPlacedAssets[ListOfPlacedAssets.Count - 1];
+
+                    newRef.xCords = (int)currentHead.x;
+                    newRef.yCords = (int)currentHead.y;
+
+                    newRef.moduleAssetIndex = mouseScrollWheel;
+                    newRef.moduleAsset = Instantiate(ListOfAssets[mouseScrollWheel], this.transform);
+
+                    newRef.moduleAssetName = newRef.moduleAsset.name;
+
+                    newRef.moduleAsset.transform.position = new Vector3(currentHead.x, 0, currentHead.y);
+
                 }
 
-                if (!free)
-                {
-                    Destroy(ListOfPlacedAssets[idx].moduleAsset);
-
-                    ListOfPlacedAssets.RemoveAt(idx);
-
-                }
-
-
-                ListOfPlacedAssets.Add(new PlacedModule());
-
-                PlacedModule newRef = ListOfPlacedAssets[ListOfPlacedAssets.Count - 1];
-
-                newRef.xCords = (int)currentHead.x;
-                newRef.yCords = (int)currentHead.y;
-
-                newRef.moduleAssetIndex = mouseScrollWheel;
-                newRef.moduleAsset = Instantiate(ListOfAssets[mouseScrollWheel], this.transform);
-
-                newRef.moduleAssetName = newRef.moduleAsset.name;
-
-                newRef.moduleAsset.transform.position = new Vector3(currentHead.x, 0, currentHead.y);
             }
 
 
 
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
-                for (int y = 0; y < maxYsize; y++)
+                if (!WFCMapMode)
                 {
-                    for (int x = 0; x < maxXsize; x++)
+                    ruleModeMainIdx++;
+                    if (ruleModeMainIdx >= ListOfAssets.Count)
                     {
-                        ListOfPlacedAssets.Add(new PlacedModule());
+                        ruleModeMainIdx = 0;
+                    }
+                    ruleBuilder.ChangeMainTile(ruleModeMainIdx);
+                }
+                else
+                {
+                    for (int y = 0; y < maxYsize; y++)
+                    {
+                        for (int x = 0; x < maxXsize; x++)
+                        {
+                            ListOfPlacedAssets.Add(new PlacedModule());
 
-                        PlacedModule newRef = ListOfPlacedAssets[ListOfPlacedAssets.Count - 1];
+                            PlacedModule newRef = ListOfPlacedAssets[ListOfPlacedAssets.Count - 1];
 
-                        newRef.xCords = x;
-                        newRef.yCords = y;
+                            newRef.xCords = x;
+                            newRef.yCords = y;
 
-                        newRef.moduleAssetIndex = ListOfAssets.Count - 1;
-                        newRef.moduleAsset = Instantiate(ListOfAssets[newRef.moduleAssetIndex], this.transform);
-                        newRef.moduleAssetName = newRef.moduleAsset.name;
+                            newRef.moduleAssetIndex = ListOfAssets.Count - 1;
+                            newRef.moduleAsset = Instantiate(ListOfAssets[newRef.moduleAssetIndex], this.transform);
+                            newRef.moduleAssetName = newRef.moduleAsset.name;
 
-                        newRef.moduleAsset.transform.position = new Vector3(x, 0, y);
+                            newRef.moduleAsset.transform.position = new Vector3(x, 0, y);
+                        }
                     }
                 }
             }
@@ -227,8 +559,23 @@ public class WaveFunctionCollaps : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                CreateRuleSet();
+                if (!WFCMapMode)
+                {
+                    ruleBuilder.DeleteRule((int)ruleModeDir, ruleModeIdx, mouseScrollWheel);
+
+
+                    PositionRuleBuilder();
+                    IDXRuleBuilder();
+
+                }
+                else
+                {
+                    CreateRuleSet();
+                }
             }
+
+
+
             if (Input.GetKeyDown(KeyCode.Alpha0))
             {
                 RunWFCVar();
@@ -237,19 +584,20 @@ public class WaveFunctionCollaps : MonoBehaviour
         }
         else
         {
-
+            if (WFCparent.activeSelf) { pointer.SetActive(false); }
             if (pointer.activeSelf) { pointer.SetActive(false); }
             if (ghostModule != null)
             {
                 if (ghostModule.activeSelf)
                 {
-
                     ghostModule.SetActive(false);
                 }
-
             }
         }
     }
+
+
+
 
 
     public void CreateRuleSet()
@@ -436,7 +784,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
                     if (arrayOfWFCTiles[y][x].solved == false) // if this tile is not solved then
                     {
-                        
+
                         WFCSolved = false;    // dont end the while loop
 
                         SetNeighbourAllowed(new Vector2(x, y));  //give the 
@@ -445,7 +793,7 @@ public class WaveFunctionCollaps : MonoBehaviour
                         {
                             lowestEntropy = arrayOfWFCTiles[y][x].possibleAssetsIDX.Count;
                             lowEntropyTile = arrayOfWFCTiles[y][x];
-                            
+
                         }
                     }
 
@@ -458,7 +806,7 @@ public class WaveFunctionCollaps : MonoBehaviour
                 break;
             }
             else
-            { 
+            {
                 lowEntropyTile.solved = true;
                 lowEntropyTile.DecideIndex();
                 lowEntropyTile.spawnedAsset = Instantiate(ListOfAssets[lowEntropyTile.decidedIndex], this.transform);
@@ -468,14 +816,12 @@ public class WaveFunctionCollaps : MonoBehaviour
 
 
     }
-    
+
 
 
     public void SetNeighbourAllowed(Vector2 coordinate)
     {
         WFCTile mainTile = arrayOfWFCTiles[(int)coordinate.y][(int)coordinate.x];
-        //its repeating 
-        //the tile on the right 
 
 
 
@@ -766,12 +1112,12 @@ public class WFCTile
     /// </summary>
     public void DecideIndex() /*=> this.decidedIndex = this.possibleAssetsIDX[Random.Range(0, this.possibleAssetsIDX.Count)];*/
     {
-        if(this.possibleAssetsIDX.Count == 0) 
+        if (this.possibleAssetsIDX.Count == 0)
         {
             Debug.Log($"fddfsdfdsffdsfsdfds");
             this.decidedIndex = 0;   // this is meant to be teh base tile the basic one
         }
-        else 
+        else
         {
 
             this.decidedIndex = this.possibleAssetsIDX[Random.Range(0, this.possibleAssetsIDX.Count)];
