@@ -228,7 +228,10 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-
+    public void CallWallsFind() 
+    {
+        FindWalls.instance.FindWalls2D(gridArray2D);
+    }
 
 
 
