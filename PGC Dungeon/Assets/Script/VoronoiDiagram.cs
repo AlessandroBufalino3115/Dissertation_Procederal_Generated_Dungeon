@@ -56,7 +56,6 @@ public class VoronoiDiagram : MonoBehaviour
         for (int i = 0; i < points; i++)
         {
 
-
             float ran_r = Random.Range(0.01f, 0.99f);
             float ran_g = Random.Range(0.01f, 0.99f);
             float ran_b = Random.Range(0.01f, 0.99f);
@@ -85,12 +84,12 @@ public class VoronoiDiagram : MonoBehaviour
                 {
                     if (closestDistance < 0)  //therefore minus therefoe we just started
                     {
-                        closestDistance = UcledianDistance2D(veronoiPoints2D[i], new Vector2( _gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
+                        closestDistance = GeneralUtil.EuclideanDistance2D(veronoiPoints2D[i], new Vector2( _gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
                     
                     }
                     else
                     {
-                        float newDist = UcledianDistance2D(veronoiPoints2D[i], new Vector2(_gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
+                        float newDist = GeneralUtil.EuclideanDistance2D(veronoiPoints2D[i], new Vector2(_gridArray2D[y][x].tileObj.transform.position.x, _gridArray2D[y][x].tileObj.transform.position.z));
 
                         if (closestDistance > newDist)
                         {
@@ -101,31 +100,9 @@ public class VoronoiDiagram : MonoBehaviour
                     }
                 }
 
-
-
                 _gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = listColor[closestIndex];
-
-
 
             }
         }
-
-
-
-
     }
-
-    private float UcledianDistance2D(Vector2 point, Vector2 currNode)
-    {
-        float distance = Mathf.Pow((point.x - currNode.x), 2) + Mathf.Pow((point.y - currNode.y), 2);
-        distance = Mathf.Sqrt(distance);
-        return distance;
-    }
-
-
-
-
-
-
-
 }

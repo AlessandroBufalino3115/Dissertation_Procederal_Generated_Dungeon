@@ -6,7 +6,9 @@ using UnityEngine;
 public class A_StarPathFinding : MonoBehaviour
 {
    
-
+    /// <summary>
+    /// / this is techinally useless
+    /// </summary>
 
     static public A_StarPathFinding instance;
 
@@ -21,7 +23,7 @@ public class A_StarPathFinding : MonoBehaviour
     }
 
     
-
+    //possibly to delete
     public List<AStar_Node> SolveA_StarPathfinding2DTest(Tile[][] tileArray2D) 
     {
         // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
@@ -134,7 +136,7 @@ public class A_StarPathFinding : MonoBehaviour
 
 
                     child.g = currNode.g + 0.5f;
-                    child.h = UcledianDistance2D(end_node, child);
+                    child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.y), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.y));
                     child.f = child.g + child.h;
                     child.parent = currNode;
 
@@ -172,38 +174,5 @@ public class A_StarPathFinding : MonoBehaviour
         
     }
 
-    
-
-
-
-
-
-    private float UcledianDistance2D(AStar_Node end_point, AStar_Node curr_node) 
-    {
-        float distance = Mathf.Pow((end_point.refToGameObj.position.x - curr_node.refToGameObj.position.x), 2) + Mathf.Pow((end_point.refToGameObj.position.y - curr_node.refToGameObj.position.y), 2);
-        distance = Mathf.Sqrt(distance);
-        return distance;
-    }
 }
 
-public class AStar_Node
-{
-
-    public Tile refToGameObj;
-    public AStar_Node parent;
-
-    public float g = 0;
-    public float f = 0;
-    public float h = 0;
-
-    public AStar_Node(Tile gameobject)
-    {
-        refToGameObj = gameobject;
-    }
-
-    public void SetParent(AStar_Node _parent)
-    {
-        parent = _parent;
-    }
-
-}

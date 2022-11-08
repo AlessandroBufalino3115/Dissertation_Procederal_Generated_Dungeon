@@ -356,11 +356,6 @@ public class LineMakingRoomThing : MonoBehaviour
 
         }
 
-
-
-
-
-
     }
 
 
@@ -370,8 +365,6 @@ public class LineMakingRoomThing : MonoBehaviour
     {
         if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
         {
-
-
             if (gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != Color.black && gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != col)
             {
 

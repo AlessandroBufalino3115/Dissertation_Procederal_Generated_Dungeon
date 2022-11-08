@@ -139,13 +139,6 @@ public class DeluanryTrig : MonoBehaviour
         }
 
 
-        //public bool IsPointInCircumCircle(Vector2 point) 
-        //{
-
-        //}
-
-
-
         public bool HasVertex(Vector2 point)
         {
             if (a == point || b == point || c == point) { return true; }
@@ -200,10 +193,5 @@ public class DeluanryTrig : MonoBehaviour
     {
         if ((A.edge[0] == B.edge[0] && A.edge[1] == B.edge[1]) || (A.edge[0] == B.edge[1] && A.edge[1] == B.edge[0])) { return true; }
         else { return false; }
-    }
-
-    public float distance(int point1X, int point1Y, int point2X, int point2Y)
-    {
-        return MathF.Sqrt(MathF.Pow((point1X - point2X), 2) + MathF.Pow((point1Y - point2Y), 2));
     }
 }

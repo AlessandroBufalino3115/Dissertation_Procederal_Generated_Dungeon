@@ -1,10 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class GeneralUtil 
 {
-    
+
+    public static int[,] childPosArry4Side = { { 0, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 } };
+    public static int[,] childPosArry8Side = { { 0, -1 }, { 1, -1 }, { -1, -1 },  { -1, 0 }, { 1, 0 },    { 0, 1 }, { 1, 1 }, { -1, 1 } };
+
+
+
 
     public static Vector2Int RanVector2Int(int maxX,int maxY) 
     {
@@ -17,11 +24,163 @@ public static class GeneralUtil
 
 
 
+    public static float EuclideanDistance2D(Vector2 point1, Vector2 point2)
+    {
+        return MathF.Sqrt(MathF.Pow((point1.x - point2.x), 2) + MathF.Pow((point1.y - point2.y), 2));
+    }
 
-    
+
+    public static float ManhattanDistance2D(Vector2 point1, Vector2 point2)
+    {
+        return Mathf.Abs((point1.x - point2.x)) + Mathf.Abs((point1.y - point2.y));
+    }
+
+
+    public static List<Tile> SolveA_StarPathfinding2D4Side(Tile[][] gridArray2D, int startX, int startY, int endX, int endY)
+    {
+        List<AStar_Node> openList = new List<AStar_Node>();
+        List<AStar_Node> closedList = new List<AStar_Node>();
+
+
+        AStar_Node start_node = new AStar_Node(gridArray2D[startY][startX]);
+        start_node.parent = null;
+
+        AStar_Node end_node = new AStar_Node(gridArray2D[endY][endX]);
+
+
+        openList.Add(start_node);
 
 
 
+        while (openList.Count > 0)
+        {
+
+
+            AStar_Node currNode = openList[0];
+            int currIndex = 0;
+            for (int i = 0; i < openList.Count; i++)
+            {
+                if (openList[i].f < currNode.f)
+                {
+                    currNode = openList[i];
+                    currIndex = i;
+                }
+            }
+
+            openList.RemoveAt(currIndex);
+            closedList.Add(currNode);
+
+            if ((currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.y == end_node.refToGameObj.position.y))
+            {
+
+                List<AStar_Node> path = new List<AStar_Node>();
+
+                AStar_Node current = currNode;
+
+                while (current.parent != null)
+                {
+                    path.Add(current);
+                    current = current.parent;
+                }
+
+                List<Tile> tiles = new List<Tile>();
+
+                foreach (var tile in path)
+                {
+                    int xCord = tile.refToGameObj.position.x;
+                    int yCord = tile.refToGameObj.position.y;
+
+                    tiles.Add(gridArray2D[yCord][xCord]);
+                }
+
+
+                return tiles;
+
+            }
+            else
+            {
+                List<AStar_Node> children = new List<AStar_Node>();
+
+
+                for (int i = 0; i < childPosArry4Side.Length / 2; i++)
+                {
+                    int x_buff = childPosArry4Side[i, 0];
+                    int y_buff = childPosArry4Side[i, 1];
+
+                    int[] node_position = { currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.y + y_buff };
+
+
+                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        //here an if statment also saying that walkable 
+                        AStar_Node new_node = new AStar_Node(gridArray2D[node_position[1]][node_position[0]]);
+                        children.Add(new_node);
+                    }
+                }
+
+                foreach (var child in children)
+                {
+                    foreach (var closedListItem in closedList)
+                    {
+                        if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.y == closedListItem.refToGameObj.position.y)
+                        {
+                            continue;
+                        }
+                    }
+
+
+                    float addedCost = 0;
+                    
+                    child.g = currNode.g + 0.3f;
+                    child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.y), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.y));
+                    child.f = child.g + child.h + addedCost;
+                    child.parent = currNode;
+
+
+                    foreach (var openListItem in openList)
+                    {
+                        if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.y == openListItem.refToGameObj.position.y && child.g > openListItem.g)
+                        {
+                            continue;
+                        }
+                    }
+
+                    openList.Add(child);
+
+                }
+            }
+        }
+
+        return null;
+
+    }
+
+}
+
+
+public class AStar_Node
+{
+
+    public Tile refToGameObj;
+    public AStar_Node parent;
+
+    public float g = 0;
+    public float f = 0;
+    public float h = 0;
+
+    public AStar_Node(Tile gameobject)
+    {
+        refToGameObj = gameobject;
+    }
+
+    public void SetParent(AStar_Node _parent)
+    {
+        parent = _parent;
+    }
 
 }
 
