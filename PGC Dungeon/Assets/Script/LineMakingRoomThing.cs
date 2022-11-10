@@ -4,9 +4,18 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static CellularAutomataBasicAlgo;
+using static UnityEditor.Progress;
 
 public class LineMakingRoomThing : MonoBehaviour
 {
+
+    [SerializeField]
+    public List<Identifier> rulesList = new List<Identifier>();
+
+
+    private Dictionary<int,float> rulesDict = new Dictionary<int,float>();
+
+
     public static LineMakingRoomThing instance;
 
     [Range(4, 25)]
@@ -33,6 +42,14 @@ public class LineMakingRoomThing : MonoBehaviour
     private void Awake()
     {
         instance = this;
+
+
+        foreach (var item in rulesList)
+        {
+            rulesDict.Add((int)item.tileType, item.cost);
+        }
+
+
     }
 
     public void GenRoomLines2D(Tile[][] _gridArray)
@@ -44,14 +61,16 @@ public class LineMakingRoomThing : MonoBehaviour
 
         for (int i = 0; i < lengthX; i++)
         {
-            _gridArray[0][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
-            _gridArray[lengthY - 1][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[0][i].tileType = Tile.TileType.AVOID;
+
+            _gridArray[lengthY - 1][i].tileType = Tile.TileType.AVOID;
         }
 
         for (int i = 0; i < lengthY; i++)
         {
-            _gridArray[i][0].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
-            _gridArray[i][lengthX - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+            _gridArray[i][0].tileType = Tile.TileType.AVOID;
+
+            _gridArray[i][lengthX - 1].tileType = Tile.TileType.AVOID;
         }
 
 
@@ -143,13 +162,14 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int i = 1; i < lengthY; i++)
             {
-                if (_gridArray[i][item].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                if (_gridArray[i][item].tileType == Tile.TileType.AVOID)
                 {
                     break;
                 }
                 else
                 {
-                    _gridArray[i][item].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                    _gridArray[i][item].tileType = Tile.TileType.AVOID;
+
                 }
             }
 
@@ -164,13 +184,13 @@ public class LineMakingRoomThing : MonoBehaviour
             {
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                    if (_gridArray[item][i].tileType == Tile.TileType.AVOID)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                            _gridArray[item][i].tileType = Tile.TileType.AVOID;
                         }
                         else
                         {
@@ -180,7 +200,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][i].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                        _gridArray[item][i].tileType = Tile.TileType.AVOID;
                     }
                 }
 
@@ -193,13 +213,14 @@ public class LineMakingRoomThing : MonoBehaviour
 
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                    if (_gridArray[item][lengthX - i - 1].tileType == Tile.TileType.AVOID)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                            _gridArray[item][lengthX - i - 1].tileType = Tile.TileType.AVOID;
+
                         }
                         else
                         {
@@ -208,7 +229,8 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][lengthX - i - 1].tileObj.GetComponent<MeshRenderer>().material.color = Color.black;
+                        _gridArray[item][lengthX - i - 1].tileType = Tile.TileType.AVOID;
+
                     }
                 }
             }
@@ -230,7 +252,7 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int x = 0; x < lengthX; x++)
             {
-                if (_gridArray[y][x].tileObj.GetComponent<MeshRenderer>().material.color == Color.black)
+                if (_gridArray[y][x].tileType == Tile.TileType.AVOID)
                 {
                     takenPositions.Add(_gridArray[y][x].tileObj.transform.name);
                 }
@@ -243,16 +265,16 @@ public class LineMakingRoomThing : MonoBehaviour
             int x = 0;
             int y = 0;
 
-            int tries = 400;
+            //int tries = 400;
 
             while (true)
             {
-                tries = tries + 1;
+                //tries = tries + 1;
 
-                if (tries == 400)
-                {
-                    break;
-                }
+                //if (tries == 400)
+                //{
+                //    break;
+                //}
 
                 int ranX = Random.Range(1, lengthX - 1);
                 int ranY = Random.Range(1, lengthY - 1);
@@ -270,12 +292,15 @@ public class LineMakingRoomThing : MonoBehaviour
                 }
             }
 
-
-            Color col = new Color(Random.Range(0.01F, 0.99F), Random.Range(0.01F, 0.99F), Random.Range(0.01F, 0.99F));
             int count = roomsList.Count;
-            roomsList.Add(new LineMakerRoom2D(col, count));
-            //StartCoroutine(Flood2D(x, y, col,i));
-            Flood2D(x, y, col, i);
+            roomsList.Add(new LineMakerRoom2D(count));
+            Flood2D(x, y, Color.grey, i);
+
+            foreach (var item in roomsList[i].position)
+            {
+                string pos = item.x + " " + item.y;
+                takenPositions.Add(pos);
+            }
 
         }
 
@@ -293,7 +318,7 @@ public class LineMakingRoomThing : MonoBehaviour
 
 
 
-        for (int i = 0; i < roomsNum; i++)
+        for (int i = 0; i < roomsList.Count; i++)
         {
             roomID.Add(i);
         }
@@ -316,7 +341,7 @@ public class LineMakingRoomThing : MonoBehaviour
             roomTwo = roomID[roomTwo];
             roomID.Remove(roomTwo);
 
-            int roomThree = Random.Range(0, roomsNum);
+            int roomThree = Random.Range(0, roomsList.Count);
 
 
             int startX = roomsList[roomOne].position[Random.Range(0, roomsList[roomOne].position.Count - 1)][0];
@@ -326,51 +351,48 @@ public class LineMakingRoomThing : MonoBehaviour
             int endY = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][1];
 
 
-            var corridor = SolveA_StarPathfinding2D(gridArray2D, startX, startY, endX, endY, roomsList[roomOne].colorRoom, roomsList[roomTwo].colorRoom);
-
-            foreach (var node in corridor)
+            var corridor = APathUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+            foreach (var node in corridor.Item1)
             {
 
-                Color col = node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color;
+                node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
 
-                if (col == Color.black || col == Color.white)
-                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                if (node.refToGameObj.tileType != Tile.TileType.FLOORROOM)
+                    node.refToGameObj.tileType = Tile.TileType.FLOORCORRIDOR;
+
             }
 
             endX = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][0];
             endY = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][1];
 
-            corridor = SolveA_StarPathfinding2D(gridArray2D, startX, startY, endX, endY, roomsList[roomOne].colorRoom, roomsList[roomThree].colorRoom);
-
-
-            foreach (var node in corridor)
+            corridor = APathUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+            foreach (var node in corridor.Item1)
             {
 
-                Color col = node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color;
+                node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
 
-                if (col == Color.black || col == Color.white)
-                    node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+                if (node.refToGameObj.tileType != Tile.TileType.FLOORROOM)
+                    node.refToGameObj.tileType = Tile.TileType.FLOORCORRIDOR;
+
             }
-
-
-
         }
 
     }
 
 
 
-
+    //this will change
     private void Flood2D(int x, int y, Color col, int i)
     {
         if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
         {
-            if (gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != Color.black && gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color != col)
+            if (gridArray2D[y][x].tileType != Tile.TileType.AVOID && gridArray2D[y][x].tileType != Tile.TileType.FLOORROOM)
             {
 
-                roomsList[i].position.Add(new int[] { x, y });
+                roomsList[i].position.Add(new Vector2Int( x, y ));
 
                 gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = col;
+                gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
 
                 Flood2D(x + 1, y, col, i);
                 Flood2D(x - 1, y, col, i);
@@ -378,208 +400,7 @@ public class LineMakingRoomThing : MonoBehaviour
                 Flood2D(x, y - 1, col, i);
             }
         }
-
     }
-
-
-
-    private IEnumerator Flood2DCor(int x, int y)
-    {
-        WaitForSeconds wait = new WaitForSeconds(0.1f);
-
-        if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
-        {
-
-            yield return wait;
-
-            Color tileCol = gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color;
-
-
-            if (tileCol != Color.black && tileCol != Color.white && tileCol != Color.green)
-            {
-
-                gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
-
-                StartCoroutine(Flood2DCor(x + 1, y));
-                StartCoroutine(Flood2DCor(x - 1, y));
-                StartCoroutine(Flood2DCor(x, y + 1));
-                StartCoroutine(Flood2DCor(x, y - 1));
-            }
-        }
-
-    }
-
-    //draw line around the whole map   this can be done with bounds
-
-
-
-
-
-
-    public List<AStar_Node> SolveA_StarPathfinding2D(Tile[][] tileArray2D, int startX, int startY, int endX, int endY, Color roomCol,Color targetCol)
-    {
-        // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
-        List<AStar_Node> openList = new List<AStar_Node>();
-        List<AStar_Node> closedList = new List<AStar_Node>();
-
-
-        AStar_Node start_node = new AStar_Node(tileArray2D[startY][startX]);
-        start_node.parent = null;
-
-        AStar_Node end_node = new AStar_Node(tileArray2D[endY][endX]);
-
-
-        openList.Add(start_node);
-
-
-
-        while (openList.Count > 0)
-        {
-
-
-            AStar_Node currNode = openList[0];
-            int currIndex = 0;
-            for (int i = 0; i < openList.Count; i++)
-            {
-                if (openList[i].f < currNode.f)
-                {
-                    currNode = openList[i];
-                    currIndex = i;
-                }
-            }
-
-            openList.RemoveAt(currIndex);
-            closedList.Add(currNode);
-
-
-
-            Color tarColor = tileArray2D[currNode.refToGameObj.position.y][currNode.refToGameObj.position.x].tileObj.GetComponent<MeshRenderer>().material.color;
-
-
-            if (   (currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.y == end_node.refToGameObj.position.y)      ||   tarColor == targetCol  )
-            {
-
-                List<AStar_Node> path = new List<AStar_Node>();
-
-                AStar_Node current = currNode;
-
-                while (current.parent != null)
-                {
-                    path.Add(current);
-                    current = current.parent;
-                }
-
-                return path;
-
-            }
-            else
-            {
-                List<AStar_Node> children = new List<AStar_Node>();
-
-
-                for (int i = 0; i < childPosArry.Length / 2; i++)
-                {
-                    int x_buff = childPosArry[i, 0];
-                    int y_buff = childPosArry[i, 1];
-
-                    int[] node_position = { currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.y + y_buff };
-
-
-                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        //here an if statment also saying that walkable 
-                        AStar_Node new_node = new AStar_Node(tileArray2D[node_position[1]][node_position[0]]);
-                        children.Add(new_node);
-                    }
-                }
-
-                foreach (var child in children)
-                {
-                    foreach (var closedListItem in closedList)
-                    {
-                        if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.y == closedListItem.refToGameObj.position.y)
-                        {
-                            continue;
-                        }
-                    }
-
-
-
-                    //if white or black  costs 0.15
-                    // same color 0
-                    // other colort costs 0.18
-
-                    float addedCost = 0;
-                    Color childColor = tileArray2D[child.refToGameObj.position.y][child.refToGameObj.position.x].tileObj.GetComponent<MeshRenderer>().material.color;
-
-
-                    if (childColor == roomCol)
-                    {
-                        addedCost = 0.02f;
-                    }
-                    else if (childColor == Color.black || childColor == Color.white)
-                    {
-                        addedCost = 0.1f;
-                    }
-                    else if (childColor == Color.gray) 
-                    {
-                        addedCost = -0.15f;
-                    }
-                    else { addedCost = -0.05f; }
-
-
-
-                    child.g = currNode.g + 0.3f;
-                    child.h = UcledianDistance2D(end_node, child);
-                    child.f = child.g + child.h + addedCost;
-                    child.parent = currNode;
-
-
-                    foreach (var openListItem in openList)
-                    {
-                        if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.y == openListItem.refToGameObj.position.y && child.g > openListItem.g)
-                        {
-                            continue;
-                        }
-                    }
-
-                    openList.Add(child);
-
-                }
-            }
-        }
-
-        return null;
-
-    }
-
-
-
-    public void CallFullDraw() 
-    {
-        StartCoroutine(Flood2DCor(test_x, test_y));
-    }
-
-
-
-    private float UcledianDistance2D(AStar_Node end_point, AStar_Node curr_node)
-    {
-        float distance = Mathf.Pow((end_point.refToGameObj.position.x - curr_node.refToGameObj.position.x), 2) + Mathf.Pow((end_point.refToGameObj.position.y - curr_node.refToGameObj.position.y), 2);
-        distance = Mathf.Sqrt(distance);
-        return distance;
-    }
-
-
-
-
-
-
-
-
 
 }
 
@@ -588,15 +409,13 @@ public class LineMakingRoomThing : MonoBehaviour
 
 public class LineMakerRoom2D
 {
-    public List<int[]> position = new List<int[]>();
-    public Color colorRoom;
+    public List<Vector2Int> position = new List<Vector2Int>();
     public int indexRoom;
 
 
 
-    public LineMakerRoom2D(Color colorRoom, int indexRoom)
+    public LineMakerRoom2D( int indexRoom)
     {
-        this.colorRoom = colorRoom;
         this.indexRoom = indexRoom;
     }
 }

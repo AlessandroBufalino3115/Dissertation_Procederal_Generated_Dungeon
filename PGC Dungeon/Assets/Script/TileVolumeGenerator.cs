@@ -96,6 +96,7 @@ public class TileVolumeGenerator : MonoBehaviour
                     newRef.transform.name = x.ToString() + " " + y.ToString();
 
                     gridArray3D[z][y][x] = new Tile(newRef, x, y, z);
+                    gridArray3D[z][y][x].tileType = Tile.TileType.VOID;
 
                     blockNum++;
                 }
@@ -156,6 +157,7 @@ public class TileVolumeGenerator : MonoBehaviour
                 newRef.transform.name = x.ToString() + " " + y.ToString();
 
                 gridArray2D[y][x] = new Tile(newRef, x, y);
+                gridArray2D[y][x].tileType = Tile.TileType.VOID;
 
                 blockNum++;
             }
@@ -206,6 +208,7 @@ public class TileVolumeGenerator : MonoBehaviour
     {
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
 
         int i = 0;
         while (i < meshFilters.Length)
@@ -327,41 +330,7 @@ public class TileVolumeGenerator : MonoBehaviour
     */
 }
 
-public class Tile
-{
-    public GameObject tileObj;
-    public Vector3Int position = new Vector3Int();
 
-
-    public Tile(GameObject _arrayTileObj, Vector2Int _pos)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector3Int(_pos.x, 0, _pos.y);
-    }
-
-    public Tile(GameObject _arrayTileObj, Vector3Int _pos)
-    {
-        tileObj = _arrayTileObj;
-        position = _pos;
-    }
-
-
-    public Tile(GameObject _arrayTileObj, int _x, int _y, int _z)
-    {
-        tileObj = _arrayTileObj;
-
-        position = new Vector3Int(_x, _y, _z);
-    }
-
-
-    public Tile(GameObject _arrayTileObj, int _x, int _y)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector3Int(_x,0,_y);
-    }
-
-    public void SetTileWorldPos() => tileObj.transform.position = position;
-}
 
 
 /*

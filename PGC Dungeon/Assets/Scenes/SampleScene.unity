@@ -4326,8 +4326,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scaleToggle: 0
-  x_Length: 50
-  y_Height: 50
+  x_Length: 75
+  y_Height: 75
   z_Width: 50
   emptyBlock: {fileID: 7935656221806652146, guid: c96f4d0cc7482c9408738b81053992cc, type: 3}
   CubeBlock: {fileID: 5718048433150643604, guid: 87b68b4aecd4f344fa9dd428018ad0f0, type: 3}
@@ -4388,6 +4388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68fc3481a095c24db7eef40f3de0210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rulesList: []
 --- !u!114 &1344085606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4404,7 +4405,7 @@ MonoBehaviour:
   topRightCor_Y: 0
   botLeftCor_X: 0
   botLeftCor_Y: 0
-  points: 10
+  points: 20
   veronoiPoints2D: []
   listColor: []
 --- !u!114 &1344085607
@@ -4513,9 +4514,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cabd4753673dd847839fb53cf61609f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rulesList:
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 0
+    cost: 0.05
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 1
+    cost: -0.05
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 2
+    cost: 0
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 3
+    cost: 0
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 4
+    cost: -0.2
+  - color: {r: 0, g: 0, b: 0, a: 0}
+    tileType: 5
+    cost: 0.2
   linesX: 16
   linesY: 16
-  roomsNum: 18
+  roomsNum: 14
   test_x: 0
   test_y: 0
 --- !u!114 &1344085609

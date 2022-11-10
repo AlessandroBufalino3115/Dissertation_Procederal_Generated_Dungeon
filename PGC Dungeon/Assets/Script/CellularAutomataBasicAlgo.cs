@@ -51,7 +51,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         {
             if (empty)
             {
-
                 tileCA.tileObj.transform.GetComponent<MeshRenderer>().material.color = Color.white;
             }
             else

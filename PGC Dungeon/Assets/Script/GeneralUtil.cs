@@ -13,6 +13,13 @@ public static class GeneralUtil
 
 
 
+
+    /// <summary>
+    /// from 0 
+    /// </summary>
+    /// <param name="maxX"></param>
+    /// <param name="maxY"></param>
+    /// <returns></returns>
     public static Vector2Int RanVector2Int(int maxX,int maxY) 
     {
         int ranX = Random.Range(0,maxX);
@@ -22,13 +29,10 @@ public static class GeneralUtil
         return new Vector2Int(ranX, ranY);
     }
 
-
-
     public static float EuclideanDistance2D(Vector2 point1, Vector2 point2)
     {
         return MathF.Sqrt(MathF.Pow((point1.x - point2.x), 2) + MathF.Pow((point1.y - point2.y), 2));
     }
-
 
     public static float ManhattanDistance2D(Vector2 point1, Vector2 point2)
     {
@@ -162,6 +166,10 @@ public static class GeneralUtil
 }
 
 
+
+
+//do some ineritance
+
 public class AStar_Node
 {
 
@@ -177,11 +185,69 @@ public class AStar_Node
         refToGameObj = gameobject;
     }
 
-    public void SetParent(AStar_Node _parent)
-    {
-        parent = _parent;
-    }
-
 }
 
+
+public class Tile
+{
+    public GameObject tileObj;
+    public Vector3Int position = new Vector3Int();
+
+    public enum TileType
+    {
+        VOID,
+        FLOORROOM,
+        WALL,
+        ROOF,
+        FLOORCORRIDOR,
+        AVOID
+
+    }
+    public TileType tileType = 0;
+
+    public Tile(GameObject _arrayTileObj, Vector2Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_pos.x, 0, _pos.y);
+    }
+    public Tile(GameObject _arrayTileObj, Vector3Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = _pos;
+    }
+    public Tile(GameObject _arrayTileObj, int _x, int _y, int _z)
+    {
+        tileObj = _arrayTileObj;
+
+        position = new Vector3Int(_x, _y, _z);
+    }
+    public Tile(GameObject _arrayTileObj, int _x, int _y)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_x, 0, _y);
+    }
+
+
+    public void SetTileWorldPos() => tileObj.transform.position = position;
+}
+
+
+[System.Serializable]
+public class Identifier 
+{
+    public Color color = Color.black;
+
+    public enum TileType
+    {
+        VOID,
+        FLOORROOM,
+        WALL,
+        ROOF,
+        FLOORCORRIDOR,
+        AVOID
+    }
+
+    public TileType tileType = 0;
+    public float cost = 0;
+}
 
