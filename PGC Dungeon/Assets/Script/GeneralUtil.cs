@@ -29,6 +29,21 @@ public static class GeneralUtil
         return new Vector2Int(ranX, ranY);
     }
 
+
+    public static Vector2 RanVector2Float(float maxX, float maxY)
+    {
+        float ranX = Random.Range(0f, maxX);
+        float ranY = Random.Range(0f, maxY);
+
+        return new Vector2(ranX, ranY);
+    }
+
+
+
+
+
+
+
     public static float EuclideanDistance2D(Vector2 point1, Vector2 point2)
     {
         return MathF.Sqrt(MathF.Pow((point1.x - point2.x), 2) + MathF.Pow((point1.y - point2.y), 2));

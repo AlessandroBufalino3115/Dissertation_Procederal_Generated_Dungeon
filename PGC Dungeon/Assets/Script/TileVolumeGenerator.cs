@@ -231,25 +231,8 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-    public void CallWallsFind() 
-    {
-        FindWalls.instance.FindWalls2D(gridArray2D);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void CallWallsFind() => FindWalls.instance.FindWalls2D(gridArray2D);
+    
     public void CallBasicPerlinNoise2D() => PerlinNoise.Instance.GenPerlinNoise2D(gridArray2D);
     public void CallBasicPerlinNoise3D() => PerlinNoise.Instance.GenPerlinNoise3D(gridArray3D);
     public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
