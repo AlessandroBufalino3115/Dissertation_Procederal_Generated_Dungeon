@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class UIVoronoiState : UiBaseState
 {
@@ -20,19 +21,19 @@ public class UIVoronoiState : UiBaseState
 
     public override void onGUI(StateUIManager currentMenu)
     {
-     
-        scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 100, 100), scrollPosition, new Rect(0, 0, 220, 200));
 
-        
-        if (GUI.Button(new Rect(0, 0, 100, 20), "Top-left"))
+
+        GUI.Box(new Rect(5, 10, 230, 560), "");
+
+
+        points = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), points, 3, 20);
+        GUI.Label(new Rect(140, 20, 100, 30), "Points: " + points);
+
+        if (GUI.Button(new Rect(10, 60, 150, 20), "Gen Voroni Points 2D"))
             CallVoronoiGen2D(currentMenu);
 
-        points = (int)GUI.HorizontalSlider(new Rect(25, 25, 100, 30), points, 3, 20);
-
-
-
-        // End the scroll view that we began above.
-        GUI.EndScrollView();
+        if (GUI.Button(new Rect(10, 90, 150, 20), "Go back to Main Menu"))
+            currentMenu.ChangeState(0);
 
     }
 

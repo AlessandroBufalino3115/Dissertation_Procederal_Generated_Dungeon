@@ -11,12 +11,15 @@ public class StateUIManager : MonoBehaviour
     UiBaseState currState;
     public UiBaseState CurrState { get { return CurrState; } }
     public int changingToState;
-    private UiBaseState[] statesList = new UiBaseState[4]
+    private UiBaseState[] statesList = new UiBaseState[7]
     {
        new UiHomeState(),
-       new UIBasicRandomRoomState(),
+       new UIRoomBased(),
        new UIVoronoiState(),
-       new UIAPathState()
+       new UIPerlinState(),
+       new UIDiamonSquare(),
+       new UILSystemState(),
+       new UICellularAutomataState()
     };
 
 

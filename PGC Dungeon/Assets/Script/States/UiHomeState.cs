@@ -16,6 +16,9 @@ public class UiHomeState : UiBaseState
     private bool ghostToggle;
 
 
+    private string hover;
+
+
     public override void onExit(StateUIManager currentMenu)
     {
 
@@ -23,31 +26,75 @@ public class UiHomeState : UiBaseState
 
     public override void onGUI(StateUIManager currentMenu)
     {
-        scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 300, 300), scrollPosition, new Rect(0, 0, 220, 200));
 
-        scaleToggle = GUI.Toggle(new Rect(10, 120, 100, 30), scaleToggle, "toggle scale");
-        ghostToggle = GUI.Toggle(new Rect(10, 90, 100, 30), ghostToggle, "toggle ghost");
+        GUI.Box(new Rect(5, 10, 230, 560),"");
 
-        scrollX = (int)GUI.HorizontalSlider(new Rect(25, 25, 100, 30), scrollX, 3, 75);
+        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 75);
+        GUI.Label(new Rect(140, 20, 100, 30), "X Length: "+ scrollX);
 
-        scrollY = (int)GUI.HorizontalSlider(new Rect(25, 50, 100, 30), scrollY, 3, 15);
+        
+        scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 15);
+        GUI.Label(new Rect(140, 45, 100, 30), "Y Length: " + scrollY);
 
-        scrollZ = (int)GUI.HorizontalSlider(new Rect(25, 75, 100, 30), scrollZ, 3, 75);
+        
+        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 75);
+        GUI.Label(new Rect(140, 70, 100, 30), "Z Length: " + scrollZ);
 
-        if (GUI.Button(new Rect(10, 160, 100, 30), "basic"))
-            currentMenu.ChangeState(1);
-        if (GUI.Button(new Rect(10, 200, 100, 30), "voroni"))
-            currentMenu.ChangeState(2);
-        if (GUI.Button(new Rect(10, 240, 100, 30), "path"))
-            currentMenu.ChangeState(3);
+        ghostToggle = GUI.Toggle(new Rect(10, 100, 100, 30), ghostToggle, "toggle ghost");
+        scaleToggle = GUI.Toggle(new Rect(10, 130, 100, 30), scaleToggle, "toggle scale");
 
-        if (GUI.Button(new Rect(10, 280, 100, 30), "GEnDAta")) 
+       
+
+        if (GUI.Button(new Rect(10, 160, 120, 30), new GUIContent("Gen TileSet 2D", "Button 1"))) 
         {
             currentMenu.DestroyAllTiles();
             currentMenu.Gen2DVolume(scrollX, scrollZ, ghostToggle, scaleToggle);
         }
-        // End the scroll view that we began above.
-        GUI.EndScrollView();
+
+        if (GUI.Button(new Rect(10, 200, 120, 30), "Gen TileSet 3D"))
+        {
+            currentMenu.DestroyAllTiles();
+            currentMenu.Gen3DVolume(scrollZ, scrollY,scrollX, ghostToggle, scaleToggle);
+        }
+
+        if (GUI.Button(new Rect(10, 240, 100, 30), "Destroy"))
+        {
+            currentMenu.DestroyAllTiles();
+        }
+
+
+
+
+
+
+        hover = GUI.tooltip;
+
+        //if (hover == "Button 1")
+        //{ Debug.Log(hover); }
+
+        GUI.Label(new Rect(10, 300, 140, 30), "Choose algo to use");
+
+        if (GUI.Button(new Rect(10, 320, 100, 30), "L-System"))
+            currentMenu.ChangeState(1);
+        if (GUI.Button(new Rect(10, 360, 100, 30), "Voroni"))
+            currentMenu.ChangeState(2);
+        if (GUI.Button(new Rect(10, 400, 100, 30), "Perlin"))
+            currentMenu.ChangeState(3);
+        if (GUI.Button(new Rect(10, 440, 100, 30), "Cell Automata"))
+            currentMenu.ChangeState(3);
+        if (GUI.Button(new Rect(10, 480, 100, 30), "Drunk Walk"))
+            currentMenu.ChangeState(3);
+        if (GUI.Button(new Rect(10, 520, 100, 30), "Room Based"))
+            currentMenu.ChangeState(3);
+        if (GUI.Button(new Rect(10, 580, 100, 30), "Diamond Square"))
+            currentMenu.ChangeState(3);
+
+
+
+
+
+
+
     }
 
     public override void onStart(StateUIManager currentMenu)
@@ -56,5 +103,11 @@ public class UiHomeState : UiBaseState
 
     public override void onUpdate(StateUIManager currentMenu)
     {
+
     }
+
+
+
+
+
 }

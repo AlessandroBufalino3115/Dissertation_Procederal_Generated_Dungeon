@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIBasicRandomRoomState : UiBaseState
+public class UIRoomBased : UiBaseState
 {
     public override void onExit(StateUIManager currentMenu)
     {

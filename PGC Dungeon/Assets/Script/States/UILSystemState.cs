@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIAPathState : UiBaseState
+public class UILSystemState : UiBaseState
 {
     public override void onExit(StateUIManager currentMenu)
     {
