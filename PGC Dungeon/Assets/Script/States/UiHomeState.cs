@@ -25,7 +25,7 @@ public class UiHomeState : UiBaseState
     {
         scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 300, 300), scrollPosition, new Rect(0, 0, 220, 200));
 
-        scaleToggle = GUI.Toggle(new Rect(10, 10, 100, 30), scaleToggle, "toggle scale");
+        scaleToggle = GUI.Toggle(new Rect(10, 120, 100, 30), scaleToggle, "toggle scale");
         ghostToggle = GUI.Toggle(new Rect(10, 90, 100, 30), ghostToggle, "toggle ghost");
 
         scrollX = (int)GUI.HorizontalSlider(new Rect(25, 25, 100, 30), scrollX, 3, 75);
@@ -34,14 +34,14 @@ public class UiHomeState : UiBaseState
 
         scrollZ = (int)GUI.HorizontalSlider(new Rect(25, 75, 100, 30), scrollZ, 3, 75);
 
-        if (GUI.Button(new Rect(0, 0, 100, 20), "basic"))
+        if (GUI.Button(new Rect(10, 160, 100, 30), "basic"))
             currentMenu.ChangeState(1);
-        if (GUI.Button(new Rect(120, 0, 100, 20), "voroni"))
+        if (GUI.Button(new Rect(10, 200, 100, 30), "voroni"))
             currentMenu.ChangeState(2);
-        if (GUI.Button(new Rect(0, 180, 100, 20), "path"))
+        if (GUI.Button(new Rect(10, 240, 100, 30), "path"))
             currentMenu.ChangeState(3);
 
-        if (GUI.Button(new Rect(120, 180, 100, 20), "GEnDAta")) 
+        if (GUI.Button(new Rect(10, 280, 100, 30), "GEnDAta")) 
         {
             currentMenu.DestroyAllTiles();
             currentMenu.Gen2DVolume(scrollX, scrollZ, ghostToggle, scaleToggle);
