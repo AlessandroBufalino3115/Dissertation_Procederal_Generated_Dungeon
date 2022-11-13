@@ -27,18 +27,18 @@ public class UiHomeState : UiBaseState
     public override void onGUI(StateUIManager currentMenu)
     {
 
-        GUI.Box(new Rect(5, 10, 230, 560),"");
+        GUI.Box(new Rect(5, 10, 230, 650),"");
 
         scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 75);
         GUI.Label(new Rect(140, 20, 100, 30), "X Length: "+ scrollX);
 
         
         scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 15);
-        GUI.Label(new Rect(140, 45, 100, 30), "Y Length: " + scrollY);
+        GUI.Label(new Rect(140, 45, 100, 30), "Y Height: " + scrollY);
 
         
         scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 75);
-        GUI.Label(new Rect(140, 70, 100, 30), "Z Length: " + scrollZ);
+        GUI.Label(new Rect(140, 70, 100, 30), "Z Width: " + scrollZ);
 
         ghostToggle = GUI.Toggle(new Rect(10, 100, 100, 30), ghostToggle, "toggle ghost");
         scaleToggle = GUI.Toggle(new Rect(10, 130, 100, 30), scaleToggle, "toggle scale");
@@ -57,13 +57,16 @@ public class UiHomeState : UiBaseState
             currentMenu.Gen3DVolume(scrollZ, scrollY,scrollX, ghostToggle, scaleToggle);
         }
 
-        if (GUI.Button(new Rect(10, 240, 100, 30), "Destroy"))
+        if (GUI.Button(new Rect(10, 240, 120, 30), "Gen Plane"))
+        {
+            currentMenu.DestroyAllTiles();
+            currentMenu.CreatePlane(scrollX, scrollZ);
+        }
+
+        if (GUI.Button(new Rect(10, 280, 100, 30), "Destroy"))
         {
             currentMenu.DestroyAllTiles();
         }
-
-
-
 
 
 
@@ -72,22 +75,22 @@ public class UiHomeState : UiBaseState
         //if (hover == "Button 1")
         //{ Debug.Log(hover); }
 
-        GUI.Label(new Rect(10, 300, 140, 30), "Choose algo to use");
+        GUI.Label(new Rect(10, 340, 140, 30), "Choose algo to use");
 
-        if (GUI.Button(new Rect(10, 320, 100, 30), "L-System"))
-            currentMenu.ChangeState(1);
-        if (GUI.Button(new Rect(10, 360, 100, 30), "Voroni"))
+        if (GUI.Button(new Rect(10, 360, 100, 30), "L-System"))
+            currentMenu.ChangeState(5);
+        if (GUI.Button(new Rect(10, 400, 100, 30), "Voroni"))
             currentMenu.ChangeState(2);
-        if (GUI.Button(new Rect(10, 400, 100, 30), "Perlin"))
+        if (GUI.Button(new Rect(10, 440, 100, 30), "Perlin"))
             currentMenu.ChangeState(3);
-        if (GUI.Button(new Rect(10, 440, 100, 30), "Cell Automata"))
-            currentMenu.ChangeState(3);
-        if (GUI.Button(new Rect(10, 480, 100, 30), "Drunk Walk"))
-            currentMenu.ChangeState(3);
-        if (GUI.Button(new Rect(10, 520, 100, 30), "Room Based"))
-            currentMenu.ChangeState(3);
-        if (GUI.Button(new Rect(10, 580, 100, 30), "Diamond Square"))
-            currentMenu.ChangeState(3);
+        if (GUI.Button(new Rect(10, 480, 100, 30), "Cell Automata"))
+            currentMenu.ChangeState(6);
+        if (GUI.Button(new Rect(10, 520, 100, 30), "Drunk Walk"))
+            currentMenu.ChangeState(7);
+        if (GUI.Button(new Rect(10, 560, 100, 30), "Room Based"))
+            currentMenu.ChangeState(1);
+        if (GUI.Button(new Rect(10, 600, 120, 30), "Diamond Square"))
+            currentMenu.ChangeState(4);
 
 
 

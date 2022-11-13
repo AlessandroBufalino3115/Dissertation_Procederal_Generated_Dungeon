@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static TestingScript;
 using Random = UnityEngine.Random;
@@ -73,10 +74,74 @@ public class TestingScript : MonoBehaviour
     //}
 
 
+    public Renderer textureRender;
+    public int mapWidth;
+    public int mapHeight;
+    public float noiseScale;
+
+
     private void Start()
     {
-      
 
+        //GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+        float[,] noiseMap = GenerateNoiseMap(mapWidth, mapHeight, noiseScale);
+
+        DrawNoiseMap(noiseMap);
+
+
+        // https://www.youtube.com/watch?v=WP-Bm65Q-1Y
+
+    }
+
+
+
+    public void DrawNoiseMap(float[,] noiseMap)
+    {
+        int width = noiseMap.GetLength(0);
+        int height = noiseMap.GetLength(1);
+
+        Texture2D texture = new Texture2D(width, height);
+
+        Color[] colourMap = new Color[width * height];
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
+            }
+        }
+        texture.SetPixels(colourMap);
+        texture.Apply();
+
+        textureRender.sharedMaterial.mainTexture = texture;
+        textureRender.transform.localScale = new Vector3(width, 1, height);
+    }
+
+
+
+    public float[,] GenerateNoiseMap(int mapWidth, int mapHeight, float scale)
+    {
+        float[,] noiseMap = new float[mapWidth, mapHeight];
+
+        if (scale <= 0)
+        {
+            scale = 0.0001f;
+        }
+
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                float sampleX = x / scale;
+                float sampleY = y / scale;
+
+                float perlinValue = Mathf.PerlinNoise(sampleX, sampleY);
+                noiseMap[x, y] = perlinValue;
+            }
+        }
+
+        return noiseMap;
     }
 
 }

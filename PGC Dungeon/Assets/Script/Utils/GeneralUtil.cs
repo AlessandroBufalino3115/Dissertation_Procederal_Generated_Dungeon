@@ -30,6 +30,25 @@ public static class GeneralUtil
     }
 
 
+    /// <summary>
+    /// from 0 
+    /// </summary>
+    /// <param name="maxX"></param>
+    /// <param name="maxY"></param>
+    /// <returns></returns>
+    public static Vector3Int RanVector3Int(int maxX, int maxY, int maxZ)
+    {
+        int ranX = Random.Range(0, maxX);
+        int ranY = Random.Range(0, maxY);
+        int ranZ = Random.Range(0, maxZ);
+
+
+        return new Vector3Int(ranX, ranY,ranZ);
+    }
+
+
+
+
     public static Vector2 RanVector2Float(float maxX, float maxY)
     {
         float ranX = Random.Range(0f, maxX);

@@ -31,7 +31,7 @@ public class A_StarPathFinding : MonoBehaviour
         var end = GeneralUtil.RanVector2Int(tileArray2D[0].Length, tileArray2D.Length);
 
 
-        var path = APathUtils.A_StarPathfinding2DNorm(tileArray2D, start, end);
+        var path = AlgosUtils.A_StarPathfinding2DNorm(tileArray2D, start, end);
        
         return  path.Item1;
     }

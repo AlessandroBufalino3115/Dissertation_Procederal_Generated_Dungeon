@@ -989,6 +989,7 @@ MonoBehaviour:
   emptyBlock: {fileID: 7935656221806652146, guid: c96f4d0cc7482c9408738b81053992cc, type: 3}
   CubeBlock: {fileID: 5718048433150643604, guid: 87b68b4aecd4f344fa9dd428018ad0f0, type: 3}
   dimension: 0
+  plane: {fileID: 0}
 --- !u!4 &382115525
 Transform:
   m_ObjectHideFlags: 0
@@ -4664,6 +4665,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 260715e596b45bf4d99b403af02bb7b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textureRender: {fileID: 0}
+  mapWidth: 0
+  mapHeight: 0
+  noiseScale: 0
 --- !u!114 &1344085613
 MonoBehaviour:
   m_ObjectHideFlags: 0

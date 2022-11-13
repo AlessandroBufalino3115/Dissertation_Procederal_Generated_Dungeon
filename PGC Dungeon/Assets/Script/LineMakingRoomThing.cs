@@ -351,7 +351,7 @@ public class LineMakingRoomThing : MonoBehaviour
             int endY = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][1];
 
 
-            var corridor = APathUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+            var corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
             foreach (var node in corridor.Item1)
             {
 
@@ -365,7 +365,7 @@ public class LineMakingRoomThing : MonoBehaviour
             endX = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][0];
             endY = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][1];
 
-            corridor = APathUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+            corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
             foreach (var node in corridor.Item1)
             {
 

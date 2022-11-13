@@ -11,7 +11,7 @@ public class StateUIManager : MonoBehaviour
     UiBaseState currState;
     public UiBaseState CurrState { get { return CurrState; } }
     public int changingToState;
-    private UiBaseState[] statesList = new UiBaseState[7]
+    private UiBaseState[] statesList = new UiBaseState[8]
     {
        new UiHomeState(),
        new UIRoomBased(),
@@ -19,7 +19,8 @@ public class StateUIManager : MonoBehaviour
        new UIPerlinState(),
        new UIDiamonSquare(),
        new UILSystemState(),
-       new UICellularAutomataState()
+       new UICellularAutomataState(),
+       new UIDrunkWalk()
     };
 
 
@@ -29,16 +30,23 @@ public class StateUIManager : MonoBehaviour
     [SerializeField] GameObject emptyBlock;
     [SerializeField] GameObject CubeBlock;
 
+    public int xSize;
+    public int ySize;
+    public int zSize;
 
     public enum Dimension 
     {
         NONE,
         TWOD,
         THREED,
+        PLANE,
         NOT_A
     }
 
     public Dimension dimension;
+
+
+    public GameObject plane;
 
 
     void Start()
@@ -69,6 +77,13 @@ public class StateUIManager : MonoBehaviour
 
     public void Gen3DVolume(int widhtZ, int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
+
+        zSize = widhtZ;
+        ySize = heightY;
+        xSize = lengthX;
+
+
+
         dimension = Dimension.THREED;
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
@@ -133,6 +148,12 @@ public class StateUIManager : MonoBehaviour
 
     public void Gen2DVolume( int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
+        xSize = lengthX;
+        zSize = heightY;
+
+
+
+
         dimension = Dimension.TWOD;
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
@@ -188,8 +209,53 @@ public class StateUIManager : MonoBehaviour
         // 1 tick seems to be 1 millisecond
     }
 
+    public void CreatePlane(int width, int height) 
+    {
+        dimension = Dimension.PLANE;
+
+        plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+
+        xSize = width;
+        zSize = height;
+
+
+        plane.transform.localScale = new Vector3(width, 1, height);
+        //Texture2D texture = new Texture2D(width, height);
+
+
+        // given something from 0 to 1 seems to also be faster to just do ti via color array
+        //Color[] colourMap = new Color[width * height];
+        //for (int y = 0; y < height; y++)
+        //{
+        //    for (int x = 0; x < width; x++)
+        //    {
+        //        colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
+        //    }
+        //}
+        //texture.SetPixels(colourMap);
+        //texture.Apply();
+
+
+
+
+
+
+
+
+
+
+        //plane.GetComponent<Renderer>().sharedMaterial.mainTexture = texture;
+        //plane.transform.localScale = new Vector3(width, height);
+    }
     public void DestroyAllTiles()
     {
+
+
+        if (plane != null)
+            Destroy(plane);
+
+
         dimension = Dimension.NONE;
 
         int timerStart = Environment.TickCount & Int32.MaxValue;
