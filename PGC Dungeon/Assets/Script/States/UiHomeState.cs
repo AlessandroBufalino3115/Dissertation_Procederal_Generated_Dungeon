@@ -29,15 +29,15 @@ public class UiHomeState : UiBaseState
 
         GUI.Box(new Rect(5, 10, 230, 650),"");
 
-        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 75);
+        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 125);
         GUI.Label(new Rect(140, 20, 100, 30), "X Length: "+ scrollX);
 
         
-        scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 15);
+        scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 25);
         GUI.Label(new Rect(140, 45, 100, 30), "Y Height: " + scrollY);
 
         
-        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 75);
+        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 125);
         GUI.Label(new Rect(140, 70, 100, 30), "Z Width: " + scrollZ);
 
         ghostToggle = GUI.Toggle(new Rect(10, 100, 100, 30), ghostToggle, "toggle ghost");
@@ -65,6 +65,7 @@ public class UiHomeState : UiBaseState
 
         if (GUI.Button(new Rect(10, 280, 100, 30), "Destroy"))
         {
+            GeneralUitlInstance.instance.SpawnMessagePrefab("this is a test spawn for the error or info message", true);
             currentMenu.DestroyAllTiles();
         }
 

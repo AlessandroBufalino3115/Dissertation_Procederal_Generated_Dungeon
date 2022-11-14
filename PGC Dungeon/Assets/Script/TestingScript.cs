@@ -111,9 +111,12 @@ public class TestingScript : MonoBehaviour
                 colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
             }
         }
+
         texture.SetPixels(colourMap);
         texture.Apply();
 
+
+        texture.filterMode = FilterMode.Point;
         textureRender.sharedMaterial.mainTexture = texture;
         textureRender.transform.localScale = new Vector3(width, 1, height);
     }

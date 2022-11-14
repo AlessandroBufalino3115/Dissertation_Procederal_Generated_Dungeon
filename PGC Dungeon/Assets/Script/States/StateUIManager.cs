@@ -29,6 +29,7 @@ public class StateUIManager : MonoBehaviour
 
     [SerializeField] GameObject emptyBlock;
     [SerializeField] GameObject CubeBlock;
+    [SerializeField] GameObject Plane;
 
     public int xSize;
     public int ySize;
@@ -213,7 +214,7 @@ public class StateUIManager : MonoBehaviour
     {
         dimension = Dimension.PLANE;
 
-        plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        plane = Instantiate(Plane, this.transform);
 
 
         xSize = width;

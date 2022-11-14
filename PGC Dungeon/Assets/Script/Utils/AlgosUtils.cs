@@ -339,9 +339,6 @@ public static class AlgosUtils
 
     #endregion
 
-
-
-
     #region DrunkWalk
 
 
@@ -541,13 +538,9 @@ public static class AlgosUtils
 
     #endregion
 
-
-
-
-
     #region PerlinNoise
 
-    public static float[,] PerlinNoise2DTileSet(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu)
+    public static float[,] PerlinNoise2DTileSet(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY)
     {
         float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
 
@@ -573,8 +566,8 @@ public static class AlgosUtils
                 for (int i = 0; i < octaves; i++)
                 {
 
-                    float sampleX = x / scale * freq;
-                    float sampleY = y / scale * freq;
+                    float sampleX = x / scale * freq + offsetX;
+                    float sampleY = y / scale * freq + offsetY;
 
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
 
@@ -649,10 +642,10 @@ public static class AlgosUtils
     }
 
 
-    public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu)
+    public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold,bool threshBool)
     {
 
-        var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale,octaves,persistance,lacu);
+        var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale,octaves,persistance,lacu, offsetX,offsetY);
 
         int width = noiseMap.GetLength(0);
         int height = noiseMap.GetLength(1);
@@ -664,7 +657,15 @@ public static class AlgosUtils
         {
             for (int x = 0; x < width; x++)
             {
-                colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
+                if (threshBool) 
+                {
+                    if (threshold > noiseMap[x, y])
+                        colourMap[y * width + x] = Color.white;
+                    else
+                        colourMap[y * width + x] = Color.black;
+                }
+                else
+                    colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
             }
         }
         texture.SetPixels(colourMap);
@@ -676,7 +677,8 @@ public static class AlgosUtils
 
 
     }
-    public static float[,] PerlinNoise2DPlane(int mapWidth, int mapHeight, float scale, int octaves, float persistance, float lacu)
+
+    public static float[,] PerlinNoise2DPlane(int mapWidth, int mapHeight, float scale, int octaves, float persistance, float lacu,int offsetX, int offsetY)
     {
         float[,] noiseMap = new float[mapWidth, mapHeight];
 
@@ -702,8 +704,8 @@ public static class AlgosUtils
                 for (int i = 0; i < octaves; i++)
                 {
 
-                    float sampleX = x / scale * freq;
-                    float sampleY = y / scale * freq;
+                    float sampleX = x / scale * freq + offsetX;
+                    float sampleY = y / scale * freq + offsetY;
 
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 -1;
 
@@ -750,5 +752,11 @@ public static class AlgosUtils
 
 
     #endregion
+
+    
+
+
+
+
 
 }
