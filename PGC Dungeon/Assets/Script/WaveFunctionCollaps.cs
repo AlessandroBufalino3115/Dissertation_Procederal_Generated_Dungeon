@@ -720,8 +720,6 @@ public class WaveFunctionCollaps : MonoBehaviour
         ghostModule.transform.position = new Vector3(_currentHead.x, 0.05f, _currentHead.y);
 
         ghostModule.GetComponent<MeshRenderer>().material.color = new Color(ghostModule.GetComponent<MeshRenderer>().material.color.r, ghostModule.GetComponent<MeshRenderer>().material.color.g, ghostModule.GetComponent<MeshRenderer>().material.color.b, 0.4f);
-
-
     }
 
 
@@ -1083,24 +1081,24 @@ public class WFCTile
         if (this.possibleAssetsIDX.Count == 0)
         {
 
-            Debug.Log($"-------------------------------------");
-            foreach (var item in allowedObjBackwards)
-            {
-                Debug.Log($"int he back {item}");
-            }
-            foreach (var item in allowedObjForward)
-            {
-                Debug.Log($"int he forward {item}");
-            }
-            foreach (var item in allowedObjRight)
-            {
-                Debug.Log($"int he right {item}");
-            }
-            foreach (var item in allowedObjLeft)
-            {
-                Debug.Log($"int he left {item}");
-            }
-            Debug.Log($"===========================================");
+            //Debug.Log($"-------------------------------------");
+            //foreach (var item in allowedObjBackwards)
+            //{
+            //    Debug.Log($"int he back {item}");
+            //}
+            //foreach (var item in allowedObjForward)
+            //{
+            //    Debug.Log($"int he forward {item}");
+            //}
+            //foreach (var item in allowedObjRight)
+            //{
+            //    Debug.Log($"int he right {item}");
+            //}
+            //foreach (var item in allowedObjLeft)
+            //{
+            //    Debug.Log($"int he left {item}");
+            //}
+            //Debug.Log($"===========================================");
 
 
             Debug.Log($"<color=red>there is a fatal flaw as this tile {gridPos} has no similarities</color>");
@@ -1114,12 +1112,10 @@ public class WFCTile
     {
         if (this.possibleAssetsIDX.Count == 0)
         {
-            Debug.Log($"fddfsdfdsffdsfsdfds");
             this.decidedIndex = 0;   // this is meant to be teh base tile the basic one
         }
         else
         {
-
             this.decidedIndex = this.possibleAssetsIDX[Random.Range(0, this.possibleAssetsIDX.Count)];
         }
     }

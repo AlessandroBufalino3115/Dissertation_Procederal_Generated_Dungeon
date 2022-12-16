@@ -14,29 +14,28 @@
  * Debug.Log($"<color=green></color>");      successs
  * 
  * 
- *   wave function collapse   90%
- *   
- *   worm
- *   
- *   BSP 
- *   
- *   different ways of dealing with the zigzag from the a*pathfidng
- *   
- *   perlin noise or diamon   or fractal
+ * 
+ *    Things left to implement
+ * 
  *    
- *   corridors first algo  
- *   
- *   walls stuff
- *   
- *   delete old rooms
- *   
- *   fix the code base
- *   
- *   
- *   
- *   
- *   actually implement eveyrthing
- *    
+ *    BPS 
  *    http://www.roguebasin.com/index.php/Basic_BSP_Dungeon_generation
  *    
+ *    
+ *    diamond noise
+ *    
+ *    fractal but prob no
+ *    
+ *    set up the basic state
+ *    
+ *    for the walls there is an algo but we need prob marching square
+ *    
+ *    worm/river gen same thing
+ *    
+ *    delete rooms that are too small or not needed when made from cellular auto
+ *    
+ *    we could draw everything instead of being on the cube on a texture which is much better for perf
+ *    
+ *    standardise this array thigns
+ *   
  */

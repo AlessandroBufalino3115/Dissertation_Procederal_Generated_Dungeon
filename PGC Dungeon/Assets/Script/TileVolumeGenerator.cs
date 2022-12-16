@@ -11,8 +11,6 @@ using UnityEngine.UIElements;
 public class TileVolumeGenerator : MonoBehaviour
 {
 
-
-
     public bool scaleToggle;
 
     public int x_Length;
@@ -44,9 +42,9 @@ public class TileVolumeGenerator : MonoBehaviour
     public int acceptedRoomFailures;
 
 
-    Tile[][][] gridArray3D = new Tile[1][][];
+    public Tile[][][] gridArray3D = new Tile[1][][];
 
-    Tile[][] gridArray2D = new Tile[1][];
+    public Tile[][] gridArray2D = new Tile[1][];
 
 
     private void Awake()
@@ -245,6 +243,12 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
     public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
+
+
+
+    public void CallDiamons() => DiamondSquare.instance.RunDiamondSquare();
+
+
 
     /*
     public void RoomSpawner()

@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,38 +7,44 @@ public class DeluanryTrig : MonoBehaviour
     [SerializeField]
     public List<Triangle> triangulation = new List<Triangle>();
 
+
+
+
+    [SerializeField]
+    List<Vector3> pointList = new List<Vector3>();
+
     private void Start()
     {
 
-        List<Vector2> pointList = new List<Vector2>();
+        //pointList = new List<Vector2>();
 
 
 
-        for (int i = 0; i < 50; i++)
-        {
+        //for (int i = 0; i < 50; i++)
+        //{
 
-            Vector2 point = new Vector2(Random.Range(1, 100), Random.Range(1, 100));
+        //    Vector2 point = new Vector2(Random.Range(1, 100), Random.Range(1, 100));
 
 
-            if (pointList.Contains(point))
-            {
-            }
-            else { pointList.Add(point); }
+        //    if (pointList.Contains(point))
+        //    {
+        //    }
+        //    else { pointList.Add(point); }
 
-        }
+        //}
 
 
 
         triangulation = new List<Triangle>();
 
-        Vector2 superTriangleA = new Vector2(10000, 10000);
-        Vector2 superTriangleB = new Vector2(10000, 0);
-        Vector2 superTriangleC = new Vector2(0, 10000);
+        Vector3 superTriangleA = new Vector3(10000, 10000,10000);
+        Vector3 superTriangleB = new Vector3(10000, 0,10000);
+        Vector3 superTriangleC = new Vector3(0, 10000,10000);
 
         triangulation.Add(new Triangle(superTriangleA, superTriangleB, superTriangleC));
 
 
-        foreach (Vector2 point in pointList)
+        foreach (Vector3 point in pointList)
         {
 
             List<Triangle> badTriangles = new List<Triangle>();
@@ -120,13 +124,13 @@ public class DeluanryTrig : MonoBehaviour
 
     public class Triangle
     {
-        public Vector2 a;
-        public Vector2 b;
-        public Vector2 c;
+        public Vector3 a;
+        public Vector3 b;
+        public Vector3 c;
 
         public Edge[] edges = new Edge[3];
 
-        public Triangle(Vector2 a, Vector2 b, Vector2 c)
+        public Triangle(Vector3 a, Vector3 b, Vector3 c)
         {
             this.a = a;
             this.b = b;
@@ -139,7 +143,7 @@ public class DeluanryTrig : MonoBehaviour
         }
 
 
-        public bool HasVertex(Vector2 point)
+        public bool HasVertex(Vector3 point)
         {
             if (a == point || b == point || c == point) { return true; }
             else { return false; }
@@ -149,9 +153,9 @@ public class DeluanryTrig : MonoBehaviour
 
     public class Edge
     {
-        public Vector2[] edge = new Vector2[2];
+        public Vector3[] edge = new Vector3[2];
 
-        public Edge(Vector2 a, Vector2 b)
+        public Edge(Vector3 a, Vector3 b)
         {
             edge[0] = a;
             edge[1] = b;
@@ -163,7 +167,7 @@ public class DeluanryTrig : MonoBehaviour
     /// <summary>
     /// returns true if the point is in the circle
     /// </summary>
-    public bool IspointInCircumcircle(Vector2 A, Vector2 B, Vector2 C, Vector2 D)
+    public bool IspointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
     {
 
 
@@ -194,4 +198,31 @@ public class DeluanryTrig : MonoBehaviour
         if ((A.edge[0] == B.edge[0] && A.edge[1] == B.edge[1]) || (A.edge[0] == B.edge[1] && A.edge[1] == B.edge[0])) { return true; }
         else { return false; }
     }
+
+
+
+    private void Update()
+    {
+        foreach (var triangle in triangulation)
+        {
+            foreach (var edge in triangle.edges)
+            {
+                // Debug.Log($"{edge.edge[0][0]} and {edge.edge[0][1]}");
+                Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+            }
+        }
+    }
+
+
+
+    private void OnDrawGizmos()
+    {
+
+        Gizmos.color = Color.yellow;
+        foreach (var vertex in pointList)
+        {
+            Gizmos.DrawSphere(vertex, 0.3f);
+        }
+    }
+
 }
