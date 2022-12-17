@@ -17,18 +17,7 @@
  * 
  *    Things left to implement
  * 
- *    
- *    BPS 
- *    http://www.roguebasin.com/index.php/Basic_BSP_Dungeon_generation
- *    
- *    
- *    diamond noise
- *    
- *    fractal but prob no
- *    
- *    set up the basic state
- *    
- *    for the walls there is an algo but we need prob marching square
+ *    for the walls there is an algo but we need prob marching square      
  *    
  *    worm/river gen same thing
  *    

@@ -146,7 +146,7 @@ public class DeluanryTrig : MonoBehaviour
                     {
                         if (visitedVertices.Contains(edge.edge[0]) && visitedVertices.Contains(edge.edge[0])) 
                         {
-                            //if it contains both no need
+                            // do nothing
                         }
                         else if (visitedVertices.Contains(edge.edge[0])) 
                         {

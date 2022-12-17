@@ -4674,6 +4674,7 @@ GameObject:
   - component: {fileID: 1344085614}
   - component: {fileID: 1344085615}
   - component: {fileID: 1344085616}
+  - component: {fileID: 1344085617}
   m_Layer: 0
   m_Name: TileGenerator
   m_TagString: MainCamera
@@ -5038,20 +5039,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344085597}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d177978d930677c4abb7e14ca924683a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showPrim: 0
   pointList:
-  - {x: 4, y: 0}
-  - {x: 0, y: 4}
-  - {x: 4, y: 4}
-  - {x: 0, y: 0}
-  - {x: 3.9, y: 3.9}
-  - {x: 4, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 3.9}
+  - {x: 4, y: 0, z: 0.000002625586}
+  - {x: 0, y: 4, z: 6.08e-43}
+  - {x: 4, y: 4, z: -2.9675327e-31}
+  - {x: 0, y: 0, z: 6.08e-43}
+  - {x: 3.9, y: 3.9, z: 6.9e-44}
+  - {x: 4, y: 0, z: 6.08e-43}
+  - {x: 0, y: 0, z: -2.9675477e-31}
+  - {x: 0, y: 3.9, z: 8.2652296e-10}
 --- !u!114 &1344085616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5064,6 +5066,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d2e667a7d58b04f8d16d11a1117e9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1344085617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344085597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b1138b37b1a75b44a09680677d9b6ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialWidth: 143
+  initialHeight: 69
+  minWidth: 16
+  minHeight: 8
 --- !u!1 &1376098204
 GameObject:
   m_ObjectHideFlags: 0
