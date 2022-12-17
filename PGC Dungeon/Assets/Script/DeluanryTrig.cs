@@ -1,37 +1,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 public class DeluanryTrig : MonoBehaviour
 {
     [SerializeField]
     public List<Triangle> triangulation = new List<Triangle>();
 
-
-
+    public bool showPrim = false;
 
     [SerializeField]
     List<Vector3> pointList = new List<Vector3>();
 
+    List<Edge> primEdges = new List<Edge>();
+
     private void Start()
     {
 
-        //pointList = new List<Vector2>();
+        pointList = new List<Vector3>();
+
+        for (int i = 0; i < 50; i++)
+        {
+
+            Vector3 point = new Vector3(Random.Range(1, 100), Random.Range(1, 100),0);
 
 
+            if (pointList.Contains(point))
+            {
+            }
+            else { pointList.Add(point); }
 
-        //for (int i = 0; i < 50; i++)
-        //{
-
-        //    Vector2 point = new Vector2(Random.Range(1, 100), Random.Range(1, 100));
-
-
-        //    if (pointList.Contains(point))
-        //    {
-        //    }
-        //    else { pointList.Add(point); }
-
-        //}
+        }
 
 
 
@@ -115,11 +115,60 @@ public class DeluanryTrig : MonoBehaviour
             {
                 triangulation.Remove(triangulation[i]);
             }
-
         }
-
-
+        PrimsAlgo();
     }
+
+
+
+
+    public void PrimsAlgo() 
+    {
+        HashSet<Vector3> visitedVertices = new HashSet<Vector3>();
+
+        var ran = Random.Range(0, pointList.Count);
+        var vertex = pointList[ran];
+
+        visitedVertices.Add(vertex);
+
+        int iter = 0;
+
+        while (visitedVertices.Count != pointList.Count) 
+        {
+
+            HashSet<Edge> edgesWithPoint = new HashSet<Edge>();
+
+            foreach (var trig in triangulation)    // we get all the edges
+            {
+                foreach (var edge in trig.edges)
+                {
+                    foreach (var point in visitedVertices)
+                    {
+                        if (visitedVertices.Contains(edge.edge[0]) && visitedVertices.Contains(edge.edge[0])) 
+                        {
+                            //if it contains both no need
+                        }
+                        else if (visitedVertices.Contains(edge.edge[0])) 
+                        {
+                            edgesWithPoint.Add(edge);
+                        }
+                        else if (visitedVertices.Contains(edge.edge[1])) 
+                        {
+                            edgesWithPoint.Add(edge);
+                        }
+                    }
+                }
+            }
+
+            var edgesWithPointSort = edgesWithPoint.OrderBy(c => c.length).ToArray();   // we sort all the edges by the smallest to biggest
+
+            visitedVertices.Add(edgesWithPointSort[0].edge[0]);
+            visitedVertices.Add(edgesWithPointSort[0].edge[1]);
+            primEdges.Add(edgesWithPointSort[0]);
+        }
+    }
+
+
 
 
     public class Triangle
@@ -154,11 +203,13 @@ public class DeluanryTrig : MonoBehaviour
     public class Edge
     {
         public Vector3[] edge = new Vector3[2];
-
+        public float length;
         public Edge(Vector3 a, Vector3 b)
         {
             edge[0] = a;
             edge[1] = b;
+
+            length = Mathf.Abs(Vector3.Distance(a, b));
         }
 
     }
@@ -201,20 +252,6 @@ public class DeluanryTrig : MonoBehaviour
 
 
 
-    private void Update()
-    {
-        foreach (var triangle in triangulation)
-        {
-            foreach (var edge in triangle.edges)
-            {
-                // Debug.Log($"{edge.edge[0][0]} and {edge.edge[0][1]}");
-                Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
-            }
-        }
-    }
-
-
-
     private void OnDrawGizmos()
     {
 
@@ -223,6 +260,30 @@ public class DeluanryTrig : MonoBehaviour
         {
             Gizmos.DrawSphere(vertex, 0.3f);
         }
+
+
+
+        if (!showPrim)
+        {
+            foreach (var triangle in triangulation)
+            {
+                foreach (var edge in triangle.edges)
+                {
+                    // Debug.Log($"{edge.edge[0][0]} and {edge.edge[0][1]}");
+                    Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+                }
+            }
+        }
+        else
+        {
+            foreach (var edge in primEdges)
+            {
+                Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+            }
+        }
+
+
+
     }
 
 }
