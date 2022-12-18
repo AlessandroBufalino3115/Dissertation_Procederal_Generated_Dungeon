@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
@@ -11,8 +12,6 @@ public static class AlgosUtils
 
 
     #region A*pathFinding
-
-
 
     /// <summary>
     /// Given a Start and End, run A* pathfinding
@@ -341,7 +340,6 @@ public static class AlgosUtils
 
     #region DrunkWalk
 
-
     public static void DrunkWalk2DCol(Tile[][] _gridarray2D, int iterations, bool alreadyPassed) 
     {
         int iterationsLeft = iterations;
@@ -431,7 +429,6 @@ public static class AlgosUtils
 
 
     }
-
 
     public static void DrunkWalk3DCol(Tile[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
     {
@@ -753,10 +750,402 @@ public static class AlgosUtils
 
     #endregion
 
-    
+    #region Triangulation
+
+    public static List<Edge> PrimAlgoNoDelu(List<Vector3> points) 
+    {
+        var triangulation = DelunayTriangulation2D(points);
+
+        return PrimAlgo(points, triangulation);
+
+    }
+
+    public static List<Edge> PrimAlgo(List<Vector3> points, List<Triangle> triangulation) 
+    {
+        List<Edge> primsAlgo = new List<Edge>();
+
+        HashSet<Vector3> visitedVertices = new HashSet<Vector3>();
+
+        var ran = Random.Range(0, points.Count);
+        var vertex = points[ran];
+
+        visitedVertices.Add(vertex);
+
+        while (visitedVertices.Count != points.Count)
+        {
+
+            HashSet<Edge> edgesWithPoint = new HashSet<Edge>();
+
+            foreach (var trig in triangulation)    // we get all the edges
+            {
+                foreach (var edge in trig.edges)
+                {
+                    foreach (var point in visitedVertices)
+                    {
+                        if (visitedVertices.Contains(edge.edge[0]) && visitedVertices.Contains(edge.edge[0]))
+                        {
+                            // do nothing
+                        }
+                        else if (visitedVertices.Contains(edge.edge[0]))
+                        {
+                            edgesWithPoint.Add(edge);
+                        }
+                        else if (visitedVertices.Contains(edge.edge[1]))
+                        {
+                            edgesWithPoint.Add(edge);
+                        }
+                    }
+                }
+            }
+
+            var edgesWithPointSort = edgesWithPoint.OrderBy(c => c.length).ToArray();   // we sort all the edges by the smallest to biggest
+
+            visitedVertices.Add(edgesWithPointSort[0].edge[0]);
+            visitedVertices.Add(edgesWithPointSort[0].edge[1]);
+            primsAlgo.Add(edgesWithPointSort[0]);
+        }
+
+        return primsAlgo;
+    }
+
+    public static List<Triangle> DelunayTriangulation2D (List<Vector3> points) 
+    {
+        var triangulation = new List<Triangle>();
+
+        Vector3 superTriangleA = new Vector3(10000, 10000, 10000);
+        Vector3 superTriangleB = new Vector3(10000, 0, 10000);
+        Vector3 superTriangleC = new Vector3(0, 10000, 10000);
+
+        triangulation.Add(new Triangle(superTriangleA, superTriangleB, superTriangleC));
+
+        foreach (Vector3 point in points)
+        {
+            List<Triangle> badTriangles = new List<Triangle>();
+
+            foreach (Triangle triangle in triangulation)
+            {
+                if (IspointInCircumcircle(triangle.a, triangle.b, triangle.c, point))
+                {
+                    badTriangles.Add(triangle);
+                }
+            }
+
+            List<Edge> polygon = new List<Edge>();
+
+            foreach (Triangle triangle in badTriangles)
+            {
+                foreach (Edge triangleEdge in triangle.edges)
+                {
+                    bool isShared = false;
+
+                    foreach (Triangle otherTri in badTriangles)
+                    {
+                        if (otherTri == triangle) { continue; }
+
+                        foreach (Edge otherEdge in otherTri.edges)
+                        {
+                            if (LineIsEqual(triangleEdge, otherEdge))
+                            {
+                                isShared = true;
+                            }
+                        }
+                    }
+
+                    if (isShared == false)
+                    {
+                        polygon.Add(triangleEdge);
+                    }
+
+                }
+            }
+
+            foreach (Triangle badTriangle in badTriangles)
+            {
+                triangulation.Remove(badTriangle);   // i think this is the issue here
+            }
+
+            foreach (Edge edge in polygon)
+            {
+                Triangle newTriangle = new Triangle(edge.edge[0], edge.edge[1], point);
+                triangulation.Add(newTriangle);
+            }
+        }
+
+        for (int i = triangulation.Count - 1; i >= 0; i--)
+        {
+            if (triangulation[i].HasVertex(superTriangleA) || triangulation[i].HasVertex(superTriangleB) || triangulation[i].HasVertex(superTriangleC))
+            {
+                triangulation.Remove(triangulation[i]);
+            }
+        }
+
+        return triangulation;
+
+    }
+
+    public static bool LineIsEqual(Edge A, Edge B)
+    {
+        if ((A.edge[0] == B.edge[0] && A.edge[1] == B.edge[1]) || (A.edge[0] == B.edge[1] && A.edge[1] == B.edge[0])) { return true; }
+        else { return false; }
+    }
+
+    public static bool IspointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
+    {
+
+
+        float ax_ = A[0] - D[0];
+        float ay_ = A[1] - D[1];
+        float bx_ = B[0] - D[0];
+        float by_ = B[1] - D[1];
+        float cx_ = C[0] - D[0];
+        float cy_ = C[1] - D[1];
+
+
+
+        if ((
+            (ax_ * ax_ + ay_ * ay_) * (bx_ * cy_ - cx_ * by_) -
+            (bx_ * bx_ + by_ * by_) * (ax_ * cy_ - cx_ * ay_) +
+            (cx_ * cx_ + cy_ * cy_) * (ax_ * by_ - bx_ * ay_)
+        ) < 0)
+        {
+            return true;
+        }
+
+        else { return false; }
+
+    }
+
+    #endregion
+
+    #region Binary Partition System
+
+    public static List<BoundsInt> BSPAlgo(BoundsInt toSplit, int minHeight, int minWidth)
+    {
+        List<BoundsInt> roomList = new List<BoundsInt>();
+        Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
+
+        roomsQueue.Enqueue(toSplit);   // enque add to que
+        while (roomsQueue.Count > 0)
+        {
+            var room = roomsQueue.Dequeue();   // take out and split this
+
+            // this room can either contain a room or split  room
+            if (room.size.y >= minHeight && room.size.x >= minWidth)   // all rooms should at least be big enough
+            {
+                if (Random.value < 0.5f)
+                {
+                    if (room.size.y >= minHeight * 2 + 1)
+                    {
+                        SplitHori(minHeight, room, roomsQueue);
+                    }
+                    else if (room.size.x >= minWidth * 2 + 1)
+                    {
+                        SplitVert(minWidth, room, roomsQueue);
+                    }
+                    else
+                    {
+                        roomList.Add(room);
+                    }
+                }
+                else
+                {
+                    if (room.size.x >= minWidth * 2 + 1)
+                    {
+                        SplitVert(minWidth, room, roomsQueue);
+                    }
+                    else if (room.size.y >= minHeight * 2 + 1)
+                    {
+                        SplitHori(minHeight, room, roomsQueue);
+                    }
+                    else
+                    {
+                        roomList.Add(room);
+                    }
+                }
+            }
+        }
+        return roomList;
+    }
+
+    private static void SplitVert(int minWidth, BoundsInt room, Queue<BoundsInt> roomQue)
+    {
+
+        int minX = room.min.x;
+        int maxX = room.max.x;
+
+        int adjustedMinX = minX + minWidth;
+        int adjustedMaxX = maxX - minWidth;
+
+        var ranPosition = Random.Range(adjustedMinX, adjustedMaxX);
+
+        BoundsInt roomLeft = new BoundsInt();
+
+        roomLeft.min = new Vector3Int(room.min.x, room.min.y, 0);
+        roomLeft.max = new Vector3Int(ranPosition, room.max.y, 0);
+
+        BoundsInt roomRight = new BoundsInt();
+
+        roomRight.min = new Vector3Int(ranPosition, room.min.y, 0);
+        roomRight.max = new Vector3Int(room.max.x, room.max.y, 0);
+
+        roomQue.Enqueue(roomRight);
+        roomQue.Enqueue(roomLeft);
+    }
+
+    private static void SplitHori(int minHeight, BoundsInt room, Queue<BoundsInt> roomQue)
+    {
+        int minY = room.min.y;
+        int maxY = room.max.y;
+
+        int adjustedMinY = minY + minHeight;
+        int adjustedMaxY = maxY - minHeight;
+
+        var ranPosition = Random.Range(adjustedMinY, adjustedMaxY);
+
+        BoundsInt roomTop = new BoundsInt();
+
+        roomTop.min = new Vector3Int(room.min.x, ranPosition, 0);
+        roomTop.max = new Vector3Int(room.max.x, room.max.y, 0);
+
+        BoundsInt roomBot = new BoundsInt();
+
+        roomBot.min = new Vector3Int(room.min.x, room.min.y, 0);
+        roomBot.max = new Vector3Int(room.max.x, ranPosition, 0);
+
+        roomQue.Enqueue(roomBot);
+        roomQue.Enqueue(roomTop);
+    }
+
+    #endregion
+
+    #region Flood Fill
 
 
 
 
+
+    #endregion
+
+
+    #region Cellular Automata
+
+
+    #endregion
+
+
+
+    #region DiamondSquare algo
+
+    public static float[,] DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] grid) 
+    {
+
+        // get the size
+        var mapSize = grid.Length;
+
+        // start the grid
+        float[,] grid2D = new float[mapSize, mapSize];
+
+        //need to check for 2n + 1
+        if (grid.Length != grid[0].Length || grid[0].Length % 2 == 0)
+        {
+            GeneralUitlInstance.instance.SpawnMessagePrefab("This size is not good soz", false);
+            return null;
+        }
+        else
+        {
+
+            //set the 4 random corners
+            grid2D[0, 0] = Random.Range(minHeight, maxHeight);   // top left
+            grid2D[mapSize - 1, mapSize - 1] = Random.Range(minHeight, maxHeight);    // bot right
+            grid2D[0, mapSize - 1] = Random.Range(minHeight, maxHeight); // top right
+            grid2D[mapSize - 1, 0] = Random.Range(minHeight, maxHeight); // bot left
+
+            var chunkSize = mapSize - 1;  //size of square in current iter of algo
+
+            while (chunkSize > 1)
+            {
+           
+                int halfChunk = chunkSize / 2;
+
+                for (int y = 0; y < mapSize - 1; y = y + chunkSize)
+                {
+                    for (int x = 0; x < mapSize - 1; x = x + chunkSize)
+                    {
+                        grid2D[y + halfChunk, x + halfChunk] = (grid2D[y, x] + grid2D[y, x + chunkSize] + grid2D[y + chunkSize, x] + grid2D[y + chunkSize, x + chunkSize]) / 4 + Random.Range(-roughness, roughness);
+                    }
+                }
+
+                for (int y = 0; y < mapSize; y = y + halfChunk)
+                {
+                    for (int x = (y + halfChunk) % chunkSize; x < mapSize; x = x + chunkSize)
+                    {
+                        grid2D[y, x] =
+                            (grid2D[(y - halfChunk + mapSize) % mapSize, x] +
+                                  grid2D[(y + halfChunk) % mapSize, x] +
+                                  grid2D[y, (x + halfChunk) % mapSize] +
+                                  grid2D[y, (x - halfChunk + mapSize) % mapSize]) / 4 + Random.Range(-roughness, roughness);
+                    }
+                }
+
+                chunkSize = chunkSize / 2;
+                //roughness = roughness / 2;
+            }
+        }
+
+        return grid2D;
+
+    }
+
+
+    #endregion
+
+}
+
+
+
+
+
+
+
+public class Triangle
+{
+    public Vector3 a;
+    public Vector3 b;
+    public Vector3 c;
+
+    public Edge[] edges = new Edge[3];
+
+    public Triangle(Vector3 a, Vector3 b, Vector3 c)
+    {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+
+
+        this.edges[0] = new Edge(a, b);
+        this.edges[1] = new Edge(b, c);
+        this.edges[2] = new Edge(c, a);
+    }
+
+
+    public bool HasVertex(Vector3 point)
+    {
+        if (a == point || b == point || c == point) { return true; }
+        else { return false; }
+    }
+
+}
+
+public class Edge
+{
+    public Vector3[] edge = new Vector3[2];
+    public float length;
+    public Edge(Vector3 a, Vector3 b)
+    {
+        edge[0] = a;
+        edge[1] = b;
+
+        length = Mathf.Abs(Vector3.Distance(a, b));
+    }
 
 }

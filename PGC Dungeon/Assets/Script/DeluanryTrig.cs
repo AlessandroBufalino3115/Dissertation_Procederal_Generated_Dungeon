@@ -5,6 +5,9 @@ using System.Linq;
 
 public class DeluanryTrig : MonoBehaviour
 {
+
+
+    // CAN BE DELETED
     [SerializeField]
     public List<Triangle> triangulation = new List<Triangle>();
 
@@ -33,7 +36,7 @@ public class DeluanryTrig : MonoBehaviour
 
         }
 
-
+        /*
 
         triangulation = new List<Triangle>();
 
@@ -117,11 +120,18 @@ public class DeluanryTrig : MonoBehaviour
             }
         }
         PrimsAlgo();
+        */
+
+        triangulation = AlgosUtils.DelunayTriangulation2D(pointList);
+        primEdges = AlgosUtils.PrimAlgo(pointList, triangulation);
+
+        Debug.Log(primEdges.Count);
+        Debug.Log(triangulation.Count);
     }
 
 
 
-
+    /*
     public void PrimsAlgo() 
     {
         HashSet<Vector3> visitedVertices = new HashSet<Vector3>();
@@ -167,10 +177,37 @@ public class DeluanryTrig : MonoBehaviour
             primEdges.Add(edgesWithPointSort[0]);
         }
     }
+    */
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        foreach (var vertex in pointList)
+        {
+            Gizmos.DrawSphere(vertex, 0.3f);
+        }
 
+        if (!showPrim)
+        {
+            foreach (var triangle in triangulation)
+            {
+                foreach (var edge in triangle.edges)
+                {
+                    // Debug.Log($"{edge.edge[0][0]} and {edge.edge[0][1]}");
+                    Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+                }
+            }
+        }
+        else
+        {
+            foreach (var edge in primEdges)
+            {
+                Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+            }
+        }
+    }
 
-
+    /*
     public class Triangle
     {
         public Vector3 a;
@@ -252,38 +289,5 @@ public class DeluanryTrig : MonoBehaviour
 
 
 
-    private void OnDrawGizmos()
-    {
-
-        Gizmos.color = Color.yellow;
-        foreach (var vertex in pointList)
-        {
-            Gizmos.DrawSphere(vertex, 0.3f);
-        }
-
-
-
-        if (!showPrim)
-        {
-            foreach (var triangle in triangulation)
-            {
-                foreach (var edge in triangle.edges)
-                {
-                    // Debug.Log($"{edge.edge[0][0]} and {edge.edge[0][1]}");
-                    Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
-                }
-            }
-        }
-        else
-        {
-            foreach (var edge in primEdges)
-            {
-                Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
-            }
-        }
-
-
-
-    }
-
+    */
 }

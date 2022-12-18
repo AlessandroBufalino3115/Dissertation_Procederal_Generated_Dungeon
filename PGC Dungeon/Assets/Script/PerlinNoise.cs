@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PerlinNoise : MonoBehaviour
 {
@@ -91,5 +92,22 @@ public class PerlinNoise : MonoBehaviour
 
 
 
+    private void GenRiver() 
+    {
+        // to do at the end
+        List<Tile> allTiles = new List<Tile>();
 
+        for (int y = 0; y < TileVolumeGenerator.Instance.z_Width; y++)
+        {
+            for (int x = 0; x < TileVolumeGenerator.Instance.x_Length; x++)
+            {
+                allTiles.Add(TileVolumeGenerator.Instance.gridArray2D[y][x]);
+            }
+        }
+
+
+        // sort to find the avarage 5% for highest and lowest weight
+
+        // drunk wallk from ttop to down using the cube with
+    }
 }
