@@ -17,6 +17,8 @@
  * 
  *   vvvvvvvvvvvvvvvvvvvvv Things left to implement vvvvvvvvvvvvvvvvvvvvv
  * 
+ *  //need to agree on a tile that is cool for every algo
+ * 
  *      go into th other pathfinding ones
  *      
  *      look into graph

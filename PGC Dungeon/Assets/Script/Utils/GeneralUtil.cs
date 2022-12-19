@@ -57,7 +57,21 @@ public static class GeneralUtil
         return new Vector2(ranX, ranY);
     }
 
+    public static int PerfTimer(bool start, int startTimer =0) 
+    {
+        if (start) 
+        {
+            return Environment.TickCount & Int32.MaxValue;
+        }
+        else 
+        {
+            int timerEnd = Environment.TickCount & Int32.MaxValue;
 
+            Debug.Log($"<color=yellow>Performance: This operation took {timerEnd - startTimer} ticks</color>");
+
+            return timerEnd - startTimer;
+        }
+    }
 
 
 

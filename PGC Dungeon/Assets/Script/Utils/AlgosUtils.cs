@@ -921,6 +921,8 @@ public static class AlgosUtils
 
     public static List<BoundsInt> BSPAlgo(BoundsInt toSplit, int minHeight, int minWidth)
     {
+        var startTimer = GeneralUtil.PerfTimer(true);
+
         List<BoundsInt> roomList = new List<BoundsInt>();
         Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
 
@@ -964,6 +966,8 @@ public static class AlgosUtils
                 }
             }
         }
+
+        var endTimer = GeneralUtil.PerfTimer(false, startTimer);
         return roomList;
     }
 
@@ -1028,7 +1032,32 @@ public static class AlgosUtils
 
 
     #region Cellular Automata
+    /// <summary>
+    /// to finish 
+    /// </summary>
+    /// <param name="grid2D"></param>
+    /// <param name="perc"></param>
+    /// <returns></returns>
+    public static CAtiles[,] StartCA2D(Tile[][] grid2D, float perc) 
+    {
+        int startTime = GeneralUtil.PerfTimer(true);
 
+        var caGrid = new CAtiles[0, 0];
+
+
+        for (int y = 0; y < grid2D.Length; y++)
+        {
+            for (int x = 0; x < grid2D[y].Length; x++)
+            {
+                //caGrid[y,x] = new CAtiles(_gridArray2D[y][x]);
+            }
+        }
+
+        var endTimer = GeneralUtil.PerfTimer(false, startTime);
+
+
+        return caGrid;
+    }
 
     #endregion
 
@@ -1038,6 +1067,8 @@ public static class AlgosUtils
 
     public static float[,] DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] grid) 
     {
+
+        int timerStart = GeneralUtil.PerfTimer(true);
 
         // get the size
         var mapSize = grid.Length;
@@ -1092,6 +1123,9 @@ public static class AlgosUtils
             }
         }
 
+
+        var end = GeneralUtil.PerfTimer(false, timerStart);
+
         return grid2D;
 
     }
@@ -1099,12 +1133,49 @@ public static class AlgosUtils
 
     #endregion
 
+
+
+
+
+
+
 }
 
 
 
 
+public class CAtiles
+{
+    public Tile tileCA;
 
+    public bool empty;
+
+    // when empty is true means white unliving
+    // when balck means full living
+
+    public CAtiles(float perc, Tile normTile)
+    {
+        var ran = Random.Range(0f, 1f);
+
+        tileCA = normTile;
+        if (ran <= perc)
+        {
+            empty = false;
+        }
+        else
+        {
+            empty = true;
+        }
+    }
+
+    public CAtiles(bool _empty, Tile normTile)
+    {
+       tileCA = normTile;
+        empty = _empty;
+    }
+
+
+}
 
 
 public class Triangle

@@ -13,7 +13,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
     public int test_y;
 
 
-
+    /*
     public class CAtiles
     {
         public Tile tileCA;
@@ -39,13 +39,9 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                 empty = true;
             }
 
-
             SetState();
 
-
         }
-
-
 
         public void SetState()
         {
@@ -62,7 +58,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         }
 
     }
-
+    */
 
     public float fillDelay = 0.2f;
 
@@ -98,10 +94,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
     public void Init2DCallAuto(Tile[][] _gridArray2D, int _length, int _height )
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
-
-        length = _length;
-        height = _height;
-
 
         gridArray2D = new CAtiles[_gridArray2D.Length][];
 
@@ -167,7 +159,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         {
             for (int x = 0; x < gridArray2D[y].Length; x++)
             {
-                gridArray2D[y][x].SetState();
+                //gridArray2D[y][x].SetState();
                 openList2D.Add(new int[] {x,y} );
             }
         }
@@ -190,8 +182,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
                 copyArrayStorage[y][x] = gridArray2D[y][x].empty;
             }
         }
-
-
 
 
 
