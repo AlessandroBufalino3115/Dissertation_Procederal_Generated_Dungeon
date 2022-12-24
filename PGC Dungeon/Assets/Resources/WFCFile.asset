@@ -13,25 +13,63 @@ MonoBehaviour:
   m_Name: WFCFile
   m_EditorClassIdentifier: Assembly-CSharp-Editor:DS.Windows:GraphViewDataCont
   nodeData:
-  - position: {x: 48, y: 233}
-    nodeGuid: 917730e3920229741b8584e70eae5a40
-    IndexTile: 3
-    dialogueType: 0
-  - position: {x: 358, y: 264}
-    nodeGuid: 5d4bf2f1b432121419e7b9805867b23f
-    IndexTile: 2
+  - position: {x: 538, y: 180}
+    nodeGuid: 05b1907c4bc366d48becab4ced89d68d
+    IndexTile: 6
     dialogueType: 1
-  - position: {x: 65, y: 371}
-    nodeGuid: 88f9251240c11e84c89e3fec68b65de2
+  - position: {x: 3, y: 150}
+    nodeGuid: c6e1ce423ea43ce40819e172fc7b45ce
     IndexTile: 5
     dialogueType: 0
+  - position: {x: 3, y: 246}
+    nodeGuid: 56afe283eb52cd04d8b87b2ad1cb58b8
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 3, y: 342}
+    nodeGuid: 5c462db1d8daaf843bcae3909a44193b
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 3, y: 534}
+    nodeGuid: f82867eb11b48cb4c9d163c42fdc9048
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 3, y: 630}
+    nodeGuid: b6ba83e2d489de44b90c189872bb68ad
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 3, y: 438}
+    nodeGuid: ddb1f841d9bf3ff4abf03aa4329051a8
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 538, y: 484}
+    nodeGuid: 2f6d6c706dbe57141b52e1dea801bac6
+    IndexTile: 6
+    dialogueType: 1
   nodeLinkData:
-  - BaseNodeGuid: 917730e3920229741b8584e70eae5a40
-    PortName: Up Side
-    TargetNodeGuid: 5d4bf2f1b432121419e7b9805867b23f
-  - BaseNodeGuid: 917730e3920229741b8584e70eae5a40
+  - BaseNodeGuid: c6e1ce423ea43ce40819e172fc7b45ce
     PortName: Left Side
-    TargetNodeGuid: 5d4bf2f1b432121419e7b9805867b23f
-  - BaseNodeGuid: 88f9251240c11e84c89e3fec68b65de2
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: c6e1ce423ea43ce40819e172fc7b45ce
+    PortName: Right Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: 56afe283eb52cd04d8b87b2ad1cb58b8
+    PortName: Up Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: 56afe283eb52cd04d8b87b2ad1cb58b8
     PortName: Down Side
-    TargetNodeGuid: 5d4bf2f1b432121419e7b9805867b23f
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: f82867eb11b48cb4c9d163c42fdc9048
+    PortName: Left Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: b6ba83e2d489de44b90c189872bb68ad
+    PortName: Right Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: ddb1f841d9bf3ff4abf03aa4329051a8
+    PortName: Down Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: 5c462db1d8daaf843bcae3909a44193b
+    PortName: Up Side
+    TargetNodeGuid: 05b1907c4bc366d48becab4ced89d68d
+  - BaseNodeGuid: f82867eb11b48cb4c9d163c42fdc9048
+    PortName: Left Side
+    TargetNodeGuid: 2f6d6c706dbe57141b52e1dea801bac6

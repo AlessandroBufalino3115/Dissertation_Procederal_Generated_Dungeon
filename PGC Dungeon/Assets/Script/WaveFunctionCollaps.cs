@@ -1058,9 +1058,6 @@ public class WFCTile
     public List<int> allowedObjForward = new List<int>();
     public List<int> allowedObjBackwards = new List<int>();
 
-
-
-
     /// <summary>
     /// matches all of the directions to find a simlar value
     /// </summary>
@@ -1112,7 +1109,7 @@ public class WFCTile
     {
         if (this.possibleAssetsIDX.Count == 0)
         {
-            this.decidedIndex = 0;   // this is meant to be teh base tile the basic one
+            this.decidedIndex = 0;   // this is meant to be the base tile the basic one
         }
         else
         {

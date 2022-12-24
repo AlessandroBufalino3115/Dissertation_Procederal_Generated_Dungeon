@@ -32,8 +32,7 @@ namespace DS.Windows
 
         public DSGraphView( DSEditorWindow dSEditorWindow) 
         {
-            ruleNode = (DSInfoNodeNode) CreateNode(DSDialogueType.InfoNode, Vector2.zero);
-            this.AddElement(ruleNode);
+      
 
             editorWindow = dSEditorWindow;
 
@@ -94,8 +93,34 @@ namespace DS.Windows
 
         }
 
-        public void RefreshRules(string fileName) 
+        public void RefreshRules(string fileName)
         {
+
+            var nodes = this.nodes.ToList();
+            bool respawn = true;
+
+
+            foreach (var GVnode in nodes)
+            {
+                DSNode iterNode = GVnode as DSNode;
+
+                if (iterNode.dialogueType == DSDialogueType.InfoNode)
+                {
+                    respawn = false;
+                    break;
+                }
+            }
+
+
+            if (respawn) 
+            {
+                ruleNode = (DSInfoNodeNode)CreateNode(DSDialogueType.InfoNode, Vector2.zero);
+                this.AddElement(ruleNode);
+            }
+
+
+
+
 
             if (fileName == null) { return; }
 
@@ -288,8 +313,7 @@ namespace DS.Windows
             var arr = nodes.ToList().Cast<DSNode>().ToList();
             ConnectNodes(arr);
 
-            ruleNode = (DSInfoNodeNode)CreateNode(DSDialogueType.InfoNode, Vector2.zero);
-            this.AddElement(ruleNode);
+            
 
             RefreshRules(editorWindow._fileNameResources);
 
@@ -321,7 +345,7 @@ namespace DS.Windows
 
 
 
-                int idx = Utilities.DSElementUtility.GetPortIdx(nodeCon.PortName);
+                int idx = DSElementUtility.GetPortIdx(nodeCon.PortName);
 
 
                 var tempEdge = new UnityEditor.Experimental.GraphView.Edge { output = (Port)outputNode.outputContainer[0], input = (Port)inputNode.inputContainer[idx] };
@@ -396,9 +420,6 @@ namespace DS.Windows
                 GVcont.nodeLinkData.Add(new NodeLinkData() { BaseNodeGuid = outputNode.nodeGuid, PortName = connectedPorts[i].input.portName, TargetNodeGuid = inputNode.nodeGuid });
 
             }
-
-
-
 
 
 
