@@ -6,6 +6,20 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
+using UnityEngine.Tilemaps;
+
+
+
+
+//new standard for tiles, 
+/*
+ * 
+ * when gicing an array to a function it has to be of class tile which is just a float arr float arr   everything else can inherit from that with a float arr we can say if bigger than 0.8 just to be sure for any issue its taken
+ * 
+ * 
+ */
+
+
 
 public static class AlgosUtils 
 {
@@ -338,9 +352,106 @@ public static class AlgosUtils
 
     #endregion
 
-    #region DrunkWalk
+    #region Random Walk
 
-    public static void DrunkWalk2DCol(Tile[][] _gridarray2D, int iterations, bool alreadyPassed) 
+    // new addition on basic tile 
+    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX,int maxY, float maxIterMultiplier = 1.4f)
+    {
+        int iterationsLeft = iterations;
+
+
+        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+
+        Vector2Int currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
+
+        int maxIter = (int)((_gridarray2D.Length * _gridarray2D[0].Length) * maxIterMultiplier);
+
+        int iterCount = 0;
+
+        while (iterationsLeft > 0)
+        {
+
+            iterCount++;
+
+            if (iterCount >= maxIter)
+            {
+                Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
+
+                break;
+            }
+
+            int ranDir = Random.Range(0, 4);
+
+            switch (ranDir)
+            {
+                case 0:    //for
+
+                    if (currentHead.y + 1 >= _gridarray2D.Length)
+                    { }
+                    else
+                    {
+                        currentHead.y++;
+                    }
+
+                    break;
+
+                case 1:    //back
+                    if (currentHead.y - 1 < 0)
+                    { }
+                    else
+                    {
+                        currentHead.y--;
+                    }
+                    break;
+
+                case 2:    //left
+                    if (currentHead.x - 1 < 0)
+                    { }
+                    else
+                    {
+                        currentHead.x--;
+                    }
+                    break;
+
+                case 3:   //rigth
+                    if (currentHead.x + 1 >= _gridarray2D[0].Length)
+                    { }
+                    else
+                    {
+                        currentHead.x++;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+
+            if (alreadyPassed)
+            {
+                if (_gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight != 1)
+                {
+                    _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+                    iterationsLeft--;
+                }
+            }
+            else
+            {
+                _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+                iterationsLeft--;
+            }
+        }
+
+        return _gridarray2D;
+
+    }
+
+
+
+
+
+
+    public static void RandomWalk2DCol(Tile[][] _gridarray2D, int iterations, bool alreadyPassed) 
     {
         int iterationsLeft = iterations;
 
@@ -430,7 +541,7 @@ public static class AlgosUtils
 
     }
 
-    public static void DrunkWalk3DCol(Tile[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
+    public static void RandomWalk3DCol(Tile[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
     {
         int iterationsLeft = iterations;
 
@@ -622,8 +733,8 @@ public static class AlgosUtils
 
 
         return noiseMap;
-
     }
+
     public static float Perlin3D(float x, float y, float z)
     {
         float ab = Mathf.PerlinNoise(x, y);
@@ -734,16 +845,6 @@ public static class AlgosUtils
 
         return noiseMap;
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1030,7 +1131,6 @@ public static class AlgosUtils
 
     #endregion
 
-
     #region Cellular Automata
     /// <summary>
     /// to finish 
@@ -1060,8 +1160,6 @@ public static class AlgosUtils
     }
 
     #endregion
-
-
 
     #region DiamondSquare algo
 
@@ -1141,42 +1239,18 @@ public static class AlgosUtils
 
 }
 
-
-
-
-public class CAtiles
+public class BasicTile
 {
-    public Tile tileCA;
+    public int xCoord;
+    public int yCoord;
 
-    public bool empty;
-
-    // when empty is true means white unliving
-    // when balck means full living
-
-    public CAtiles(float perc, Tile normTile)
-    {
-        var ran = Random.Range(0f, 1f);
-
-        tileCA = normTile;
-        if (ran <= perc)
-        {
-            empty = false;
-        }
-        else
-        {
-            empty = true;
-        }
-    }
-
-    public CAtiles(bool _empty, Tile normTile)
-    {
-       tileCA = normTile;
-        empty = _empty;
-    }
-
-
+    public float tileWeight;
 }
 
+
+
+
+#region triangulation
 
 public class Triangle
 {
@@ -1219,4 +1293,125 @@ public class Edge
         length = Mathf.Abs(Vector3.Distance(a, b));
     }
 
+}
+
+
+#endregion
+
+
+
+
+
+public class CAtiles
+{
+    public Tile tileCA;
+
+    public bool empty;
+
+    // when empty is true means white unliving
+    // when balck means full living
+
+    public CAtiles(float perc, Tile normTile)
+    {
+        var ran = Random.Range(0f, 1f);
+
+        tileCA = normTile;
+        if (ran <= perc)
+        {
+            empty = false;
+        }
+        else
+        {
+            empty = true;
+        }
+    }
+
+    public CAtiles(bool _empty, Tile normTile)
+    {
+        tileCA = normTile;
+        empty = _empty;
+    }
+
+
+}
+
+public class AStar_Node
+{
+
+    public Tile refToGameObj;
+    public AStar_Node parent;
+
+    public float g = 0;
+    public float f = 0;
+    public float h = 0;
+
+    public AStar_Node(Tile gameobject)
+    {
+        refToGameObj = gameobject;
+    }
+
+}
+
+
+public class Tile
+{
+    public GameObject tileObj;
+    public Vector3Int position = new Vector3Int();
+
+    public enum TileType
+    {
+        VOID,
+        FLOORROOM,
+        WALL,
+        ROOF,
+        FLOORCORRIDOR,
+        AVOID
+
+    }
+    public TileType tileType = 0;
+
+    public Tile(GameObject _arrayTileObj, Vector2Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_pos.x, 0, _pos.y);
+    }
+    public Tile(GameObject _arrayTileObj, Vector3Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = _pos;
+    }
+    public Tile(GameObject _arrayTileObj, int _x, int _y, int _z)
+    {
+        tileObj = _arrayTileObj;
+
+        position = new Vector3Int(_x, _y, _z);
+    }
+    public Tile(GameObject _arrayTileObj, int _x, int _y)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_x, 0, _y);
+    }
+
+
+    public void SetTileWorldPos() => tileObj.transform.position = position;
+}
+
+
+[System.Serializable]
+public class Identifier
+{
+    public Color color = Color.black;
+
+    public enum TileType
+    {
+        VOID,
+        FLOORROOM,
+        WALL,
+        ROOF,
+        FLOORCORRIDOR,
+        AVOID
+    }
+
+    public TileType tileType = 0;
+    public float cost = 0;
 }

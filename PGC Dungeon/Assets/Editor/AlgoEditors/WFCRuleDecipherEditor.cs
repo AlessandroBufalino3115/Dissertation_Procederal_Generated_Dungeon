@@ -2,14 +2,28 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
-using DS.Elements;
 using DS.Windows;
+using System.IO;
 
 [CustomEditor(typeof(WFCRuleDecipher))]
 public class WFCRuleDecipherEditor : Editor
 {
+
+    //the saving and loading al of that works fine
+
+    // the issues are the resources folde risnt getting loaded
+    // need a quick way to insta some of this shits 
+    //need a space on top of the bar
+    
+
+
+    // maybes:
+    //maybe find a way to show the tile
+    //maybe 
+
+
+
 
     public override void OnInspectorGUI()
     {
@@ -17,16 +31,47 @@ public class WFCRuleDecipherEditor : Editor
 
         WFCRuleDecipher ruleDec = (WFCRuleDecipher)target;
 
-
-
+     
         if (GUILayout.Button("Load rule Set"))
         {
 
-            ruleDec.Ruleset.Clear();
+            IDictionary<int, string> dictNameIdx = new Dictionary<int, string>();
+            
 
-            var graphViewCont = Resources.Load<DS.Windows.GraphViewDataCont>(ruleDec.fileName);
+            var fileName = "Assets/Resources/" + ruleDec.tileSetFolderName;
 
-            var dictRuleGuid = new Dictionary<string, int>();
+            var info = new DirectoryInfo(fileName);
+            var fileInfo = info.GetFiles();
+
+
+            var currIdx = 0;
+
+            foreach (var file in fileInfo)
+            {
+                if (file.Name.Contains("meta"))
+                {
+                    continue;
+                }
+
+               
+                int index = file.Name.IndexOf(".");
+                var manipString = file.Name.Substring(0, index);
+
+                dictNameIdx.Add(currIdx, ruleDec.tileSetFolderName + "/" + file.Name);
+
+
+                Debug.Log(dictNameIdx[currIdx]);
+
+
+
+                currIdx++;
+            }
+
+
+
+            ruleDec.ruleSet.Clear();
+
+            var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFolderName);
 
             foreach (var node in graphViewCont.nodeData)   // this creates all the rules 
             {
@@ -37,7 +82,7 @@ public class WFCRuleDecipherEditor : Editor
 
                     bool present = false;
 
-                    foreach (var rule in ruleDec.Ruleset)
+                    foreach (var rule in ruleDec.ruleSet)
                     {
                         if (rule.assetIdx == idx) 
                         {
@@ -48,7 +93,7 @@ public class WFCRuleDecipherEditor : Editor
 
                     if (!present) 
                     {
-                        ruleDec.Ruleset.Add(new WFCTileRule() { assetIdx = idx });
+                        ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx , mainAsset = Resources.Load(dictNameIdx[idx]) as GameObject });
                     }
                 }
             }
@@ -73,15 +118,13 @@ public class WFCRuleDecipherEditor : Editor
                     }
                 }
 
-
-
-                foreach(var rule in ruleDec.Ruleset)
+                foreach(var rule in ruleDec.ruleSet)
                 {
 
                     bool added = false;
                     if (rule.assetIdx == int.Parse(inputNode.IndexTile)) 
                     {
-
+                        Debug.Log(outputNode.IndexTile);
                         int idxToAdd = int.Parse(outputNode.IndexTile);
 
                         switch (edge.PortName)
@@ -128,34 +171,14 @@ public class WFCRuleDecipherEditor : Editor
                         }
                         
                         added = true;
-
-
                     }
-
-
 
                     if (added) { break; }
 
                 }
-
-
-
-
             }
-
-
-
-
-
         }
 
-
-
-
-        if (GUILayout.Button("Load rule ddSet"))
-        {
-
-        }
 
 
 

@@ -10,14 +10,10 @@ public class WFCRuleDecipher : MonoBehaviour
 
 
     [SerializeField]
-    public List<WFCTileRule> Ruleset = new List<WFCTileRule>();
-    public string fileName = "";
+    public List<WFCTileRule> ruleSet = new List<WFCTileRule>();
+    public string ruleSetFolderName = "";
+    public string tileSetFolderName = "";
 
-
-    public void printRule() 
-    {
-        
-    }
 
 
 

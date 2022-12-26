@@ -21,6 +21,11 @@ namespace DS.Windows
     public class DSGraphView : GraphView
     {
 
+        //need to add checks for whne the val is incorrect
+        // add a text under the sub rule node to say which one is sleected
+
+
+
         private DSSearchWindow searchWindow;
 
         private DSEditorWindow editorWindow;

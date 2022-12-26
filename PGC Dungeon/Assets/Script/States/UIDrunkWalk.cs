@@ -88,7 +88,7 @@ public class UIDrunkWalk : UiBaseState
         if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
         {
             crunching = true;
-            AlgosUtils.DrunkWalk2DCol(currentMenu.gridArray2D, iterations, alreadyPassed);
+            AlgosUtils.RandomWalk2DCol(currentMenu.gridArray2D, iterations, alreadyPassed);
 
             crunching = false;
         }
@@ -102,7 +102,7 @@ public class UIDrunkWalk : UiBaseState
         {
 
             crunching = true;
-            AlgosUtils.DrunkWalk3DCol(currentMenu.gridArray3D, iterations, alreadyPassed);
+            AlgosUtils.RandomWalk3DCol(currentMenu.gridArray3D, iterations, alreadyPassed);
             crunching=false;
         }
     }
