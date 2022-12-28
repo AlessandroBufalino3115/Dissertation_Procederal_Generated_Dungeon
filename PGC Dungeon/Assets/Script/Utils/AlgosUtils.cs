@@ -7,6 +7,8 @@ using System.Linq;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 using UnityEngine.Tilemaps;
+using System.Drawing;
+using Color = UnityEngine.Color;
 
 
 
@@ -21,7 +23,7 @@ using UnityEngine.Tilemaps;
 
 
 
-public static class AlgosUtils 
+public static class AlgosUtils
 {
 
 
@@ -37,7 +39,7 @@ public static class AlgosUtils
     /// <param name="colorDebug"></param>
     /// <param name="diagonalTiles"></param>
     /// <returns>Item 1 is the path of the AI, Item 2 is the checked tiles</returns>
-    public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DNorm(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
+    public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DNorm(TileOBJ[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 
@@ -190,7 +192,7 @@ public static class AlgosUtils
 
     }
 
-    public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DWeight(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, Dictionary<int, float> rulesDict, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
+    public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DWeight(TileOBJ[][] tileArray2D, Vector2Int start, Vector2Int end, Dictionary<int, float> rulesDict, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 
@@ -355,12 +357,24 @@ public static class AlgosUtils
     #region Random Walk
 
     // new addition on basic tile 
-    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX,int maxY, float maxIterMultiplier = 1.4f)
+    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f)
     {
         int iterationsLeft = iterations;
 
 
         BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+
+        for (int y = 0; y < maxY; y++)
+        {
+            _gridarray2D[y] = new BasicTile[maxX];
+
+            for (int x = 0; x < maxX; x++)
+            {
+                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x].position = new Vector3Int(x, 0, y);
+            }
+        }
+
 
         Vector2Int currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
 
@@ -446,12 +460,8 @@ public static class AlgosUtils
 
     }
 
-
-
-
-
-
-    public static void RandomWalk2DCol(Tile[][] _gridarray2D, int iterations, bool alreadyPassed) 
+    //also ask if it wants to start from the middle or no
+    public static void RandomWalk2DCol(TileOBJ[][] _gridarray2D, int iterations, bool alreadyPassed)
     {
         int iterationsLeft = iterations;
 
@@ -470,7 +480,7 @@ public static class AlgosUtils
             if (iterCount >= maxIter)
             {
                 Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
-              
+
                 break;
             }
 
@@ -540,8 +550,8 @@ public static class AlgosUtils
 
 
     }
-
-    public static void RandomWalk3DCol(Tile[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
+    /*
+    public static void RandomWalk3DCol(TileOBJ[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
     {
         int iterationsLeft = iterations;
 
@@ -643,12 +653,14 @@ public static class AlgosUtils
             }
         }
     }
+    */
+
 
     #endregion
 
     #region PerlinNoise
 
-    public static float[,] PerlinNoise2DTileSet(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY)
+    public static TileOBJ[][] PerlinNoise2DTileSet(TileOBJ[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
         float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
 
@@ -694,20 +706,30 @@ public static class AlgosUtils
                 noiseMap[x, y] = noiseHeight;
             }
         }
+
         for (int y = 0; y < _gridArray2D.Length; y++)
         {
             for (int x = 0; x < _gridArray2D[0].Length; x++)
             {
-                noiseMap[x, y] = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
+                _gridArray2D[y][x].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
+
+                if (threashold != 0)
+                {
+                    if (threashold > _gridArray2D[y][x].tileWeight)
+                        _gridArray2D[y][x].tileWeight=1;
+                    else
+                        _gridArray2D[y][x].tileWeight=0;
+                }
+               
             }
         }
 
-        return noiseMap;
+        return _gridArray2D;
     }
 
 
-
-    public static float[,,] PerlinNoise3DTileSet(Tile[][][] _gridArray3D, float scale)
+    /*
+    public static float[,,] PerlinNoise3DTileSet(TileOBJ[][][] _gridArray3D, float scale)
     {
         float[,,] noiseMap = new float[_gridArray3D[0][0].Length, _gridArray3D[0].Length, _gridArray3D.Length];
 
@@ -748,12 +770,85 @@ public static class AlgosUtils
         float abc = ab + bc + ac + ba + cb + ca;
         return abc / 6f;
     }
+    */
 
 
-    public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold,bool threshBool)
+
+    public static BasicTile[][] PerlinNoise2D(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
+    {
+        float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
+
+        if (scale <= 0)
+        {
+            scale = 0.0001f;
+        }
+
+        float maxN = float.MinValue;
+        float minN = float.MaxValue;
+
+
+        for (int y = 0; y < _gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < _gridArray2D[0].Length; x++)
+            {
+
+                float amplitude = 1;
+                float freq = 1;
+                float noiseHeight = 0;
+
+
+                for (int i = 0; i < octaves; i++)
+                {
+
+                    float sampleX = x / scale * freq + offsetX;
+                    float sampleY = y / scale * freq + offsetY;
+
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+
+                    noiseHeight += perlinValue * amplitude;
+
+                    amplitude *= persistance;
+
+                    freq *= lacu;
+
+                }
+
+
+                if (noiseHeight > maxN) { maxN = noiseHeight; }
+                else if (noiseHeight < minN) { minN = noiseHeight; }
+
+                noiseMap[x, y] = noiseHeight;
+            }
+        }
+
+        for (int y = 0; y < _gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < _gridArray2D[0].Length; x++)
+            {
+                _gridArray2D[y][x].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
+
+                if (threashold != 0)
+                {
+                    if (threashold > _gridArray2D[y][x].tileWeight)
+                        _gridArray2D[y][x].tileWeight = 1;
+                    else
+                        _gridArray2D[y][x].tileWeight = 0;
+                }
+            }
+        }
+
+        return _gridArray2D;
+    }
+
+
+
+
+
+
+    public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, bool threshBool)
     {
 
-        var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale,octaves,persistance,lacu, offsetX,offsetY);
+        var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale, octaves, persistance, lacu, offsetX, offsetY);
 
         int width = noiseMap.GetLength(0);
         int height = noiseMap.GetLength(1);
@@ -765,7 +860,7 @@ public static class AlgosUtils
         {
             for (int x = 0; x < width; x++)
             {
-                if (threshBool) 
+                if (threshBool)
                 {
                     if (threshold > noiseMap[x, y])
                         colourMap[y * width + x] = Color.white;
@@ -779,14 +874,14 @@ public static class AlgosUtils
         texture.SetPixels(colourMap);
         texture.Apply();
 
-      
+
         meshRenderer.sharedMaterial.mainTexture = texture;
         meshRenderer.transform.localScale = new Vector3(width, 1, height);
 
 
     }
 
-    public static float[,] PerlinNoise2DPlane(int mapWidth, int mapHeight, float scale, int octaves, float persistance, float lacu,int offsetX, int offsetY)
+    public static float[,] PerlinNoise2DPlane(int mapWidth, int mapHeight, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY)
     {
         float[,] noiseMap = new float[mapWidth, mapHeight];
 
@@ -815,7 +910,7 @@ public static class AlgosUtils
                     float sampleX = x / scale * freq + offsetX;
                     float sampleY = y / scale * freq + offsetY;
 
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 -1;
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
 
                     noiseHeight += perlinValue * amplitude;
 
@@ -853,7 +948,7 @@ public static class AlgosUtils
 
     #region Triangulation
 
-    public static List<Edge> PrimAlgoNoDelu(List<Vector3> points) 
+    public static List<Edge> PrimAlgoNoDelu(List<Vector3> points)
     {
         var triangulation = DelunayTriangulation2D(points);
 
@@ -861,7 +956,7 @@ public static class AlgosUtils
 
     }
 
-    public static List<Edge> PrimAlgo(List<Vector3> points, List<Triangle> triangulation) 
+    public static List<Edge> PrimAlgo(List<Vector3> points, List<Triangle> triangulation)
     {
         List<Edge> primsAlgo = new List<Edge>();
 
@@ -909,7 +1004,7 @@ public static class AlgosUtils
         return primsAlgo;
     }
 
-    public static List<Triangle> DelunayTriangulation2D (List<Vector3> points) 
+    public static List<Triangle> DelunayTriangulation2D(List<Vector3> points)
     {
         var triangulation = new List<Triangle>();
 
@@ -1125,60 +1220,226 @@ public static class AlgosUtils
 
     #region Flood Fill
 
+    public static void ResetVisited(BasicTile[][] gridArray2D) 
+    {
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < gridArray2D[0].Length; x++)
+            {
+                gridArray2D[y][x].visited = false;
+            }
+        }
+    }
 
 
+    /// <summary>
+    /// for now this is looking only for the white or wieght = 0 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="list"></param>
+    /// <param name="gridArray2D"></param>
+    /// <returns>the returned list holds the coords of everything that was true</returns>
+    public static List<Vector2> Flood2DText(int x, int y, List<Vector2> list, BasicTile[][] gridArray2D)
+    {
+        
+        if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
+        {
+            if (gridArray2D[y][x].tileWeight == 0 && gridArray2D[y][x].visited == false)
+            {
+                list.Add(new Vector2(x, y));
+                gridArray2D[y][x].visited=true;
+
+                Flood2DText(x + 1, y, list, gridArray2D);
+                Flood2DText(x - 1, y, list, gridArray2D);
+                Flood2DText(x, y + 1, list, gridArray2D);
+                Flood2DText(x, y - 1, list, gridArray2D);
+            }
+        }
+
+        return list;
+
+    }
 
 
     #endregion
 
     #region Cellular Automata
+
+
+
     /// <summary>
-    /// to finish 
+    /// mainly used for CA given a % fill up with wieght 1
     /// </summary>
-    /// <param name="grid2D"></param>
-    /// <param name="perc"></param>
-    /// <returns></returns>
-    public static CAtiles[,] StartCA2D(Tile[][] grid2D, float perc) 
+    /// <param name="gridArr"></param>
+    /// <param name="ranValue"></param>
+    public static void SpawnRandomPointsObj2D(BasicTile[][] gridArr, float ranValue) 
     {
-        int startTime = GeneralUtil.PerfTimer(true);
-
-        var caGrid = new CAtiles[0, 0];
-
-
-        for (int y = 0; y < grid2D.Length; y++)
+        for (int y = 0; y < gridArr.Length; y++)
         {
-            for (int x = 0; x < grid2D[y].Length; x++)
+            for (int x = 0; x < gridArr[0].Length; x++)
             {
-                //caGrid[y,x] = new CAtiles(_gridArray2D[y][x]);
+                if (Random.value > ranValue) 
+                {
+                    gridArr[y][x].tileWeight = 0;
+
+                }
+                else 
+                {
+                    gridArr[y][x].tileWeight = 1;
+                }
+            }
+        }
+    }
+
+
+    public static void RunCaIteration2D(BasicTile[][] gridArray2D, int neighboursNeeded) 
+    {
+
+        float[][] copyArrayStorage = new float[gridArray2D.Length][];
+
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            copyArrayStorage[y] = new float[gridArray2D[y].Length];
+
+            for (int x = 0; x < gridArray2D[y].Length; x++)
+            {
+                copyArrayStorage[y][x] = gridArray2D[y][x].tileWeight;
             }
         }
 
-        var endTimer = GeneralUtil.PerfTimer(false, startTime);
 
 
-        return caGrid;
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+
+            for (int x = 0; x < gridArray2D[y].Length; x++)
+            {
+                int neighbours = 0;
+
+                for (int col_offset = -1; col_offset < 2; col_offset++)
+                {
+                    for (int row_offset = -1; row_offset < 2; row_offset++)
+                    {
+
+                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length - 1)
+                        {
+
+                        }
+                        else if (col_offset == 0 && row_offset == 0)
+                        {
+
+                        }
+                        else
+                        {
+                            // this was !
+                            if (copyArrayStorage[y + col_offset][x + row_offset] == 1)
+                            {
+                                neighbours++;
+                            }
+                        }
+                    }
+                }
+
+                if (neighbours >= neighboursNeeded)
+                {   //empty is = false therefore weight is there
+                    gridArray2D[y][x].tileWeight = 1;
+                }
+                else
+                {   //true
+                    gridArray2D[y][x].tileWeight = 0;
+                }
+            }
+        }
     }
+
+    public static void CleanUp2dCA(BasicTile[][] gridArray2D, int neighboursNeeded)
+    {
+
+        float[][] copyArrayStorage = new float[gridArray2D.Length][];
+
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            copyArrayStorage[y] = new float[gridArray2D[y].Length];
+
+            for (int x = 0; x < gridArray2D[y].Length; x++)
+            {
+                copyArrayStorage[y][x] = gridArray2D[y][x].tileWeight;
+            }
+        }
+
+
+
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+
+            for (int x = 0; x < gridArray2D[y].Length; x++)
+            {
+                int neighbours = 0;
+                if (copyArrayStorage[y][x] == 1)
+                {
+                    for (int col_offset = -1; col_offset < 2; col_offset++)
+                    {
+                        for (int row_offset = -1; row_offset < 2; row_offset++)
+                        {
+
+                            if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length - 1)
+                            {
+
+                            }
+                            else if (col_offset == 0 && row_offset == 0)
+                            {
+
+                            }
+                            else
+                            {
+                                // this was !
+                                if (copyArrayStorage[y + col_offset][x + row_offset] == 1)
+                                {
+                                    neighbours++;
+                                }
+                            }
+                        }
+                    }
+
+                    if (neighbours >= neighboursNeeded)
+                    {   //empty is = false therefore weight is there
+                        gridArray2D[y][x].tileWeight = 1;
+                    }
+                    else
+                    {   //true
+                        gridArray2D[y][x].tileWeight = 0;
+                    }
+                }
+                
+            }
+        }
+    }
+
+
+
+
 
     #endregion
 
     #region DiamondSquare algo
 
-    public static float[,] DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] grid) 
+    public static void DiamondSquare(int maxHeight, int minHeight, float roughness, BasicTile[][] gridArr)
     {
 
         int timerStart = GeneralUtil.PerfTimer(true);
 
         // get the size
-        var mapSize = grid.Length;
+        var mapSize = gridArr.Length;
 
         // start the grid
         float[,] grid2D = new float[mapSize, mapSize];
 
         //need to check for 2n + 1
-        if (grid.Length != grid[0].Length || grid[0].Length % 2 == 0)
+        if (gridArr.Length != gridArr[0].Length || gridArr[0].Length % 2 == 0)
         {
             GeneralUitlInstance.instance.SpawnMessagePrefab("This size is not good soz", false);
-            return null;
+            return;
         }
         else
         {
@@ -1193,7 +1454,7 @@ public static class AlgosUtils
 
             while (chunkSize > 1)
             {
-           
+
                 int halfChunk = chunkSize / 2;
 
                 for (int y = 0; y < mapSize - 1; y = y + chunkSize)
@@ -1217,14 +1478,24 @@ public static class AlgosUtils
                 }
 
                 chunkSize = chunkSize / 2;
-                //roughness = roughness / 2;
+                roughness = roughness / 2;
+            }
+        }
+
+
+
+
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                gridArr[y][x].tileWeight = grid2D[y,x];
             }
         }
 
 
         var end = GeneralUtil.PerfTimer(false, timerStart);
 
-        return grid2D;
 
     }
 
@@ -1232,20 +1503,244 @@ public static class AlgosUtils
     #endregion
 
 
+    #region Voronoi
+
+
+    public static BasicTile[][] Voronoi2D(BasicTile[][] gridArray2D, List<Vector3> pointsArr)
+    {
+     
 
 
 
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < gridArray2D[y].Length; x++)
+            {
+                int closestIndex = 0;
+                float closestDistance = -1;
+
+                for (int i = 0; i < pointsArr.Count; i++)
+                {
+                    if (closestDistance < 0)
+                    {
+                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.z));
+                    }
+                    else
+                    {
+                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.z));
+
+                        if (closestDistance > newDist)
+                        {
+                            closestDistance = newDist;
+                            closestIndex = i;
+                        }
+                    }
+                }
+
+                gridArray2D[y][x].idx = closestIndex;
+
+            }
+        }
+
+        return gridArray2D;
+    }
+
+    public static TileOBJ[][] VoronoiObj2D(TileOBJ[][] gridArrayObj2D, List<Vector3> pointsArr)
+    {
+
+        for (int y = 0; y < gridArrayObj2D.Length; y++)
+        {
+            for (int x = 0; x < gridArrayObj2D[y].Length; x++)
+            {
+                int closestIndex = 0;
+                float closestDistance = -1;
+
+                for (int i = 0; i < pointsArr.Count; i++)
+                {
+                    if (closestDistance < 0)  //therefore minus therefoe we just started
+                    {
+                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArrayObj2D[y][x].tileObj.transform.position.x, gridArrayObj2D[y][x].tileObj.transform.position.z));
+                    }
+                    else
+                    {
+                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArrayObj2D[y][x].tileObj.transform.position.x, gridArrayObj2D[y][x].tileObj.transform.position.z));
+
+                        if (closestDistance > newDist)
+                        {
+                            closestDistance = newDist;
+                            closestIndex = i;
+
+                        }
+                    }
+                }
+                gridArrayObj2D[y][x].idx = closestIndex;
+
+            }
+        }
+
+        return gridArrayObj2D;
+    }
+
+
+    #endregion
+
+    #region Random Util
+    // the widht and height should be relative to the size of thearra not a given input
+    /// <summary>
+    /// Set the shade of black and white with a given max and min weight then weight
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="gridArray2D"></param>
+    /// <returns></returns>
+    public static Texture2D SetUpTextBiColShade(BasicTile[][] gridArray2D, float minWeight, float maxWeight)
+    {
+
+        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
+        //plane.GetComponent<Renderer>().material.mainTexture = texture;
+
+        for (int y = 0; y < texture.height; y++)
+        {
+            for (int x = 0; x < texture.width; x++)
+            {
+                float num = Mathf.InverseLerp(minWeight, maxWeight, gridArray2D[y][x].tileWeight);
+                gridArray2D[y][x].color = new Color(num, num, num, 1f);
+
+
+                texture.SetPixel(x, y, gridArray2D[y][x].color);
+            }
+        }
+        texture.filterMode = FilterMode.Point;
+        texture.Apply();
+
+
+        return texture;
+    }
+
+    /// <summary>
+    /// either black or white, if = 0 white if = 1 black
+    /// </summary>
+    /// <param name="gridArray2D"></param>
+    /// <param name="black"></param>
+    /// <returns></returns>
+    public static Texture2D SetUpTextBiColAnchor(BasicTile[][] gridArray2D, bool black = false)
+    {
+
+        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
+
+        for (int y = 0; y < texture.height; y++)
+        {
+            for (int x = 0; x < texture.width; x++)
+            {
+                Color color = new Color();
+
+                if (black)
+                {
+                    color = ((gridArray2D[y][x].tileWeight) == 0 ? Color.white : Color.black);
+                }
+                else
+                {
+                    color = ((gridArray2D[y][x].tileWeight) == 0 ? Color.white : Color.grey);
+                }
+
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.filterMode = FilterMode.Point;
+        texture.Apply();
+
+
+        return texture;
+    }
+
+    /// <summary>
+    /// Sets the colour of the pixel that is saved in the class instance
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="gridArray2D"></param>
+    /// <returns></returns>
+    public static Texture2D SetUpTextSelfCol( BasicTile[][] gridArray2D)
+    {
+
+        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
+
+        for (int y = 0; y < texture.height; y++)
+        {
+            for (int x = 0; x < texture.width; x++)
+            {
+                texture.SetPixel(x, y, gridArray2D[y][x].color);
+            }
+        }
+        texture.filterMode = FilterMode.Point;
+        texture.Apply();
+
+
+        return texture;
+    }
+
+
+
+    public static void SetColorAllObjAnchor(TileOBJ[][] gridArr) 
+    {
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                gridArr[y][x].SetColorBiAncor();
+            }
+        }
+    }
+
+
+    public static void SetColorAllObjBi(TileOBJ[][] gridArr, float minWeight, float maxWeight)
+    {
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                gridArr[y][x].SetColorBi(minWeight, maxWeight);
+            }
+        }
+    }
+
+
+    #endregion
 
 
 }
 
+
+
+/// <summary>
+/// This is the base tile which hopefully everything inherits from
+/// </summary>
 public class BasicTile
 {
-    public int xCoord;
-    public int yCoord;
 
+    public Color32 color;
+    public Vector3Int position = Vector3Int.zero;
     public float tileWeight;
+    public float cost = 0;
+    public int idx = 0;
+    public bool visited = false;
+
+    public enum TileType
+    {
+        VOID,
+        FLOORROOM,
+        WALL,
+        ROOF,
+        FLOORCORRIDOR,
+        AVOID
+    }
+
+    public TileType tileType = 0;
+  
 }
+
+
+
 
 
 
@@ -1304,14 +1799,14 @@ public class Edge
 
 public class CAtiles
 {
-    public Tile tileCA;
+    public TileOBJ tileCA;
 
     public bool empty;
 
     // when empty is true means white unliving
     // when balck means full living
 
-    public CAtiles(float perc, Tile normTile)
+    public CAtiles(float perc, TileOBJ normTile)
     {
         var ran = Random.Range(0f, 1f);
 
@@ -1326,7 +1821,7 @@ public class CAtiles
         }
     }
 
-    public CAtiles(bool _empty, Tile normTile)
+    public CAtiles(bool _empty, TileOBJ normTile)
     {
         tileCA = normTile;
         empty = _empty;
@@ -1338,14 +1833,14 @@ public class CAtiles
 public class AStar_Node
 {
 
-    public Tile refToGameObj;
+    public TileOBJ refToGameObj;
     public AStar_Node parent;
 
     public float g = 0;
     public float f = 0;
     public float h = 0;
 
-    public AStar_Node(Tile gameobject)
+    public AStar_Node(TileOBJ gameobject)
     {
         refToGameObj = gameobject;
     }
@@ -1353,50 +1848,63 @@ public class AStar_Node
 }
 
 
-public class Tile
+/// <summary>
+/// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
+/// </summary>
+public class TileOBJ : BasicTile
 {
     public GameObject tileObj;
-    public Vector3Int position = new Vector3Int();
 
-    public enum TileType
-    {
-        VOID,
-        FLOORROOM,
-        WALL,
-        ROOF,
-        FLOORCORRIDOR,
-        AVOID
-
-    }
-    public TileType tileType = 0;
-
-    public Tile(GameObject _arrayTileObj, Vector2Int _pos)
+    public TileOBJ(GameObject _arrayTileObj, Vector2Int _pos)
     {
         tileObj = _arrayTileObj;
         position = new Vector3Int(_pos.x, 0, _pos.y);
     }
-    public Tile(GameObject _arrayTileObj, Vector3Int _pos)
+    public TileOBJ(GameObject _arrayTileObj, int _x, int _y, int _z)
     {
         tileObj = _arrayTileObj;
-        position = _pos;
-    }
-    public Tile(GameObject _arrayTileObj, int _x, int _y, int _z)
-    {
-        tileObj = _arrayTileObj;
-
         position = new Vector3Int(_x, _y, _z);
     }
-    public Tile(GameObject _arrayTileObj, int _x, int _y)
+    public TileOBJ(GameObject _arrayTileObj, int _x, int _y)
     {
         tileObj = _arrayTileObj;
         position = new Vector3Int(_x, 0, _y);
     }
 
+ 
+    public void SetColorBi(float minWeight, float maxWeight) 
+    {
+        float num = Mathf.InverseLerp(minWeight, maxWeight, tileWeight);
+        color = new Color(num, num, num,1f);
 
-    public void SetTileWorldPos() => tileObj.transform.position = position;
+        tileObj.GetComponent<MeshRenderer>().material.color = color;
+    }
+
+    public void SetColor(Color _color) 
+    {
+        this.color = _color;
+        tileObj.GetComponent<MeshRenderer>().material.color = _color;
+    }
+
+
+    public void SetColorBiAncor(bool black = true)
+    {
+
+        if (black)
+            this.color = this.tileWeight == 0 ? Color.white : Color.black;
+        else
+            this.color = this.tileWeight == 0 ? Color.white : Color.grey;
+
+        tileObj.GetComponent<MeshRenderer>().material.color = this.color;
+    }
 }
 
 
+
+
+/// <summary>
+/// to prob delete
+/// </summary>
 [System.Serializable]
 public class Identifier
 {

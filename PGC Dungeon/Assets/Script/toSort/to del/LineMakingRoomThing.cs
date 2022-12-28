@@ -35,7 +35,7 @@ public class LineMakingRoomThing : MonoBehaviour
     public int test_x = 0;
     public int test_y = 0;
 
-    Tile[][] gridArray2D = new Tile[1][];
+    TileOBJ[][] gridArray2D = new TileOBJ[1][];
 
     List<LineMakerRoom2D> roomsList = new List<LineMakerRoom2D>();
 
@@ -52,7 +52,7 @@ public class LineMakingRoomThing : MonoBehaviour
 
     }
 
-    public void GenRoomLines2D(Tile[][] _gridArray)
+    public void GenRoomLines2D(TileOBJ[][] _gridArray)
     {
         int lengthY = _gridArray.Length;
         int lengthX = _gridArray[0].Length;
@@ -61,16 +61,16 @@ public class LineMakingRoomThing : MonoBehaviour
 
         for (int i = 0; i < lengthX; i++)
         {
-            _gridArray[0][i].tileType = Tile.TileType.AVOID;
+            _gridArray[0][i].tileType = TileOBJ.TileType.AVOID;
 
-            _gridArray[lengthY - 1][i].tileType = Tile.TileType.AVOID;
+            _gridArray[lengthY - 1][i].tileType = TileOBJ.TileType.AVOID;
         }
 
         for (int i = 0; i < lengthY; i++)
         {
-            _gridArray[i][0].tileType = Tile.TileType.AVOID;
+            _gridArray[i][0].tileType = TileOBJ.TileType.AVOID;
 
-            _gridArray[i][lengthX - 1].tileType = Tile.TileType.AVOID;
+            _gridArray[i][lengthX - 1].tileType = TileOBJ.TileType.AVOID;
         }
 
 
@@ -162,13 +162,13 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int i = 1; i < lengthY; i++)
             {
-                if (_gridArray[i][item].tileType == Tile.TileType.AVOID)
+                if (_gridArray[i][item].tileType == TileOBJ.TileType.AVOID)
                 {
                     break;
                 }
                 else
                 {
-                    _gridArray[i][item].tileType = Tile.TileType.AVOID;
+                    _gridArray[i][item].tileType = TileOBJ.TileType.AVOID;
 
                 }
             }
@@ -184,13 +184,13 @@ public class LineMakingRoomThing : MonoBehaviour
             {
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][i].tileType == Tile.TileType.AVOID)
+                    if (_gridArray[item][i].tileType == TileOBJ.TileType.AVOID)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][i].tileType = Tile.TileType.AVOID;
+                            _gridArray[item][i].tileType = TileOBJ.TileType.AVOID;
                         }
                         else
                         {
@@ -200,7 +200,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][i].tileType = Tile.TileType.AVOID;
+                        _gridArray[item][i].tileType = TileOBJ.TileType.AVOID;
                     }
                 }
 
@@ -213,13 +213,13 @@ public class LineMakingRoomThing : MonoBehaviour
 
                 for (int i = 1; i < lengthX; i++)
                 {
-                    if (_gridArray[item][lengthX - i - 1].tileType == Tile.TileType.AVOID)
+                    if (_gridArray[item][lengthX - i - 1].tileType == TileOBJ.TileType.AVOID)
                     {
                         float ran = Random.Range(0f, 1f);
 
                         if (ran >= 0.10f)
                         {
-                            _gridArray[item][lengthX - i - 1].tileType = Tile.TileType.AVOID;
+                            _gridArray[item][lengthX - i - 1].tileType = TileOBJ.TileType.AVOID;
 
                         }
                         else
@@ -229,7 +229,7 @@ public class LineMakingRoomThing : MonoBehaviour
                     }
                     else
                     {
-                        _gridArray[item][lengthX - i - 1].tileType = Tile.TileType.AVOID;
+                        _gridArray[item][lengthX - i - 1].tileType = TileOBJ.TileType.AVOID;
 
                     }
                 }
@@ -239,7 +239,7 @@ public class LineMakingRoomThing : MonoBehaviour
         DecideRooms2D(_gridArray, lengthY, lengthX);
     }
 
-    public void DecideRooms2D(Tile[][] _gridArray, int lengthY, int lengthX)
+    public void DecideRooms2D(TileOBJ[][] _gridArray, int lengthY, int lengthX)
     {
 
         gridArray2D = _gridArray;
@@ -252,7 +252,7 @@ public class LineMakingRoomThing : MonoBehaviour
         {
             for (int x = 0; x < lengthX; x++)
             {
-                if (_gridArray[y][x].tileType == Tile.TileType.AVOID)
+                if (_gridArray[y][x].tileType == TileOBJ.TileType.AVOID)
                 {
                     takenPositions.Add(_gridArray[y][x].tileObj.transform.name);
                 }
@@ -357,8 +357,8 @@ public class LineMakingRoomThing : MonoBehaviour
 
                 node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
 
-                if (node.refToGameObj.tileType != Tile.TileType.FLOORROOM)
-                    node.refToGameObj.tileType = Tile.TileType.FLOORCORRIDOR;
+                if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
+                    node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
 
             }
 
@@ -371,8 +371,8 @@ public class LineMakingRoomThing : MonoBehaviour
 
                 node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
 
-                if (node.refToGameObj.tileType != Tile.TileType.FLOORROOM)
-                    node.refToGameObj.tileType = Tile.TileType.FLOORCORRIDOR;
+                if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
+                    node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
 
             }
         }
@@ -386,13 +386,13 @@ public class LineMakingRoomThing : MonoBehaviour
     {
         if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
         {
-            if (gridArray2D[y][x].tileType != Tile.TileType.AVOID && gridArray2D[y][x].tileType != Tile.TileType.FLOORROOM)
+            if (gridArray2D[y][x].tileType != TileOBJ.TileType.AVOID && gridArray2D[y][x].tileType != TileOBJ.TileType.FLOORROOM)
             {
 
                 roomsList[i].position.Add(new Vector2Int( x, y ));
 
                 gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = col;
-                gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
+                gridArray2D[y][x].tileType = TileOBJ.TileType.FLOORROOM;
 
                 Flood2D(x + 1, y, col, i);
                 Flood2D(x - 1, y, col, i);

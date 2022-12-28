@@ -91,7 +91,7 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         instance = this;
     }
 
-    public void Init2DCallAuto(Tile[][] _gridArray2D, int _length, int _height )
+    public void Init2DCallAuto(TileOBJ[][] _gridArray2D, int _length, int _height )
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 

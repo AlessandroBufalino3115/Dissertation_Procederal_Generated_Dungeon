@@ -18,7 +18,7 @@ public class PerlinNoise : MonoBehaviour
         Instance = this;
     }
 
-    public void GenPerlinNoise2D(Tile[][] _gridArray2D) 
+    public void GenPerlinNoise2D(TileOBJ[][] _gridArray2D) 
     {
 
         for (int y = 0; y < TileVolumeGenerator.Instance.y_Height; y++)
@@ -47,7 +47,7 @@ public class PerlinNoise : MonoBehaviour
 
 
 
-    public void GenPerlinNoise3D(Tile[][][] _gridArray3D)
+    public void GenPerlinNoise3D(TileOBJ[][][] _gridArray3D)
     {
         for (int z = 0; z < TileVolumeGenerator.Instance.z_Width; z++)
         {
@@ -95,7 +95,7 @@ public class PerlinNoise : MonoBehaviour
     private void GenRiver() 
     {
         // to do at the end
-        List<Tile> allTiles = new List<Tile>();
+        List<TileOBJ> allTiles = new List<TileOBJ>();
 
         for (int y = 0; y < TileVolumeGenerator.Instance.z_Width; y++)
         {

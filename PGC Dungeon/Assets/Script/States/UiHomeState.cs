@@ -9,7 +9,7 @@ public class UiHomeState : UiBaseState
     public Vector2 scrollPosition = Vector2.zero;
 
     private int scrollX = 0;
-    private int scrollY = 0;
+   // private int scrollY = 0;
     private int scrollZ = 0;
 
     private bool scaleToggle;
@@ -29,16 +29,16 @@ public class UiHomeState : UiBaseState
 
         GUI.Box(new Rect(5, 10, 230, 650),"");
 
-        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 125);
-        GUI.Label(new Rect(140, 20, 100, 30), "X Length: "+ scrollX);
+        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 300);
+        GUI.Label(new Rect(140, 20, 100, 30), "Width: "+ scrollX);
 
         
-        scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 25);
-        GUI.Label(new Rect(140, 45, 100, 30), "Y Height: " + scrollY);
+        //scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 25);    // this should be how high the room you want them to be     and then a floor count
+        //GUI.Label(new Rect(140, 45, 100, 30), "Y Height: " + scrollY);
 
         
-        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 125);
-        GUI.Label(new Rect(140, 70, 100, 30), "Z Width: " + scrollZ);
+        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 300);
+        GUI.Label(new Rect(140, 70, 100, 30), "Height: " + scrollZ);
 
         ghostToggle = GUI.Toggle(new Rect(10, 100, 100, 30), ghostToggle, "toggle ghost");
         scaleToggle = GUI.Toggle(new Rect(10, 130, 100, 30), scaleToggle, "toggle scale");
@@ -51,11 +51,11 @@ public class UiHomeState : UiBaseState
             currentMenu.Gen2DVolume(scrollX, scrollZ, ghostToggle, scaleToggle);
         }
 
-        if (GUI.Button(new Rect(10, 200, 120, 30), "Gen TileSet 3D"))
-        {
-            currentMenu.DestroyAllTiles();
-            currentMenu.Gen3DVolume(scrollZ, scrollY,scrollX, ghostToggle, scaleToggle);
-        }
+        //if (GUI.Button(new Rect(10, 200, 120, 30), "Gen TileSet 3D"))
+        //{
+        //    currentMenu.DestroyAllTiles();
+        //    currentMenu.Gen3DVolume(scrollZ, scrollY,scrollX, ghostToggle, scaleToggle);
+        //}
 
         if (GUI.Button(new Rect(10, 240, 120, 30), "Gen Plane"))
         {
@@ -68,8 +68,6 @@ public class UiHomeState : UiBaseState
             GeneralUitlInstance.instance.SpawnMessagePrefab("this is a test spawn for the error or info message", true);
             currentMenu.DestroyAllTiles();
         }
-
-
 
         hover = GUI.tooltip;
 
@@ -92,11 +90,7 @@ public class UiHomeState : UiBaseState
             currentMenu.ChangeState(1);
         if (GUI.Button(new Rect(10, 600, 120, 30), "Diamond Square"))
             currentMenu.ChangeState(4);
-
-
-
-
-
+        // graph grammar and WFC on their own
 
 
     }

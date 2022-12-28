@@ -5,6 +5,37 @@ using UnityEngine;
 public class DrunkWalkAlgo : MonoBehaviour
 {
 
+    /*
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+
+      _______ ____    _____  ______ _      ______ _______ ______ 
+     |__   __/ __ \  |  __ \|  ____| |    |  ____|__   __|  ____|
+        | | | |  | | | |  | | |__  | |    | |__     | |  | |__   
+        | | | |  | | | |  | |  __| | |    |  __|    | |  |  __|  
+        | | | |__| | | |__| | |____| |____| |____   | |  | |____ 
+        |_|  \____/  |_____/|______|______|______|  |_|  |______|
+
+
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+
+
+
+
+
+
+
     public bool DWtype;     //false for just iter       true for actual count
 
     public int iterationNum;
@@ -22,13 +53,13 @@ public class DrunkWalkAlgo : MonoBehaviour
 
 
 
-    public void DrunkWalk2D(Tile[][] _gridArray2d) => StartCoroutine(DrunkWalk2DCor(_gridArray2d));
-    public void DrunkWalk3D(Tile[][][] _gridArray3d) => StartCoroutine(DrunkWalk3DCor(_gridArray3d));
+    public void DrunkWalk2D(TileOBJ[][] _gridArray2d) => StartCoroutine(DrunkWalk2DCor(_gridArray2d));
+    public void DrunkWalk3D(TileOBJ[][][] _gridArray3d) => StartCoroutine(DrunkWalk3DCor(_gridArray3d));
     
 
 
 
-    public IEnumerator DrunkWalk2DCor(Tile[][] _gridArray2d)
+    public IEnumerator DrunkWalk2DCor(TileOBJ[][] _gridArray2d)
     {
         WaitForSeconds wait = new WaitForSeconds(fillDelay);
         int startX = Random.Range(0, TileVolumeGenerator.Instance.x_Length);
@@ -134,7 +165,7 @@ public class DrunkWalkAlgo : MonoBehaviour
 
 
 
-    public IEnumerator DrunkWalk3DCor(Tile[][][] _gridArray3d)
+    public IEnumerator DrunkWalk3DCor(TileOBJ[][][] _gridArray3d)
     {
         WaitForSeconds wait = new WaitForSeconds(fillDelay);
         int startX = Random.Range(0, TileVolumeGenerator.Instance.x_Length);

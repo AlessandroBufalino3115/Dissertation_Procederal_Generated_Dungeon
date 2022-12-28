@@ -42,9 +42,9 @@ public class TileVolumeGenerator : MonoBehaviour
     public int acceptedRoomFailures;
 
 
-    public Tile[][][] gridArray3D = new Tile[1][][];
+    public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
 
-    public Tile[][] gridArray2D = new Tile[1][];
+    public TileOBJ[][] gridArray2D = new TileOBJ[1][];
 
 
     private void Awake()
@@ -57,16 +57,16 @@ public class TileVolumeGenerator : MonoBehaviour
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
 
-        gridArray3D = new Tile[z_Width][][];
+        gridArray3D = new TileOBJ[z_Width][][];
 
         for (int z = 0; z < gridArray3D.Length; z++)
         {
 
-            gridArray3D[z] = new Tile[y_Height][];
+            gridArray3D[z] = new TileOBJ[y_Height][];
             for (int y = 0; y < gridArray3D[z].Length; y++)
             {
 
-                gridArray3D[z][y] = new Tile[x_Length];
+                gridArray3D[z][y] = new TileOBJ[x_Length];
 
                 for (int x = 0; x < gridArray3D[z][y].Length; x++)
                 {
@@ -93,8 +93,8 @@ public class TileVolumeGenerator : MonoBehaviour
 
                     newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                    gridArray3D[z][y][x] = new Tile(newRef, x, y, z);
-                    gridArray3D[z][y][x].tileType = Tile.TileType.VOID;
+                    gridArray3D[z][y][x] = new TileOBJ(newRef, x, y, z);
+                    gridArray3D[z][y][x].tileType = TileOBJ.TileType.VOID;
 
                     blockNum++;
                 }
@@ -123,11 +123,11 @@ public class TileVolumeGenerator : MonoBehaviour
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
 
-        gridArray2D = new Tile[y_Height][];
+        gridArray2D = new TileOBJ[y_Height][];
 
         for (int y = 0; y < gridArray2D.Length; y++)
         {
-            gridArray2D[y] = new Tile[x_Length];
+            gridArray2D[y] = new TileOBJ[x_Length];
 
             for (int x = 0; x < gridArray2D[y].Length; x++)
             {
@@ -154,8 +154,8 @@ public class TileVolumeGenerator : MonoBehaviour
                 }
                 newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                gridArray2D[y][x] = new Tile(newRef, x, y);
-                gridArray2D[y][x].tileType = Tile.TileType.VOID;
+                gridArray2D[y][x] = new TileOBJ(newRef, x, y);
+                gridArray2D[y][x].tileType = TileOBJ.TileType.VOID;
 
                 blockNum++;
             }
@@ -185,9 +185,9 @@ public class TileVolumeGenerator : MonoBehaviour
             Destroy(child.gameObject);
 
 
-        gridArray3D = new Tile[1][][];
+        gridArray3D = new TileOBJ[1][][];
 
-        gridArray2D = new Tile[1][];
+        gridArray2D = new TileOBJ[1][];
 
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 
@@ -241,8 +241,8 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
 
-    public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
-    public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
+    //public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
+    //public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
 
 
 

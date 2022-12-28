@@ -5,6 +5,23 @@ using UnityEngine;
 
 
 
+/*
+  _______ ____     _____  ______ _      ______ _______ ______ 
+ |__   __/ __ \   |  __ \|  ____| |    |  ____|__   __|  ____|
+    | | | |  | |  | |  | | |__  | |    | |__     | |  | |__   
+    | | | |  | |  | |  | |  __| | |    |  __|    | |  |  __|  
+    | | | |__| |  | |__| | |____| |____| |____   | |  | |____ 
+    |_|  \____/   |_____/|______|______|______|  |_|  |______|
+                    
+
+
+
+ */
+
+
+
+
+
 // get the boundso fthe whole map
 // spawn a certain amount of objects
 
@@ -37,7 +54,7 @@ public class VoronoiDiagram : MonoBehaviour
         instance = this;
     }
 
-    public void CallVoronoiGen2D(Tile[][] _gridArray2D) 
+    public void CallVoronoiGen2D(TileOBJ[][] _gridArray2D) 
     {
         veronoiPoints2D = new List<Vector2>();
         listColor = new List<Color>();

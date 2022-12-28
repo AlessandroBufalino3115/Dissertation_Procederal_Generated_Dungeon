@@ -983,18 +983,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382115523}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04c097345040c5e44be4bd4b0d5cdd20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   changingToState: 0
+  working: 0
   emptyBlock: {fileID: 7935656221806652146, guid: c96f4d0cc7482c9408738b81053992cc, type: 3}
   CubeBlock: {fileID: 5718048433150643604, guid: 87b68b4aecd4f344fa9dd428018ad0f0, type: 3}
   Plane: {fileID: 445834603092584273, guid: 663aa1f55655fd842a4e3ceb27bc3f36, type: 3}
-  xSize: 0
+  width: 0
   ySize: 0
-  zSize: 0
+  height: 0
   dimension: 0
   plane: {fileID: 0}
 --- !u!4 &382115525
@@ -3087,8 +3088,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.6124026, y: -0.0024832485, z: 0.0017394086, w: -0.7905402}
-  m_LocalPosition: {x: 132.4308, y: 141.6783, z: 63.65439}
+  m_LocalRotation: {x: 0.4127399, y: 0.07295669, z: -0.03292904, w: 0.9073251}
+  m_LocalPosition: {x: -107.56521, y: 553.6957, z: -457.45914}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5564,7 +5565,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1565671151
 MonoBehaviour:
   m_ObjectHideFlags: 0

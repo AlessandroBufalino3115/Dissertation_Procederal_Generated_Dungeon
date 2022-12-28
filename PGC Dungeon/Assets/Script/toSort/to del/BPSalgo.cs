@@ -23,7 +23,7 @@ public class BPSalgo : MonoBehaviour
         BoundsInt initialRoom = new BoundsInt();
 
         initialRoom.min = new Vector3Int(0,0, 0);
-        initialRoom.max = new Vector3Int(initialWidth,initialHeight, 0);
+        initialRoom.max = new Vector3Int(initialWidth,0, initialHeight);
 
         BSPAlgo(initialRoom);
         Debug.Log(roomList.Count);
@@ -50,7 +50,7 @@ public class BPSalgo : MonoBehaviour
             var room = roomsQueue.Dequeue();   // take out and split this
 
             // this room can either contain a room or split  room
-            if (room.size.y >= minHeight && room.size.x >= minWidth)   // all rooms should at least be big enough
+            if (room.size.z >= minHeight && room.size.x >= minWidth)   // all rooms should at least be big enough
             {
 
                 if (Random.value < 0.5f) 
@@ -58,7 +58,7 @@ public class BPSalgo : MonoBehaviour
 
                     Debug.Log("hori first");
 
-                    if (room.size.y >= minHeight * 2 +1) 
+                    if (room.size.z >= minHeight * 2 +1) 
                     {
                         Debug.Log("in hehehehehehe");
                         SplitHori(minHeight, room, roomsQueue);
@@ -86,7 +86,7 @@ public class BPSalgo : MonoBehaviour
                     {
                         SplitVert(minWidth, room, roomsQueue);
                     }
-                    else if (room.size.y >= minHeight * 2 +1)
+                    else if (room.size.z >= minHeight * 2 +1)
                     {
                         SplitHori(minHeight, room, roomsQueue);
                     }
@@ -99,10 +99,7 @@ public class BPSalgo : MonoBehaviour
                 }
 
             }
-            else 
-            {
-                //roomList.Add(room);
-            }
+           
         }
 
 
@@ -136,14 +133,14 @@ public class BPSalgo : MonoBehaviour
 
         BoundsInt roomLeft = new BoundsInt();
 
-        roomLeft.min = new Vector3Int(room.min.x, room.min.y, 0);
-        roomLeft.max = new Vector3Int(ranPosition, room.max.y, 0);
+        roomLeft.min = new Vector3Int(room.min.x, 0, room.min.z);
+        roomLeft.max = new Vector3Int(ranPosition, 0, room.max.z);
 
 
         BoundsInt roomRight = new BoundsInt();
 
-        roomRight.min = new Vector3Int(ranPosition, room.min.y, 0);
-        roomRight.max = new Vector3Int(room.max.x, room.max.y, 0);
+        roomRight.min = new Vector3Int(ranPosition, 0, room.min.z);
+        roomRight.max = new Vector3Int(room.max.x,0, room.max.z);
 
         Debug.Log($"The size of room1 is x{roomLeft.size.x} and for the y{roomLeft.size.y}");
         Debug.Log($"The size of room2 is x{roomRight.size.x} and for the y{roomRight.size.y}");
@@ -158,8 +155,8 @@ public class BPSalgo : MonoBehaviour
 
     private void SplitHori(int minHeight, BoundsInt room, Queue<BoundsInt> roomQue)
     {
-        int minY = room.min.y;
-        int maxY = room.max.y;
+        int minY = room.min.z;
+        int maxY = room.max.z;
 
         int adjustedMinY = minY + minHeight;
         int adjustedMaxY = maxY - minHeight;
@@ -168,15 +165,14 @@ public class BPSalgo : MonoBehaviour
 
         BoundsInt roomTop = new BoundsInt();
 
-        roomTop.min = new Vector3Int(room.min.x, ranPosition, 0);
-        roomTop.max = new Vector3Int(room.max.x, room.max.y, 0);
-
+        roomTop.min = new Vector3Int(room.min.x, 0, ranPosition);
+        roomTop.max = new Vector3Int(room.max.x, 0, room.max.z);
 
 
         BoundsInt roomBot = new BoundsInt();
 
-        roomBot.min = new Vector3Int(room.min.x, room.min.y, 0);
-        roomBot.max = new Vector3Int(room.max.x, ranPosition, 0);
+        roomBot.min = new Vector3Int(room.min.x,0, room.min.z);
+        roomBot.max = new Vector3Int(room.max.x, 0, ranPosition);
 
         Debug.Log($"The size of room1 is x{roomBot.size.x} and for the y{roomBot.size.y}");
         Debug.Log($"The size of room2 is x{roomTop.size.x} and for the y{roomTop.size.y}");

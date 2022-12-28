@@ -25,18 +25,7 @@ public class DiamondSquare : MonoBehaviour
         
     }
 
-
-
-
-
-
-
-
-    public void RunDiamondSquare() 
-    {
-
-
-        /*
+    /*
 
         int maxHeight = 8;
         int minHeight = -8;
@@ -117,7 +106,18 @@ public class DiamondSquare : MonoBehaviour
             }
         }
         */
-        var grid2D = AlgosUtils.DiamondSquare(16, -16, 2,TileVolumeGenerator.Instance.gridArray2D);
+
+
+
+
+
+
+    public void RunDiamondSquare() 
+    {
+
+
+        
+         AlgosUtils.DiamondSquare(16, -16, 2,TileVolumeGenerator.Instance.gridArray2D);
 
         
         for (int y = 0; y < TileVolumeGenerator.Instance.y_Height; y++)
@@ -138,7 +138,7 @@ public class DiamondSquare : MonoBehaviour
 
                 //}
 
-                TileVolumeGenerator.Instance.gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = CalcColour(8, grid2D[y, x]);
+               // TileVolumeGenerator.Instance.gridArray2D[y][x].tileObj.GetComponent<MeshRenderer>().material.color = CalcColour(8, grid2D[y, x]);
 
             }
         }

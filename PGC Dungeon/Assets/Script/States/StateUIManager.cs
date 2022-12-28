@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class StateUIManager : MonoBehaviour
 {
+
+
+    //differnet maximas for the plane and obj
 
     UiBaseState currState;
     public UiBaseState CurrState { get { return CurrState; } }
@@ -24,28 +23,31 @@ public class StateUIManager : MonoBehaviour
     };
 
 
-    public Tile[][][] gridArray3D = new Tile[1][][];
-    public Tile[][] gridArray2D = new Tile[1][];
+    public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
+
+
+    public bool working;
+
+    public TileOBJ[][] gridArrayObj2D = new TileOBJ[1][];
+    public BasicTile[][] gridArray2D = new BasicTile[1][];
 
     [SerializeField] GameObject emptyBlock;
     [SerializeField] GameObject CubeBlock;
     [SerializeField] GameObject Plane;
 
-    public int xSize;
+    public int width;
     public int ySize;
-    public int zSize;
+    public int height;
 
     public enum Dimension 
     {
         NONE,
         TWOD,
         THREED,
-        PLANE,
-        NOT_A
+        PLANE
     }
 
     public Dimension dimension;
-
 
     public GameObject plane;
 
@@ -75,7 +77,7 @@ public class StateUIManager : MonoBehaviour
         currState.onGUI(this);
     }
 
-
+    /*
     public void Gen3DVolume(int widhtZ, int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
 
@@ -89,16 +91,16 @@ public class StateUIManager : MonoBehaviour
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
 
-        gridArray3D = new Tile[widhtZ][][];
+        gridArray3D = new TileOBJ[widhtZ][][];
 
         for (int z = 0; z < gridArray3D.Length; z++)
         {
 
-            gridArray3D[z] = new Tile[heightY][];
+            gridArray3D[z] = new TileOBJ[heightY][];
             for (int y = 0; y < gridArray3D[z].Length; y++)
             {
 
-                gridArray3D[z][y] = new Tile[lengthX];
+                gridArray3D[z][y] = new TileOBJ[lengthX];
 
                 for (int x = 0; x < gridArray3D[z][y].Length; x++)
                 {
@@ -123,8 +125,8 @@ public class StateUIManager : MonoBehaviour
 
                     newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                    gridArray3D[z][y][x] = new Tile(newRef, x, y, z);
-                    gridArray3D[z][y][x].tileType = Tile.TileType.VOID;
+                    gridArray3D[z][y][x] = new TileOBJ(newRef, x, y, z);
+                    gridArray3D[z][y][x].tileType = TileOBJ.TileType.VOID;
 
                     blockNum++;
                 }
@@ -146,26 +148,24 @@ public class StateUIManager : MonoBehaviour
         Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
 
     }
+    */
 
     public void Gen2DVolume( int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
-        xSize = lengthX;
-        zSize = heightY;
-
-
-
+        width = lengthX;
+        height = heightY;
 
         dimension = Dimension.TWOD;
         int timerStart = Environment.TickCount & Int32.MaxValue;
         int blockNum = 0;
 
-        gridArray2D = new Tile[heightY][];
+        gridArrayObj2D = new TileOBJ[heightY][];
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArrayObj2D.Length; y++)
         {
-            gridArray2D[y] = new Tile[lengthX];
+            gridArrayObj2D[y] = new TileOBJ[lengthX];
 
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArrayObj2D[y].Length; x++)
             {
                 Vector3 position = new Vector3(x, 0, y);
 
@@ -190,8 +190,8 @@ public class StateUIManager : MonoBehaviour
                 }
                 newRef.transform.name = x.ToString() + " " + y.ToString();
 
-                gridArray2D[y][x] = new Tile(newRef, x, y);
-                gridArray2D[y][x].tileType = Tile.TileType.VOID;
+                gridArrayObj2D[y][x] = new TileOBJ(newRef, x, y);
+                gridArrayObj2D[y][x].tileType = TileOBJ.TileType.VOID;
 
                 blockNum++;
             }
@@ -201,7 +201,7 @@ public class StateUIManager : MonoBehaviour
         int half_x = (lengthX - 1) / 2;
         int half_y = (heightY - 1) / 2;
 
-        gridArray2D[half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        gridArrayObj2D[half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
 
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 
@@ -217,11 +217,26 @@ public class StateUIManager : MonoBehaviour
         plane = Instantiate(Plane, this.transform);
 
 
-        xSize = width;
-        zSize = height;
+        this.width = width;
+        this.height = height;
 
 
         plane.transform.localScale = new Vector3(width, 1, height);
+
+        gridArray2D = new BasicTile[height][];
+
+        for (int y = 0; y < height; y++)
+        {
+            gridArray2D[y] = new BasicTile[width];
+
+            for (int x = 0; x < width; x++)
+            {
+                gridArray2D[y][x] = new BasicTile();
+                gridArray2D[y][x].position = new Vector3Int(x, 0, y);
+            }
+        }
+
+
         //Texture2D texture = new Texture2D(width, height);
 
 
@@ -236,14 +251,6 @@ public class StateUIManager : MonoBehaviour
         //}
         //texture.SetPixels(colourMap);
         //texture.Apply();
-
-
-
-
-
-
-
-
 
 
         //plane.GetComponent<Renderer>().sharedMaterial.mainTexture = texture;
@@ -264,9 +271,9 @@ public class StateUIManager : MonoBehaviour
         foreach (Transform child in transform)
             Destroy(child.gameObject);
 
-        gridArray3D = new Tile[1][][];
+        gridArray3D = new TileOBJ[1][][];
 
-        gridArray2D = new Tile[1][];
+        gridArrayObj2D = new TileOBJ[1][];
 
         int timerEnd = Environment.TickCount & Int32.MaxValue;
 

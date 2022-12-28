@@ -19,7 +19,7 @@ public class FindWalls : MonoBehaviour
     }
 
 
-    public void FindWalls2D(Tile[][] _gridArray2d) 
+    public void FindWalls2D(TileOBJ[][] _gridArray2d) 
     {
 
         Debug.Log("this is where it starts");
