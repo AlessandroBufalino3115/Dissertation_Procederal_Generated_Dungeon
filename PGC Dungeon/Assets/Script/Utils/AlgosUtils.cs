@@ -26,7 +26,6 @@ using Color = UnityEngine.Color;
 public static class AlgosUtils
 {
 
-
     #region A*pathFinding
 
     /// <summary>
@@ -1502,7 +1501,6 @@ public static class AlgosUtils
 
     #endregion
 
-
     #region Voronoi
 
 
@@ -1707,7 +1705,6 @@ public static class AlgosUtils
 
     #endregion
 
-
 }
 
 
@@ -1796,58 +1793,6 @@ public class Edge
 
 
 
-
-public class CAtiles
-{
-    public TileOBJ tileCA;
-
-    public bool empty;
-
-    // when empty is true means white unliving
-    // when balck means full living
-
-    public CAtiles(float perc, TileOBJ normTile)
-    {
-        var ran = Random.Range(0f, 1f);
-
-        tileCA = normTile;
-        if (ran <= perc)
-        {
-            empty = false;
-        }
-        else
-        {
-            empty = true;
-        }
-    }
-
-    public CAtiles(bool _empty, TileOBJ normTile)
-    {
-        tileCA = normTile;
-        empty = _empty;
-    }
-
-
-}
-
-public class AStar_Node
-{
-
-    public TileOBJ refToGameObj;
-    public AStar_Node parent;
-
-    public float g = 0;
-    public float f = 0;
-    public float h = 0;
-
-    public AStar_Node(TileOBJ gameobject)
-    {
-        refToGameObj = gameobject;
-    }
-
-}
-
-
 /// <summary>
 /// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
 /// </summary>
@@ -1923,3 +1868,60 @@ public class Identifier
     public TileType tileType = 0;
     public float cost = 0;
 }
+
+/// <summary>
+/// to most liely delete
+/// </summary>
+public class CAtiles
+{
+    public TileOBJ tileCA;
+
+    public bool empty;
+
+    // when empty is true means white unliving
+    // when balck means full living
+
+    public CAtiles(float perc, TileOBJ normTile)
+    {
+        var ran = Random.Range(0f, 1f);
+
+        tileCA = normTile;
+        if (ran <= perc)
+        {
+            empty = false;
+        }
+        else
+        {
+            empty = true;
+        }
+    }
+
+    public CAtiles(bool _empty, TileOBJ normTile)
+    {
+        tileCA = normTile;
+        empty = _empty;
+    }
+
+
+}
+
+/// <summary>
+///  to delete
+/// </summary>
+public class AStar_Node
+{
+
+    public TileOBJ refToGameObj;
+    public AStar_Node parent;
+
+    public float g = 0;
+    public float f = 0;
+    public float h = 0;
+
+    public AStar_Node(TileOBJ gameobject)
+    {
+        refToGameObj = gameobject;
+    }
+
+}
+
