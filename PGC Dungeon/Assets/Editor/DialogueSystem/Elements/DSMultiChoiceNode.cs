@@ -9,16 +9,19 @@ namespace DS.Elements
 {
 
     using DS.Utilities;
+    using DS.Windows;
+    using Unity.VisualScripting.YamlDotNet.Core.Tokens;
+
     public class DSMultiChoiceNode : DSNode
     {
 
 
-        public override void Initialize(Vector2 pos)
+        public override void Initialize(Vector2 pos, DSGraphView graphView)
         {
 
-            base.Initialize(pos);
+            base.Initialize(pos, graphView);
 
-
+            titleString = "\n Main Rule";
             dialogueType = DSDialogueType.MultiChoice;
 
            // Choices.Add("New choice");
@@ -29,21 +32,21 @@ namespace DS.Elements
         {
             base.Draw();
 
-            Label dialogueTextField = new Label("\n Main Rule");
+            Label dialogueText = new Label(titleString);
 
-            titleContainer.Insert(0, dialogueTextField);
-
-
-            // multi field its going to be the middle fo the ruel, needs to have 
-
-            // textfield with the index reperesenitng the tile
-
-            //4 ports for each direction
+            titleContainer.Insert(0, dialogueText);
 
 
             var textFieldIndexRule = DSElementUtility.CreateTextField(indexVal);
             textFieldIndexRule.MarkDirtyRepaint();
-            textFieldIndexRule.RegisterValueChangedCallback(evt => indexVal = evt.newValue);
+            textFieldIndexRule.RegisterValueChangedCallback(
+            evt => {
+                indexVal = CheckExists(evt.newValue);
+                titleString = allowed == true ? $"{titleString}" : $"<color=red>{titleString}</color>";
+            }) ;   //indexVal = evt.newValue
+
+
+
 
             mainContainer.Insert(1,textFieldIndexRule);
 
@@ -62,6 +65,9 @@ namespace DS.Elements
 
             RefreshExpandedState();
         }
+
+
+       
     }
 
 }

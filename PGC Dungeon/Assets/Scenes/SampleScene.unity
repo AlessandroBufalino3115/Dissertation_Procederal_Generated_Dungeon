@@ -4683,7 +4683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1344085598
 Transform:
   m_ObjectHideFlags: 0
@@ -5097,43 +5097,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ruleSet:
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 8072559000157671326, guid: c1b8e8034e73c814c90c6de1f0853c37, type: 3}
     assetIdx: 0
     allowedObjLeft: 060000000500000001000000
     allowedObjRight: 04000000030000000200000001000000
     allowedObjForward: 05000000020000000100000000000000
     allowedObjBackwards: 050000000100000000000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 919132149155446097, guid: a494cf85db0689c4d97e872d87b97b40, type: 3}
     assetIdx: 6
     allowedObjLeft: 0500000001000000
     allowedObjRight: 0500000000000000
     allowedObjForward: 0400000003000000
     allowedObjBackwards: 0400000002000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 7919663853438127959, guid: 778e1429af14c3b46bef635fd31bed5a, type: 3}
     assetIdx: 2
     allowedObjLeft: 04000000030000000200000000000000
     allowedObjRight: 01000000020000000300000004000000
     allowedObjForward: 060000000400000003000000
     allowedObjBackwards: 00000000010000000300000005000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 919132149155446097, guid: fbfc16c3f0cc25d49abac30d00ebabef, type: 3}
     assetIdx: 3
     allowedObjLeft: 05000000000000000300000004000000
     allowedObjRight: 04000000030000000200000001000000
     allowedObjForward: 020000000100000005000000
     allowedObjBackwards: 02000000030000000400000006000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 8505394300355001830, guid: 20ab04c2513ed394fad4bc3969f7d028, type: 3}
     assetIdx: 4
     allowedObjLeft: 04000000030000000200000000000000
     allowedObjRight: 04000000030000000200000001000000
     allowedObjForward: 030000000400000006000000
     allowedObjBackwards: 020000000400000006000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 919132149155446097, guid: 2062fa3a51a72c74cb75da9c80727e6f, type: 3}
     assetIdx: 5
     allowedObjLeft: 060000000500000001000000
     allowedObjRight: 060000000000000005000000
     allowedObjForward: 05000000020000000100000000000000
     allowedObjBackwards: 05000000000000000100000003000000
-  - mainAsset: {fileID: 0}
+  - mainAsset: {fileID: 5575561148174824634, guid: ae6ac486723532446b3d90776446313b, type: 3}
     assetIdx: 1
     allowedObjLeft: 04000000030000000200000000000000
     allowedObjRight: 000000000500000006000000

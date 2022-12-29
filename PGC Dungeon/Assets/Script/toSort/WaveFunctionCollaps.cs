@@ -31,8 +31,6 @@ public class WaveFunctionCollaps : MonoBehaviour
     public WFCRuleBuilder ruleBuilder;
 
 
-
-
     [SerializeField]
     public List<WFCTileRule> arrayOfModulesRules = new List<WFCTileRule>();
 
@@ -262,6 +260,14 @@ public class WaveFunctionCollaps : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            RunWFCVar();
+        }
+
+
+        /*
         if (WFCEditingMode)
         {
 
@@ -594,6 +600,7 @@ public class WaveFunctionCollaps : MonoBehaviour
                 }
             }
         }
+        */
     }
 
 
@@ -821,15 +828,10 @@ public class WaveFunctionCollaps : MonoBehaviour
     {
         WFCTile mainTile = arrayOfWFCTiles[(int)coordinate.y][(int)coordinate.x];
 
-
-
         mainTile.allowedObjRight = new List<int>();
         mainTile.allowedObjLeft = new List<int>();
         mainTile.allowedObjBackwards = new List<int>();
         mainTile.allowedObjForward = new List<int>();
-
-
-
 
         if (coordinate.x + 1 >= maxXsize)
         {
@@ -844,7 +846,6 @@ public class WaveFunctionCollaps : MonoBehaviour
             }
             else
             {
-
                 foreach (var modules in arrayOfModulesRules)
                 {
                     arrayOfWFCTiles[(int)coordinate.y][(int)coordinate.x].allowedObjRight.Add(modules.assetIdx);
@@ -897,7 +898,6 @@ public class WaveFunctionCollaps : MonoBehaviour
         }
         else
         {
-
             if (arrayOfWFCTiles[(int)coordinate.y][(int)coordinate.x - 1].solved)
             {
                 int indexOfSolvedNeighbourTile = arrayOfWFCTiles[(int)coordinate.y][(int)coordinate.x - 1].decidedIndex;
@@ -1028,18 +1028,6 @@ public class PlacedModule
     public int yCords;
 }
 
-[Serializable]
-public class WFCTileRule
-{
-    public GameObject mainAsset;
-
-    public int assetIdx;
-
-    public List<int> allowedObjLeft = new List<int>();
-    public List<int> allowedObjRight = new List<int>();
-    public List<int> allowedObjForward = new List<int>();
-    public List<int> allowedObjBackwards = new List<int>();
-}
 
 
 
@@ -1075,31 +1063,31 @@ public class WFCTile
             this.possibleAssetsIDX.Add(item);
         }
 
-        if (this.possibleAssetsIDX.Count == 0)
-        {
+        //if (this.possibleAssetsIDX.Count == 0)
+        //{
 
-            //Debug.Log($"-------------------------------------");
-            //foreach (var item in allowedObjBackwards)
-            //{
-            //    Debug.Log($"int he back {item}");
-            //}
-            //foreach (var item in allowedObjForward)
-            //{
-            //    Debug.Log($"int he forward {item}");
-            //}
-            //foreach (var item in allowedObjRight)
-            //{
-            //    Debug.Log($"int he right {item}");
-            //}
-            //foreach (var item in allowedObjLeft)
-            //{
-            //    Debug.Log($"int he left {item}");
-            //}
-            //Debug.Log($"===========================================");
+        //    //Debug.Log($"-------------------------------------");
+        //    //foreach (var item in allowedObjBackwards)
+        //    //{
+        //    //    Debug.Log($"int he back {item}");
+        //    //}
+        //    //foreach (var item in allowedObjForward)
+        //    //{
+        //    //    Debug.Log($"int he forward {item}");
+        //    //}
+        //    //foreach (var item in allowedObjRight)
+        //    //{
+        //    //    Debug.Log($"int he right {item}");
+        //    //}
+        //    //foreach (var item in allowedObjLeft)
+        //    //{
+        //    //    Debug.Log($"int he left {item}");
+        //    //}
+        //    //Debug.Log($"===========================================");
 
 
-            Debug.Log($"<color=red>there is a fatal flaw as this tile {gridPos} has no similarities</color>");
-        }
+        //    Debug.Log($"<color=red>there is a fatal flaw as this tile {gridPos} has no similarities</color>");
+        //}
     }
 
     /// <summary>

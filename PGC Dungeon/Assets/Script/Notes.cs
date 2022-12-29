@@ -15,9 +15,9 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv priority things left vvvvvvvvvvvvvvvvvvvvv
  * 
- * check why the resources folder doesnt work
+ * i have changed it so now the graph view wont be saved if unavailbale issue is that i  need something to change the colour of the node or somthign to indicate which one is the issue but the callback doesnt want to work
  * 
- * implement at least on iteration
+ * implement at least one iteration
  * 
  * try out the WFC
  * 

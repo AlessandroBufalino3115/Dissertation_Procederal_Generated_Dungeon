@@ -8,20 +8,23 @@ using UnityEngine;
 namespace DS.Elements 
 {
     using DS.Utilities;
+    using DS.Windows;
     using Enumerations;
     using System;
     using UnityEditor;
     using UnityEditor.Experimental.GraphView;
+    using UnityEngine.UI;
     using UnityEngine.UIElements;
 
     public class DSSingleChoiceNode : DSNode
     {
 
-        public override void Initialize(Vector2 pos)
+        public override void Initialize(Vector2 pos, DSGraphView graphView)
         {
 
-            base.Initialize(pos);
+            base.Initialize(pos, graphView);
 
+            titleString = "\n Sub Rule Node";
 
             dialogueType = DSDialogueType.SingleChoice;
 
@@ -32,7 +35,10 @@ namespace DS.Elements
         public override void Draw()
         {
             base.Draw();
-            Label dialogueTextField = new Label("\n Sub Rule Node");
+
+            Label dialogueTextField;
+
+                 dialogueTextField = new Label(titleString);
 
             titleContainer.Insert(0, dialogueTextField);
 
@@ -43,7 +49,7 @@ namespace DS.Elements
 
             var textFieldIndexRule = DSElementUtility.CreateTextField(indexVal);
             textFieldIndexRule.MarkDirtyRepaint();
-            textFieldIndexRule.RegisterValueChangedCallback(evt => indexVal = evt.newValue);
+            textFieldIndexRule.RegisterValueChangedCallback(evt => indexVal = CheckExists(evt.newValue));
 
             mainContainer.Insert(1, textFieldIndexRule);
            

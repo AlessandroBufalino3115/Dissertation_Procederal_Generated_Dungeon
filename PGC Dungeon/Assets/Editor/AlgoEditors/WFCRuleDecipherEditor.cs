@@ -57,12 +57,7 @@ public class WFCRuleDecipherEditor : Editor
                 int index = file.Name.IndexOf(".");
                 var manipString = file.Name.Substring(0, index);
 
-                dictNameIdx.Add(currIdx, ruleDec.tileSetFolderName + "/" + file.Name);
-
-
-                Debug.Log(dictNameIdx[currIdx]);
-
-
+                dictNameIdx.Add(currIdx, ruleDec.tileSetFolderName + "/" + manipString);
 
                 currIdx++;
             }
@@ -93,6 +88,7 @@ public class WFCRuleDecipherEditor : Editor
 
                     if (!present) 
                     {
+                        Debug.Log(dictNameIdx[idx]);
                         ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx , mainAsset = Resources.Load(dictNameIdx[idx]) as GameObject });
                     }
                 }
@@ -178,10 +174,6 @@ public class WFCRuleDecipherEditor : Editor
                 }
             }
         }
-
-
-
-
     }
 
 

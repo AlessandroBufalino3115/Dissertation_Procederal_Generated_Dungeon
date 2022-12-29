@@ -33,6 +33,7 @@ namespace DS.Windows
         private GraphViewDataCont graphViewCont;
 
         private DSInfoNodeNode ruleNode;
+        public IDictionary<int,string> ruleDict = new Dictionary<int,string>();
 
 
         public DSGraphView( DSEditorWindow dSEditorWindow) 
@@ -101,6 +102,8 @@ namespace DS.Windows
         public void RefreshRules(string fileName)
         {
 
+            ruleDict.Clear();
+
             var nodes = this.nodes.ToList();
             bool respawn = true;
 
@@ -152,6 +155,9 @@ namespace DS.Windows
                 manipString = manipString.Replace("Variant", "");
 
                 fileNames.Add(manipString);
+
+                ruleDict.Add(fileNames.Count - 1, manipString);
+
             }
 
             AddRuleNode(fileNames);
@@ -239,7 +245,7 @@ namespace DS.Windows
 
             DSNode node = (DSNode)Activator.CreateInstance(nodeType);
 
-            node.Initialize(pos);
+            node.Initialize(pos,this);
             node.Draw();
 
             return node;
@@ -253,7 +259,7 @@ namespace DS.Windows
 
             DSNode node = (DSNode)Activator.CreateInstance(nodeType);
 
-            node.Initialize(pos);
+            node.Initialize(pos,this);
             node.indexVal = indexVal;
             node.nodeGuid = Guid;
             
@@ -412,6 +418,7 @@ namespace DS.Windows
             if (!edges.Any()) return;
 
 
+
             var GVcont = ScriptableObject.CreateInstance<GraphViewDataCont>();
 
 
@@ -426,17 +433,27 @@ namespace DS.Windows
 
             }
 
-
+            bool save = true;
 
             foreach (var GVnode in nodes)
             {
                 DSNode iterNode = GVnode as DSNode;
 
                 if (iterNode.dialogueType == DSDialogueType.InfoNode)  { continue; }
-
+                if (iterNode.allowed == false) 
+                {
+                    save  =false;
+                    EditorUtility.DisplayDialog("Inavlid Index Given", "lase ensure all the index are within range", "OK!");
+                    break;
+                }
                 GVcont.nodeData.Add(new NodeData() { position = iterNode.GetPosition().position,     nodeGuid = iterNode.nodeGuid  ,  dialogueType = iterNode.dialogueType,    IndexTile = iterNode.indexVal          });
             }
 
+
+            if (save == false) 
+            {
+                return;
+            }
 
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))

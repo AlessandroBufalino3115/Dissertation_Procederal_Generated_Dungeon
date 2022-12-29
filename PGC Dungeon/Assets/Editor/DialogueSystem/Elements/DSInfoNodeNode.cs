@@ -1,5 +1,6 @@
 using DS.Enumerations;
 using DS.Utilities;
+using DS.Windows;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -12,10 +13,10 @@ namespace DS.Elements
     public class DSInfoNodeNode : DSNode
     {
 
-        public override void Initialize(Vector2 pos)
+        public override void Initialize(Vector2 pos, DSGraphView graphView)
         {
 
-            base.Initialize(pos);
+            base.Initialize(pos, graphView);
 
             dialogueType = DSDialogueType.InfoNode;
         }
