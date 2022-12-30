@@ -10,6 +10,8 @@ public class WFCRuleDecipher : MonoBehaviour
 
     [SerializeField]
     public List<WFCTileRule> ruleSet = new List<WFCTileRule>();
+
+    public GameObject[] tileSet = new GameObject[0];
     public string ruleSetFolderName = "";
     public string tileSetFolderName = "";
 

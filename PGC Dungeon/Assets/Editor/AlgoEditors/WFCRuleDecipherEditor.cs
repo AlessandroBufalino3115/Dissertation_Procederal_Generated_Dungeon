@@ -68,6 +68,7 @@ public class WFCRuleDecipherEditor : Editor
 
             var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFolderName);
 
+
             foreach (var node in graphViewCont.nodeData)   // this creates all the rules 
             {
                 if (node.dialogueType == DS.Enumerations.DSDialogueType.MultiChoice) 
@@ -90,6 +91,7 @@ public class WFCRuleDecipherEditor : Editor
                     {
                         Debug.Log(dictNameIdx[idx]);
                         ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx , mainAsset = Resources.Load(dictNameIdx[idx]) as GameObject });
+                        //ruleDec.tileSet.Add(Resources.Load(dictNameIdx[idx]) as GameObject);
                     }
                 }
             }
@@ -122,6 +124,7 @@ public class WFCRuleDecipherEditor : Editor
                     {
                         Debug.Log(outputNode.IndexTile);
                         int idxToAdd = int.Parse(outputNode.IndexTile);
+
 
                         switch (edge.PortName)
                         {
@@ -172,6 +175,17 @@ public class WFCRuleDecipherEditor : Editor
                     if (added) { break; }
 
                 }
+
+                ruleDec.tileSet = new GameObject[ruleDec.ruleSet.Count];
+
+
+                foreach (var rule in ruleDec.ruleSet)
+                {
+                    ruleDec.tileSet[rule.assetIdx] = rule.mainAsset;
+                }
+
+
+
             }
         }
     }

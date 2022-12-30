@@ -1,0 +1,737 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: NewRuleSet
+  m_EditorClassIdentifier: Assembly-CSharp-Editor:DS.Windows:GraphViewDataCont
+  nodeData:
+  - position: {x: 328, y: 375}
+    nodeGuid: ea394f6744200c8489708705aba01477
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 149, y: 375}
+    nodeGuid: 8526e72fde6bad84d9235fab786e5b8e
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: -25, y: 375}
+    nodeGuid: 4043d7e28fe66d44fbfccc412b392db7
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 542, y: 536}
+    nodeGuid: f6597c59eea8fd243970a479b4443278
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 728, y: 356}
+    nodeGuid: 0e34686c1fd8529468eed82e4038a945
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 916, y: 356}
+    nodeGuid: 5cbd2860306fb134bb6474ce445ad481
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 1095, y: 356}
+    nodeGuid: cf38de0873cc3104fb1c544b5ccfb69e
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 542, y: -34}
+    nodeGuid: 446c040ac8fe65e4b81cbea1e55403d5
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 542, y: 786}
+    nodeGuid: 40528778ec907bf42913671127a8c4b1
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 542, y: 908}
+    nodeGuid: 9e08f4747cdd32441a873b9eb9366766
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: -188, y: 375}
+    nodeGuid: 846684ee72f9abe4188d897dbc1e5658
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 1251, y: 356}
+    nodeGuid: 4eb5206b3552fe84592f47abb3a8cc3f
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 542, y: 219}
+    nodeGuid: 653ba17e78ed06741acbf046917559e9
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 542, y: 87}
+    nodeGuid: 41732b707e8f42944a78fed6d497cb6d
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 2269, y: 328}
+    nodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+    IndexTile: 1
+    dialogueType: 1
+  - position: {x: 2254, y: 539}
+    nodeGuid: cd19b1dacef84c3428be4c8b941e4f06
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 2254, y: 768}
+    nodeGuid: 8f776894e00312346a962bc1353b49ec
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 2407, y: 371}
+    nodeGuid: ebbfee88b39b3724aa929b7fef3242e1
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 2101, y: 371}
+    nodeGuid: 74906070a0592d54d9faef7a349af9d5
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 2575, y: 371}
+    nodeGuid: fd31a1235238fe842b192b511ea7854a
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 1944, y: 371}
+    nodeGuid: d4346c34e78cbb14d832490be7ccbb22
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 1771, y: 371}
+    nodeGuid: 4debc066633a00b4ebe09ae4b6024a94
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 2254, y: -78}
+    nodeGuid: 3b425335ef82cb947aac3cdbbc82f20f
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 2254, y: 889}
+    nodeGuid: d276c62dc7874c74abedc09ae58b0822
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 2254, y: -197}
+    nodeGuid: fdf6adbfa18f6ea4a8df7dbe992f14e8
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 2737, y: 371}
+    nodeGuid: 8adbc72946d7f2848a1d094d3607f1da
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 2895, y: 371}
+    nodeGuid: 6e4a10ea57c52794ebbe2e569248da3b
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 2254, y: 653}
+    nodeGuid: 8d8379656e82e7c4ea646a807f235246
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 2254, y: 164}
+    nodeGuid: ab10136ff37cf8c4f933680ea7ffd425
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 3840, y: 354}
+    nodeGuid: 34b87c1816c30a54eb6eb9455668c61b
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 3673, y: 354}
+    nodeGuid: 4ac2bfa045a62f34794d68040ceb892e
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 3505, y: 354}
+    nodeGuid: f854ddd15e1c97448b867685cbc0551b
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 3343, y: 354}
+    nodeGuid: 0556f2f350c4d7646ab48f5f66f39007
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 3994, y: 527}
+    nodeGuid: 1c1186d0aff2175408653582b5c92572
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 3994, y: 643}
+    nodeGuid: 132650bc9d6b0ba4ba6886f0b5a6a90d
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 3994, y: 763}
+    nodeGuid: db1ff9bbd3913364f8a5199ff501e31e
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 4168, y: 354}
+    nodeGuid: 74da6287815facc4e95c8c5de7445538
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 4530, y: 354}
+    nodeGuid: bf2f9caf2dbaee74b89f42c520574cd3
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 4021, y: 178}
+    nodeGuid: f301b001d04ab1e45b61a0230f96559d
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 4021, y: 320}
+    nodeGuid: 53a0d986746418943b26b95404bc8ed9
+    IndexTile: 2
+    dialogueType: 1
+  - position: {x: 4348, y: 354}
+    nodeGuid: 3a48855b80c81c24aad489be8cd9a3ea
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 4021, y: 58}
+    nodeGuid: 07d85970e37d04346a79b40bc7aa823f
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 4021, y: -57}
+    nodeGuid: 66d252dd35cc63c458f7aa38b24ef34b
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 4021, y: -175}
+    nodeGuid: 0f40180900a2637489e4a8db0baa1833
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 3994, y: 888}
+    nodeGuid: fb7b69848ba0a6b488a1111adfec1aef
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 5641, y: 321}
+    nodeGuid: 170743cc13867994fb9f1acb2b3e007d
+    IndexTile: 3
+    dialogueType: 1
+  - position: {x: 5471, y: 354}
+    nodeGuid: 0190580d28b32d64e9bacdcbda11ad0c
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 5300, y: 354}
+    nodeGuid: 92990141530c1ff47a502de926075cac
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 5118, y: 354}
+    nodeGuid: f1d738dea1110c8449df82dc849f1f59
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 5641, y: 672}
+    nodeGuid: 03f1c02bf65b55844a41cda9dcedea44
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 5802, y: 354}
+    nodeGuid: 9f57ee56a106b8d4ca9124cd6f7fb1db
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 5970, y: 354}
+    nodeGuid: 36e1f651bbd92cf4685e5037b59ee754
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 6122, y: 354}
+    nodeGuid: 06fb6f99027359b4b977ced87915f88c
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 5641, y: 66}
+    nodeGuid: e24df31205eb0a447b98227de6f9e63f
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 5641, y: -30}
+    nodeGuid: 40d47f257f638044cbc546edfc570fa8
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 6252, y: 354}
+    nodeGuid: 9a5b8ffcc88d201419e8bda2a1416862
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 5641, y: -139}
+    nodeGuid: fc19acf1df50b5848b480c3012727526
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 5641, y: 551}
+    nodeGuid: e6822696ba9465e4da9904a0b7841080
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 4988, y: 354}
+    nodeGuid: e4bff3072316ef842815e34e7037ec01
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 5641, y: 193}
+    nodeGuid: 687390550d22a1b4ca88bdec854fa12e
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 7200, y: 354}
+    nodeGuid: c5e595a6d0764584e850b9f7aac8be0d
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 7028, y: 354}
+    nodeGuid: ba643de27c59b3e4eb6a67805a59d50a
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 7551, y: 530}
+    nodeGuid: 929d1279a3cd23a4a848338264df9d57
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 7551, y: 646}
+    nodeGuid: a2f02228e5cb11147b694a4163bacf05
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 7716, y: 354}
+    nodeGuid: e91eab2e490e8c341a56046cb51507e2
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 7872, y: 354}
+    nodeGuid: 9f31cb862e86b86438c3b3a6ac80a3e0
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 7538, y: 52}
+    nodeGuid: 6ab5de88b50b8944b94eab6e429ae3b0
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 7538, y: -71}
+    nodeGuid: 05d681ac5e6fc26429fcb8490f23cdf5
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 7551, y: 755}
+    nodeGuid: 716dd6665f33a8e4eb993735154b394d
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 7538, y: -190}
+    nodeGuid: acd665340ffd57f49ab4bbb32dcba142
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 7538, y: 174}
+    nodeGuid: eb9b0830c0e298843b0d717f86e6632b
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 7361, y: 354}
+    nodeGuid: 28f06ef473395eb46bd6ac2ce1d6e4d9
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 9008, y: 354}
+    nodeGuid: e7aaf85043eaac645afcc273cf9a2351
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 9186, y: 523}
+    nodeGuid: ad56b10f91a94164d8e365c35f2ee0f7
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 9186, y: 645}
+    nodeGuid: ff5cd69aebc1e3e4aa730a7c2788c069
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 9332, y: 354}
+    nodeGuid: d30cad137a9b85841b49c5bd1cfb638e
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 9490, y: 354}
+    nodeGuid: 7eb3cf92ae22ec34c808ae856e2f5d4b
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 9654, y: 354}
+    nodeGuid: 9207213455a977e418b570a628f57a95
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 8551, y: 354}
+    nodeGuid: 9e36605f0db735e4ab86d829f7e6e606
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 9816, y: 354}
+    nodeGuid: 7483610f702d9294eacd27f91a3ecdb1
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 9186, y: 204}
+    nodeGuid: 61bf457eda7445b47bf13b4201fcf5f4
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 9186, y: -35}
+    nodeGuid: 0ec3e4e5cb98e3d4e8fb7eae87050c6e
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 9186, y: 322}
+    nodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+    IndexTile: 5
+    dialogueType: 1
+  - position: {x: 9186, y: 87}
+    nodeGuid: 7177535dff186ad438a2b83cedcca22d
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 9186, y: 741}
+    nodeGuid: 96bb669a2db6b1443bf767a57a99c98a
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 8852, y: 354}
+    nodeGuid: 970829c860bbe1344a0bd7d21931e84a
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 8697, y: 354}
+    nodeGuid: 06aea3d0dcf7ad44c83301b620f81f01
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 10882, y: 312}
+    nodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+    IndexTile: 6
+    dialogueType: 1
+  - position: {x: 10656, y: 354}
+    nodeGuid: 144fcd5545650d24bbc1072423803c75
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 10855, y: 516}
+    nodeGuid: 471c02d31f78f1f4fa7f2d9f91cb39a2
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 11057, y: 354}
+    nodeGuid: 6366d127d30081a41a72eb37bddf2403
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 10340, y: 354}
+    nodeGuid: 2eb9178e7d6cd3c4d8271b2db23f2063
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 10855, y: 193}
+    nodeGuid: 53cd6ecded22ff34499046b337d85dda
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 10855, y: 67}
+    nodeGuid: 29e2208fc3870bb4bb5ae2866d371ce7
+    IndexTile: 3
+    dialogueType: 0
+  - position: {x: 10855, y: -48}
+    nodeGuid: f4b8b4d9394a127428dc709414278580
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 10855, y: 754}
+    nodeGuid: 9eb5fc7991948aa48bde640398ce81e9
+    IndexTile: 0
+    dialogueType: 0
+  - position: {x: 11364, y: 354}
+    nodeGuid: 3a65c392881724c46aa55bcfd0b7a1f7
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 10855, y: 635}
+    nodeGuid: caf45314246d97e41801898fe4b37e5c
+    IndexTile: 5
+    dialogueType: 0
+  - position: {x: 10503, y: 354}
+    nodeGuid: 7fff294c7f2724b4389bb1a0849e16b6
+    IndexTile: 4
+    dialogueType: 0
+  - position: {x: 11219, y: 354}
+    nodeGuid: 0a95e9a9dd8e086458007fddbbab0108
+    IndexTile: 1
+    dialogueType: 0
+  - position: {x: 8024, y: 366}
+    nodeGuid: 808f24e6aa2c7c1498a8d575d4f6b64a
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 2254, y: 44}
+    nodeGuid: d820f71f2b82fc041b563718f8ae97f8
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 542, y: 664}
+    nodeGuid: fcc71babce1c4bb4e8a03bf02f066f5a
+    IndexTile: 2
+    dialogueType: 0
+  - position: {x: 7565, y: 318}
+    nodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+    IndexTile: 4
+    dialogueType: 1
+  - position: {x: 5641, y: 784}
+    nodeGuid: 6cafbd8742e6ff8458c52879666a5cc8
+    IndexTile: 6
+    dialogueType: 0
+  - position: {x: 553, y: 337}
+    nodeGuid: 27f47b9dc62913e4581a89c1036514b9
+    IndexTile: 0
+    dialogueType: 1
+  nodeLinkData:
+  - BaseNodeGuid: 144fcd5545650d24bbc1072423803c75
+    PortName: Left Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 7fff294c7f2724b4389bb1a0849e16b6
+    PortName: Left Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 2eb9178e7d6cd3c4d8271b2db23f2063
+    PortName: Left Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 53cd6ecded22ff34499046b337d85dda
+    PortName: Up Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 29e2208fc3870bb4bb5ae2866d371ce7
+    PortName: Up Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: f4b8b4d9394a127428dc709414278580
+    PortName: Up Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 6366d127d30081a41a72eb37bddf2403
+    PortName: Right Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 0a95e9a9dd8e086458007fddbbab0108
+    PortName: Right Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 3a65c392881724c46aa55bcfd0b7a1f7
+    PortName: Right Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 471c02d31f78f1f4fa7f2d9f91cb39a2
+    PortName: Down Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: caf45314246d97e41801898fe4b37e5c
+    PortName: Down Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: 9eb5fc7991948aa48bde640398ce81e9
+    PortName: Down Side
+    TargetNodeGuid: 554477036dba5e74bb8c51a9ebf28e77
+  - BaseNodeGuid: d30cad137a9b85841b49c5bd1cfb638e
+    PortName: Right Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 7eb3cf92ae22ec34c808ae856e2f5d4b
+    PortName: Right Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 9207213455a977e418b570a628f57a95
+    PortName: Right Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 7483610f702d9294eacd27f91a3ecdb1
+    PortName: Right Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 61bf457eda7445b47bf13b4201fcf5f4
+    PortName: Up Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 7177535dff186ad438a2b83cedcca22d
+    PortName: Up Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 0ec3e4e5cb98e3d4e8fb7eae87050c6e
+    PortName: Up Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: e7aaf85043eaac645afcc273cf9a2351
+    PortName: Left Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 970829c860bbe1344a0bd7d21931e84a
+    PortName: Left Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 06aea3d0dcf7ad44c83301b620f81f01
+    PortName: Left Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 9e36605f0db735e4ab86d829f7e6e606
+    PortName: Left Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: ad56b10f91a94164d8e365c35f2ee0f7
+    PortName: Down Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: ff5cd69aebc1e3e4aa730a7c2788c069
+    PortName: Down Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 96bb669a2db6b1443bf767a57a99c98a
+    PortName: Down Side
+    TargetNodeGuid: a67ee34eb1396f04ebc3c41e18d2ee3a
+  - BaseNodeGuid: 929d1279a3cd23a4a848338264df9d57
+    PortName: Down Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: a2f02228e5cb11147b694a4163bacf05
+    PortName: Down Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 716dd6665f33a8e4eb993735154b394d
+    PortName: Down Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: e91eab2e490e8c341a56046cb51507e2
+    PortName: Right Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 9f31cb862e86b86438c3b3a6ac80a3e0
+    PortName: Right Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 808f24e6aa2c7c1498a8d575d4f6b64a
+    PortName: Right Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 28f06ef473395eb46bd6ac2ce1d6e4d9
+    PortName: Left Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: c5e595a6d0764584e850b9f7aac8be0d
+    PortName: Left Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: ba643de27c59b3e4eb6a67805a59d50a
+    PortName: Left Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: eb9b0830c0e298843b0d717f86e6632b
+    PortName: Up Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 6ab5de88b50b8944b94eab6e429ae3b0
+    PortName: Up Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: 05d681ac5e6fc26429fcb8490f23cdf5
+    PortName: Up Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: acd665340ffd57f49ab4bbb32dcba142
+    PortName: Up Side
+    TargetNodeGuid: abc719ff9ed6e7241bb9dbfe62deb4da
+  - BaseNodeGuid: e6822696ba9465e4da9904a0b7841080
+    PortName: Down Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 6cafbd8742e6ff8458c52879666a5cc8
+    PortName: Down Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 03f1c02bf65b55844a41cda9dcedea44
+    PortName: Down Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 9f57ee56a106b8d4ca9124cd6f7fb1db
+    PortName: Right Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 36e1f651bbd92cf4685e5037b59ee754
+    PortName: Right Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 0190580d28b32d64e9bacdcbda11ad0c
+    PortName: Left Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 92990141530c1ff47a502de926075cac
+    PortName: Left Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: f1d738dea1110c8449df82dc849f1f59
+    PortName: Left Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: e4bff3072316ef842815e34e7037ec01
+    PortName: Left Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 687390550d22a1b4ca88bdec854fa12e
+    PortName: Up Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: e24df31205eb0a447b98227de6f9e63f
+    PortName: Up Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 40d47f257f638044cbc546edfc570fa8
+    PortName: Up Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: fc19acf1df50b5848b480c3012727526
+    PortName: Up Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 06fb6f99027359b4b977ced87915f88c
+    PortName: Right Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 9a5b8ffcc88d201419e8bda2a1416862
+    PortName: Right Side
+    TargetNodeGuid: 170743cc13867994fb9f1acb2b3e007d
+  - BaseNodeGuid: 1c1186d0aff2175408653582b5c92572
+    PortName: Down Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 132650bc9d6b0ba4ba6886f0b5a6a90d
+    PortName: Down Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: db1ff9bbd3913364f8a5199ff501e31e
+    PortName: Down Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: fb7b69848ba0a6b488a1111adfec1aef
+    PortName: Down Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: f301b001d04ab1e45b61a0230f96559d
+    PortName: Up Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 07d85970e37d04346a79b40bc7aa823f
+    PortName: Up Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 66d252dd35cc63c458f7aa38b24ef34b
+    PortName: Up Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 0f40180900a2637489e4a8db0baa1833
+    PortName: Up Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 74da6287815facc4e95c8c5de7445538
+    PortName: Right Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 3a48855b80c81c24aad489be8cd9a3ea
+    PortName: Right Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: bf2f9caf2dbaee74b89f42c520574cd3
+    PortName: Right Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 34b87c1816c30a54eb6eb9455668c61b
+    PortName: Left Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 4ac2bfa045a62f34794d68040ceb892e
+    PortName: Left Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: f854ddd15e1c97448b867685cbc0551b
+    PortName: Left Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: 0556f2f350c4d7646ab48f5f66f39007
+    PortName: Left Side
+    TargetNodeGuid: 53a0d986746418943b26b95404bc8ed9
+  - BaseNodeGuid: d276c62dc7874c74abedc09ae58b0822
+    PortName: Down Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 8f776894e00312346a962bc1353b49ec
+    PortName: Down Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 8d8379656e82e7c4ea646a807f235246
+    PortName: Down Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: cd19b1dacef84c3428be4c8b941e4f06
+    PortName: Down Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: ab10136ff37cf8c4f933680ea7ffd425
+    PortName: Up Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: d820f71f2b82fc041b563718f8ae97f8
+    PortName: Up Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 3b425335ef82cb947aac3cdbbc82f20f
+    PortName: Up Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: fdf6adbfa18f6ea4a8df7dbe992f14e8
+    PortName: Up Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 74906070a0592d54d9faef7a349af9d5
+    PortName: Left Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: d4346c34e78cbb14d832490be7ccbb22
+    PortName: Left Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 4debc066633a00b4ebe09ae4b6024a94
+    PortName: Left Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: ebbfee88b39b3724aa929b7fef3242e1
+    PortName: Right Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: fd31a1235238fe842b192b511ea7854a
+    PortName: Right Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 8adbc72946d7f2848a1d094d3607f1da
+    PortName: Right Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 6e4a10ea57c52794ebbe2e569248da3b
+    PortName: Right Side
+    TargetNodeGuid: 16f8a474b43ea9c43a4ba28405b18031
+  - BaseNodeGuid: 0e34686c1fd8529468eed82e4038a945
+    PortName: Right Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 5cbd2860306fb134bb6474ce445ad481
+    PortName: Right Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: cf38de0873cc3104fb1c544b5ccfb69e
+    PortName: Right Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 4eb5206b3552fe84592f47abb3a8cc3f
+    PortName: Right Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: ea394f6744200c8489708705aba01477
+    PortName: Left Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 8526e72fde6bad84d9235fab786e5b8e
+    PortName: Left Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 4043d7e28fe66d44fbfccc412b392db7
+    PortName: Left Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 846684ee72f9abe4188d897dbc1e5658
+    PortName: Left Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 653ba17e78ed06741acbf046917559e9
+    PortName: Up Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 41732b707e8f42944a78fed6d497cb6d
+    PortName: Up Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 446c040ac8fe65e4b81cbea1e55403d5
+    PortName: Up Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: f6597c59eea8fd243970a479b4443278
+    PortName: Down Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: fcc71babce1c4bb4e8a03bf02f066f5a
+    PortName: Down Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 40528778ec907bf42913671127a8c4b1
+    PortName: Down Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9
+  - BaseNodeGuid: 9e08f4747cdd32441a873b9eb9366766
+    PortName: Down Side
+    TargetNodeGuid: 27f47b9dc62913e4581a89c1036514b9

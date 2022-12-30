@@ -81,8 +81,9 @@ namespace DS.Windows
             this.AddManipulator(new RectangleSelector());
 
             this.AddManipulator(CreateGroupContextualMenu());
-
         }
+
+
         private void AddGridBackground()
         {
             GridBackground gridBackground = new GridBackground();
