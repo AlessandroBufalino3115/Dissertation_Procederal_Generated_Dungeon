@@ -4678,6 +4678,7 @@ GameObject:
   - component: {fileID: 1344085617}
   - component: {fileID: 1344085618}
   - component: {fileID: 1344085619}
+  - component: {fileID: 1344085620}
   m_Layer: 0
   m_Name: TileGenerator
   m_TagString: MainCamera
@@ -4756,13 +4757,11 @@ MonoBehaviour:
   ListToSee:
   - key: 97
     val: ab
-  - key: 98
-    val: b
   axium: a
-  proposedRuleName: b
-  proposedAction: b
+  proposedRuleName: a
+  proposedAction: ab
   iterations: 2
-  solution: a
+  solution: abab
 --- !u!114 &1344085605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5157,7 +5156,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344085597}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27d126209e18e67499d5cccb6e07e9c7, type: 3}
   m_Name: 
@@ -5166,6 +5165,25 @@ MonoBehaviour:
   ySize: 40
   outskirtsCheck: 1
   indexOutskirts: 6
+  run: 0
+--- !u!114 &1344085620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344085597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c541db9e24ee354eb3d34d27a3e71c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axium: A
+  iterations: 2
+  points: []
+  head: {fileID: 1996485358}
+  ruleString: []
+  endingWord: 
   run: 0
 --- !u!1 &1376098204
 GameObject:
@@ -6527,6 +6545,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1996485358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1996485359}
+  m_Layer: 0
+  m_Name: head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1996485359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996485358}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 29.884975, y: 4.6416903, z: 8.008723}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2018307794
 GameObject:

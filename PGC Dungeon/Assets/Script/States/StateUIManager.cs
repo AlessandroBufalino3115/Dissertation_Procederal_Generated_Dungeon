@@ -221,7 +221,7 @@ public class StateUIManager : MonoBehaviour
         this.height = height;
 
 
-        plane.transform.localScale = new Vector3(width, 1, height);
+        plane.transform.localScale = new Vector3(width/4, 1, height/4);
 
         gridArray2D = new BasicTile[height][];
 

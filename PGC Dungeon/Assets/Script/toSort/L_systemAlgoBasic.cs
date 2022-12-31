@@ -17,6 +17,20 @@ public class KeyValuePair
 
 
 
+/*
+ * https://gamedev.stackexchange.com/questions/18799/what-is-a-good-algorithm-for-fractal-based-procedural-city-layout
+ *
+ * https://gamedev.stackexchange.com/questions/86234/using-l-systems-to-procedurally-generate-cities
+ * 
+ * 
+ * 
+ * adding saving
+ */
+
+
+
+
+
 public class L_systemAlgoBasic : MonoBehaviour
 {
 
@@ -104,20 +118,18 @@ public class L_systemAlgoBasic : MonoBehaviour
         solution = axium;
 
 
+        string presolution = "";
+
         for (int i = 0; i < iterations; i++)
         {
-            string presolution = "";
             for (int z = 0; z < solution.Length; z++)
             {
-                presolution += rulesDict[(char)solution[z]];
+                if (rulesDict.ContainsKey((char)solution[z]))
+                    presolution += rulesDict[(char)solution[z]];
             }
-
-            solution = presolution;
-            
+            solution += presolution;
 
         }
-
-
         Debug.Log($"<color=green>{solution}</color>");
 
     }
@@ -144,6 +156,8 @@ public class InspectorEditing : Editor
         if (GUILayout.Button("add a Rule")) 
         {
             newRef.AddRule();
+
+            newRef.PrintDict();
         }
 
         if (GUILayout.Button("run algo"))
@@ -153,6 +167,7 @@ public class InspectorEditing : Editor
 
         if (GUILayout.Button("print rules"))
         {
+
             newRef.PrintDict();
         }
     }

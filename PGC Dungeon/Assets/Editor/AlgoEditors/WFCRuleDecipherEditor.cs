@@ -10,18 +10,7 @@ using System.IO;
 public class WFCRuleDecipherEditor : Editor
 {
 
-    //the saving and loading al of that works fine
-
-    // the issues are the resources folde risnt getting loaded
-    // need a quick way to insta some of this shits 
-    //need a space on top of the bar
-    
-
-
-    // maybes:
-    //maybe find a way to show the tile
-    //maybe 
-
+   
 
 
 
