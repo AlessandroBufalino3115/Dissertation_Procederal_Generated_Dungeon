@@ -17,9 +17,10 @@
  * 
  * i have changed it so now the graph view wont be saved if unavailbale issue is that i  need something to change the colour of the node or somthign to indicate which one is the issue but the callback doesnt want to work
  * 
+ * 
+ * 
  * implement at least one iteration
  * 
- * try out the WFC
  * 
  * fix the l-system and start to have an idea of what to actually do with it
  * 
@@ -31,11 +32,11 @@
  *      the plane seems to generate 90 degrees out of syn or maybe its othe objs?
  * 
  * 
- * 
+ *      there is an issue in how the WFC sets the indexes on load
  * 
  *    go into th other pathfinding ones
  *      
- *    for the reutnr and all the inputs being a bit meh, for the returns instead of doing a specific way do a generalised codpy of the thing similar to how sqauredimaond returns  a list of float in a diff array * 
+ *    for the return and all the inputs being a bit meh, for the returns instead of doing a specific way do a generalised codpy of the thing similar to how sqauredimaond returns  a list of float in a diff array * 
  *        
  *    
  *    worm/river gen same thing   in the perlinnois.cs

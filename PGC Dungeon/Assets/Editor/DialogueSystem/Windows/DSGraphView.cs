@@ -48,10 +48,23 @@ namespace DS.Windows
             AddGridBackground();
 
 
+            AddMiniMap();
+
             AddStyles();
         }
 
+        private void AddMiniMap() 
+        {
+            MiniMap miniMap = new MiniMap()
+            {
+                anchored = true,
+            };
 
+            miniMap.SetPosition(new Rect(15, 50, 200, 100));
+
+            this.Add(miniMap);
+
+        }
 
         private void AddSearchWindow() 
         {
