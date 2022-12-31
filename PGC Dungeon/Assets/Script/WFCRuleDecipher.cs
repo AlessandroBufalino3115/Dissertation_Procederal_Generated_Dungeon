@@ -38,8 +38,8 @@ public class WFCTileRule
 
     public List<int> allowedObjLeft = new List<int>();
     public List<int> allowedObjRight = new List<int>();
-    public List<int> allowedObjForward = new List<int>();
-    public List<int> allowedObjBackwards = new List<int>();
+    public List<int> allowedObjAbove = new List<int>();
+    public List<int> allowedObjBelow = new List<int>();
 }
 
 

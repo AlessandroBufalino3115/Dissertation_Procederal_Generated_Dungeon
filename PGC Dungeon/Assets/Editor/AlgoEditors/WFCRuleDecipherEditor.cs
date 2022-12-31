@@ -69,6 +69,7 @@ public class WFCRuleDecipherEditor : Editor
             var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFolderName);
 
 
+
             foreach (var node in graphViewCont.nodeData)   // this creates all the rules 
             {
                 if (node.dialogueType == DS.Enumerations.DSDialogueType.MultiChoice) 
@@ -91,7 +92,6 @@ public class WFCRuleDecipherEditor : Editor
                     {
                         Debug.Log(dictNameIdx[idx]);
                         ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx , mainAsset = Resources.Load(dictNameIdx[idx]) as GameObject });
-                        //ruleDec.tileSet.Add(Resources.Load(dictNameIdx[idx]) as GameObject);
                     }
                 }
             }
@@ -122,9 +122,7 @@ public class WFCRuleDecipherEditor : Editor
                     bool added = false;
                     if (rule.assetIdx == int.Parse(inputNode.IndexTile)) 
                     {
-                        Debug.Log(outputNode.IndexTile);
                         int idxToAdd = int.Parse(outputNode.IndexTile);
-
 
                         switch (edge.PortName)
                         {
@@ -141,9 +139,9 @@ public class WFCRuleDecipherEditor : Editor
                             case "Up Side":
 
 
-                                if (!rule.allowedObjForward.Contains(idxToAdd))
+                                if (!rule.allowedObjAbove.Contains(idxToAdd))
                                 {
-                                    rule.allowedObjForward.Add(idxToAdd);
+                                    rule.allowedObjAbove.Add(idxToAdd);
                                 }
                                 break ;
 
@@ -158,9 +156,9 @@ public class WFCRuleDecipherEditor : Editor
 
                             case "Down Side":
 
-                                if (!rule.allowedObjBackwards.Contains(idxToAdd))
+                                if (!rule.allowedObjBelow.Contains(idxToAdd))
                                 {
-                                    rule.allowedObjBackwards.Add(idxToAdd);
+                                    rule.allowedObjBelow.Add(idxToAdd);
                                 }
 
                                 break ;

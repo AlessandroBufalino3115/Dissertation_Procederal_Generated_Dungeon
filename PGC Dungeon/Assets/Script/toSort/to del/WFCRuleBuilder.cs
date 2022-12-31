@@ -48,7 +48,7 @@ public class WFCRuleBuilder : MonoBehaviour
                 {
                     //Destroy(AllowedForwards[idx]);
                     //AllowedForwards.RemoveAt(idx);
-                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjForward.RemoveAt(idx);
+                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjAbove.RemoveAt(idx);
                 }
 
                 break;
@@ -59,7 +59,7 @@ public class WFCRuleBuilder : MonoBehaviour
                 {
                     //Destroy(AllowedBackwards[idx]);
                     //AllowedBackwards.RemoveAt(idx);
-                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBackwards.RemoveAt(idx);
+                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBelow.RemoveAt(idx);
                 }
 
                 break;
@@ -109,9 +109,9 @@ public class WFCRuleBuilder : MonoBehaviour
 
             case 2:
 
-                if (!WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjForward.Contains(idx))
+                if (!WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjAbove.Contains(idx))
                 {
-                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjForward.Add(idx);
+                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjAbove.Add(idx);
                 }
                 else
                 {
@@ -121,9 +121,9 @@ public class WFCRuleBuilder : MonoBehaviour
 
             case 3:
 
-                if (!WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBackwards.Contains(idx))
+                if (!WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBelow.Contains(idx))
                 {
-                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBackwards.Add(idx);
+                    WaveFunctionCollaps.instance.arrayOfModulesRules[mainIdx].allowedObjBelow.Add(idx);
                 }
                 else
                 {
@@ -179,9 +179,9 @@ public class WFCRuleBuilder : MonoBehaviour
         AllowedForwards.Clear();
 
 
-        for (int i = 0; i < wFC.arrayOfModulesRules[idx].allowedObjBackwards.Count; i++)
+        for (int i = 0; i < wFC.arrayOfModulesRules[idx].allowedObjBelow.Count; i++)
         {
-            AllowedBackwards.Add(Instantiate(wFC.ListOfAssets[wFC.arrayOfModulesRules[idx].allowedObjBackwards[i]], this.transform));
+            AllowedBackwards.Add(Instantiate(wFC.ListOfAssets[wFC.arrayOfModulesRules[idx].allowedObjBelow[i]], this.transform));
             AllowedBackwards[AllowedBackwards.Count - 1].transform.position = new Vector3(0, 0, -2 - (i * 1.25f));
         }
 
@@ -197,9 +197,9 @@ public class WFCRuleBuilder : MonoBehaviour
             AllowedLeft[AllowedLeft.Count - 1].transform.position = new Vector3( -2 - (i * 1.25f ), 0, 0);
         }
 
-        for (int i = 0; i < wFC.arrayOfModulesRules[idx].allowedObjForward.Count; i++)
+        for (int i = 0; i < wFC.arrayOfModulesRules[idx].allowedObjAbove.Count; i++)
         {
-            AllowedForwards.Add(Instantiate(wFC.ListOfAssets[wFC.arrayOfModulesRules[idx].allowedObjForward[i]], this.transform));
+            AllowedForwards.Add(Instantiate(wFC.ListOfAssets[wFC.arrayOfModulesRules[idx].allowedObjAbove[i]], this.transform));
             AllowedForwards[AllowedForwards.Count - 1].transform.position = new Vector3(0, 0, 2 + (i * 1.25f ));
         }
 

@@ -687,8 +687,8 @@ public class WaveFunctionCollaps : MonoBehaviour
                 {
                     if (selfX == comparingPlacedModule.xCords && selfY + 1 == comparingPlacedModule.yCords)
                     {
-                        if (arrayOfModulesRules[idxMain].allowedObjForward.Contains(idxCompare)) { }
-                        else { arrayOfModulesRules[idxMain].allowedObjForward.Add(idxCompare); }
+                        if (arrayOfModulesRules[idxMain].allowedObjAbove.Contains(idxCompare)) { }
+                        else { arrayOfModulesRules[idxMain].allowedObjAbove.Add(idxCompare); }
                     }
                 }
 
@@ -705,8 +705,8 @@ public class WaveFunctionCollaps : MonoBehaviour
                 {
                     if (selfX == comparingPlacedModule.xCords && selfY - 1 == comparingPlacedModule.yCords)
                     {
-                        if (arrayOfModulesRules[idxMain].allowedObjBackwards.Contains(idxCompare)) { }
-                        else { arrayOfModulesRules[idxMain].allowedObjBackwards.Add(idxCompare); }
+                        if (arrayOfModulesRules[idxMain].allowedObjBelow.Contains(idxCompare)) { }
+                        else { arrayOfModulesRules[idxMain].allowedObjBelow.Add(idxCompare); }
                     }
                 }
             }
@@ -927,7 +927,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
                 mainTile.allowedObjForward = new List<int>();
 
-                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjBackwards)
+                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjBelow)
                 {
                     mainTile.allowedObjForward.Add(item);
                 }
@@ -948,7 +948,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
                 mainTile.allowedObjForward = new List<int>();
 
-                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjBackwards)
+                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjBelow)
                 {
                     mainTile.allowedObjForward.Add(item);
                 }
@@ -973,7 +973,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
                 mainTile.allowedObjBackwards = new List<int>();
 
-                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjForward)
+                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjAbove)
                 {
                     mainTile.allowedObjBackwards.Add(item);
                 }
@@ -994,7 +994,7 @@ public class WaveFunctionCollaps : MonoBehaviour
 
                 int indexOfSolvedNeighbourTile = arrayOfWFCTiles[(int)coordinate.y - 1][(int)coordinate.x].decidedIndex;
 
-                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjForward)
+                foreach (var item in arrayOfModulesRules[indexOfSolvedNeighbourTile].allowedObjAbove)
                 {
                     mainTile.allowedObjBackwards.Add(item);
                 }

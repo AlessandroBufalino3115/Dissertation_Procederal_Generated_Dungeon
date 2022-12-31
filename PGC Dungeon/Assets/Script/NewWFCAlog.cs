@@ -7,15 +7,27 @@ using static UnityEditor.Progress;
 
 public class NewWFCAlog : MonoBehaviour
 {
+    /// <summary>
+    /// wave function collapse worrks fine, tere are some issues with the editor side but i think its just an issue with unity,
+    /// 
+    /// out outksirt checks works its just the currently available tiles are no good
+    /// 
+    /// there is this issue with th ediotr showindg a different index from the actual wanted index which is an issue,  will have to be fixed somehow
+    /// </summary>
+
+
+
+
+
     [SerializeField]
     public WFCTile[][] arrayOfWFCTiles = new WFCTile[0][];
     public int xSize = 20;
     public int ySize = 20;
 
-    public int maxiter = 20;
+    public bool outskirtsCheck = false;
+    public int indexOutskirts = 0;
 
     private WFCRuleDecipher rulesInst;
-
 
     public bool run = false;
 
@@ -47,8 +59,6 @@ public class NewWFCAlog : MonoBehaviour
     {
 
 
-
-
         arrayOfWFCTiles = new WFCTile[ySize][];
 
         for (int y = 0; y < arrayOfWFCTiles.Length; y++)
@@ -61,6 +71,10 @@ public class NewWFCAlog : MonoBehaviour
                 arrayOfWFCTiles[y][x].coord = new Vector2Int(x, y);
             }
         }
+
+
+        if (outskirtsCheck)
+            SetOutSkirts();
 
 
 
@@ -84,21 +98,14 @@ public class NewWFCAlog : MonoBehaviour
         arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Clear();
         ResetNeighbours(arrayOfWFCTiles, ranStart, arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX);
 
-        int iter = 0;
+
 
         bool finishedAlgo = false;
 
 
         while (!finishedAlgo)
         {
-            iter++;
-
-
-            if (iter >= maxiter)
-            {
-                Debug.Log($"THIS HAS EXITED FROM THE ITER THERE IS AN ISSUE");
-                break;
-            }
+          
 
             finishedAlgo = true;
             int lowestSuperposition = 999;
@@ -151,6 +158,46 @@ public class NewWFCAlog : MonoBehaviour
 
 
 
+    private void SetOutSkirts() 
+    {
+
+        WFCTileRule ruleRef = null;
+
+        foreach (var rule in rulesInst.ruleSet)
+        {
+            if (rule.assetIdx == indexOutskirts)
+            {
+                ruleRef = rule;
+                break;
+            }
+        }
+
+
+        for (int x = 0; x < xSize-1; x++)
+        {
+            arrayOfWFCTiles[0][x].NeighbourAllowed(ruleRef.allowedObjBelow);
+        }
+
+        for (int x = 0; x < xSize - 1; x++)
+        {
+            arrayOfWFCTiles[ySize-1][x].NeighbourAllowed(ruleRef.allowedObjAbove);
+        }
+
+        for (int y = 0; y < ySize-1; y++)
+        {
+            arrayOfWFCTiles[y][0].NeighbourAllowed(ruleRef.allowedObjRight);
+        }
+
+        for (int y = 0; y < ySize - 1; y++)
+        {
+            arrayOfWFCTiles[y][xSize-1].NeighbourAllowed(ruleRef.allowedObjLeft);
+        }
+
+
+    }
+
+
+
     public void ResetNeighbours(WFCTile[][] arrayOfWFCTiles, Vector2Int mainTileCoord, int mainTileIDX)
     {
 
@@ -182,13 +229,13 @@ public class NewWFCAlog : MonoBehaviour
         if (mainTileCoord.y + 1 < ySize)   // the one on the right  exists
         {
             if (!arrayOfWFCTiles[mainTileCoord.y + 1][mainTileCoord.x].solved)
-                arrayOfWFCTiles[mainTileCoord.y + 1][mainTileCoord.x].NeighbourAllowed(ruleRef.allowedObjForward);
+                arrayOfWFCTiles[mainTileCoord.y + 1][mainTileCoord.x].NeighbourAllowed(ruleRef.allowedObjAbove);
         }
 
         if (mainTileCoord.y - 1 >= 0)   // the one on the right  exists
         {
             if (!arrayOfWFCTiles[mainTileCoord.y - 1][mainTileCoord.x].solved)
-                arrayOfWFCTiles[mainTileCoord.y - 1][mainTileCoord.x].NeighbourAllowed(ruleRef.allowedObjBackwards);
+                arrayOfWFCTiles[mainTileCoord.y - 1][mainTileCoord.x].NeighbourAllowed(ruleRef.allowedObjBelow);
         }
 
 

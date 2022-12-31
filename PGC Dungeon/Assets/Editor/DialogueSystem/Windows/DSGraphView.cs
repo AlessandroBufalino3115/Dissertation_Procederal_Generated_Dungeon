@@ -53,7 +53,6 @@ namespace DS.Windows
 
 
 
-
         private void AddSearchWindow() 
         {
             if (searchWindow == null) 
