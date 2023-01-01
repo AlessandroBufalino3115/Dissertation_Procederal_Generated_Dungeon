@@ -19,10 +19,11 @@
  * 
  * 
  * 
+ * print the l_system onto the tiel map
+ * 
  * implement at least one iteration
  * 
  * 
- * fix the l-system and start to have an idea of what to actually do with it
  * 
  * 
  * 

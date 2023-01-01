@@ -313,69 +313,69 @@ public class LineMakingRoomThing : MonoBehaviour
 
     public void ConnectTheRooms()
     {
-        List<int> roomID = new List<int>();
+        //List<int> roomID = new List<int>();
 
 
 
 
-        for (int i = 0; i < roomsList.Count; i++)
-        {
-            roomID.Add(i);
-        }
+        //for (int i = 0; i < roomsList.Count; i++)
+        //{
+        //    roomID.Add(i);
+        //}
 
-        int tries = 0;
-        while (roomID.Count > 0)
-        {
-            tries++;
-
-
-            if (tries > 200) { break; }
+        //int tries = 0;
+        //while (roomID.Count > 0)
+        //{
+        //    tries++;
 
 
-            int roomOne = Random.Range(0, roomID.Count);
-            roomOne = roomID[roomOne];
-            roomID.Remove(roomOne);
+        //    if (tries > 200) { break; }
 
 
-            int roomTwo = Random.Range(0, roomID.Count);
-            roomTwo = roomID[roomTwo];
-            roomID.Remove(roomTwo);
-
-            int roomThree = Random.Range(0, roomsList.Count);
+        //    int roomOne = Random.Range(0, roomID.Count);
+        //    roomOne = roomID[roomOne];
+        //    roomID.Remove(roomOne);
 
 
-            int startX = roomsList[roomOne].position[Random.Range(0, roomsList[roomOne].position.Count - 1)][0];
-            int startY = roomsList[roomOne].position[Random.Range(0, roomsList[roomOne].position.Count - 1)][1];
+        //    int roomTwo = Random.Range(0, roomID.Count);
+        //    roomTwo = roomID[roomTwo];
+        //    roomID.Remove(roomTwo);
 
-            int endX = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][0];
-            int endY = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][1];
+        //    int roomThree = Random.Range(0, roomsList.Count);
 
 
-            var corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
-            foreach (var node in corridor.Item1)
-            {
+        //    int startX = roomsList[roomOne].position[Random.Range(0, roomsList[roomOne].position.Count - 1)][0];
+        //    int startY = roomsList[roomOne].position[Random.Range(0, roomsList[roomOne].position.Count - 1)][1];
 
-                node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+        //    int endX = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][0];
+        //    int endY = roomsList[roomTwo].position[Random.Range(0, roomsList[roomTwo].position.Count - 1)][1];
 
-                if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
-                    node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
 
-            }
+        //    var corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+        //    foreach (var node in corridor.Item1)
+        //    {
 
-            endX = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][0];
-            endY = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][1];
+        //        node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
 
-            corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
-            foreach (var node in corridor.Item1)
-            {
+        //        if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
+        //            node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
 
-                node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+        //    }
 
-                if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
-                    node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
+        //    endX = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][0];
+        //    endY = roomsList[roomThree].position[Random.Range(0, roomsList[roomThree].position.Count - 1)][1];
 
-            }
-        }
+        //    corridor = AlgosUtils.A_StarPathfinding2DWeight(gridArray2D, new Vector2Int(startX, startY), new Vector2Int(endX, endY), rulesDict);
+        //    foreach (var node in corridor.Item1)
+        //    {
+
+        //        node.refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
+
+        //        if (node.refToGameObj.tileType != TileOBJ.TileType.FLOORROOM)
+        //            node.refToGameObj.tileType = TileOBJ.TileType.FLOORCORRIDOR;
+
+        //    }
+        //}
 
     }
 

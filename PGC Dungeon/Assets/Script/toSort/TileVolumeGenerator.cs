@@ -235,7 +235,7 @@ public class TileVolumeGenerator : MonoBehaviour
     public void CallBasicPerlinNoise3D() => PerlinNoise.Instance.GenPerlinNoise3D(gridArray3D);
     public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
 
-    public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
+   // public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
 
     public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
 

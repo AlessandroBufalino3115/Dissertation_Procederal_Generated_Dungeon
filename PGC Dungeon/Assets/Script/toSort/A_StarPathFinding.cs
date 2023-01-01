@@ -32,16 +32,16 @@ public class A_StarPathFinding : MonoBehaviour
 
     
     //possibly to delete
-    public List<AStar_Node> SolveA_StarPathfinding2DTest(TileOBJ[][] tileArray2D) 
-    {
-        var start = GeneralUtil.RanVector2Int(tileArray2D[0].Length, tileArray2D.Length);
-        var end = GeneralUtil.RanVector2Int(tileArray2D[0].Length, tileArray2D.Length);
+    //public List<AStar_Node> SolveA_StarPathfinding2DTest(TileOBJ[][] tileArray2D) 
+    //{
+    //    var start = GeneralUtil.RanVector2Int(tileArray2D[0].Length, tileArray2D.Length);
+    //    var end = GeneralUtil.RanVector2Int(tileArray2D[0].Length, tileArray2D.Length);
 
 
-        var path = AlgosUtils.A_StarPathfinding2DNorm(tileArray2D, start, end);
-       
-        return  path.Item1;
-    }
+    //    var path = AlgosUtils.A_StarPathfinding2DNorm(tileArray2D, start, end);
+
+    //    return path.Item1;
+    //}
 
 }
 
