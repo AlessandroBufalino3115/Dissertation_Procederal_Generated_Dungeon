@@ -17,11 +17,10 @@
  * 
  * i have changed it so now the graph view wont be saved if unavailbale issue is that i  need something to change the colour of the node or somthign to indicate which one is the issue but the callback doesnt want to work
  * 
- * 
- * 
- * print the l_system onto the tiel map
+ *
  * 
  * implement at least one iteration
+ * the last thign needed is a nice UI example, and also 
  * 
  * 
  * 

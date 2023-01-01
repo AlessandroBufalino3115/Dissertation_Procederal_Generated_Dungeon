@@ -1896,11 +1896,57 @@ public class BasicTile
   
 }
 
+/// <summary>
+/// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
+/// </summary>
+
+public class TileOBJ : BasicTile
+{
+    public GameObject tileObj;
+
+    public TileOBJ(GameObject _arrayTileObj, Vector2Int _pos)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_pos.x, 0, _pos.y);
+    }
+    public TileOBJ(GameObject _arrayTileObj, int _x, int _y, int _z)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_x, _y, _z);
+    }
+    public TileOBJ(GameObject _arrayTileObj, int _x, int _y)
+    {
+        tileObj = _arrayTileObj;
+        position = new Vector3Int(_x, 0, _y);
+    }
 
 
+    public void SetColorBi(float minWeight, float maxWeight)
+    {
+        float num = Mathf.InverseLerp(minWeight, maxWeight, tileWeight);
+        color = new Color(num, num, num, 1f);
+
+        tileObj.GetComponent<MeshRenderer>().material.color = color;
+    }
+
+    public void SetColor(Color _color)
+    {
+        this.color = _color;
+        tileObj.GetComponent<MeshRenderer>().material.color = _color;
+    }
 
 
+    public void SetColorBiAncor(bool black = true)
+    {
 
+        if (black)
+            this.color = this.tileWeight == 0 ? Color.white : Color.black;
+        else
+            this.color = this.tileWeight == 0 ? Color.white : Color.grey;
+
+        tileObj.GetComponent<MeshRenderer>().material.color = this.color;
+    }
+}
 
 #region triangulation
 
@@ -1950,59 +1996,28 @@ public class Edge
 
 #endregion
 
-
-
-
-/// <summary>
-/// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
-/// </summary>
-public class TileOBJ : BasicTile
+public class AStar_Node
 {
-    public GameObject tileObj;
 
-    public TileOBJ(GameObject _arrayTileObj, Vector2Int _pos)
+    public BasicTile refToBasicTile;
+    public AStar_Node parent;
+
+    public float g = 0;
+    public float f = 0;
+    public float h = 0;
+
+    public AStar_Node(BasicTile basicTile)
     {
-        tileObj = _arrayTileObj;
-        position = new Vector3Int(_pos.x, 0, _pos.y);
-    }
-    public TileOBJ(GameObject _arrayTileObj, int _x, int _y, int _z)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector3Int(_x, _y, _z);
-    }
-    public TileOBJ(GameObject _arrayTileObj, int _x, int _y)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector3Int(_x, 0, _y);
+        refToBasicTile = basicTile;
     }
 
- 
-    public void SetColorBi(float minWeight, float maxWeight) 
-    {
-        float num = Mathf.InverseLerp(minWeight, maxWeight, tileWeight);
-        color = new Color(num, num, num,1f);
-
-        tileObj.GetComponent<MeshRenderer>().material.color = color;
-    }
-
-    public void SetColor(Color _color) 
-    {
-        this.color = _color;
-        tileObj.GetComponent<MeshRenderer>().material.color = _color;
-    }
-
-
-    public void SetColorBiAncor(bool black = true)
-    {
-
-        if (black)
-            this.color = this.tileWeight == 0 ? Color.white : Color.black;
-        else
-            this.color = this.tileWeight == 0 ? Color.white : Color.grey;
-
-        tileObj.GetComponent<MeshRenderer>().material.color = this.color;
-    }
 }
+
+
+
+
+
+
 
 
 
@@ -2068,20 +2083,5 @@ public class CAtiles
 /// <summary>
 ///  to delete
 /// </summary>
-public class AStar_Node
-{
 
-    public BasicTile refToBasicTile;
-    public AStar_Node parent;
-
-    public float g = 0;
-    public float f = 0;
-    public float h = 0;
-
-    public AStar_Node(BasicTile basicTile)
-    {
-        refToBasicTile = basicTile;
-    }
-
-}
 

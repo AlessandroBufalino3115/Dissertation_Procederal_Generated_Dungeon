@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class MarchingCubes : MonoBehaviour
@@ -275,92 +276,159 @@ public class MarchingCubes : MonoBehaviour
     #endregion
     public int rannum = 0;
 
+
+    public int _x;
+    public int _y;
+    public int _z;
+
     public Material mat;
 
-    public Vector3[] positionVertex = new Vector3[8] 
-    {
-    new Vector3(0,0,0),
-    new Vector3(1,0,0),
-    new Vector3(1,1,0),
-    new Vector3(1,1,1),
-    new Vector3(0,0,1),
-    new Vector3(0,1,1),
-    new Vector3(0,0,0),
-    new Vector3(1,0,0)
-    };
+    //public Vector3[] positionVertex = new Vector3[8]
+    //{
+    //  new Vector3(0,0,0), //  positionVertex[x,y,z]      
+    //  new Vector3(1,0,0), //  x + 1    positionVertex[x + 1,y,z]
+    //  new Vector3(1,1,0), //  x + 1   y + 1   positionVertex[x + 1,y +1,z]
+    //  new Vector3(0,1,0), //          y + 1    positionVertex[x,y + 1,z]
+    //  new Vector3(0,0,1),  //                z + 1   positionVertex[x,y,z + 1]
+    //  new Vector3(1,0,1),   //x + 1          z + 1  positionVertex[x +1,y,z+1]
+    //  new Vector3(1,1,1),  // x + 1  y + 1   z + 1   positionVertex[x+1,y+1,z+1]
+    //  new Vector3(0,1,1), //         y + 1      z + 1   positionVertex[x,y+1,z+1]
+    //};
+
+
+    public MarchingCubeClass[,,] positionVertex = new MarchingCubeClass[50, 5, 50];
 
 
     public bool reCalc = false;
     public bool inverse = false;
     public bool newone = false;
+    public bool debugDraw = false;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        newone = true;
         reCalc = true;
+       
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (newone)
+        {
+            newone = false;
 
-        if (reCalc) 
+            for (int z = 0; z < _z; z++)
+            {
+                for (int y = 0; y < _y; y++)
+                {
+                    for (int x = 0; x < _x; x++)
+                    {
+                        positionVertex[x, y, z] = new MarchingCubeClass(new Vector3Int(x, y, z), Random.value >= 0.5f ? 1 : 0);
+                    }
+                }
+            }
+        }
+
+
+
+        if (reCalc)
         {
             reCalc = false;
-
-            var midPosArr = new Vector3[12]
-            {
-                Vector3.Lerp(positionVertex[0],positionVertex[1],0.5f),
-            Vector3.Lerp(positionVertex[1],positionVertex[2],0.5f),
-            Vector3.Lerp(positionVertex[2],positionVertex[3],0.5f),
-            Vector3.Lerp(positionVertex[3],positionVertex[0],0.5f),
-            Vector3.Lerp(positionVertex[4],positionVertex[5],0.5f),
-            Vector3.Lerp(positionVertex[5],positionVertex[6],0.5f),
-            Vector3.Lerp(positionVertex[6],positionVertex[7],0.5f),
-            Vector3.Lerp(positionVertex[7],positionVertex[4],0.5f),
-            Vector3.Lerp(positionVertex[4],positionVertex[0],0.5f),
-            Vector3.Lerp(positionVertex[5],positionVertex[1],0.5f),
-            Vector3.Lerp(positionVertex[6],positionVertex[2],0.5f),
-            Vector3.Lerp(positionVertex[7],positionVertex[3],0.5f)
-
-            };
-
 
             Mesh mesh = this.GetComponent<MeshFilter>().mesh;
 
             mesh.Clear();
 
-
-            if (newone) 
-            {
-                rannum = Random.Range(1, 254);
-            }
-            //int ran = rannum;
-
-            Debug.Log(rannum);
-
             List<int> triangles = new List<int>();
             List<Vector3> vertecies = new List<Vector3>();
 
-
-            for (int i = 0; i < triTable.GetLength(1); i++)
+            for (int z = 0; z < _z; z++)
             {
+                for (int y = 0; y < _y; y++)
+                {
+                    for (int x = 0; x < _x; x++)
+                    {
 
-                if (triTable[rannum, i] == -1)
-                    break;
+                        if (x + 1 >= _x   || y + 1 >= _y || z + 1 >= _z) 
+                        {
+                            continue;
+                        }
 
-                triangles.Add(vertecies.Count());
-                
-                vertecies.Add(midPosArr[triTable[rannum, i]]);
+                        var midPosArr = new Vector3[12]
+                        {
+                            Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
+                            Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
+                            Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
+                            Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
+                            Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
+                            Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
+                            Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
+                            Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
+                        };
 
+
+                        int index = positionVertex[x, y, z].state * 1 +
+                                        positionVertex[x + 1, y, z].state * 2 +
+                                        positionVertex[x + 1, y + 1, z].state * 4 +
+                                        positionVertex[x, y + 1, z].state * 8 +
+                                        positionVertex[x, y, z + 1].state * 16 +
+                                        positionVertex[x + 1, y, z + 1].state * 32 +
+                                        positionVertex[x + 1, y + 1, z + 1].state * 64 +
+                                        positionVertex[x, y + 1, z + 1].state * 128;
+
+                        //            var midPosArr = new Vector3[12]
+                        //{
+                        //                Vector3.Lerp(positionVertex[0],positionVertex[1],0.5f),
+                        //            Vector3.Lerp(positionVertex[1],positionVertex[2],0.5f),
+                        //            Vector3.Lerp(positionVertex[2],positionVertex[3],0.5f),
+                        //            Vector3.Lerp(positionVertex[3],positionVertex[0],0.5f),
+                        //            Vector3.Lerp(positionVertex[4],positionVertex[5],0.5f),
+                        //            Vector3.Lerp(positionVertex[5],positionVertex[6],0.5f),
+                        //            Vector3.Lerp(positionVertex[6],positionVertex[7],0.5f),
+                        //            Vector3.Lerp(positionVertex[7],positionVertex[4],0.5f),
+                        //            Vector3.Lerp(positionVertex[4],positionVertex[0],0.5f),
+                        //            Vector3.Lerp(positionVertex[5],positionVertex[1],0.5f),
+                        //            Vector3.Lerp(positionVertex[6],positionVertex[2],0.5f),
+                        //            Vector3.Lerp(positionVertex[7],positionVertex[3],0.5f)
+
+                        //};
+
+
+
+
+                        //int index = 2;
+
+                        for (int i = 0; i < triTable.GetLength(1); i++)
+                        {
+
+                            if (triTable[index, i] == -1)
+                                break;
+
+                            triangles.Add(vertecies.Count());
+
+                            vertecies.Add(midPosArr[triTable[index, i]]);
+
+                        }
+
+
+                    }
+                }
             }
 
 
-            if (inverse) 
+
+            if (inverse)
             {
                 triangles.Reverse();
             }
-
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertecies.ToArray();
             mesh.triangles = triangles.ToArray();
 
@@ -373,8 +441,67 @@ public class MarchingCubes : MonoBehaviour
 
 
 
-
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Mesh mesh = this.GetComponent<MeshFilter>().mesh;
+
+        //mesh.Clear();
+
+
+        //if (newone)
+        //{
+        //    rannum = Random.Range(1, 254);
+        //}
+        ////int ran = rannum;
+
+        //Debug.Log(rannum);
+
+        //List<int> triangles = new List<int>();
+        //List<Vector3> vertecies = new List<Vector3>();
+
+
+        //for (int i = 0; i < triTable.GetLength(1); i++)
+        //{
+
+        //    if (triTable[rannum, i] == -1)
+        //        break;
+
+        //    triangles.Add(vertecies.Count());
+
+        //    vertecies.Add(midPosArr[triTable[rannum, i]]);
+
+        //}
+
+
+        //if (inverse)
+        //{
+        //    triangles.Reverse();
+        //}
+
+        //mesh.vertices = vertecies.ToArray();
+        //mesh.triangles = triangles.ToArray();
+
+
+        //mesh.RecalculateBounds();
+        //mesh.RecalculateNormals();
+        //mesh.RecalculateTangents();
+
+        //GetComponent<MeshRenderer>().material = mat;
+
 
 
 
@@ -384,9 +511,54 @@ public class MarchingCubes : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        for (int i = 0; i < positionVertex.Count(); i++)
+
+        if (debugDraw) 
         {
-            Gizmos.DrawSphere(positionVertex[i], 0.2f);
+        
+        for (int z = 0; z < _z; z++)
+        {
+            for (int y = 0; y < _y; y++)
+            {
+                for (int x = 0; x < _x; x++)
+                {
+                    if (positionVertex[x, y, z].state == 1)
+                        Gizmos.color = Color.red;
+                    else
+                        Gizmos.color = Color.white;
+
+                    Gizmos.DrawSphere(positionVertex[x, y, z].position, 0.05f);
+                }
+            }
+        }
+
+
+            //for (int i = 0; i < positionVertex.Count(); i++)
+            //{
+            //    //Gizmos.DrawSphere(positionVertex[i], 0.05f);
+            //    Handles.Label(positionVertex[i], i.ToString());
+            //}
+
+
         }
     }
+
+
+
+
+    public class MarchingCubeClass
+    {
+        public Vector3Int position;
+        public int state;
+
+        public MarchingCubeClass(Vector3Int position, int state)
+        {
+            this.position = position;
+            this.state = state;
+        }
+    }
+
+
 }
+
+
+

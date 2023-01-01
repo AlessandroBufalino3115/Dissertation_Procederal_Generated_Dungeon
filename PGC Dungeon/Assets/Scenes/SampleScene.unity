@@ -975,7 +975,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &382115524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5609,7 +5609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1565671151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5622,20 +5622,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b459bfef81bcb13488a0244744efa758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rannum: 1
+  rannum: 2
+  _x: 50
+  _y: 5
+  _z: 50
   mat: {fileID: 2100000, guid: 638f47472bd8f36489b2370228b607bf, type: 2}
-  positionVertex:
-  - {x: 0, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 1}
-  - {x: 0, y: 0, z: 1}
-  - {x: 0, y: 1, z: 0}
-  - {x: 1, y: 1, z: 0}
-  - {x: 1, y: 1, z: 1}
-  - {x: 0, y: 1, z: 1}
   reCalc: 0
-  inverse: 0
+  inverse: 1
   newone: 1
+  debugDraw: 0
 --- !u!4 &1565671152
 Transform:
   m_ObjectHideFlags: 0
@@ -6561,7 +6556,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1996485359
 Transform:
   m_ObjectHideFlags: 0
