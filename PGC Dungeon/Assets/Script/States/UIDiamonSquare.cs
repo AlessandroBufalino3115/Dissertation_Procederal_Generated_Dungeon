@@ -68,7 +68,9 @@ public class UIDiamonSquare : UiBaseState
         }
     }
 
-
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+    }
     public override void onStart(StateUIManager currentMenu)
     { 
     }

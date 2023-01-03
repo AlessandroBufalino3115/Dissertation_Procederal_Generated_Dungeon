@@ -8,9 +8,9 @@ public class UiHomeState : UiBaseState
 
     public Vector2 scrollPosition = Vector2.zero;
 
-    private int scrollX = 0;
-   // private int scrollY = 0;
-    private int scrollZ = 0;
+    private int scrollWidth = 0;
+    private int roomHeight = 0;
+    private int scrollHeigh = 0;
 
     private bool scaleToggle;
     private bool ghostToggle;
@@ -23,22 +23,22 @@ public class UiHomeState : UiBaseState
     {
 
     }
-
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+    }
     public override void onGUI(StateUIManager currentMenu)
     {
 
         GUI.Box(new Rect(5, 10, 230, 650),"");
 
-        scrollX = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollX, 3, 300);
-        GUI.Label(new Rect(140, 20, 100, 30), "Width: "+ scrollX);
-
+        scrollWidth = (int)GUI.HorizontalSlider(new Rect(10, 25, 100, 20), scrollWidth, 3, 300);
+        GUI.Label(new Rect(140, 20, 100, 30), "Width: "+ scrollWidth);
         
-        //scrollY = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollY, 3, 25);    // this should be how high the room you want them to be     and then a floor count
-        //GUI.Label(new Rect(140, 45, 100, 30), "Y Height: " + scrollY);
+        scrollHeigh = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), scrollHeigh, 3, 300);
+        GUI.Label(new Rect(140, 45, 100, 30), "Height: " + scrollHeigh);
 
-        
-        scrollZ = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), scrollZ, 3, 300);
-        GUI.Label(new Rect(140, 70, 100, 30), "Height: " + scrollZ);
+        roomHeight = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), roomHeight, 3, 6);    // this should be how high the room you want them to be     and then a floor count
+        GUI.Label(new Rect(140, 70, 100, 30), "Y Height: " + roomHeight);
 
         ghostToggle = GUI.Toggle(new Rect(10, 100, 100, 30), ghostToggle, "toggle ghost");
         scaleToggle = GUI.Toggle(new Rect(10, 130, 100, 30), scaleToggle, "toggle scale");
@@ -48,7 +48,7 @@ public class UiHomeState : UiBaseState
         if (GUI.Button(new Rect(10, 160, 120, 30), new GUIContent("Gen TileSet 2D", "Button 1"))) 
         {
             currentMenu.DestroyAllTiles();
-            currentMenu.Gen2DVolume(scrollX, scrollZ, ghostToggle, scaleToggle);
+            currentMenu.Gen2DVolume(scrollHeigh, scrollWidth, ghostToggle, scaleToggle);
         }
 
         //if (GUI.Button(new Rect(10, 200, 120, 30), "Gen TileSet 3D"))
@@ -60,7 +60,7 @@ public class UiHomeState : UiBaseState
         if (GUI.Button(new Rect(10, 240, 120, 30), "Gen Plane"))
         {
             currentMenu.DestroyAllTiles();
-            currentMenu.CreatePlane(scrollX, scrollZ);
+            currentMenu.CreatePlane(scrollWidth, scrollHeigh);
         }
 
         if (GUI.Button(new Rect(10, 280, 100, 30), "Destroy"))

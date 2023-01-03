@@ -975,7 +975,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &382115524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,6 +989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   changingToState: 0
+  mat: {fileID: 2100000, guid: 638f47472bd8f36489b2370228b607bf, type: 2}
   working: 0
   emptyBlock: {fileID: 7935656221806652146, guid: c96f4d0cc7482c9408738b81053992cc, type: 3}
   CubeBlock: {fileID: 5718048433150643604, guid: 87b68b4aecd4f344fa9dd428018ad0f0, type: 3}
@@ -1006,7 +1007,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382115523}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 24.453247, y: 15.621399, z: 16.562494}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5048,14 +5049,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showPrim: 0
   pointList:
-  - {x: 4, y: 0, z: 0.000002625586}
-  - {x: 0, y: 4, z: 6.08e-43}
-  - {x: 4, y: 4, z: -2.9675327e-31}
-  - {x: 0, y: 0, z: 6.08e-43}
-  - {x: 3.9, y: 3.9, z: 6.9e-44}
-  - {x: 4, y: 0, z: 6.08e-43}
-  - {x: 0, y: 0, z: -2.9675477e-31}
-  - {x: 0, y: 3.9, z: 8.2652296e-10}
+  - {x: 4, y: 0}
+  - {x: 0, y: 4}
+  - {x: 4, y: 4}
+  - {x: 0, y: 0}
+  - {x: 3.9, y: 3.9}
+  - {x: 4, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 3.9}
 --- !u!114 &1344085616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5173,7 +5174,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344085597}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c541db9e24ee354eb3d34d27a3e71c0, type: 3}
   m_Name: 
@@ -5609,7 +5610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1565671151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5623,9 +5624,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rannum: 2
-  _x: 50
-  _y: 5
-  _z: 50
+  _x: 2500
+  _y: 10
+  _z: 20
   mat: {fileID: 2100000, guid: 638f47472bd8f36489b2370228b607bf, type: 2}
   reCalc: 0
   inverse: 1

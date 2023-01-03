@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StateUIManager : MonoBehaviour
@@ -22,11 +23,13 @@ public class StateUIManager : MonoBehaviour
        new UIDrunkWalk()
     };
 
+    public Material mat;
 
-    public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
-
+    //public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
+    public Dictionary<BasicTile.TileType, float> tileTypeToCostDict = new Dictionary<BasicTile.TileType, float>();
 
     public bool working;
+    private bool gizmo;
 
     public TileOBJ[][] gridArrayObj2D = new TileOBJ[1][];
     public BasicTile[][] gridArray2D = new BasicTile[1][];
@@ -77,78 +80,12 @@ public class StateUIManager : MonoBehaviour
         currState.onGUI(this);
     }
 
-    /*
-    public void Gen3DVolume(int widhtZ, int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
+    private void OnDrawGizmos()
     {
-
-        zSize = widhtZ;
-        ySize = heightY;
-        xSize = lengthX;
-
-
-
-        dimension = Dimension.THREED;
-        int timerStart = Environment.TickCount & Int32.MaxValue;
-        int blockNum = 0;
-
-        gridArray3D = new TileOBJ[widhtZ][][];
-
-        for (int z = 0; z < gridArray3D.Length; z++)
-        {
-
-            gridArray3D[z] = new TileOBJ[heightY][];
-            for (int y = 0; y < gridArray3D[z].Length; y++)
-            {
-
-                gridArray3D[z][y] = new TileOBJ[lengthX];
-
-                for (int x = 0; x < gridArray3D[z][y].Length; x++)
-                {
-                    Vector3 position = new Vector3(x, y, z);
-
-                    GameObject newRef = null;
-
-                    if (clearBlock)
-                    {
-                        newRef = Instantiate(emptyBlock, this.gameObject.transform);
-                    }
-                    else
-                    {
-                        newRef = Instantiate(CubeBlock, this.gameObject.transform);
-                    }
-
-                    newRef.transform.position = position;
-                    if (scaleToggle)
-                    {
-                        newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                    }
-
-                    newRef.transform.name = x.ToString() + " " + y.ToString();
-
-                    gridArray3D[z][y][x] = new TileOBJ(newRef, x, y, z);
-                    gridArray3D[z][y][x].tileType = TileOBJ.TileType.VOID;
-
-                    blockNum++;
-                }
-            }
-        }
-
-
-        int half_x = (lengthX - 1) / 2;
-        int half_y = (heightY - 1) / 2;
-        int half_z = (widhtZ - 1) / 2;
-
-
-
-        gridArray3D[half_z][half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
-
-
-        int timerEnd = Environment.TickCount & Int32.MaxValue;
-        int totalTicks = timerEnd - timerStart;
-        Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
-
+        if (gizmo)
+            currState.onGizmos(this);
     }
-    */
+
 
     public void Gen2DVolume( int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
@@ -232,29 +169,11 @@ public class StateUIManager : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 gridArray2D[y][x] = new BasicTile();
-                gridArray2D[y][x].position = new Vector3Int(x, 0, y);
+                gridArray2D[y][x].position = new Vector2Int(x, y);
             }
         }
 
 
-        //Texture2D texture = new Texture2D(width, height);
-
-
-        // given something from 0 to 1 seems to also be faster to just do ti via color array
-        //Color[] colourMap = new Color[width * height];
-        //for (int y = 0; y < height; y++)
-        //{
-        //    for (int x = 0; x < width; x++)
-        //    {
-        //        colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
-        //    }
-        //}
-        //texture.SetPixels(colourMap);
-        //texture.Apply();
-
-
-        //plane.GetComponent<Renderer>().sharedMaterial.mainTexture = texture;
-        //plane.transform.localScale = new Vector3(width, height);
     }
     public void DestroyAllTiles()
     {
@@ -271,7 +190,7 @@ public class StateUIManager : MonoBehaviour
         foreach (Transform child in transform)
             Destroy(child.gameObject);
 
-        gridArray3D = new TileOBJ[1][][];
+        //gridArray3D = new TileOBJ[1][][];
 
         gridArrayObj2D = new TileOBJ[1][];
 
@@ -283,7 +202,21 @@ public class StateUIManager : MonoBehaviour
         Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>");
     }
 
+    public void FormObject(Mesh mesh)
+    {
+        GameObject newPart = new GameObject();
+        newPart.transform.position = this.transform.position;
+        newPart.transform.rotation = this.transform.rotation;
+        newPart.transform.localScale = this.transform.localScale;
 
+        var renderer = newPart.AddComponent<MeshRenderer>();
+        renderer.material = mat;
 
+        var filter = newPart.AddComponent<MeshFilter>();
+        filter.mesh = mesh;
+
+        var collider = newPart.AddComponent<MeshCollider>();
+        collider.convex = true;
+    }
 
 }

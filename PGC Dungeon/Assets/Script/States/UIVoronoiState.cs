@@ -100,6 +100,10 @@ public class UIVoronoiState : UiBaseState
 
     }
 
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+    }
+
 
     /*
     private void CallVoronoiGen2D(StateUIManager currentMenu)

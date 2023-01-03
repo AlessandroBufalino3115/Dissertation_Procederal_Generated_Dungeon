@@ -12,4 +12,5 @@ public abstract class UiBaseState
     public abstract void onExit(StateUIManager currentMenu);
 
     public abstract void onGUI(StateUIManager currentMenu);
+    public abstract void onGizmos(StateUIManager currentMenu);
 }

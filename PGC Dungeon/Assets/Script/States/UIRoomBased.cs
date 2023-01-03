@@ -31,7 +31,9 @@ public class UIRoomBased : UiBaseState
     public override void onExit(StateUIManager currentMenu)
     {
     }
-
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+    }
     public override void onGUI(StateUIManager currentMenu)
     {
 

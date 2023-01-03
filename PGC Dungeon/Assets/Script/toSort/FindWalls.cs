@@ -23,7 +23,7 @@ public class FindWalls : MonoBehaviour
     {
 
         Debug.Log("this is where it starts");
-        var ran = GeneralUtil.RanVector2Int(_gridArray2d.Length, _gridArray2d[0].Length);
+        var ran = GeneralUtil.RanVector2Int(_gridArray2d.Length, _gridArray2d[0].Length);  //gets a
 
         while (true) 
         {
@@ -54,8 +54,8 @@ public class FindWalls : MonoBehaviour
 
                 floodFillArr[y][x] = new FloodFillTile();
 
-                floodFillArr[y][x].position =  _gridArray2d[y][x].position;
-                floodFillArr[y][x].tileObj = _gridArray2d[y][x].tileObj;
+                //floodFillArr[y][x].position =  _gridArray2d[y][x].position;
+                //floodFillArr[y][x].tileObj = _gridArray2d[y][x].tileObj;
 
 
             }

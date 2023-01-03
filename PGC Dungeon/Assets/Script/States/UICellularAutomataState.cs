@@ -19,7 +19,10 @@ public class UICellularAutomataState : UiBaseState
     public override void onExit(StateUIManager currentMenu)
     {
     }
-
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+        throw new System.NotImplementedException();
+    }
     public override void onGUI(StateUIManager currentMenu)
     {
 

@@ -1,22 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
-using UnityEngine.Tilemaps;
-using System.Drawing;
 using Color = UnityEngine.Color;
 
 
 
 
-//new standard for tiles, 
 /*
- * 
- * when gicing an array to a function it has to be of class tile which is just a float arr float arr   everything else can inherit from that with a float arr we can say if bigger than 0.8 just to be sure for any issue its taken
+ * the TileOBJ does inherit form the basic tile class therefore there is no need for multiple functions doing the same things, to clean up
  * 
  * 
  */
@@ -25,6 +18,276 @@ using Color = UnityEngine.Color;
 
 public static class AlgosUtils
 {
+
+    // 0 1  2 4
+    #region marching Cubes Rule
+
+    //http://paulbourke.net/geometry/polygonise/
+
+    public static int[,] triTable = new int[256, 16]
+{{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, //
+
+{2, 8, 3, 2, 10, 8, 10, 9, 8, -1, -1, -1, -1, -1, -1, -1},
+
+{3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 11, 2, 8, 11, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 9, 0, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 11, 2, 1, 9, 11, 9, 8, 11, -1, -1, -1, -1, -1, -1, -1},   //
+{3, 10, 1, 11, 10, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 10, 1, 0, 8, 10, 8, 11, 10, -1, -1, -1, -1, -1, -1, -1},
+{3, 9, 0, 3, 11, 9, 11, 10, 9, -1, -1, -1, -1, -1, -1, -1},
+{9, 8, 10, 10, 8, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 3, 0, 7, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 1, 9, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 1, 9, 4, 7, 1, 7, 3, 1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+
+{3, 4, 7, 3, 0, 4, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1},
+{9, 2, 10, 9, 0, 2, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1},
+{2, 10, 9, 2, 9, 7, 2, 7, 3, 7, 9, 4, -1, -1, -1, -1},
+{8, 4, 7, 3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{11, 4, 7, 11, 2, 4, 2, 0, 4, -1, -1, -1, -1, -1, -1, -1},
+{9, 0, 1, 8, 4, 7, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1},
+{4, 7, 11, 9, 4, 11, 9, 11, 2, 9, 2, 1, -1, -1, -1, -1},
+{3, 10, 1, 3, 11, 10, 7, 8, 4, -1, -1, -1, -1, -1, -1, -1},
+{1, 11, 10, 1, 4, 11, 1, 0, 4, 7, 11, 4, -1, -1, -1, -1},
+{4, 7, 8, 9, 0, 11, 9, 11, 10, 11, 0, 3, -1, -1, -1, -1},
+{4, 7, 11, 4, 11, 9, 9, 11, 10, -1, -1, -1, -1, -1, -1, -1},
+{9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 5, 4, 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 5, 4, 1, 5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{8, 5, 4, 8, 3, 5, 3, 1, 5, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, 9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{3, 0, 8, 1, 2, 10, 4, 9, 5, -1, -1, -1, -1, -1, -1, -1},
+{5, 2, 10, 5, 4, 2, 4, 0, 2, -1, -1, -1, -1, -1, -1, -1},
+{2, 10, 5, 3, 2, 5, 3, 5, 4, 3, 4, 8, -1, -1, -1, -1},
+{9, 5, 4, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 11, 2, 0, 8, 11, 4, 9, 5, -1, -1, -1, -1, -1, -1, -1},
+{0, 5, 4, 0, 1, 5, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1},
+{2, 1, 5, 2, 5, 8, 2, 8, 11, 4, 8, 5, -1, -1, -1, -1},
+{10, 3, 11, 10, 1, 3, 9, 5, 4, -1, -1, -1, -1, -1, -1, -1},
+{4, 9, 5, 0, 8, 1, 8, 10, 1, 8, 11, 10, -1, -1, -1, -1},
+{5, 4, 0, 5, 0, 11, 5, 11, 10, 11, 0, 3, -1, -1, -1, -1},
+{5, 4, 8, 5, 8, 10, 10, 8, 11, -1, -1, -1, -1, -1, -1, -1},
+{9, 7, 8, 5, 7, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 3, 0, 9, 5, 3, 5, 7, 3, -1, -1, -1, -1, -1, -1, -1},
+{0, 7, 8, 0, 1, 7, 1, 5, 7, -1, -1, -1, -1, -1, -1, -1},
+{1, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 7, 8, 9, 5, 7, 10, 1, 2, -1, -1, -1, -1, -1, -1, -1},
+{10, 1, 2, 9, 5, 0, 5, 3, 0, 5, 7, 3, -1, -1, -1, -1},
+{8, 0, 2, 8, 2, 5, 8, 5, 7, 10, 5, 2, -1, -1, -1, -1},
+{2, 10, 5, 2, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1, -1},
+{7, 9, 5, 7, 8, 9, 3, 11, 2, -1, -1, -1, -1, -1, -1, -1},
+{9, 5, 7, 9, 7, 2, 9, 2, 0, 2, 7, 11, -1, -1, -1, -1},
+{2, 3, 11, 0, 1, 8, 1, 7, 8, 1, 5, 7, -1, -1, -1, -1},
+{11, 2, 1, 11, 1, 7, 7, 1, 5, -1, -1, -1, -1, -1, -1, -1},
+{9, 5, 8, 8, 5, 7, 10, 1, 3, 10, 3, 11, -1, -1, -1, -1},
+{5, 7, 0, 5, 0, 9, 7, 11, 0, 1, 0, 10, 11, 10, 0, -1},
+{11, 10, 0, 11, 0, 3, 10, 5, 0, 8, 0, 7, 5, 7, 0, -1},
+{11, 10, 5, 7, 11, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{10, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 0, 1, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 8, 3, 1, 9, 8, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1},
+{1, 6, 5, 2, 6, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 6, 5, 1, 2, 6, 3, 0, 8, -1, -1, -1, -1, -1, -1, -1},
+{9, 6, 5, 9, 0, 6, 0, 2, 6, -1, -1, -1, -1, -1, -1, -1},
+{5, 9, 8, 5, 8, 2, 5, 2, 6, 3, 2, 8, -1, -1, -1, -1},
+{2, 3, 11, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{11, 0, 8, 11, 2, 0, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1},
+{0, 1, 9, 2, 3, 11, 5, 10, 6, -1, -1, -1, -1, -1, -1, -1},
+{5, 10, 6, 1, 9, 2, 9, 11, 2, 9, 8, 11, -1, -1, -1, -1},
+{6, 3, 11, 6, 5, 3, 5, 1, 3, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 11, 0, 11, 5, 0, 5, 1, 5, 11, 6, -1, -1, -1, -1},
+{3, 11, 6, 0, 3, 6, 0, 6, 5, 0, 5, 9, -1, -1, -1, -1},
+{6, 5, 9, 6, 9, 11, 11, 9, 8, -1, -1, -1, -1, -1, -1, -1},
+{5, 10, 6, 4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 3, 0, 4, 7, 3, 6, 5, 10, -1, -1, -1, -1, -1, -1, -1},
+{1, 9, 0, 5, 10, 6, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1},
+{10, 6, 5, 1, 9, 7, 1, 7, 3, 7, 9, 4, -1, -1, -1, -1},
+{6, 1, 2, 6, 5, 1, 4, 7, 8, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 5, 5, 2, 6, 3, 0, 4, 3, 4, 7, -1, -1, -1, -1},
+{8, 4, 7, 9, 0, 5, 0, 6, 5, 0, 2, 6, -1, -1, -1, -1},
+{7, 3, 9, 7, 9, 4, 3, 2, 9, 5, 9, 6, 2, 6, 9, -1},
+{3, 11, 2, 7, 8, 4, 10, 6, 5, -1, -1, -1, -1, -1, -1, -1},
+{5, 10, 6, 4, 7, 2, 4, 2, 0, 2, 7, 11, -1, -1, -1, -1},
+{0, 1, 9, 4, 7, 8, 2, 3, 11, 5, 10, 6, -1, -1, -1, -1},
+{9, 2, 1, 9, 11, 2, 9, 4, 11, 7, 11, 4, 5, 10, 6, -1},
+{8, 4, 7, 3, 11, 5, 3, 5, 1, 5, 11, 6, -1, -1, -1, -1},
+{5, 1, 11, 5, 11, 6, 1, 0, 11, 7, 11, 4, 0, 4, 11, -1},
+{0, 5, 9, 0, 6, 5, 0, 3, 6, 11, 6, 3, 8, 4, 7, -1},
+{6, 5, 9, 6, 9, 11, 4, 7, 9, 7, 11, 9, -1, -1, -1, -1},
+{10, 4, 9, 6, 4, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 10, 6, 4, 9, 10, 0, 8, 3, -1, -1, -1, -1, -1, -1, -1},
+{10, 0, 1, 10, 6, 0, 6, 4, 0, -1, -1, -1, -1, -1, -1, -1},
+{8, 3, 1, 8, 1, 6, 8, 6, 4, 6, 1, 10, -1, -1, -1, -1},
+{1, 4, 9, 1, 2, 4, 2, 6, 4, -1, -1, -1, -1, -1, -1, -1},
+{3, 0, 8, 1, 2, 9, 2, 4, 9, 2, 6, 4, -1, -1, -1, -1},
+{0, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{8, 3, 2, 8, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1, -1},
+{10, 4, 9, 10, 6, 4, 11, 2, 3, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 2, 2, 8, 11, 4, 9, 10, 4, 10, 6, -1, -1, -1, -1},
+{3, 11, 2, 0, 1, 6, 0, 6, 4, 6, 1, 10, -1, -1, -1, -1},
+{6, 4, 1, 6, 1, 10, 4, 8, 1, 2, 1, 11, 8, 11, 1, -1},
+{9, 6, 4, 9, 3, 6, 9, 1, 3, 11, 6, 3, -1, -1, -1, -1},
+{8, 11, 1, 8, 1, 0, 11, 6, 1, 9, 1, 4, 6, 4, 1, -1},
+{3, 11, 6, 3, 6, 0, 0, 6, 4, -1, -1, -1, -1, -1, -1, -1},
+{6, 4, 8, 11, 6, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{7, 10, 6, 7, 8, 10, 8, 9, 10, -1, -1, -1, -1, -1, -1, -1},
+{0, 7, 3, 0, 10, 7, 0, 9, 10, 6, 7, 10, -1, -1, -1, -1},
+{10, 6, 7, 1, 10, 7, 1, 7, 8, 1, 8, 0, -1, -1, -1, -1},
+{10, 6, 7, 10, 7, 1, 1, 7, 3, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 6, 1, 6, 8, 1, 8, 9, 8, 6, 7, -1, -1, -1, -1},
+{2, 6, 9, 2, 9, 1, 6, 7, 9, 0, 9, 3, 7, 3, 9, -1},
+{7, 8, 0, 7, 0, 6, 6, 0, 2, -1, -1, -1, -1, -1, -1, -1},
+{7, 3, 2, 6, 7, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{2, 3, 11, 10, 6, 8, 10, 8, 9, 8, 6, 7, -1, -1, -1, -1},
+{2, 0, 7, 2, 7, 11, 0, 9, 7, 6, 7, 10, 9, 10, 7, -1},
+{1, 8, 0, 1, 7, 8, 1, 10, 7, 6, 7, 10, 2, 3, 11, -1},
+{11, 2, 1, 11, 1, 7, 10, 6, 1, 6, 7, 1, -1, -1, -1, -1},
+{8, 9, 6, 8, 6, 7, 9, 1, 6, 11, 6, 3, 1, 3, 6, -1},
+{0, 9, 1, 11, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{7, 8, 0, 7, 0, 6, 3, 11, 0, 11, 6, 0, -1, -1, -1, -1},
+{7, 11, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{7, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{3, 0, 8, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 1, 9, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{8, 1, 9, 8, 3, 1, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1},
+{10, 1, 2, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, 3, 0, 8, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1},
+{2, 9, 0, 2, 10, 9, 6, 11, 7, -1, -1, -1, -1, -1, -1, -1},
+{6, 11, 7, 2, 10, 3, 10, 8, 3, 10, 9, 8, -1, -1, -1, -1},
+{7, 2, 3, 6, 2, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{7, 0, 8, 7, 6, 0, 6, 2, 0, -1, -1, -1, -1, -1, -1, -1},
+{2, 7, 6, 2, 3, 7, 0, 1, 9, -1, -1, -1, -1, -1, -1, -1},
+{1, 6, 2, 1, 8, 6, 1, 9, 8, 8, 7, 6, -1, -1, -1, -1},
+{10, 7, 6, 10, 1, 7, 1, 3, 7, -1, -1, -1, -1, -1, -1, -1},
+{10, 7, 6, 1, 7, 10, 1, 8, 7, 1, 0, 8, -1, -1, -1, -1},
+{0, 3, 7, 0, 7, 10, 0, 10, 9, 6, 10, 7, -1, -1, -1, -1},
+{7, 6, 10, 7, 10, 8, 8, 10, 9, -1, -1, -1, -1, -1, -1, -1},
+{6, 8, 4, 11, 8, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{3, 6, 11, 3, 0, 6, 0, 4, 6, -1, -1, -1, -1, -1, -1, -1},
+{8, 6, 11, 8, 4, 6, 9, 0, 1, -1, -1, -1, -1, -1, -1, -1},   //
+{9, 4, 6, 9, 6, 3, 9, 3, 1, 11, 3, 6, -1, -1, -1, -1},
+{6, 8, 4, 6, 11, 8, 2, 10, 1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, 3, 0, 11, 0, 6, 11, 0, 4, 6, -1, -1, -1, -1},
+{4, 11, 8, 4, 6, 11, 0, 2, 9, 2, 10, 9, -1, -1, -1, -1},
+{10, 9, 3, 10, 3, 2, 9, 4, 3, 11, 3, 6, 4, 6, 3, -1},
+{8, 2, 3, 8, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1, -1},
+{0, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 9, 0, 2, 3, 4, 2, 4, 6, 4, 3, 8, -1, -1, -1, -1},
+{1, 9, 4, 1, 4, 2, 2, 4, 6, -1, -1, -1, -1, -1, -1, -1},
+{8, 1, 3, 8, 6, 1, 8, 4, 6, 6, 10, 1, -1, -1, -1, -1},
+{10, 1, 0, 10, 0, 6, 6, 0, 4, -1, -1, -1, -1, -1, -1, -1},
+{4, 6, 3, 4, 3, 8, 6, 10, 3, 0, 3, 9, 10, 9, 3, -1},
+{10, 9, 4, 6, 10, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 9, 5, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, 4, 9, 5, 11, 7, 6, -1, -1, -1, -1, -1, -1, -1},
+{5, 0, 1, 5, 4, 0, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1},
+{11, 7, 6, 8, 3, 4, 3, 5, 4, 3, 1, 5, -1, -1, -1, -1},
+{9, 5, 4, 10, 1, 2, 7, 6, 11, -1, -1, -1, -1, -1, -1, -1},
+{6, 11, 7, 1, 2, 10, 0, 8, 3, 4, 9, 5, -1, -1, -1, -1},
+{7, 6, 11, 5, 4, 10, 4, 2, 10, 4, 0, 2, -1, -1, -1, -1},
+{3, 4, 8, 3, 5, 4, 3, 2, 5, 10, 5, 2, 11, 7, 6, -1},
+{7, 2, 3, 7, 6, 2, 5, 4, 9, -1, -1, -1, -1, -1, -1, -1},
+{9, 5, 4, 0, 8, 6, 0, 6, 2, 6, 8, 7, -1, -1, -1, -1},
+{3, 6, 2, 3, 7, 6, 1, 5, 0, 5, 4, 0, -1, -1, -1, -1},
+{6, 2, 8, 6, 8, 7, 2, 1, 8, 4, 8, 5, 1, 5, 8, -1},
+{9, 5, 4, 10, 1, 6, 1, 7, 6, 1, 3, 7, -1, -1, -1, -1},
+{1, 6, 10, 1, 7, 6, 1, 0, 7, 8, 7, 0, 9, 5, 4, -1},
+{4, 0, 10, 4, 10, 5, 0, 3, 10, 6, 10, 7, 3, 7, 10, -1},
+{7, 6, 10, 7, 10, 8, 5, 4, 10, 4, 8, 10, -1, -1, -1, -1},
+{6, 9, 5, 6, 11, 9, 11, 8, 9, -1, -1, -1, -1, -1, -1, -1},
+{3, 6, 11, 0, 6, 3, 0, 5, 6, 0, 9, 5, -1, -1, -1, -1},
+{0, 11, 8, 0, 5, 11, 0, 1, 5, 5, 6, 11, -1, -1, -1, -1},
+{6, 11, 3, 6, 3, 5, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 10, 9, 5, 11, 9, 11, 8, 11, 5, 6, -1, -1, -1, -1},
+{0, 11, 3, 0, 6, 11, 0, 9, 6, 5, 6, 9, 1, 2, 10, -1},
+{11, 8, 5, 11, 5, 6, 8, 0, 5, 10, 5, 2, 0, 2, 5, -1},
+{6, 11, 3, 6, 3, 5, 2, 10, 3, 10, 5, 3, -1, -1, -1, -1},
+{5, 8, 9, 5, 2, 8, 5, 6, 2, 3, 8, 2, -1, -1, -1, -1},
+{9, 5, 6, 9, 6, 0, 0, 6, 2, -1, -1, -1, -1, -1, -1, -1},
+{1, 5, 8, 1, 8, 0, 5, 6, 8, 3, 8, 2, 6, 2, 8, -1},
+{1, 5, 6, 2, 1, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 3, 6, 1, 6, 10, 3, 8, 6, 5, 6, 9, 8, 9, 6, -1},
+{10, 1, 0, 10, 0, 6, 9, 5, 0, 5, 6, 0, -1, -1, -1, -1},
+{0, 3, 8, 5, 6, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{10, 5, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{11, 5, 10, 7, 5, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{11, 5, 10, 11, 7, 5, 8, 3, 0, -1, -1, -1, -1, -1, -1, -1},
+{5, 11, 7, 5, 10, 11, 1, 9, 0, -1, -1, -1, -1, -1, -1, -1},
+{10, 7, 5, 10, 11, 7, 9, 8, 1, 8, 3, 1, -1, -1, -1, -1},
+{11, 1, 2, 11, 7, 1, 7, 5, 1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, 1, 2, 7, 1, 7, 5, 7, 2, 11, -1, -1, -1, -1},
+{9, 7, 5, 9, 2, 7, 9, 0, 2, 2, 11, 7, -1, -1, -1, -1},
+{7, 5, 2, 7, 2, 11, 5, 9, 2, 3, 2, 8, 9, 8, 2, -1},
+{2, 5, 10, 2, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1, -1},
+{8, 2, 0, 8, 5, 2, 8, 7, 5, 10, 2, 5, -1, -1, -1, -1},
+{9, 0, 1, 5, 10, 3, 5, 3, 7, 3, 10, 2, -1, -1, -1, -1},
+{9, 8, 2, 9, 2, 1, 8, 7, 2, 10, 2, 5, 7, 5, 2, -1},
+{1, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 7, 0, 7, 1, 1, 7, 5, -1, -1, -1, -1, -1, -1, -1},
+{9, 0, 3, 9, 3, 5, 5, 3, 7, -1, -1, -1, -1, -1, -1, -1},
+{9, 8, 7, 5, 9, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{5, 8, 4, 5, 10, 8, 10, 11, 8, -1, -1, -1, -1, -1, -1, -1},
+{5, 0, 4, 5, 11, 0, 5, 10, 11, 11, 3, 0, -1, -1, -1, -1},
+{0, 1, 9, 8, 4, 10, 8, 10, 11, 10, 4, 5, -1, -1, -1, -1},
+{10, 11, 4, 10, 4, 5, 11, 3, 4, 9, 4, 1, 3, 1, 4, -1},
+{2, 5, 1, 2, 8, 5, 2, 11, 8, 4, 5, 8, -1, -1, -1, -1},
+{0, 4, 11, 0, 11, 3, 4, 5, 11, 2, 11, 1, 5, 1, 11, -1},
+{0, 2, 5, 0, 5, 9, 2, 11, 5, 4, 5, 8, 11, 8, 5, -1},
+{9, 4, 5, 2, 11, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{2, 5, 10, 3, 5, 2, 3, 4, 5, 3, 8, 4, -1, -1, -1, -1},
+{5, 10, 2, 5, 2, 4, 4, 2, 0, -1, -1, -1, -1, -1, -1, -1},
+{3, 10, 2, 3, 5, 10, 3, 8, 5, 4, 5, 8, 0, 1, 9, -1},
+{5, 10, 2, 5, 2, 4, 1, 9, 2, 9, 4, 2, -1, -1, -1, -1},
+{8, 4, 5, 8, 5, 3, 3, 5, 1, -1, -1, -1, -1, -1, -1, -1},
+{0, 4, 5, 1, 0, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{8, 4, 5, 8, 5, 3, 9, 0, 5, 0, 3, 5, -1, -1, -1, -1},
+{9, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 11, 7, 4, 9, 11, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1},
+{0, 8, 3, 4, 9, 7, 9, 11, 7, 9, 10, 11, -1, -1, -1, -1},
+{1, 10, 11, 1, 11, 4, 1, 4, 0, 7, 4, 11, -1, -1, -1, -1},
+{3, 1, 4, 3, 4, 8, 1, 10, 4, 7, 4, 11, 10, 11, 4, -1},
+{4, 11, 7, 9, 11, 4, 9, 2, 11, 9, 1, 2, -1, -1, -1, -1},
+{9, 7, 4, 9, 11, 7, 9, 1, 11, 2, 11, 1, 0, 8, 3, -1},
+{11, 7, 4, 11, 4, 2, 2, 4, 0, -1, -1, -1, -1, -1, -1, -1},
+{11, 7, 4, 11, 4, 2, 8, 3, 4, 3, 2, 4, -1, -1, -1, -1},
+{2, 9, 10, 2, 7, 9, 2, 3, 7, 7, 4, 9, -1, -1, -1, -1},
+{9, 10, 7, 9, 7, 4, 10, 2, 7, 8, 7, 0, 2, 0, 7, -1},
+{3, 7, 10, 3, 10, 2, 7, 4, 10, 1, 10, 0, 4, 0, 10, -1},
+{1, 10, 2, 8, 7, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 9, 1, 4, 1, 7, 7, 1, 3, -1, -1, -1, -1, -1, -1, -1},
+{4, 9, 1, 4, 1, 7, 0, 8, 1, 8, 7, 1, -1, -1, -1, -1},
+{4, 0, 3, 7, 4, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{4, 8, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{9, 10, 8, 10, 11, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{3, 0, 9, 3, 9, 11, 11, 9, 10, -1, -1, -1, -1, -1, -1, -1},
+{0, 1, 10, 0, 10, 8, 8, 10, 11, -1, -1, -1, -1, -1, -1, -1},
+{3, 1, 10, 11, 3, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 2, 11, 1, 11, 9, 9, 11, 8, -1, -1, -1, -1, -1, -1, -1},
+{3, 0, 9, 3, 9, 11, 1, 2, 9, 2, 11, 9, -1, -1, -1, -1},
+{0, 2, 11, 8, 0, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{3, 2, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{2, 3, 8, 2, 8, 10, 10, 8, 9, -1, -1, -1, -1, -1, -1, -1},
+{9, 10, 2, 0, 9, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{2, 3, 8, 2, 8, 10, 0, 1, 8, 1, 10, 8, -1, -1, -1, -1},
+{1, 10, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{1, 3, 8, 9, 1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
+
+    #endregion
+
+
 
     #region A*pathFinding
 
@@ -399,7 +662,7 @@ public static class AlgosUtils
 
             closedList.Add(currNode);
 
-            if (currNode.refToBasicTile.position.x == end_node.refToBasicTile.position.x && currNode.refToBasicTile.position.z == end_node.refToBasicTile.position.z)
+            if (currNode.refToBasicTile.position.x == end_node.refToBasicTile.position.x && currNode.refToBasicTile.position.y == end_node.refToBasicTile.position.y)
             {
 
                 List<AStar_Node> path = new List<AStar_Node>();
@@ -446,7 +709,7 @@ public static class AlgosUtils
                     int x_buff = childPosArry[i, 0];
                     int y_buff = childPosArry[i, 1];
 
-                    int[] node_position = { currNode.refToBasicTile.position.x + x_buff, currNode.refToBasicTile.position.z + y_buff };
+                    int[] node_position = { currNode.refToBasicTile.position.x + x_buff, currNode.refToBasicTile.position.y + y_buff };
 
 
                     if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= tileArray2D[0].Length || node_position[1] >= tileArray2D.Length)
@@ -465,7 +728,7 @@ public static class AlgosUtils
                 {
                     foreach (var closedListItem in closedList)
                     {
-                        if (child.refToBasicTile.position.x == closedListItem.refToBasicTile.position.x && child.refToBasicTile.position.z == closedListItem.refToBasicTile.position.z)
+                        if (child.refToBasicTile.position.x == closedListItem.refToBasicTile.position.x && child.refToBasicTile.position.y == closedListItem.refToBasicTile.position.y)
                         {
                             continue;
                         }
@@ -475,9 +738,9 @@ public static class AlgosUtils
                     child.g = currNode.g + 0.5f;
 
                     if (euclideanDis)
-                        child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.z), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.z));
+                        child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
                     else
-                        child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.z), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.z));
+                        child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
 
                     child.f = child.g + child.h;   //added value here
                     child.parent = currNode;
@@ -485,7 +748,7 @@ public static class AlgosUtils
 
                     foreach (var openListItem in openList)
                     {
-                        if (child.refToBasicTile.position.x == openListItem.refToBasicTile.position.x && child.refToBasicTile.position.z == openListItem.refToBasicTile.position.z && child.g > openListItem.g)// 
+                        if (child.refToBasicTile.position.x == openListItem.refToBasicTile.position.x && child.refToBasicTile.position.y == openListItem.refToBasicTile.position.y && child.g > openListItem.g)// 
                         {
                             continue;
                         }
@@ -530,28 +793,28 @@ public static class AlgosUtils
             for (int x = 0; x < maxX; x++)
             {
                 _gridarray2D[y][x] = new BasicTile();
-                _gridarray2D[y][x].position = new Vector3Int(x, 0, y);
+                _gridarray2D[y][x].position = new Vector2Int(x, y);
             }
         }
 
 
         Vector2Int currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
 
-        int maxIter = (int)((_gridarray2D.Length * _gridarray2D[0].Length) * maxIterMultiplier);
+        //int maxIter = (int)((_gridarray2D.Length * _gridarray2D[0].Length) * maxIterMultiplier);
 
-        int iterCount = 0;
+        //int iterCount = 0;
 
         while (iterationsLeft > 0)
         {
 
-            iterCount++;
+            //iterCount++;
 
-            if (iterCount >= maxIter)
-            {
-                Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
+            //if (iterCount >= maxIter)
+            //{
+            //    Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
 
-                break;
-            }
+            //    break;
+            //}
 
             int ranDir = Random.Range(0, 4);
 
@@ -1107,19 +1370,19 @@ public static class AlgosUtils
 
     #region Triangulation
 
-    public static List<Edge> PrimAlgoNoDelu(List<Vector3> points)
+    public static List<Edge> PrimAlgoNoDelu(List<Vector2> points)
     {
         var triangulation = DelunayTriangulation2D(points);
 
-        return PrimAlgo(points, triangulation);
+        return PrimAlgo(points, triangulation.Item1);
 
     }
 
-    public static List<Edge> PrimAlgo(List<Vector3> points, List<Triangle> triangulation)
+    public static List<Edge> PrimAlgo(List<Vector2> points, List<Triangle> triangulation)
     {
         List<Edge> primsAlgo = new List<Edge>();
 
-        HashSet<Vector3> visitedVertices = new HashSet<Vector3>();
+        HashSet<Vector2> visitedVertices = new HashSet<Vector2>();
 
         var ran = Random.Range(0, points.Count);
         var vertex = points[ran];
@@ -1155,25 +1418,31 @@ public static class AlgosUtils
 
             var edgesWithPointSort = edgesWithPoint.OrderBy(c => c.length).ToArray();   // we sort all the edges by the smallest to biggest
 
+            Debug.Log(visitedVertices.Count);
+            Debug.Log(edgesWithPointSort.Length);
+
             visitedVertices.Add(edgesWithPointSort[0].edge[0]);
             visitedVertices.Add(edgesWithPointSort[0].edge[1]);
             primsAlgo.Add(edgesWithPointSort[0]);
         }
 
+        Debug.Log($"{primsAlgo.Count} count for prims");
+
         return primsAlgo;
     }
 
-    public static List<Triangle> DelunayTriangulation2D(List<Vector3> points)
+
+    public static Tuple<List<Triangle>, List<Edge>> DelunayTriangulation2D(List<Vector2> points)
     {
         var triangulation = new List<Triangle>();
 
-        Vector3 superTriangleA = new Vector3(10000, 10000, 10000);
-        Vector3 superTriangleB = new Vector3(10000, 0, 10000);
-        Vector3 superTriangleC = new Vector3(0, 10000, 10000);
+        Vector2 superTriangleA = new Vector2(10000, 10000 );
+        Vector2 superTriangleB = new Vector2(10000, 0);
+        Vector2 superTriangleC = new Vector2(0, 10000);
 
         triangulation.Add(new Triangle(superTriangleA, superTriangleB, superTriangleC));
 
-        foreach (Vector3 point in points)
+        foreach (Vector2 point in points)
         {
             List<Triangle> badTriangles = new List<Triangle>();
 
@@ -1234,7 +1503,20 @@ public static class AlgosUtils
             }
         }
 
-        return triangulation;
+
+
+        var edges = new List<Edge>();
+
+        foreach (var tri in triangulation)
+        {
+            foreach (var edge in tri.edges)
+            {
+                edges.Add(edge);
+            }
+        }
+
+
+        return new Tuple<List<Triangle>, List<Edge>>(triangulation, edges) ;
 
     }
 
@@ -1399,25 +1681,24 @@ public static class AlgosUtils
     /// <param name="list"></param>
     /// <param name="gridArray2D"></param>
     /// <returns>the returned list holds the coords of everything that was true</returns>
-    public static List<Vector2> Flood2DText(int x, int y, List<Vector2> list, BasicTile[][] gridArray2D)
+    public static List<Vector2Int> Flood2DAnchor(int x, int y, List<Vector2Int> list, BasicTile[][] gridArray2D)
     {
         
         if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
         {
-            if (gridArray2D[y][x].tileWeight == 0 && gridArray2D[y][x].visited == false)
+            if (gridArray2D[y][x].tileWeight != 0 && gridArray2D[y][x].visited == false)
             {
-                list.Add(new Vector2(x, y));
+                list.Add(new Vector2Int(x, y));
                 gridArray2D[y][x].visited=true;
 
-                Flood2DText(x + 1, y, list, gridArray2D);
-                Flood2DText(x - 1, y, list, gridArray2D);
-                Flood2DText(x, y + 1, list, gridArray2D);
-                Flood2DText(x, y - 1, list, gridArray2D);
+                Flood2DAnchor(x + 1, y, list, gridArray2D);
+                Flood2DAnchor(x - 1, y, list, gridArray2D);
+                Flood2DAnchor(x, y + 1, list, gridArray2D);
+                Flood2DAnchor(x, y - 1, list, gridArray2D);
             }
         }
 
         return list;
-
     }
 
 
@@ -1681,11 +1962,11 @@ public static class AlgosUtils
                 {
                     if (closestDistance < 0)
                     {
-                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.z));
+                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
                     }
                     else
                     {
-                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.z));
+                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
 
                         if (closestDistance > newDist)
                         {
@@ -1742,6 +2023,168 @@ public static class AlgosUtils
 
     #endregion
 
+    #region Marching Cubes Generation
+
+
+    public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(BasicTile[][] gridArray2D, int roomHeight = 7) 
+    {
+
+        var marchingCubesArr = new MarchingCubeClass[gridArray2D[0].Length, gridArray2D.Length, roomHeight];
+
+
+
+        for (int z = 0; z < marchingCubesArr.GetLength(2); z++)  // this is the heihgt of the room
+        {
+            for (int y = 0; y < marchingCubesArr.GetLength(1); y++)
+            {
+                for (int x = 0; x < marchingCubesArr.GetLength(0); x++)
+                {
+                    //if (x + 1 >= marchingCubesArr.GetLength(0) || y + 1 >= marchingCubesArr.GetLength(1) || z + 1 >= marchingCubesArr.GetLength(2))
+                    //{
+                    //    continue;
+                    //}
+
+
+                    if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
+                    {
+                        marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
+                    }
+                    else 
+                    {
+
+                        if (gridArray2D[y][x].tileType != BasicTile.TileType.FLOORROOM) 
+                        {
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
+                        }
+                        else 
+                        {
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0);
+                        }
+                            
+                    }
+                }
+            }
+        }
+
+
+
+        return marchingCubesArr;
+    }
+
+
+
+
+
+    
+    public static Mesh MarchingCubesAlgo(MarchingCubeClass[,,] positionVertex, bool inverse = false) 
+    {
+
+        Mesh mesh = new Mesh();
+
+        mesh.Clear();
+
+        List<int> triangles = new List<int>();
+        List<Vector3> vertecies = new List<Vector3>();
+
+        for (int z = 0; z < positionVertex.GetLength(2); z++)
+        {
+            for (int y = 0; y < positionVertex.GetLength(1); y++)
+            {
+                for (int x = 0; x < positionVertex.GetLength(0); x++)
+                {
+
+                    if (x + 1 >= positionVertex.GetLength(0) || y + 1 >= positionVertex.GetLength(1) || z + 1 >= positionVertex.GetLength(2))
+                    {
+                        continue;
+                    }
+
+                    var midPosArr = new Vector3[12]
+                    {
+                            Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
+                            Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
+                            Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
+                            Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
+                            Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
+                            Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
+                            Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
+                            Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
+                    };
+
+
+                    int index = positionVertex[x, y, z].state * 1 +
+                                    positionVertex[x + 1, y, z].state * 2 +
+                                    positionVertex[x + 1, y + 1, z].state * 4 +
+                                    positionVertex[x, y + 1, z].state * 8 +
+                                    positionVertex[x, y, z + 1].state * 16 +
+                                    positionVertex[x + 1, y, z + 1].state * 32 +
+                                    positionVertex[x + 1, y + 1, z + 1].state * 64 +
+                                    positionVertex[x, y + 1, z + 1].state * 128;
+
+
+                    for (int i = 0; i < triTable.GetLength(1); i++)
+                    {
+
+                        if (triTable[index, i] == -1)
+                            break;
+
+                        triangles.Add(vertecies.Count());
+
+                        vertecies.Add(midPosArr[triTable[index, i]]);
+
+                    }
+                }
+            }
+        }
+
+
+
+        if (inverse)
+        {
+            triangles.Reverse();
+        }
+
+        Debug.Log(vertecies.Count());
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = vertecies.ToArray();
+        mesh.triangles = triangles.ToArray();
+
+
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
+
+
+
+        return mesh;
+
+
+
+
+
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    #endregion
+
+
+
+    //random util should go in the general util with the classes benath
     #region Random Util
     // the widht and height should be relative to the size of thearra not a given input
     /// <summary>
@@ -1751,7 +2194,7 @@ public static class AlgosUtils
     /// <param name="height"></param>
     /// <param name="gridArray2D"></param>
     /// <returns></returns>
-    public static Texture2D SetUpTextBiColShade(BasicTile[][] gridArray2D, float minWeight, float maxWeight)
+    public static Texture2D SetUpTextBiColShade(BasicTile[][] gridArray2D, float minWeight, float maxWeight, bool inverse = false)
     {
 
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
@@ -1762,7 +2205,11 @@ public static class AlgosUtils
             for (int x = 0; x < texture.width; x++)
             {
                 float num = Mathf.InverseLerp(minWeight, maxWeight, gridArray2D[y][x].tileWeight);
-                gridArray2D[y][x].color = new Color(num, num, num, 1f);
+
+                if (inverse)
+                    gridArray2D[y][x].color = new Color(1-num, 1-num, 1 - num, 1f);
+                else
+                    gridArray2D[y][x].color = new Color(num, num, num, 1f);
 
 
                 texture.SetPixel(x, y, gridArray2D[y][x].color);
@@ -1865,6 +2312,212 @@ public static class AlgosUtils
 
     #endregion
 
+    #region to sort
+
+    /// <summary>
+    /// given a set of points finds the mid points of those points
+    /// </summary>
+    /// <param name="listOfPoints"></param>
+    /// <returns></returns>
+    public static Vector2 FindMiddlePoint(List<Vector2> listOfPoints)
+    {
+        var midPoint = new Vector2(0, 0);
+
+        foreach (var point in listOfPoints)
+        {
+            midPoint.x += point.x;
+            midPoint.y += point.y;
+        }
+
+        midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
+
+        return midPoint;
+
+    }
+    public static Vector2 FindMiddlePoint(List<BasicTile> listOfPoints)
+    {
+        var midPoint = new Vector2(0, 0);
+
+        foreach (var point in listOfPoints)
+        {
+            midPoint.x += point.position.x;
+            midPoint.y += point.position.y;
+        }
+
+        midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
+
+        return midPoint;
+
+    }
+
+    /// <summary>
+    /// call this to set up the tile type, for wall and floor, algo that recognises walls
+    /// </summary>
+    /// <param name="gridArray2D"></param>
+    /// <param name="diagonalTiles"></param>
+    public static void SetUpTileTypes(BasicTile[][] gridArray2D, bool diagonalTiles = false)
+    {
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < gridArray2D[0].Length; x++)
+            {
+                if (gridArray2D[y][x].tileWeight == 1)
+                {
+                    int[,] childPosArry = new int[0, 0];
+
+                    if (diagonalTiles)
+                        childPosArry = GeneralUtil.childPosArry8Side;
+                    else
+                        childPosArry = GeneralUtil.childPosArry4Side;
+
+                    bool wall = false;
+
+                    for (int i = 0; i < childPosArry.Length / 2; i++)
+                    {
+                        int x_buff = childPosArry[i, 0];
+                        int y_buff = childPosArry[i, 1];
+
+                        int[] node_position = { x + x_buff, y + y_buff };
+
+
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArray2D[0].Length || node_position[1] >= gridArray2D.Length)
+                        {
+                            wall = true;
+                            break;
+                        }
+                        else
+                        {
+                            if (gridArray2D[node_position[1]][node_position[0]].tileWeight == 0)
+                            {
+                                wall = true;
+                                break;
+                            }
+                        }
+                    }
+
+
+                    if (wall)
+                    {
+                        gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
+                        gridArray2D[y][x].tileWeight = 1;
+                    }
+                    else
+                    {
+                        gridArray2D[y][x].tileType = BasicTile.TileType.FLOORROOM;
+                        gridArray2D[y][x].tileWeight = 0.5f;
+                    }
+
+
+
+                }
+
+
+
+
+
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// recongnises all of the rooms, give true to set the colours
+    /// </summary>
+    /// <param name="gridArray2D"></param>
+    /// <param name="colorDebug"></param>
+    /// <returns>returns a list of a lists of basic tiles = to one room</returns>
+    public static List<List<BasicTile>> GetAllRooms(BasicTile[][] gridArray2D, bool colorDebug = false)
+    {
+        var rooms = new List<List<BasicTile>>();
+
+        ResetVisited(gridArray2D);  //sest everything back to false ready for flood
+
+        List<Vector2Int> openCoords = new List<Vector2Int>();  // this has all the tile coords of the tiles that are considered roomable
+
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            for (int x = 0; x < gridArray2D[0].Length; x++)
+            {
+                if (gridArray2D[y][x].tileWeight != 0)
+                    openCoords.Add(new Vector2Int(x, y));
+            }
+        }
+
+        int iter = 0;
+
+        while (openCoords.Count > 2)   // until there is stuff in the open coords  then
+        {
+
+            if (iter >= 1000)
+            {
+                break;
+            }
+
+            iter++;
+
+            var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
+
+            var room = new List<Vector2Int>();
+
+            room = Flood2DAnchor(ranCoord.x, ranCoord.y, room, gridArray2D);   // this returns 
+
+            for (int i = openCoords.Count(); i-- > 0;) //for every open coord 
+            {
+                foreach (var coor in room)    //does the open cord contain then remove to satisfy infinte while loop
+                {
+                    if (openCoords[i] == coor)
+                    {
+                        openCoords.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
+            List<BasicTile> roomBasicTile = new List<BasicTile>();
+
+            for (int y = 0; y < gridArray2D.Length; y++)
+            {
+                for (int x = 0; x < gridArray2D[0].Length; x++)
+                {
+                    foreach (var coord in room)
+                    {
+                        if (new Vector2Int(x, y) == coord)
+                            roomBasicTile.Add(gridArray2D[y][x]);
+                    }
+                }
+            }
+
+            rooms.Add(roomBasicTile);
+
+        }
+
+
+
+
+
+        //debug
+        if (colorDebug)
+        {
+            foreach (var room in rooms)
+            {
+                var col = new Color(Random.Range(0, 0.99f), Random.Range(0, 0.99f), Random.Range(0, 0.99f));
+
+                foreach (var tile in room)
+                {
+                    tile.color = col;
+                }
+            }
+        }
+
+
+
+
+        return rooms;
+    }
+
+    #endregion
+
+
 }
 
 
@@ -1876,7 +2529,7 @@ public class BasicTile
 {
 
     public Color32 color;
-    public Vector3Int position = Vector3Int.zero;
+    public Vector2Int position = Vector2Int.zero;
     public float tileWeight;
     public float cost = 0;
     public int idx = 0;
@@ -1907,17 +2560,17 @@ public class TileOBJ : BasicTile
     public TileOBJ(GameObject _arrayTileObj, Vector2Int _pos)
     {
         tileObj = _arrayTileObj;
-        position = new Vector3Int(_pos.x, 0, _pos.y);
+        position = new Vector2Int(_pos.x, _pos.y);
     }
     public TileOBJ(GameObject _arrayTileObj, int _x, int _y, int _z)
     {
         tileObj = _arrayTileObj;
-        position = new Vector3Int(_x, _y, _z);
+        position = new Vector2Int(_x, _z);
     }
     public TileOBJ(GameObject _arrayTileObj, int _x, int _y)
     {
         tileObj = _arrayTileObj;
-        position = new Vector3Int(_x, 0, _y);
+        position = new Vector2Int(_x, _y);
     }
 
 
@@ -1948,7 +2601,7 @@ public class TileOBJ : BasicTile
     }
 }
 
-#region triangulation
+#region triangulation classes
 
 public class Triangle
 {
@@ -2014,6 +2667,17 @@ public class AStar_Node
 }
 
 
+public class MarchingCubeClass
+{
+    public Vector3Int position;
+    public int state;
+
+    public MarchingCubeClass(Vector3Int position, int state)
+    {
+        this.position = position;
+        this.state = state;
+    }
+}
 
 
 

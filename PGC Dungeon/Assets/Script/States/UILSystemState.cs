@@ -15,7 +15,8 @@ public class UILSystemState : UiBaseState
 
     //public Dictionary<char, string> rulesDict = new Dictionary<char, string>();
 
-    public List<string> ruleString = new List<string>();
+    [SerializeField]
+    private List<string> ruleString = new List<string>() { "SA+A+CLBSB---AL", "SA--C+CLBSB--AL", "SC+A--CL" };
 
     public string endingWord;
 
@@ -29,6 +30,10 @@ public class UILSystemState : UiBaseState
 
 
     public override void onExit(StateUIManager currentMenu)
+    {
+    }
+
+    public override void onGizmos(StateUIManager currentMenu)
     {
     }
 
@@ -70,10 +75,11 @@ public class UILSystemState : UiBaseState
             }
 
 
-            modePath = GUI.Toggle(new Rect(10, 100, 100, 30), modePath, "toggle ghost");
+            modePath = GUI.Toggle(new Rect(10, 100, 100, 30), modePath, "toggle path way");
 
             if (GUI.Button(new Rect(10, 360, 100, 30), "Go back"))
                 currentMenu.ChangeState(0);
+
 
         }
 
@@ -81,14 +87,12 @@ public class UILSystemState : UiBaseState
 
     public override void onStart(StateUIManager currentMenu)
     {
-        ruleString.Clear();
-
+        //ruleString.Clear();
 
         currHeadPos = Vector3Int.zero;
-
-        ruleString.Add("SA+A+CLBSB---AL");
-        ruleString.Add("SA--C+CLBSB--AL");
-        ruleString.Add("SC+A--CL");
+        //ruleString.Add("SA+A+CLBSB---AL");
+        //ruleString.Add("SA--C+CLBSB--AL");
+        //ruleString.Add("SC+A--CL");
     }
 
     public override void onUpdate(StateUIManager currentMenu)
@@ -104,6 +108,7 @@ public class UILSystemState : UiBaseState
 
     private void RunLSystem(string axium,StateUIManager currentMenu)
     {
+
         currHeadPos = new Vector3Int(currentMenu.width/2, 0 , currentMenu.height/2 );
 
         StringBuilder currentWord = new StringBuilder(axium);

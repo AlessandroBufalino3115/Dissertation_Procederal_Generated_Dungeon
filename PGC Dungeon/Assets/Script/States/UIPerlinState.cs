@@ -22,17 +22,14 @@ public class UIPerlinState : UiBaseState
     private bool thresholdBool;
 
 
-
     public override void onExit(StateUIManager currentMenu)
     {
     }
-
+    public override void onGizmos(StateUIManager currentMenu)
+    {
+    }
     public override void onGUI(StateUIManager currentMenu)
     {
-
-
-
-
 
         if (currentMenu.working)
         {

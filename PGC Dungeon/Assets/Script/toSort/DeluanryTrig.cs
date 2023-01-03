@@ -14,19 +14,19 @@ public class DeluanryTrig : MonoBehaviour
     public bool showPrim = false;
 
     [SerializeField]
-    List<Vector3> pointList = new List<Vector3>();
+    List<Vector2> pointList = new List<Vector2>();
 
     List<Edge> primEdges = new List<Edge>();
 
     private void Start()
     {
 
-        pointList = new List<Vector3>();
+        pointList = new List<Vector2>();
 
         for (int i = 0; i < 50; i++)
         {
 
-            Vector3 point = new Vector3(Random.Range(1, 100), Random.Range(1, 100),0);
+            Vector2 point = new Vector2(Random.Range(1, 100), Random.Range(1, 100));
 
 
             if (pointList.Contains(point))
@@ -122,8 +122,8 @@ public class DeluanryTrig : MonoBehaviour
         PrimsAlgo();
         */
 
-        triangulation = AlgosUtils.DelunayTriangulation2D(pointList);
-        primEdges = AlgosUtils.PrimAlgo(pointList, triangulation);
+       // triangulation = AlgosUtils.DelunayTriangulation2D(pointList);
+        //primEdges = AlgosUtils.PrimAlgo(pointList, triangulation);
 
         Debug.Log(primEdges.Count);
         Debug.Log(triangulation.Count);

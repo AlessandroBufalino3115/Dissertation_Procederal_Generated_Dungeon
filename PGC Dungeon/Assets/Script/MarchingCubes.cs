@@ -306,11 +306,9 @@ public class MarchingCubes : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-
+    { 
         newone = true;
-        reCalc = true;
-       
+        reCalc = true;  
     }
 
     // Update is called once per frame
@@ -319,6 +317,8 @@ public class MarchingCubes : MonoBehaviour
         if (newone)
         {
             newone = false;
+            //Debug.Log(_x * _z * _y);
+            positionVertex = new  MarchingCubeClass[_x, _y, _z];
 
             for (int z = 0; z < _z; z++)
             {
@@ -416,8 +416,6 @@ public class MarchingCubes : MonoBehaviour
                             vertecies.Add(midPosArr[triTable[index, i]]);
 
                         }
-
-
                     }
                 }
             }
@@ -428,6 +426,8 @@ public class MarchingCubes : MonoBehaviour
             {
                 triangles.Reverse();
             }
+
+            Debug.Log(vertecies.Count());
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertecies.ToArray();
             mesh.triangles = triangles.ToArray();
@@ -442,66 +442,6 @@ public class MarchingCubes : MonoBehaviour
 
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Mesh mesh = this.GetComponent<MeshFilter>().mesh;
-
-        //mesh.Clear();
-
-
-        //if (newone)
-        //{
-        //    rannum = Random.Range(1, 254);
-        //}
-        ////int ran = rannum;
-
-        //Debug.Log(rannum);
-
-        //List<int> triangles = new List<int>();
-        //List<Vector3> vertecies = new List<Vector3>();
-
-
-        //for (int i = 0; i < triTable.GetLength(1); i++)
-        //{
-
-        //    if (triTable[rannum, i] == -1)
-        //        break;
-
-        //    triangles.Add(vertecies.Count());
-
-        //    vertecies.Add(midPosArr[triTable[rannum, i]]);
-
-        //}
-
-
-        //if (inverse)
-        //{
-        //    triangles.Reverse();
-        //}
-
-        //mesh.vertices = vertecies.ToArray();
-        //mesh.triangles = triangles.ToArray();
-
-
-        //mesh.RecalculateBounds();
-        //mesh.RecalculateNormals();
-        //mesh.RecalculateTangents();
-
-        //GetComponent<MeshRenderer>().material = mat;
-
 
 
 
