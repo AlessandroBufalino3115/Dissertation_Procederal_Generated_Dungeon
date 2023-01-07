@@ -20,6 +20,7 @@ public class WFCRuleDecipherEditor : Editor
 
         WFCRuleDecipher ruleDec = (WFCRuleDecipher)target;
 
+
      
         if (GUILayout.Button("Load rule Set"))
         {
@@ -42,7 +43,6 @@ public class WFCRuleDecipherEditor : Editor
                     continue;
                 }
 
-               
                 int index = file.Name.IndexOf(".");
                 var manipString = file.Name.Substring(0, index);
 

@@ -26,6 +26,18 @@ public class UILSystemState : UiBaseState
 
     bool modePath = false;
 
+    private string fileName = "";
+
+
+    private List<string> A_RuleSet = new List<string>();
+    private List<string> B_RuleSet = new List<string>();
+    private List<string> C_RuleSet = new List<string>();
+    private List<string> S_RuleSet = new List<string>();
+    private List<string> L_RuleSet = new List<string>();
+    private List<string> P_RuleSet = new List<string>();
+    private List<string> N_RuleSet = new List<string>();
+
+
 
 
 
@@ -57,6 +69,7 @@ public class UILSystemState : UiBaseState
             iterations = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), iterations,2, 8);
 
             axium = GUI.TextField(new Rect(10, 20, 200, 20), axium, 25);
+            fileName = GUI.TextField(new Rect(10, 80, 200, 20), fileName, 25);
 
             if (GUI.Button(new Rect(10, 140, 120, 30), "Run L-system"))
             {
@@ -71,6 +84,12 @@ public class UILSystemState : UiBaseState
                 {
                     Debug.Log(point);
                 }
+
+            }
+
+            if (GUI.Button(new Rect(10, 200, 120, 30), "Load Ruleset"))
+            {
+                
 
             }
 
@@ -226,9 +245,6 @@ public class UILSystemState : UiBaseState
         }
     }
 
-
-
-
     private void MoveHead(int moveAmount)
     {
         switch (currDirection)
@@ -258,7 +274,11 @@ public class UILSystemState : UiBaseState
         }
     }
 
+    private void LoadRuleSet() 
+    {
 
+        //var ruleSet = Resources.Load<LSystemRuleSet>(ruleDec.ruleSetFolderName);
+    }
 
 
 }

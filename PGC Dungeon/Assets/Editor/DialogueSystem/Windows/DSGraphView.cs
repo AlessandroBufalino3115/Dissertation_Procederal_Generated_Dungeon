@@ -177,7 +177,6 @@ namespace DS.Windows
         }
 
 
-
         private void AddRuleNode(List<string> TileSetNames)
         {
 
@@ -206,9 +205,6 @@ namespace DS.Windows
                 ruleNode.RefreshExpandedState();
             }
         }
-
-
-
 
 
 
@@ -415,10 +411,6 @@ namespace DS.Windows
         }
 
 
-
-
-
-
         public void SaveGraph(string filename) 
         {
             
@@ -443,6 +435,7 @@ namespace DS.Windows
                 var inputNode = connectedPorts[i].input.node as DSNode;
 
                 GVcont.nodeLinkData.Add(new NodeLinkData() { BaseNodeGuid = outputNode.nodeGuid, PortName = connectedPorts[i].input.portName, TargetNodeGuid = inputNode.nodeGuid });
+
 
             }
 
@@ -482,44 +475,7 @@ namespace DS.Windows
         
         }
 
-
-
     }
-
-
-
-
-    [Serializable]
-    public class GraphViewDataCont : ScriptableObject 
-    {
-       public List<NodeData> nodeData = new List<NodeData>();
-       public List<NodeLinkData> nodeLinkData = new List<NodeLinkData>();
-    }
-
-
-
-    [Serializable]
-    public class NodeData
-    {
-        public Vector2 position;
-        public string nodeGuid;
-        public string IndexTile;
-        public DSDialogueType dialogueType;
-    }
-
-
-
-
-    [Serializable]
-    public class NodeLinkData
-    {
-        public string BaseNodeGuid;
-        public string PortName;
-        public string TargetNodeGuid;
-    }
-
-
-
 
 }
 

@@ -171,9 +171,4 @@ public class InspectorEditing : Editor
             newRef.PrintDict();
         }
     }
-
-
-
-
-
 }
