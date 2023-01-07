@@ -2039,11 +2039,7 @@ public static class AlgosUtils
             {
                 for (int x = 0; x < marchingCubesArr.GetLength(0); x++)
                 {
-                    //if (x + 1 >= marchingCubesArr.GetLength(0) || y + 1 >= marchingCubesArr.GetLength(1) || z + 1 >= marchingCubesArr.GetLength(2))
-                    //{
-                    //    continue;
-                    //}
-
+                  
 
                     if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
@@ -2052,11 +2048,53 @@ public static class AlgosUtils
                     else 
                     {
 
-                        if (gridArray2D[y][x].tileType != BasicTile.TileType.FLOORROOM) 
+                        if (gridArray2D[y][x].tileType != BasicTile.TileType.FLOORROOM) // draw everything but the floor
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
+
+                            if (gridArray2D[y][x].tileType != BasicTile.TileType.WALL && gridArray2D[y][x].tileType != BasicTile.TileType.FLOORCORRIDOR) // this is void 
+                            {
+                                var bufferArr = GeneralUtil.childPosArry4Side;
+
+                                int neigh = 0;
+
+                                for (int i = 0; i < bufferArr.Length / 2; i++)
+                                {
+
+
+                                    int x_buff = bufferArr[i, 0];
+                                    int y_buff = bufferArr[i, 1];
+
+                                    int[] node_position = { x + x_buff, y + y_buff };
+
+                                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArray2D[0].Length || node_position[1] >= gridArray2D.Length)
+                                    {
+                                        continue;
+                                    }
+                                    else if (gridArray2D[node_position[1]][node_position[0]].tileType != BasicTile.TileType.VOID)
+                                    {
+                                        neigh++;
+                                    }
+                                }
+
+
+                                if (neigh >= 2)
+                                { 
+                                    marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y),1);
+                                }
+                                else 
+                                {
+                                    marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0);
+                                }
+
+                            }
+                            else 
+                            {
+
+                                marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
+                            }
+
                         }
-                        else 
+                        else // set the floor to 0 
                         {
                             marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0);
                         }

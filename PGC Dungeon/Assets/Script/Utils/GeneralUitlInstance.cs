@@ -17,7 +17,6 @@ public class GeneralUitlInstance : MonoBehaviour
     private GameObject previousErrorPrefabRef;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         instance = this;

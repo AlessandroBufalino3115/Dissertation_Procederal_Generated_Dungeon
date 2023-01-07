@@ -216,7 +216,7 @@ public class StateUIManager : MonoBehaviour
         filter.mesh = mesh;
 
         var collider = newPart.AddComponent<MeshCollider>();
-        collider.convex = true;
+        collider.convex = false;
     }
 
 }

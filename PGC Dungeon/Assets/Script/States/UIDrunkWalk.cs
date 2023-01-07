@@ -109,9 +109,9 @@ public class UIDrunkWalk : UiBaseState
 
 
 
-            wallDiag = GUI.Toggle(new Rect(10, 320, 100, 30), wallDiag, "diag toggle");
+            wallDiag = GUI.Toggle(new Rect(10, 320, 100, 30), wallDiag, wallDiag != true ? "diagonal" : "straight");
 
-            typeOfTri = GUI.Toggle(new Rect(10, 600, 100, 30), typeOfTri, "type of tri");
+            typeOfTri = GUI.Toggle(new Rect(10, 600, 100, 30), typeOfTri, typeOfTri != true ? "delu" : "prims");
 
 
             if (GUI.Button(new Rect(10, 280, 120, 30), "Run Wall finding"))
