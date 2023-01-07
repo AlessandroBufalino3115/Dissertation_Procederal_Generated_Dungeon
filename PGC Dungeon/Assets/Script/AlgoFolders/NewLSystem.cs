@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class NewLSystem : MonoBehaviour
 {
-
     //https://www.gamedeveloper.com/design/kastle-dungeon-generation-using-l-systems
 
     public string axium;
@@ -14,23 +13,14 @@ public class NewLSystem : MonoBehaviour
 
     public string fileName = "";
 
-
     public List<Vector3> points = new List<Vector3>();
     public GameObject head;
-
-    //public Dictionary<char, string> rulesDict = new Dictionary<char, string>();
-
-
-    //public List<string> ruleString = new List<string>();
     
     public string endingWord;
 
     public bool run;
 
     private int currDirection = 0;
-
-
-
 
     public List<string> A_RuleSet = new List<string>();
     public List<string> B_RuleSet = new List<string>();
@@ -41,24 +31,9 @@ public class NewLSystem : MonoBehaviour
     public List<string> N_RuleSet = new List<string>();
 
 
-
-
-
-
-
     private void Start()
     {
         head.transform.position = Vector3.zero;
-
-        //rulesDict.Add('C', "SC-B+C-AL");
-        //rulesDict.Add('B', "SC+B+CL");
-        //rulesDict.Add('A', "SA+A+CLBSB-AL");
-
-        //ruleString.Add("SA+A+CLBSB---AL");
-        //ruleString.Add("SA--C+CLBSB--AL");
-        //ruleString.Add("SC+A--CL");
-
-
     }
 
 
@@ -72,8 +47,6 @@ public class NewLSystem : MonoBehaviour
 
             for (int x = 0; x < currentWord.Length; x++)
             {
-
-            
                 switch (currentWord[x])
                 {
                     case 'A':
@@ -87,9 +60,6 @@ public class NewLSystem : MonoBehaviour
                         else   
                             newWordQue.Enqueue(A_RuleSet[Random.Range(0, A_RuleSet.Count - 1)]);
 
-
-
-                        Debug.Log($"This is on the A");
                         break;
 
                     case 'B':
@@ -174,50 +144,19 @@ public class NewLSystem : MonoBehaviour
                     default:
                         break;
                 }
-
-
             }
-
-            // currentWord.Replace("A", rulesDict['A']);
-            //currentWord.Replace("A", ruleString[Random.Range(0,ruleString.Count-1)]);
-
 
             currentWord = string.Empty;
             while (newWordQue.Count > 0)
             {
-
                 currentWord = currentWord +  newWordQue.Dequeue();
-                Debug.Log(currentWord);
             }
-
-
-            //do something
-
 
         }
 
         Debug.Log($"{currentWord}");
         return currentWord.ToString();
 
-    }
-
-
-    private void Update()
-    {
-        if (run) 
-        {
-            run = false;
-
-            //head.transform.position = Vector3.zero;
-
-            //points.Clear();
-            //currDirection = 0;
-            //endingWord = RunLSystem(axium);
-            //ProcessSentence();
-
-
-
-        }
     }
 
 
@@ -238,8 +177,6 @@ public class NewLSystem : MonoBehaviour
 
         for (int i = 0; i < endingWord.Length; i++)
         {
-            //seems to have a 0 somewhere
-           // Debug.Log(currDirection);
 
             switch (endingWord[i])
             {
@@ -338,17 +275,6 @@ public class NewLSystem : MonoBehaviour
                 break;
         }
     }
-
-
-
-
-
-    private void LoadRuleSet() 
-    {
-        
-    }
-
-
 
 
     private void OnDrawGizmos()

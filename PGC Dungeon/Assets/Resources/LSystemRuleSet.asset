@@ -12,10 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: LSystemRuleSet
   m_EditorClassIdentifier: Assembly-CSharp-Editor::LSystemRuleSet
-  A_RuleSet: []
-  B_RuleSet: []
+  A_RuleSet:
+  - SA+A+CLBSB---AL
+  - SA--C+CLBSB--AL
+  - SC+A--CL
+  B_RuleSet:
+  - SC-B+C-AL
+  - SA-AA++BC+CLBSB--AL
   C_RuleSet: []
   S_RuleSet: []
   L_RuleSet: []
-  P_RuleSet: []
-  N_RuleSet: []
+  Psign_RuleSet: []
+  Nsign_RuleSet: []

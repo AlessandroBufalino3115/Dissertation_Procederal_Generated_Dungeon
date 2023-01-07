@@ -44,8 +44,8 @@ public class LSystemEditor : Editor
             ruleDec.A_RuleSet = ruleSet.A_RuleSet;
             ruleDec.B_RuleSet = ruleSet.B_RuleSet;
             ruleDec.C_RuleSet = ruleSet.C_RuleSet;
-            ruleDec.N_RuleSet = ruleSet.N_RuleSet;
-            ruleDec.P_RuleSet = ruleSet.P_RuleSet;
+            ruleDec.N_RuleSet = ruleSet.Nsign_RuleSet;
+            ruleDec.P_RuleSet = ruleSet.Psign_RuleSet;
             ruleDec.S_RuleSet = ruleSet.S_RuleSet;
             ruleDec.L_RuleSet = ruleSet.L_RuleSet;
 

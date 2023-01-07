@@ -7,14 +7,14 @@ using UnityEngine;
 public class LSystemRuleSet : ScriptableObject
 {
 
-    [Header("bla bla\n bla bla\nbla bla\nbla bla\nbla bla\nbla bla\nbla bla\nbla bla\n")]
+    [Header("L-System ruleset\nA = move 10 blocks\nB = move 15 blocks\nC = move 20 blocks\nS = ave current position in stack\nL = load last position from stack\n+ = turn clockwise\n- = turn anti-clockwise\n")]
 
     public List<string> A_RuleSet = new List<string>();
     public List<string> B_RuleSet = new List<string>();
     public List<string> C_RuleSet = new List<string>();
     public List<string> S_RuleSet = new List<string>();
     public List<string> L_RuleSet = new List<string>();
-    public List<string> P_RuleSet = new List<string>();
-    public List<string> N_RuleSet = new List<string>();
+    public List<string> Psign_RuleSet = new List<string>();
+    public List<string> Nsign_RuleSet = new List<string>();
 }
 
