@@ -125,42 +125,6 @@ public class UIPerlinState : UiBaseState
 
 
 
-            if (GUI.Button(new Rect(10, 350, 120, 30), "Run Wall finding"))
-            {
-
-
-
-
-                currentMenu.working = true;
-                if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
-                    AlgosUtils.SetUpTileTypesFloorWall(currentMenu.gridArrayObj2D);
-
-                else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
-                {
-                    AlgosUtils.SetUpTileTypesFloorWall(currentMenu.gridArray2D);
-                    currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1, true);
-                }
-
-
-                currentMenu.working = false;
-
-            }
-
-
-
-            if (GUI.Button(new Rect(10, 440, 120, 30), "Gen mesh"))
-            {
-
-
-                currentMenu.working = true;
-
-                currentMenu.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D), false));
-
-
-                currentMenu.working = false;
-            }
-
-
 
             if (GUI.Button(new Rect(10, 300, 120, 30), "Go Back"))
                 currentMenu.ChangeState(0);
