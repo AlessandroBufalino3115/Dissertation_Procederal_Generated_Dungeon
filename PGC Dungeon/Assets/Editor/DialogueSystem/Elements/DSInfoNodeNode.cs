@@ -12,7 +12,6 @@ namespace DS.Elements
 
     public class DSInfoNodeNode : DSNode
     {
-
         public override void Initialize(Vector2 pos, DSGraphView graphView)
         {
 

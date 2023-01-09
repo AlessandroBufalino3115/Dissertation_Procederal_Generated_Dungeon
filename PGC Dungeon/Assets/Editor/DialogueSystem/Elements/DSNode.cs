@@ -40,9 +40,6 @@ namespace DS.Elements
             RefreshPorts();
             RefreshExpandedState();
 
-
-
-
         }
 
 

@@ -13,38 +13,35 @@
  *  
  * Debug.Log($"<color=green></color>");      successs
  * 
+ * 
+ * vvvvvvvvvvvvvvvvvvvvv could vvvvvvvvvvvvvvvvvvvvv
+ * 
+ * there can be just a an algo that performs prims
+ * using poissons?
+ * 
+ * 
+ * 
  * vvvvvvvvvvvvvvvvvvvvv priority things left vvvvvvvvvvvvvvvvvvvvv
  * 
  * i have changed it so now the graph view wont be saved if unavailbale issue is that i  need something to change the colour of the node or somthign to indicate which one is the issue but the callback doesnt want to work
  * 
- *
- * 
- * implement at least one iteration
- * the last thign needed is a nice UI example, and also 
- * 
- * 
- * 
- * actually set the states
+ *doing the room generation with the given algo      random    standard    cell auto
  * 
  * 
  *   vvvvvvvvvvvvvvvvvvvvv Things left to implement vvvvvvvvvvvvvvvvvvvvv
  * 
- *      the plane seems to generate 90 degrees out of syn or maybe its othe objs?
- * 
- * 
  *      there is an issue in how the WFC sets the indexes on load
  * 
  *    go into th other pathfinding ones
+ *      
  *      
  *    for the return and all the inputs being a bit meh, for the returns instead of doing a specific way do a generalised codpy of the thing similar to how sqauredimaond returns  a list of float in a diff array * 
  *        
  *    
  *    worm/river gen same thing   in the perlinnois.cs
  *    
+ *    
  *    delete rooms that are too small or not needed when made from cellular auto    simialr to how we do the procederal wall thing, flood everything and if its not bigger then a tot delete the whole thing
  *    
- *   
- *    
- *    standardise this array thigns
  *   
  */

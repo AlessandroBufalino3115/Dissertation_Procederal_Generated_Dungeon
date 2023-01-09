@@ -52,7 +52,6 @@ namespace DS.Windows
 
             AddStyles();
         }
-
         private void AddMiniMap() 
         {
             MiniMap miniMap = new MiniMap()

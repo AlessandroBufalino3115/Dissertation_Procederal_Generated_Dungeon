@@ -16,5 +16,6 @@ public class LSystemRuleSet : ScriptableObject
     public List<string> L_RuleSet = new List<string>();
     public List<string> Psign_RuleSet = new List<string>();
     public List<string> Nsign_RuleSet = new List<string>();
+
 }
 

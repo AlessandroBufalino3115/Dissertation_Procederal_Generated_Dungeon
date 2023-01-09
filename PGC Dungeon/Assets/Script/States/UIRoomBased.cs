@@ -9,7 +9,8 @@ using Random = UnityEngine.Random;
 public class UIRoomBased : UiBaseState
 {
 
-    //bsp
+    //for the additive process the main issue is how to add into the existing room
+    //or is that veen necessary as there is flood algo?
 
     private int maxWidth;
     private int minWidth;
@@ -19,12 +20,9 @@ public class UIRoomBased : UiBaseState
 
     private int numOfRoom;
 
-    private int xAxis;
-    private int yAxis;
-
     private bool BPS;
+    private bool additive;
 
-    private int[,] grid2d;
     private List<RoomsClass> roomList = new List<RoomsClass>();
     List<BoundsInt> roomsListBPSAlgo = new List<BoundsInt>();
 
@@ -64,13 +62,10 @@ public class UIRoomBased : UiBaseState
             GUI.Label(new Rect(130, 145, 150, 30), "max num of rooms: " + numOfRoom);
 
 
-            xAxis = (int)GUI.HorizontalSlider(new Rect(10, 175, 100, 20), xAxis, 30, 200);
-            GUI.Label(new Rect(130, 170, 150, 30), "width of the map: " + xAxis);
-            yAxis = (int)GUI.HorizontalSlider(new Rect(10, 200, 100, 20), yAxis, 30, 200);
-            GUI.Label(new Rect(130, 195, 150, 30), "height of the map: " + yAxis);
 
+            BPS = GUI.Toggle(new Rect(10, 230, 120, 30), BPS, BPS == true? "Using RandomGen" : "using BPS");
 
-            BPS = GUI.Toggle(new Rect(10, 230, 120, 30), BPS, "use BPS");
+            additive = GUI.Toggle(new Rect(10, 210, 120, 30), additive, additive == true? "additive" : "new iteration");
 
 
 
@@ -82,16 +77,17 @@ public class UIRoomBased : UiBaseState
                     currentMenu.working = true;
                     roomsListBPSAlgo.Clear();
 
-                    if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
+
+                    if (!additive) 
                     {
-                        BPSRoomGen();
-                        SetUpWeights(currentMenu.gridArrayObj2D);
-                        AlgosUtils.SetColorAllObjAnchor(currentMenu.gridArrayObj2D);
+                        roomsListBPSAlgo.Clear();
+                        currentMenu.gridArray2D = AlgosUtils.RestartArr(currentMenu.gridArray2D);
                     }
 
-                    else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
+
+                    if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
                     {
-                        BPSRoomGen();
+                        BPSRoomGen(currentMenu.gridArray2D);
                         SetUpWeights(currentMenu.gridArray2D);
                         currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D, true);
                     }
@@ -105,19 +101,18 @@ public class UIRoomBased : UiBaseState
                 if (GUI.Button(new Rect(10, 260, 120, 30), "GenRooms"))
                 {
                     currentMenu.working = true;
-                    grid2d = new int[yAxis, xAxis];
                     roomList.Clear();
 
-                    if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
+
+                    if (!additive) 
                     {
-                        RandomRoomGen();
-                        SetUpWeights(currentMenu.gridArrayObj2D);
-                        AlgosUtils.SetColorAllObjAnchor(currentMenu.gridArrayObj2D);
+
+                        currentMenu.gridArray2D = AlgosUtils.RestartArr(currentMenu.gridArray2D);
                     }
 
-                    else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
+                    if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
                     {
-                        RandomRoomGen();
+                        RandomRoomGen(currentMenu.gridArray2D);
                         SetUpWeights(currentMenu.gridArray2D);
                         currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D, true);
                     }
@@ -164,7 +159,7 @@ public class UIRoomBased : UiBaseState
 
     #region Random Room Gen
 
-    private void RandomRoomGen() 
+    private void RandomRoomGen(BasicTile[][] gridArray2D) 
     {
         int tries = numOfRoom * 4;
 
@@ -177,7 +172,7 @@ public class UIRoomBased : UiBaseState
             if (roomList.Count >= numOfRoom) { break; }
 
 
-            Vector2Int ranStartPoint = new Vector2Int(Random.Range(0, xAxis), Random.Range(0, yAxis));
+            Vector2Int ranStartPoint = new Vector2Int(Random.Range(0, gridArray2D[0].Length), Random.Range(0, gridArray2D.Length));
 
             RoomsClass currRoom = new RoomsClass();
 
@@ -207,7 +202,7 @@ public class UIRoomBased : UiBaseState
             else
             {
 
-                if (ranStartPoint.x + ranWidth > xAxis -1)
+                if (ranStartPoint.x + ranWidth > gridArray2D[0].Length -1)
                     continue;
 
                 currRoom.minX = ranStartPoint.x;
@@ -233,7 +228,7 @@ public class UIRoomBased : UiBaseState
             else
             {
 
-                if (ranStartPoint.y + ranHeight > yAxis - 1)
+                if (ranStartPoint.y + ranHeight > gridArray2D.Length - 1)
                     continue;
 
                 currRoom.minY = ranStartPoint.y;
@@ -315,12 +310,12 @@ public class UIRoomBased : UiBaseState
 
 
 
-    private void BPSRoomGen()
+    private void BPSRoomGen(BasicTile[][] gridArray2D)
     {
         BoundsInt map = new BoundsInt();
 
         map.min = new Vector3Int(0, 0, 0);
-        map.max = new Vector3Int(xAxis, 0, yAxis);
+        map.max = new Vector3Int(gridArray2D[0].Length, 0, gridArray2D.Length);
 
         roomsListBPSAlgo = BPSAlgo2d(map);
 

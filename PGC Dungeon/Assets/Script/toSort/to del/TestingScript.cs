@@ -10,6 +10,10 @@ using Random = UnityEngine.Random;
 
 public class TestingScript : MonoBehaviour
 {
+
+    [SerializeField]
+    public AnimationCurve testAnimCurve;
+
     // In this example we show how to invoke a coroutine and
     // continue executing the function in parallel.
 

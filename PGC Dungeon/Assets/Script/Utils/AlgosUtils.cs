@@ -6,20 +6,9 @@ using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
 
 
-
-
-/*
- * the TileOBJ does inherit form the basic tile class therefore there is no need for multiple functions doing the same things, to clean up
- * 
- * 
- */
-
-
-
 public static class AlgosUtils
 {
 
-    // 0 1  2 4
     #region marching Cubes Rule
 
     //http://paulbourke.net/geometry/polygonise/
@@ -286,8 +275,6 @@ public static class AlgosUtils
 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
     #endregion
-
-
 
     #region A*pathFinding
 
@@ -639,111 +626,7 @@ public static class AlgosUtils
 
 
     }
-    /*
-    public static void RandomWalk3DCol(TileOBJ[][][] _gridarray3D, int iterations, bool alreadyPassed ) 
-    {
-        int iterationsLeft = iterations;
-
-        Vector3 currentHead = GeneralUtil.RanVector3Int(_gridarray3D[0][0].Length, _gridarray3D[0].Length, _gridarray3D.Length);
-
-        int maxIter = (int)((_gridarray3D.Length * _gridarray3D[0].Length * _gridarray3D[0][0].Length) * 1.4f);
-
-        int iterCount = 0;
-
-        while (iterationsLeft > 0)
-        {
-            iterCount++;
-
-            if (iterCount >= maxIter)
-            {
-                Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
-                
-                break;
-            }
-
-            int ranDir = Random.Range(0, 6);
-
-            switch (ranDir)
-            {
-                case 0:    //for
-
-                    if (currentHead.y + 1 >= _gridarray3D[0].Length)
-                    { }
-                    else
-                    {
-                        currentHead.y++;
-                    }
-
-                    break;
-
-                case 1:    //back
-                    if (currentHead.y - 1 < 0)
-                    { }
-                    else
-                    {
-                        currentHead.y--;
-                    }
-                    break;
-
-                case 2:    //left
-                    if (currentHead.x - 1 < 0)
-                    { }
-                    else
-                    {
-                        currentHead.x--;
-                    }
-                    break;
-
-                case 3:   //rigth
-                    if (currentHead.x + 1 >= _gridarray3D[0][0].Length)
-                    { }
-                    else
-                    {
-                        currentHead.x++;
-                    }
-                    break;
-
-                case 4:   //top
-                    if (currentHead.z + 1 >= _gridarray3D.Length)
-                    { }
-                    else
-                    {
-                        currentHead.z++;
-                    }
-                    break;
-
-                case 5:   //bot
-                    if (currentHead.z - 1 < 0)
-                    { }
-                    else
-                    {
-                        currentHead.z--;
-                    }
-                    break;
-
-
-                default:
-                    break;
-            }
-
-
-            if (alreadyPassed)
-            {
-                if (_gridarray3D[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color != Color.grey)
-                {
-                    _gridarray3D[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
-                    iterationsLeft--;
-                }
-            }
-            else
-            {
-                _gridarray3D[(int)currentHead.z][(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
-                iterationsLeft--;
-            }
-        }
-    }
-    */
-
+ 
 
     #endregion
 
@@ -2225,6 +2108,23 @@ public static class AlgosUtils
         return rooms;
     }
 
+    public static BasicTile[][] RestartArr(BasicTile[][] gridArr) 
+    {
+
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            gridArr[y] = new BasicTile[gridArr[0].Length];
+
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                gridArr[y][x] = new BasicTile();
+                gridArr[y][x].position = new Vector2Int(x, y);
+                gridArr[y][x].tileType = BasicTile.TileType.VOID;
+            }
+        }
+
+        return gridArr;
+    }
     #endregion
 
 

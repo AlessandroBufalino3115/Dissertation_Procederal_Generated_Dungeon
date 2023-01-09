@@ -273,7 +273,7 @@ public class UIDrunkWalk : UiBaseState
 
 
 
-            GUI.Label(new Rect(130, 475, 110, 30), "Min room size: " + minSize);
+            GUI.Label(new Rect(130, 475, 110, 40), "Min room size: " + minSize);
             minSize = (int)GUI.HorizontalSlider(new Rect(10, 480, 100, 20), minSize, 20, 100);
 
             if (GUI.Button(new Rect(10, 540, 100, 30), "Go back"))
@@ -296,10 +296,10 @@ public class UIDrunkWalk : UiBaseState
     public override void onGizmos(StateUIManager currentMenu)
     {
 
-        //foreach (var edge in primEdges)
-        //{
-        //    Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
-        //}
+        foreach (var edge in primEdges)
+        {
+            Debug.DrawLine(new Vector3(edge.edge[0].x, edge.edge[0].y, edge.edge[0].z), new Vector3(edge.edge[1].x, edge.edge[1].y, edge.edge[1].z), Color.green);
+        }
     }
 
 
