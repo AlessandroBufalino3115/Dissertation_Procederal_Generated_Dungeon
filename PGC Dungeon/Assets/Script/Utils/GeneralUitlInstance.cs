@@ -38,7 +38,6 @@ public class GeneralUitlInstance : MonoBehaviour
         if (type)      // positve is green
         {
             newRef.GetComponent<RawImage>().color = new Color32(0, 200, 0, 100);
-            Debug.Log($"calling for green");
         }
         else    // negative is red
         {

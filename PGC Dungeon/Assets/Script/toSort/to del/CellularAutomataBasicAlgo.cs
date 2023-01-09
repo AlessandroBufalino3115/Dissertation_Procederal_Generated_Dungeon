@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 
 public class CellularAutomataBasicAlgo : MonoBehaviour
 {
+    /*
 
     public int test_x;
     public int test_y;
@@ -58,7 +59,6 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
         }
 
     }
-    */
 
     public float fillDelay = 0.2f;
 
@@ -325,7 +325,8 @@ public class CellularAutomataBasicAlgo : MonoBehaviour
 
     }
 
-
+    
+    */
 
 
 }

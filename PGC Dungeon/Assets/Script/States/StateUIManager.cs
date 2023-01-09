@@ -29,7 +29,7 @@ public class StateUIManager : MonoBehaviour
     public Dictionary<BasicTile.TileType, float> tileTypeToCostDict = new Dictionary<BasicTile.TileType, float>();
 
     public bool working;
-    private bool gizmo;
+    public bool gizmo;
 
     public TileOBJ[][] gridArrayObj2D = new TileOBJ[1][];
     public BasicTile[][] gridArray2D = new BasicTile[1][];
@@ -85,6 +85,9 @@ public class StateUIManager : MonoBehaviour
         if (gizmo)
             currState.onGizmos(this);
     }
+
+
+
 
 
     public void Gen2DVolume( int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
@@ -170,10 +173,9 @@ public class StateUIManager : MonoBehaviour
             {
                 gridArray2D[y][x] = new BasicTile();
                 gridArray2D[y][x].position = new Vector2Int(x, y);
+                gridArray2D[y][x].tileType = BasicTile.TileType.VOID;
             }
         }
-
-
     }
     public void DestroyAllTiles()
     {

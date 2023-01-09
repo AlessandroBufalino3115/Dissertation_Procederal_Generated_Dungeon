@@ -10,7 +10,7 @@ public class LineMakingRoomThing : MonoBehaviour
 {
 
     [SerializeField]
-    public List<Identifier> rulesList = new List<Identifier>();
+    //public List<Identifier> rulesList = new List<Identifier>();
 
 
     private Dictionary<int,float> rulesDict = new Dictionary<int,float>();
@@ -44,10 +44,10 @@ public class LineMakingRoomThing : MonoBehaviour
         instance = this;
 
 
-        foreach (var item in rulesList)
-        {
-            rulesDict.Add((int)item.tileType, item.cost);
-        }
+        //foreach (var item in rulesList)
+        //{
+        //    rulesDict.Add((int)item.tileType, item.cost);
+        //}
 
 
     }

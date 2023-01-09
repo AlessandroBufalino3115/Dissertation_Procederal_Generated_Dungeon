@@ -22,7 +22,7 @@ public class A_StarPathFinding : MonoBehaviour
 
 
     [SerializeField]
-    public List<Identifier> rulesList = new List<Identifier>();
+   // public List<Identifier> rulesList = new List<Identifier>();
 
     // Start is called before the first frame update
     void Start()

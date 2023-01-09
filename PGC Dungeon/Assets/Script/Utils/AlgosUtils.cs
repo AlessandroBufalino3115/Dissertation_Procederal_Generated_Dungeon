@@ -292,331 +292,6 @@ public static class AlgosUtils
     #region A*pathFinding
 
 
-    /*
-
-    /// <summary>
-    /// Given a Start and End, run A* pathfinding
-    /// </summary>
-    /// <param name="tileArray2D"></param>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <param name="perf"></param>
-    /// <param name="colorDebug"></param>
-    /// <param name="diagonalTiles"></param>
-    /// <returns>Item 1 is the path of the AI, Item 2 is the checked tiles</returns>
-    //public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DNorm(TileOBJ[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
-    //{
-    //    int timerStart = Environment.TickCount & Int32.MaxValue;
-
-    //    // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
-    //    List<AStar_Node> openList = new List<AStar_Node>();
-    //    List<AStar_Node> closedList = new List<AStar_Node>();
-
-
-    //    AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
-    //    start_node.parent = null;
-
-    //    AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
-
-
-    //    int[,] childPosArry = new int[0, 0];
-
-    //    if (diagonalTiles)
-    //        childPosArry = GeneralUtil.childPosArry8Side;
-    //    else
-    //        childPosArry = GeneralUtil.childPosArry4Side;
-
-    //    openList.Add(start_node);
-
-    //    while (openList.Count > 0)
-    //    {
-
-    //        AStar_Node currNode = openList[0];
-    //        int currIndex = 0;
-    //        for (int i = 0; i < openList.Count; i++)
-    //        {
-    //            if (openList[i].f < currNode.f)
-    //            {
-    //                currNode = openList[i];
-    //                currIndex = i;
-    //            }
-    //        }
-
-    //        openList.RemoveAt(currIndex);
-
-    //        closedList.Add(currNode);
-
-    //        if (currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.z == end_node.refToGameObj.position.z)
-    //        {
-
-    //            List<AStar_Node> path = new List<AStar_Node>();
-
-    //            AStar_Node current = currNode;
-
-    //            while (current.parent != null)
-    //            {
-    //                path.Add(current);
-    //                current = current.parent;
-    //            }
-
-
-
-    //            if (colorDebug)
-    //            {
-    //                tileArray2D[start.y][start.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.red;
-
-
-    //                for (int i = 0; i < path.Count; i++)
-    //                {
-    //                    if (i == path.Count - 1)
-    //                        path[i].refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
-    //                    else
-    //                        path[i].refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.blue;
-    //                }
-    //            }
-
-    //            int timerEnd_ = Environment.TickCount & Int32.MaxValue;
-    //            int totalTicks_ = timerEnd_ - timerStart;
-
-    //            if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks_}</color>"); }
-
-
-    //            return new Tuple<List<AStar_Node>, List<AStar_Node>>(path, openList);
-
-    //        }
-    //        else
-    //        {
-    //            List<AStar_Node> children = new List<AStar_Node>();
-
-
-    //            for (int i = 0; i < childPosArry.Length / 2; i++)
-    //            {
-    //                int x_buff = childPosArry[i, 0];
-    //                int y_buff = childPosArry[i, 1];
-
-    //                int[] node_position = { currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.z + y_buff };
-
-
-    //                if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height)
-    //                {
-    //                    continue;
-    //                }
-    //                else
-    //                {
-    //                    //here an if statment also saying that walkable 
-    //                    AStar_Node new_node = new AStar_Node(tileArray2D[node_position[1]][node_position[0]]);
-    //                    children.Add(new_node);
-    //                }
-    //            }
-
-    //            foreach (var child in children)
-    //            {
-    //                foreach (var closedListItem in closedList)
-    //                {
-    //                    if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.z == closedListItem.refToGameObj.position.z)
-    //                    {
-    //                        continue;
-    //                    }
-    //                }
-
-
-    //                child.g = currNode.g + 0.5f;
-
-    //                if (euclideanDis)
-    //                    child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.z), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.z));
-    //                else
-    //                    child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.z), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.z));
-
-    //                child.f = child.g + child.h;
-    //                child.parent = currNode;
-
-
-    //                foreach (var openListItem in openList)
-    //                {
-    //                    if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.z == openListItem.refToGameObj.position.z && child.g > openListItem.g)// 
-    //                    {
-    //                        continue;
-    //                    }
-    //                }
-
-    //                openList.Add(child);
-
-    //            }
-    //        }
-    //    }
-
-
-
-    //    int timerEnd = Environment.TickCount & Int32.MaxValue;
-    //    int totalTicks = timerEnd - timerStart;
-
-    //    if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>"); }
-
-
-    //    return null;
-
-    //}
-
-    //public static Tuple<List<AStar_Node>, List<AStar_Node>> A_StarPathfinding2DWeight(TileOBJ[][] tileArray2D, Vector2Int start, Vector2Int end, Dictionary<int, float> rulesDict, bool euclideanDis = true, bool perf = false, bool colorDebug = false, bool diagonalTiles = false)
-    //{
-    //    int timerStart = Environment.TickCount & Int32.MaxValue;
-
-    //    // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
-    //    List<AStar_Node> openList = new List<AStar_Node>();
-    //    List<AStar_Node> closedList = new List<AStar_Node>();
-
-
-    //    AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
-    //    start_node.parent = null;
-
-    //    AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
-
-
-    //    int[,] childPosArry = new int[0, 0];
-
-    //    if (diagonalTiles)
-    //        childPosArry = GeneralUtil.childPosArry8Side;
-    //    else
-    //        childPosArry = GeneralUtil.childPosArry4Side;
-
-    //    openList.Add(start_node);
-
-    //    while (openList.Count > 0)
-    //    {
-
-    //        AStar_Node currNode = openList[0];
-    //        int currIndex = 0;
-    //        for (int i = 0; i < openList.Count; i++)
-    //        {
-    //            if (openList[i].f < currNode.f)
-    //            {
-    //                currNode = openList[i];
-    //                currIndex = i;
-    //            }
-    //        }
-
-    //        openList.RemoveAt(currIndex);
-
-    //        closedList.Add(currNode);
-
-    //        if (currNode.refToGameObj.position.x == end_node.refToGameObj.position.x && currNode.refToGameObj.position.z == end_node.refToGameObj.position.z)
-    //        {
-
-    //            List<AStar_Node> path = new List<AStar_Node>();
-
-    //            AStar_Node current = currNode;
-
-    //            while (current.parent != null)
-    //            {
-    //                path.Add(current);
-    //                current = current.parent;
-    //            }
-
-
-
-    //            if (colorDebug)
-    //            {
-    //                tileArray2D[start.y][start.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.red;
-
-
-    //                for (int i = 0; i < path.Count; i++)
-    //                {
-    //                    if (i == path.Count - 1)
-    //                        path[i].refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.green;
-    //                    else
-    //                        path[i].refToGameObj.tileObj.GetComponent<MeshRenderer>().material.color = Color.blue;
-    //                }
-    //            }
-
-    //            int timerEnd_ = Environment.TickCount & Int32.MaxValue;
-    //            int totalTicks_ = timerEnd_ - timerStart;
-
-    //            if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks_}</color>"); }
-
-
-    //            return new Tuple<List<AStar_Node>, List<AStar_Node>>(path, openList);
-
-    //        }
-    //        else
-    //        {
-    //            List<AStar_Node> children = new List<AStar_Node>();
-
-
-    //            for (int i = 0; i < childPosArry.Length / 2; i++)
-    //            {
-    //                int x_buff = childPosArry[i, 0];
-    //                int y_buff = childPosArry[i, 1];
-
-    //                int[] node_position = { currNode.refToGameObj.position.x + x_buff, currNode.refToGameObj.position.z + y_buff };
-
-
-    //                if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= TileVolumeGenerator.Instance.x_Length || node_position[1] >= TileVolumeGenerator.Instance.y_Height)
-    //                {
-    //                    continue;
-    //                }
-    //                else
-    //                {
-    //                    //here an if statment also saying that walkable 
-    //                    AStar_Node new_node = new AStar_Node(tileArray2D[node_position[1]][node_position[0]]);
-    //                    children.Add(new_node);
-    //                }
-    //            }
-
-    //            foreach (var child in children)
-    //            {
-    //                foreach (var closedListItem in closedList)
-    //                {
-    //                    if (child.refToGameObj.position.x == closedListItem.refToGameObj.position.x && child.refToGameObj.position.z == closedListItem.refToGameObj.position.z)
-    //                    {
-    //                        continue;
-    //                    }
-    //                }
-
-
-    //                float addedValue = 0;
-    //                int tileType = (int)tileArray2D[child.refToGameObj.position.z][child.refToGameObj.position.x].tileType;
-
-    //                if (rulesDict.ContainsKey(tileType))
-    //                    addedValue = rulesDict[tileType];
-
-
-    //                child.g = currNode.g + 0.5f;
-
-    //                if (euclideanDis)
-    //                    child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.z), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.z));
-    //                else
-    //                    child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToGameObj.position.x, end_node.refToGameObj.position.z), new Vector2(child.refToGameObj.position.x, child.refToGameObj.position.z));
-
-    //                child.f = child.g + child.h + addedValue;
-    //                child.parent = currNode;
-
-
-    //                foreach (var openListItem in openList)
-    //                {
-    //                    if (child.refToGameObj.position.x == openListItem.refToGameObj.position.x && child.refToGameObj.position.z == openListItem.refToGameObj.position.z && child.g > openListItem.g)
-    //                    {
-    //                        continue;
-    //                    }
-    //                }
-
-    //                openList.Add(child);
-
-    //            }
-    //        }
-    //    }
-
-
-
-    //    int timerEnd = Environment.TickCount & Int32.MaxValue;
-    //    int totalTicks = timerEnd - timerStart;
-
-    //    if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>"); }
-
-
-    //    return null;
-
-    //}
-    */
 
 
 
@@ -1150,52 +825,6 @@ public static class AlgosUtils
     }
 
 
-    /*
-    public static float[,,] PerlinNoise3DTileSet(TileOBJ[][][] _gridArray3D, float scale)
-    {
-        float[,,] noiseMap = new float[_gridArray3D[0][0].Length, _gridArray3D[0].Length, _gridArray3D.Length];
-
-
-        if (scale <= 0)
-        {
-            scale = 0.0001f;
-        }
-
-        for (int z = 0; z < _gridArray3D.Length; z++)
-        {
-            for (int y = 0; y < _gridArray3D[0].Length; y++)
-            {
-                for (int x = 0; x < _gridArray3D[0][0].Length; x++)
-                {
-                    float perlinValue = Perlin3D(z * scale, y * scale, x * scale);
-
-
-                    noiseMap[x, y, z] = perlinValue;
-                }
-            }
-        }
-
-
-        return noiseMap;
-    }
-
-    public static float Perlin3D(float x, float y, float z)
-    {
-        float ab = Mathf.PerlinNoise(x, y);
-        float bc = Mathf.PerlinNoise(y, z);
-        float ac = Mathf.PerlinNoise(x, z);
-
-        float ba = Mathf.PerlinNoise(y, x);
-        float cb = Mathf.PerlinNoise(z, y);
-        float ca = Mathf.PerlinNoise(z, x);
-
-        float abc = ab + bc + ac + ba + cb + ca;
-        return abc / 6f;
-    }
-    */
-
-
-
     public static BasicTile[][] PerlinNoise2D(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
         float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
@@ -1375,7 +1004,6 @@ public static class AlgosUtils
         var triangulation = DelunayTriangulation2D(points);
 
         return PrimAlgo(points, triangulation.Item1);
-
     }
 
     public static List<Edge> PrimAlgo(List<Vector2> points, List<Triangle> triangulation)
@@ -1430,7 +1058,6 @@ public static class AlgosUtils
 
         return primsAlgo;
     }
-
 
     public static Tuple<List<Triangle>, List<Edge>> DelunayTriangulation2D(List<Vector2> points)
     {
@@ -1857,11 +1484,9 @@ public static class AlgosUtils
     }
 
 
-
-
-
     #endregion
 
+    //not working
     #region DiamondSquare algo
 
     public static void DiamondSquare(int maxHeight, int minHeight, float roughness, BasicTile[][] gridArr)
@@ -1944,13 +1569,8 @@ public static class AlgosUtils
 
     #region Voronoi
 
-
     public static BasicTile[][] Voronoi2D(BasicTile[][] gridArray2D, List<Vector3> pointsArr)
     {
-     
-
-
-
         for (int y = 0; y < gridArray2D.Length; y++)
         {
             for (int x = 0; x < gridArray2D[y].Length; x++)
@@ -2020,7 +1640,6 @@ public static class AlgosUtils
         return gridArrayObj2D;
     }
 
-
     #endregion
 
     #region Marching Cubes Generation
@@ -2039,60 +1658,17 @@ public static class AlgosUtils
             {
                 for (int x = 0; x < marchingCubesArr.GetLength(0); x++)
                 {
-                  
-
+              
                     if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
                         marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
                     }
-                    else 
+                    else // this is justt he wall
                     {
 
-                        if (gridArray2D[y][x].tileType != BasicTile.TileType.FLOORROOM) // draw everything but the floor
+                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL) // draw everything but the floor
                         {
-
-                            if (gridArray2D[y][x].tileType != BasicTile.TileType.WALL && gridArray2D[y][x].tileType != BasicTile.TileType.FLOORCORRIDOR) // this is void 
-                            {
-                                var bufferArr = GeneralUtil.childPosArry4Side;
-
-                                int neigh = 0;
-
-                                for (int i = 0; i < bufferArr.Length / 2; i++)
-                                {
-
-
-                                    int x_buff = bufferArr[i, 0];
-                                    int y_buff = bufferArr[i, 1];
-
-                                    int[] node_position = { x + x_buff, y + y_buff };
-
-                                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArray2D[0].Length || node_position[1] >= gridArray2D.Length)
-                                    {
-                                        continue;
-                                    }
-                                    else if (gridArray2D[node_position[1]][node_position[0]].tileType != BasicTile.TileType.VOID)
-                                    {
-                                        neigh++;
-                                    }
-                                }
-
-
-                                if (neigh >= 2)
-                                { 
-                                    marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y),1);
-                                }
-                                else 
-                                {
-                                    marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0);
-                                }
-
-                            }
-                            else 
-                            {
-
-                                marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
-                            }
-
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y),1);
                         }
                         else // set the floor to 0 
                         {
@@ -2103,8 +1679,6 @@ public static class AlgosUtils
                 }
             }
         }
-
-
 
         return marchingCubesArr;
     }
@@ -2389,24 +1963,24 @@ public static class AlgosUtils
     }
 
     /// <summary>
-    /// call this to set up the tile type, for wall and floor, algo that recognises walls
+    /// call this to set up the tile type, for wall and floor, algo that recognises walls. this recognise
     /// </summary>
     /// <param name="gridArray2D"></param>
-    /// <param name="diagonalTiles"></param>
-    public static void SetUpTileTypes(BasicTile[][] gridArray2D, bool diagonalTiles = false)
+    /// <param name="diagonalTiles">diag tile depends if it uses the 8 or 4 child arr</param>
+    public static void SetUpTileTypesFloorWall(BasicTile[][] gridArray2D)
     {
+
+        int[,] childPosArry = new int[0, 0];
+
+        childPosArry = GeneralUtil.childPosArry4Side;
+
+
         for (int y = 0; y < gridArray2D.Length; y++)
         {
             for (int x = 0; x < gridArray2D[0].Length; x++)
             {
-                if (gridArray2D[y][x].tileWeight == 1)
+                if (gridArray2D[y][x].tileWeight != 0)
                 {
-                    int[,] childPosArry = new int[0, 0];
-
-                    if (diagonalTiles)
-                        childPosArry = GeneralUtil.childPosArry8Side;
-                    else
-                        childPosArry = GeneralUtil.childPosArry4Side;
 
                     bool wall = false;
 
@@ -2444,17 +2018,125 @@ public static class AlgosUtils
                         gridArray2D[y][x].tileType = BasicTile.TileType.FLOORROOM;
                         gridArray2D[y][x].tileWeight = 0.5f;
                     }
-
-
-
                 }
-
-
-
-
-
             }
         }
+
+
+        var copyArr = new BasicTile[gridArray2D.Length][];
+
+        for (int y = 0; y < copyArr.Length; y++)
+        {
+            copyArr[y] = new BasicTile[gridArray2D[0].Length];
+
+            for (int x = 0; x < copyArr[y].Length; x++)
+            {
+
+                copyArr[y][x] = new BasicTile();
+                copyArr[y][x].tileType = gridArray2D[y][x].tileType;
+                copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
+            }
+        }
+
+
+        for (int y = 0; y < copyArr.Length; y++)
+        {
+            for (int x = 0; x < copyArr[0].Length; x++)
+            {
+                if (copyArr[y][x].tileWeight == 0)
+                {
+
+                    int neigh = 0;
+
+                    for (int i = 0; i < childPosArry.Length / 2; i++)
+                    {
+                        int x_buff = childPosArry[i, 0];
+                        int y_buff = childPosArry[i, 1];
+
+                        int[] node_position = { x + x_buff, y + y_buff };
+
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr[0].Length || node_position[1] >= copyArr.Length)
+                        {
+                            continue;
+                        }
+                        else if (copyArr[node_position[1]][node_position[0]].tileType != BasicTile.TileType.VOID)
+                        {
+                            neigh++;
+                        }
+                    }
+
+
+                    if (neigh >= 2)
+                    {
+                        gridArray2D[y][x].tileWeight = 1;
+                        gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
+                    }
+                  
+                }
+            }
+        }
+
+    }
+
+    public static void SetUpTileTypesCorridor(BasicTile[][] gridArray2D)
+    {
+
+        int[,] childPosArry = new int[0, 0];
+
+        childPosArry = GeneralUtil.childPosArry4Side;
+
+
+        var copyArr = new BasicTile[gridArray2D.Length][];
+
+        for (int y = 0; y < copyArr.Length; y++)
+        {
+            copyArr[y] = new BasicTile[gridArray2D[0].Length];
+
+            for (int x = 0; x < copyArr[y].Length; x++)
+            {
+                copyArr[y][x] = new BasicTile();
+                copyArr[y][x].tileType = gridArray2D[y][x].tileType;
+                copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
+            }
+        }
+
+
+        for (int y = 0; y < copyArr.Length; y++)
+        {
+            for (int x = 0; x < copyArr[0].Length; x++)
+            {
+                if (copyArr[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                {
+
+                    for (int i = 0; i < childPosArry.Length / 2; i++)
+                    {
+                        int x_buff = childPosArry[i, 0];
+                        int y_buff = childPosArry[i, 1];
+
+                        int[] node_position = { x + x_buff, y + y_buff };
+
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr[0].Length || node_position[1] >= copyArr.Length)
+                        {
+                            continue;
+                        }
+                        else if (copyArr[node_position[1]][node_position[0]].tileType == BasicTile.TileType.VOID)
+                        {
+                            gridArray2D[node_position[1]][node_position[0]].tileType = BasicTile.TileType.WALL;
+                            gridArray2D[node_position[1]][node_position[0]].tileWeight =1;
+                        }
+                    }
+
+
+                    //if (neigh >= 2)
+                    //{
+                    //    gridArray2D[y][x].tileWeight = 1;
+                    //    gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
+                    //}
+
+                }
+            }
+        }
+
     }
 
 
@@ -2722,68 +2404,5 @@ public class MarchingCubeClass
 
 
 
-
-
-/// <summary>
-/// to prob delete
-/// </summary>
-[System.Serializable]
-public class Identifier
-{
-    public Color color = Color.black;
-
-    public enum TileType
-    {
-        VOID,
-        FLOORROOM,
-        WALL,
-        ROOF,
-        FLOORCORRIDOR,
-        AVOID
-    }
-
-    public TileType tileType = 0;
-    public float cost = 0;
-}
-
-/// <summary>
-/// to most liely delete
-/// </summary>
-public class CAtiles
-{
-    public TileOBJ tileCA;
-
-    public bool empty;
-
-    // when empty is true means white unliving
-    // when balck means full living
-
-    public CAtiles(float perc, TileOBJ normTile)
-    {
-        var ran = Random.Range(0f, 1f);
-
-        tileCA = normTile;
-        if (ran <= perc)
-        {
-            empty = false;
-        }
-        else
-        {
-            empty = true;
-        }
-    }
-
-    public CAtiles(bool _empty, TileOBJ normTile)
-    {
-        tileCA = normTile;
-        empty = _empty;
-    }
-
-
-}
-
-/// <summary>
-///  to delete
-/// </summary>
 
 

@@ -975,7 +975,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &382115524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,6 +991,7 @@ MonoBehaviour:
   changingToState: 0
   mat: {fileID: 2100000, guid: 638f47472bd8f36489b2370228b607bf, type: 2}
   working: 0
+  gizmo: 0
   emptyBlock: {fileID: 7935656221806652146, guid: c96f4d0cc7482c9408738b81053992cc, type: 3}
   CubeBlock: {fileID: 5718048433150643604, guid: 87b68b4aecd4f344fa9dd428018ad0f0, type: 3}
   Plane: {fileID: 445834603092584273, guid: 663aa1f55655fd842a4e3ceb27bc3f36, type: 3}
@@ -4686,7 +4687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1344085598
 Transform:
   m_ObjectHideFlags: 0
@@ -4735,14 +4736,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063c71bba05b2104788ed97b967d1b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  test_x: 0
-  test_y: 0
-  fillDelay: 0.05
-  startingPercentageOfTaken: 0.4
-  neighbours_var: 5
-  length: 0
-  width: 0
-  height: 0
 --- !u!114 &1344085603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4775,7 +4768,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68fc3481a095c24db7eef40f3de0210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rulesList: []
 --- !u!114 &1344085606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4901,25 +4893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cabd4753673dd847839fb53cf61609f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rulesList:
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 0
-    cost: 0.05
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 1
-    cost: -0.05
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 2
-    cost: 0
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 3
-    cost: 0
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 4
-    cost: -0.2
-  - color: {r: 0, g: 0, b: 0, a: 0}
-    tileType: 5
-    cost: 0.2
   linesX: 16
   linesY: 16
   roomsNum: 14
@@ -5042,7 +5015,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344085597}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d177978d930677c4abb7e14ca924683a, type: 3}
   m_Name: 
@@ -5174,7 +5147,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344085597}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c541db9e24ee354eb3d34d27a3e71c0, type: 3}
   m_Name: 

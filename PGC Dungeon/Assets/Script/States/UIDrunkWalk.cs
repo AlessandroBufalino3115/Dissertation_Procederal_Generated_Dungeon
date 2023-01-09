@@ -6,11 +6,10 @@ using UnityEngine.UIElements;
 
 public class UIDrunkWalk : UiBaseState
 {
-    // ask if to fill in the holes
-    // add more walk in the sesne of another run additivie
-    //start from the center
-
-    // there is an issue with the edge stuff if only two rooms
+   // ask if to start from the middle
+   // add tge other things 
+   // a nice order
+   // diags for path
 
 
 
@@ -22,7 +21,6 @@ public class UIDrunkWalk : UiBaseState
 
     private int neighboursNeeded = 3;
 
-    private bool wallDiag;
     private bool typeOfTri;
     private int minSize;
 
@@ -68,16 +66,23 @@ public class UIDrunkWalk : UiBaseState
 
             if (GUI.Button(new Rect(10, 140, 120, 30), "Run Drunk Walk"))
             {
+                currentMenu.working = true;
+
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
                     DrunkWalkObj2D(currentMenu);
 
                 else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
                     DrunkWalk2D(currentMenu);
 
+
+                currentMenu.working = false;
             }
 
             if (GUI.Button(new Rect(10, 180, 120, 30), "Run CA cleanup"))
             {
+
+
+                currentMenu.working = true;
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
                     AlgosUtils.CleanUp2dCA(currentMenu.gridArrayObj2D, neighboursNeeded);
 
@@ -88,11 +93,16 @@ public class UIDrunkWalk : UiBaseState
                     currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D);
                 }
 
+                currentMenu.working = false;
 
             }
 
             if (GUI.Button(new Rect(10, 220, 120, 30), "Run CA iteration"))
             {
+
+
+                currentMenu.working = true;
+
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
                     AlgosUtils.RunCaIteration2D(currentMenu.gridArrayObj2D, neighboursNeeded);
 
@@ -102,55 +112,78 @@ public class UIDrunkWalk : UiBaseState
                     currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D);
                 }
 
+
+                currentMenu.working = false;
             }
 
             neighboursNeeded = (int)GUI.HorizontalSlider(new Rect(10, 250, 100, 20), neighboursNeeded, 3, 5);
-
-
-
-
-            wallDiag = GUI.Toggle(new Rect(10, 320, 100, 30), wallDiag, wallDiag != true ? "diagonal" : "straight");
 
             typeOfTri = GUI.Toggle(new Rect(10, 600, 100, 30), typeOfTri, typeOfTri != true ? "delu" : "prims");
 
 
             if (GUI.Button(new Rect(10, 280, 120, 30), "Run Wall finding"))
             {
+
+
+
+
+                currentMenu.working = true;
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
-                    AlgosUtils.SetUpTileTypes(currentMenu.gridArrayObj2D, wallDiag);
+                    AlgosUtils.SetUpTileTypesFloorWall(currentMenu.gridArrayObj2D);
 
                 else if (currentMenu.dimension == StateUIManager.Dimension.PLANE) 
                 {
-                    AlgosUtils.SetUpTileTypes(currentMenu.gridArray2D, wallDiag);
+                    AlgosUtils.SetUpTileTypesFloorWall(currentMenu.gridArray2D);
                     currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1,true);
                 }
+
+
+                currentMenu.working = false;
 
             }
 
 
-            if (GUI.Button(new Rect(10, 360, 120, 30), "GEt All rooms"))
+            if (GUI.Button(new Rect(10, 320, 120, 30), "Set up corridors"))
             {
+
+                currentMenu.working = true;
+
+                if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
+                {
+                    AlgosUtils.SetUpTileTypesCorridor(currentMenu.gridArray2D);
+                    currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1, true);
+                }
+
+
+                currentMenu.working = false;
+            }
+
+
+
+            if (GUI.Button(new Rect(10, 360, 120, 30), "Get All rooms"))
+            {
+
+
+                currentMenu.working = true;
+
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
-                    AlgosUtils.SetUpTileTypes(currentMenu.gridArrayObj2D, wallDiag);
+                    AlgosUtils.SetUpTileTypesFloorWall(currentMenu.gridArrayObj2D);
 
                 else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
                 {
                     rooms = AlgosUtils.GetAllRooms(currentMenu.gridArray2D,true);
                     currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextSelfCol(currentMenu.gridArray2D);
                 }
+
+
+                currentMenu.working = false;
             }
 
 
             if (GUI.Button(new Rect(10, 400, 120, 30), "Connect all the rooms"))
             {
-                //if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
-                //    AlgosUtils.SetUpTileTypes(currentMenu.gridArrayObj2D, wallDiag);
 
-                //else if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
-                //{
-                //    AlgosUtils.GetAllRooms(currentMenu.gridArray2D, true);
-                //    currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextSelfCol(currentMenu.gridArray2D);
-                //}
+                currentMenu.working = true;
 
                 var centerPoints = new List<Vector2>();
                 var roomDict = new Dictionary<Vector2, List<BasicTile>>();
@@ -190,17 +223,29 @@ public class UIDrunkWalk : UiBaseState
                 }
 
                 currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1, true);
+
+
+                currentMenu.working = false;
             }
 
             if (GUI.Button(new Rect(10, 440, 120, 30), "Gen mesh"))
             {
-                //var something  = AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D);
+
+
+                currentMenu.working = true;
+
                 currentMenu.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D), false));
+
+
+                currentMenu.working = false;
             }
 
 
             if (GUI.Button(new Rect(10, 500, 120, 30), "check size"))
             {
+
+                currentMenu.working = true;
+
                 //var something  = AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D);
                 foreach (var room in rooms)
                 {
@@ -216,6 +261,9 @@ public class UIDrunkWalk : UiBaseState
                 }
 
                 currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1, true);
+
+
+                currentMenu.working = false;
 
             }
 
