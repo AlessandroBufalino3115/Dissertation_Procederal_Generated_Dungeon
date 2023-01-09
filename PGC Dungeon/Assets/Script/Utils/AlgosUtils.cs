@@ -454,7 +454,7 @@ public static class AlgosUtils
     #region Random Walk
 
     // new addition on basic tile 
-    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f)
+    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
     {
         int iterationsLeft = iterations;
 
@@ -473,24 +473,16 @@ public static class AlgosUtils
         }
 
 
-        Vector2Int currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
+        Vector2Int currentHead = new Vector2Int(maxX / 2, maxY / 2);
 
-        //int maxIter = (int)((_gridarray2D.Length * _gridarray2D[0].Length) * maxIterMultiplier);
+        if (randomStart)
+             currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
 
-        //int iterCount = 0;
 
         while (iterationsLeft > 0)
         {
 
-            //iterCount++;
-
-            //if (iterCount >= maxIter)
-            //{
-            //    Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
-
-            //    break;
-            //}
-
+      
             int ranDir = Random.Range(0, 4);
 
             switch (ranDir)
@@ -1046,8 +1038,6 @@ public static class AlgosUtils
 
             var edgesWithPointSort = edgesWithPoint.OrderBy(c => c.length).ToArray();   // we sort all the edges by the smallest to biggest
 
-            Debug.Log(visitedVertices.Count);
-            Debug.Log(edgesWithPointSort.Length);
 
             visitedVertices.Add(edgesWithPointSort[0].edge[0]);
             visitedVertices.Add(edgesWithPointSort[0].edge[1]);

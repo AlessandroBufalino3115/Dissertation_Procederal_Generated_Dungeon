@@ -6,7 +6,6 @@ using UnityEngine.UIElements;
 
 public class UIDrunkWalk : UiBaseState
 {
-   // ask if to start from the middle
    // add tge other things 
    // a nice order
    // diags for path
@@ -16,6 +15,9 @@ public class UIDrunkWalk : UiBaseState
 
     private int iterations;
     private int iterationsLeft;
+
+    private bool startFromMiddle = false;
+    private bool pathType = false;
 
     private bool alreadyPassed;
 
@@ -62,7 +64,10 @@ public class UIDrunkWalk : UiBaseState
             GUI.Label(new Rect(130, 70, 100, 30), "Iterations Left: " + iterationsLeft);
 
 
-            alreadyPassed = GUI.Toggle(new Rect(10, 100, 120, 30), alreadyPassed, "Overwrite cells");
+
+            startFromMiddle = GUI.Toggle(new Rect(120, 100, 150, 30), startFromMiddle, startFromMiddle == false ? "starting from mid" : "starting randomly");
+
+            alreadyPassed = GUI.Toggle(new Rect(10, 100, 120, 30), alreadyPassed, alreadyPassed != true ? "overlap cells" : "dont overlap");
 
             if (GUI.Button(new Rect(10, 140, 120, 30), "Run Drunk Walk"))
             {
@@ -80,8 +85,6 @@ public class UIDrunkWalk : UiBaseState
 
             if (GUI.Button(new Rect(10, 180, 120, 30), "Run CA cleanup"))
             {
-
-
                 currentMenu.working = true;
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
                     AlgosUtils.CleanUp2dCA(currentMenu.gridArrayObj2D, neighboursNeeded);
@@ -100,7 +103,6 @@ public class UIDrunkWalk : UiBaseState
             if (GUI.Button(new Rect(10, 220, 120, 30), "Run CA iteration"))
             {
 
-
                 currentMenu.working = true;
 
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
@@ -116,16 +118,15 @@ public class UIDrunkWalk : UiBaseState
                 currentMenu.working = false;
             }
 
-            neighboursNeeded = (int)GUI.HorizontalSlider(new Rect(10, 250, 100, 20), neighboursNeeded, 3, 5);
+            neighboursNeeded = (int)GUI.HorizontalSlider(new Rect(130, 210, 100, 20), neighboursNeeded, 3, 5);
 
-            typeOfTri = GUI.Toggle(new Rect(10, 600, 100, 30), typeOfTri, typeOfTri != true ? "delu" : "prims");
+            GUI.Label(new Rect(140, 220, 100, 40), "Needed neighbours: " + neighboursNeeded);
+
+
 
 
             if (GUI.Button(new Rect(10, 280, 120, 30), "Run Wall finding"))
             {
-
-
-
 
                 currentMenu.working = true;
                 if (currentMenu.dimension == StateUIManager.Dimension.TWOD)
@@ -180,6 +181,10 @@ public class UIDrunkWalk : UiBaseState
             }
 
 
+
+            typeOfTri = GUI.Toggle(new Rect(140, 415, 100, 30), typeOfTri, typeOfTri != true ? "delu" : "prims");
+            pathType = GUI.Toggle(new Rect(140, 395, 120, 30), pathType, pathType != true ? "straight" : "diagonal");
+
             if (GUI.Button(new Rect(10, 400, 120, 30), "Connect all the rooms"))
             {
 
@@ -210,7 +215,7 @@ public class UIDrunkWalk : UiBaseState
                     var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
 
-                    var path = AlgosUtils.A_StarPathfinding2DNorm(currentMenu.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), false);
+                    var path = AlgosUtils.A_StarPathfinding2DNorm(currentMenu.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), pathType);
 
 
                     foreach (var tile in path.Item1)
@@ -228,7 +233,7 @@ public class UIDrunkWalk : UiBaseState
                 currentMenu.working = false;
             }
 
-            if (GUI.Button(new Rect(10, 440, 120, 30), "Gen mesh"))
+            if (GUI.Button(new Rect(10, 500, 120, 30), "Gen mesh"))
             {
 
 
@@ -241,12 +246,13 @@ public class UIDrunkWalk : UiBaseState
             }
 
 
-            if (GUI.Button(new Rect(10, 500, 120, 30), "check size"))
+
+
+            if (GUI.Button(new Rect(10, 440, 120, 30), "check size"))
             {
 
                 currentMenu.working = true;
 
-                //var something  = AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D);
                 foreach (var room in rooms)
                 {
                     if(room.Count < minSize) 
@@ -256,12 +262,10 @@ public class UIDrunkWalk : UiBaseState
                             tile.tileWeight = 0;
                             tile.tileType = BasicTile.TileType.VOID;
                         }
-                        
                     }
                 }
 
                 currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColShade(currentMenu.gridArray2D, 0, 1, true);
-
 
                 currentMenu.working = false;
 
@@ -269,6 +273,7 @@ public class UIDrunkWalk : UiBaseState
 
 
 
+            GUI.Label(new Rect(130, 475, 110, 30), "Min room size: " + minSize);
             minSize = (int)GUI.HorizontalSlider(new Rect(10, 480, 100, 20), minSize, 20, 100);
 
             if (GUI.Button(new Rect(10, 540, 100, 30), "Go back"))
@@ -316,7 +321,7 @@ public class UIDrunkWalk : UiBaseState
         {
             currentMenu.working = true;
 
-            currentMenu.gridArray2D = AlgosUtils.RandomWalk2DCol(iterations, alreadyPassed, currentMenu.width, currentMenu.height);
+            currentMenu.gridArray2D = AlgosUtils.RandomWalk2DCol(iterations, alreadyPassed, currentMenu.width, currentMenu.height, randomStart: startFromMiddle);
 
             currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D);
 
