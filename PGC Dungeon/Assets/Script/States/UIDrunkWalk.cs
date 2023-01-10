@@ -235,12 +235,9 @@ public class UIDrunkWalk : UiBaseState
 
             if (GUI.Button(new Rect(10, 500, 120, 30), "Gen mesh"))
             {
-
-
                 currentMenu.working = true;
 
-                currentMenu.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D), false));
-
+                currentMenu.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D,currentMenu.ySize), false));
 
                 currentMenu.working = false;
             }

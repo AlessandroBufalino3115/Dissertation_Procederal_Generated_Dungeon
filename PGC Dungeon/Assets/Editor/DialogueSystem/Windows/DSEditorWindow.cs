@@ -19,10 +19,10 @@ namespace DS.Windows
 
 
 
-        [MenuItem("Window/DS/Dialogue Graph")]
+        [MenuItem("PCG Algorithms/WFC GraphView type 1")]
         public static void ShowExample()
         {
-            DSEditorWindow wnd = GetWindow<DSEditorWindow>("Dialogue Graph");
+            DSEditorWindow wnd = GetWindow<DSEditorWindow>("WFC GraphView type 1");
         }
 
 

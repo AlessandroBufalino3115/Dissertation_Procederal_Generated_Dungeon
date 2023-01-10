@@ -31,9 +31,17 @@ public class NewLSystem : MonoBehaviour
     public List<string> N_RuleSet = new List<string>();
 
 
-    private void Start()
+    private PCGManager pcgManager;
+    public PCGManager PcgManager
+    {
+        get { return pcgManager; }
+    }
+
+
+    public void InspectorAwake()
     {
         head.transform.position = Vector3.zero;
+        pcgManager = this.transform.GetComponent<PCGManager>();
     }
 
 
@@ -158,6 +166,8 @@ public class NewLSystem : MonoBehaviour
         return currentWord.ToString();
 
     }
+
+
 
 
     public void RunIteration() 

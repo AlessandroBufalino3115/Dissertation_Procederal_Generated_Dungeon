@@ -12,17 +12,17 @@ public class WFCRuleDecipher : MonoBehaviour
     public List<WFCTileRule> ruleSet = new List<WFCTileRule>();
 
     public GameObject[] tileSet = new GameObject[0];
-    public string ruleSetFolderName = "";
-    public string tileSetFolderName = "";
+    public string ruleSetFileName = "";
+    public string tileSetFileName = "";
 
 
 
-    public static WFCRuleDecipher instance;
+    //public static WFCRuleDecipher instance;
 
-    private void Awake()
-    {
-        instance = this; 
-    }
+    //private void Awake()
+    //{
+    //    instance = this; 
+    //}
 
 
 

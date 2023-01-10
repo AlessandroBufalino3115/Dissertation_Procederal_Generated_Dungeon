@@ -27,19 +27,35 @@ public class NewWFCAlog : MonoBehaviour
     public bool outskirtsCheck = false;
     public int indexOutskirts = 0;
 
-    private WFCRuleDecipher rulesInst;
+   private WFCRuleDecipher rulesInst;
 
     public bool run = false;
 
 
-    // Start is called before the first frame update
+
+
+
+    private PCGManager pcgManager;
+    public PCGManager PcgManager
+    {
+        get { return pcgManager; }
+    }
+
+
+    public void InspectorAwake()
+    {
+        pcgManager = this.transform.GetComponent<PCGManager>();
+        rulesInst = this.transform.GetComponent<WFCRuleDecipher>();
+    }
+
     void Start()
     {
         run = true;
-        rulesInst = WFCRuleDecipher.instance;
+        rulesInst = this.GetComponent<WFCRuleDecipher>();
     }
 
-    // Update is called once per frame
+
+
     void Update()
     {
         if (run)
@@ -47,9 +63,8 @@ public class NewWFCAlog : MonoBehaviour
             foreach (Transform child in transform)
                 Destroy(child.gameObject);
 
-
             run = false;
-            RunWFCAlgo(rulesInst.ruleSet);
+             RunWFCAlgo(rulesInst.ruleSet);
         }
     }
 

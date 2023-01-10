@@ -28,7 +28,7 @@ public class WFCRuleDecipherEditor : Editor
             IDictionary<int, string> dictNameIdx = new Dictionary<int, string>();
             
 
-            var fileName = "Assets/Resources/" + ruleDec.tileSetFolderName;
+            var fileName = "Assets/Resources/" + ruleDec.tileSetFileName;
 
             var info = new DirectoryInfo(fileName);
             var fileInfo = info.GetFiles();
@@ -46,7 +46,7 @@ public class WFCRuleDecipherEditor : Editor
                 int index = file.Name.IndexOf(".");
                 var manipString = file.Name.Substring(0, index);
 
-                dictNameIdx.Add(currIdx, ruleDec.tileSetFolderName + "/" + manipString);
+                dictNameIdx.Add(currIdx, ruleDec.tileSetFileName + "/" + manipString);
 
                 currIdx++;
             }
@@ -55,7 +55,7 @@ public class WFCRuleDecipherEditor : Editor
 
             ruleDec.ruleSet.Clear();
 
-            var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFolderName);
+            var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFileName);
 
 
 

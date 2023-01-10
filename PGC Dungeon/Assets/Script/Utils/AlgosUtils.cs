@@ -2120,6 +2120,8 @@ public static class AlgosUtils
                 gridArr[y][x] = new BasicTile();
                 gridArr[y][x].position = new Vector2Int(x, y);
                 gridArr[y][x].tileType = BasicTile.TileType.VOID;
+                gridArr[y][x].color = Color.white;
+
             }
         }
 

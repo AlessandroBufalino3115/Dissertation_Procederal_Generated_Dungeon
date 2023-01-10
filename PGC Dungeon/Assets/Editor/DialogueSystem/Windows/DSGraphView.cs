@@ -400,7 +400,6 @@ namespace DS.Windows
 
             foreach (var node in nodes)
             {
-                
                 this.RemoveElement(node);
             }
         }
@@ -461,10 +460,16 @@ namespace DS.Windows
             {
                 AssetDatabase.CreateFolder("Assets", "Resources");
                 AssetDatabase.Refresh();
-               
             }
 
-            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/{filename}.asset");
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/WFC RuleSets"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources", "WFC RuleSets");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WFC RuleSets/{filename}.asset");
             AssetDatabase.SaveAssets();
            
         

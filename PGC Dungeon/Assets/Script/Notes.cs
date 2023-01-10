@@ -40,8 +40,11 @@
  *    
  *    worm/river gen same thing   in the perlinnois.cs
  *    
- *    
- *    delete rooms that are too small or not needed when made from cellular auto    simialr to how we do the procederal wall thing, flood everything and if its not bigger then a tot delete the whole thing
- *    
+ *  
+ *   
+ *   
+ *   
+ *   
+ *   the fact that we need to do the rooms again when deleting them is bad 
  *   
  */

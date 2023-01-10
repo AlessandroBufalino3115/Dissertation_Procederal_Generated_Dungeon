@@ -1,153 +1,104 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Random = UnityEngine.Random;
 
-public class UIRoomBased : UiBaseState
+public class RanRoomGenMA : MonoBehaviour
 {
+    private PCGManager pcgManager;
+    public PCGManager PcgManager
+    {
+        get { return pcgManager; }
+    }
 
-    //for the additive process the main issue is how to add into the existing room
-    //or is that veen necessary as there is flood algo?
+
+
+
+
 
     private int maxWidth;
+    public int MaxWidth
+    {
+        get { return maxWidth; }
+        set { maxWidth = value; }
+    }
+
+
     private int minWidth;
+    public int MinWidth
+    {
+        get { return minWidth; }
+        set { minWidth = value; }
+    }
+
 
     private int maxHeight;
+    public int MaxHeight
+    {
+        get { return maxHeight; }
+        set { maxHeight = value; }
+    }
+
+
     private int minHeight;
+    public int MinHeight
+    {
+        get { return minHeight; }
+        set { minHeight = value; }
+    }
+
 
     private int numOfRoom;
+    public int NumOfRoom
+    {
+        get { return numOfRoom; }
+        set { numOfRoom = value; }
+    }
+
 
     private bool BPS;
+    public bool BPSg
+    {
+        get { return BPS; }
+        set { BPS = value; }
+    }
+
+
+
     private bool additive;
-
-    private List<RoomsClassInUI> roomList = new List<RoomsClassInUI>();
-    List<BoundsInt> roomsListBPSAlgo = new List<BoundsInt>();
-
-    public override void onExit(StateUIManager currentMenu)
+    public bool Additive
     {
-    }
-    public override void onGizmos(StateUIManager currentMenu)
-    {
-    }
-    public override void onGUI(StateUIManager currentMenu)
-    {
-
-
-
-        if (currentMenu.working) 
-        {
-            GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "LOADING");
-        }
-        else 
-        {
-
-            GUI.Box(new Rect(5, 10, 260, 650), "");
-
-            minHeight = (int)GUI.HorizontalSlider(new Rect(10, 50, 100, 20), minHeight, 5, 20);
-            GUI.Label(new Rect(130, 45, 150, 30), "min height of room: " + minHeight);
-            maxHeight = (int)GUI.HorizontalSlider(new Rect(10, 75, 100, 20), maxHeight, 5, 20);
-            GUI.Label(new Rect(130, 70, 150, 30), "max height of room: " + maxHeight);
-
-
-            minWidth = (int)GUI.HorizontalSlider(new Rect(10, 100, 100, 20), minWidth, 5, 20);
-            GUI.Label(new Rect(130, 95, 150, 30), "min width of room: " + minWidth);
-            maxWidth = (int)GUI.HorizontalSlider(new Rect(10, 125, 100, 20), maxWidth, 5, 20);
-            GUI.Label(new Rect(130, 120, 150, 30), "max width of room: " + maxWidth);
-
-
-            numOfRoom = (int)GUI.HorizontalSlider(new Rect(10, 150, 100, 20), numOfRoom, 3, 10);
-            GUI.Label(new Rect(130, 145, 150, 30), "max num of rooms: " + numOfRoom);
-
-
-
-            BPS = GUI.Toggle(new Rect(10, 230, 120, 30), BPS, BPS == true? "Using RandomGen" : "using BPS");
-
-            additive = GUI.Toggle(new Rect(10, 210, 120, 30), additive, additive == true? "additive" : "new iteration");
-
-
-
-
-            if (BPS) 
-            {
-                if (GUI.Button(new Rect(10, 260, 120, 30), "BPS algo"))
-                {
-                    currentMenu.working = true;
-                    roomsListBPSAlgo.Clear();
-
-
-                    if (!additive) 
-                    {
-                        roomsListBPSAlgo.Clear();
-                        currentMenu.gridArray2D = AlgosUtils.RestartArr(currentMenu.gridArray2D);
-                    }
-
-
-                    if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
-                    {
-                        BPSRoomGen(currentMenu.gridArray2D);
-                        SetUpWeights(currentMenu.gridArray2D);
-                        currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D, true);
-                    }
-                    currentMenu.working = false;
-
-                }
-            }
-            else
-            {
-
-                if (GUI.Button(new Rect(10, 260, 120, 30), "GenRooms"))
-                {
-                    currentMenu.working = true;
-                    roomList.Clear();
-
-
-                    if (!additive) 
-                    {
-
-                        currentMenu.gridArray2D = AlgosUtils.RestartArr(currentMenu.gridArray2D);
-                    }
-
-                    if (currentMenu.dimension == StateUIManager.Dimension.PLANE)
-                    {
-                        RandomRoomGen(currentMenu.gridArray2D);
-                        SetUpWeights(currentMenu.gridArray2D);
-                        currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D, true);
-                    }
-                    currentMenu.working = false;
-
-                }
-
-            }
-
-
-
-
-
-
-            if (GUI.Button(new Rect(10, 300, 120, 30), "Go Back"))
-                currentMenu.ChangeState(0);
-        }
-
+        get { return additive; }
+        set { additive = value; }
     }
 
-    public override void onStart(StateUIManager currentMenu)
+
+    public  List<RoomsClassInUI> roomList = new List<RoomsClassInUI>();
+    private List<BoundsInt> roomsListBPSAlgo = new List<BoundsInt>();
+
+    public List<BoundsInt> RoomList
     {
+        get { return roomsListBPSAlgo; }
     }
 
-    public override void onUpdate(StateUIManager currentMenu)
+
+    public void InspectorAwake()
     {
+        pcgManager = this.transform.GetComponent<PCGManager>();
+        roomList.Clear();
+        roomsListBPSAlgo.Clear();
     }
 
-    private void SetUpWeights(BasicTile[][] gridArr) 
+
+
+
+
+    public void SetUpWeights(BasicTile[][] gridArr)
     {
         foreach (var room in roomList)
         {
             for (int i = 0; i < room.tileCoords.Count; i++)
             {
-                gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileWeight = 1; 
+                gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileWeight = 1;
             }
         }
     }
@@ -159,7 +110,7 @@ public class UIRoomBased : UiBaseState
 
     #region Random Room Gen
 
-    private void RandomRoomGen(BasicTile[][] gridArray2D) 
+    public void RandomRoomGen(BasicTile[][] gridArray2D)
     {
         int tries = numOfRoom * 4;
 
@@ -202,7 +153,7 @@ public class UIRoomBased : UiBaseState
             else
             {
 
-                if (ranStartPoint.x + ranWidth > gridArray2D[0].Length -1)
+                if (ranStartPoint.x + ranWidth > gridArray2D[0].Length - 1)
                     continue;
 
                 currRoom.minX = ranStartPoint.x;
@@ -243,7 +194,7 @@ public class UIRoomBased : UiBaseState
 
             for (int i = 0; i < roomList.Count; i++)
             {
-                if (AABBCol(currRoom, roomList[i])) 
+                if (AABBCol(currRoom, roomList[i]))
                 {
                     //Debug.Log($"DId this call {roomsList.Count}");
                     toAdd = false;
@@ -252,7 +203,7 @@ public class UIRoomBased : UiBaseState
             }
 
 
-            if (toAdd) 
+            if (toAdd)
             {
                 WorkoutRegion(currRoom);
 
@@ -268,7 +219,7 @@ public class UIRoomBased : UiBaseState
     /// <param name="newRoom"></param>
     /// <param name="oldRoom"></param>
     /// <returns></returns>
-    private bool AABBCol(RoomsClassInUI newRoom, RoomsClassInUI oldRoom ) 
+    public bool AABBCol(RoomsClassInUI newRoom, RoomsClassInUI oldRoom)
     {
 
         for (int i = 0; i < newRoom.verticesList.Count; i++)
@@ -289,7 +240,7 @@ public class UIRoomBased : UiBaseState
 
 
 
-    private void WorkoutRegion(RoomsClassInUI room) 
+    public void WorkoutRegion(RoomsClassInUI room)
     {
         room.tileCoords = new List<Vector2Int>();
 
@@ -310,12 +261,12 @@ public class UIRoomBased : UiBaseState
 
 
 
-    private void BPSRoomGen(BasicTile[][] gridArray2D)
+    public void BPSRoomGen(BasicTile[][] gridArray2D)
     {
         BoundsInt map = new BoundsInt();
 
         map.min = new Vector3Int(0, 0, 0);
-        map.max = new Vector3Int(gridArray2D[0].Length, 0, gridArray2D.Length);
+        map.max = new Vector3Int(gridArray2D[0].Length -1, 0, gridArray2D.Length -1);
 
         roomsListBPSAlgo = BPSAlgo2d(map);
 
@@ -331,7 +282,7 @@ public class UIRoomBased : UiBaseState
 
     }
 
-    private void BoundsToWeights() 
+    public void BoundsToWeights()
     {
         roomList.Clear();
 
@@ -351,13 +302,13 @@ public class UIRoomBased : UiBaseState
 
         Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
 
-        roomsQueue.Enqueue(toSplit);  
+        roomsQueue.Enqueue(toSplit);
 
         while (roomsQueue.Count > 0)
         {
-            var room = roomsQueue.Dequeue();   
+            var room = roomsQueue.Dequeue();
 
-            if (room.size.z >= minHeight && room.size.x >= minWidth)   
+            if (room.size.z >= minHeight && room.size.x >= minWidth)
             {
 
                 if (Random.value < 0.5f)
@@ -398,7 +349,7 @@ public class UIRoomBased : UiBaseState
 
     }
 
-    private void SplitVert(int minWidth, BoundsInt room, Queue<BoundsInt> roomQue)
+    public void SplitVert(int minWidth, BoundsInt room, Queue<BoundsInt> roomQue)
     {
 
         int minX = room.min.x;
@@ -425,7 +376,7 @@ public class UIRoomBased : UiBaseState
 
     }
 
-    private void SplitHori(int minHeight, BoundsInt room, Queue<BoundsInt> roomQue)
+    public void SplitHori(int minHeight, BoundsInt room, Queue<BoundsInt> roomQue)
     {
         int minY = room.min.z;
         int maxY = room.max.z;
@@ -452,32 +403,51 @@ public class UIRoomBased : UiBaseState
 
     #endregion
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
 
 
-public class RoomsClassInUI
+
+
+public class RoomsClass
 {
     public int minX;
     public int maxX;
     public int minY;
     public int maxY;
 
-    public Vector2Int topLeftCoord;  
-    public Vector2Int topRightCoord;    
-    public Vector2Int botLeftCoord;  
+    public Vector2Int topLeftCoord;
+    public Vector2Int topRightCoord;
+    public Vector2Int botLeftCoord;
     public Vector2Int botRightCoord;
     public List<Vector2Int> verticesList = new List<Vector2Int>();
 
     public int width;
     public int height;
 
-    public List<Vector2Int> tileCoords = new List<Vector2Int>() ;
+    public List<Vector2Int> tileCoords = new List<Vector2Int>();
     public GameObject tile;
 
 
-    public void WorkOutCoords() 
+    public void WorkOutCoords()
     {
         verticesList = new List<Vector2Int>();
 
@@ -490,9 +460,5 @@ public class RoomsClassInUI
         verticesList.Add(topRightCoord);
         verticesList.Add(botLeftCoord);
         verticesList.Add(botRightCoord);
-    
     }
-
-
 }
-

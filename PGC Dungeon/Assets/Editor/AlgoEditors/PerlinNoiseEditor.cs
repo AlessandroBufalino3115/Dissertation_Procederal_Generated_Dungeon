@@ -1,13 +1,13 @@
+using Codice.Client.BaseCommands.Changelist;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-[CustomEditor(typeof(RandomWalkMA))]
-public class RandomWalkEditor : Editor
+
+
+[CustomEditor(typeof(PerlinNoiseMA))]
+public class PerlinNoiseEditor : Editor
 {
     bool showCA = false;
     string status = "Use Cellular Automata to tidy up";
@@ -17,28 +17,39 @@ public class RandomWalkEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        RandomWalkMA mainScript = (RandomWalkMA)target;
 
-        //Main algo 
-
-        GUILayout.Label("How many iterations");
+        PerlinNoiseMA mainScript = (PerlinNoiseMA)target;
 
 
-        mainScript.Iterations = (int)EditorGUILayout.Slider(mainScript.Iterations, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.3f, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) *0.9f);
+        //specific to Main algo
 
-        mainScript.StartFromMiddle = EditorGUILayout.Toggle("Should it start from middle", mainScript.StartFromMiddle, GUILayout.ExpandWidth(true)); ;
-        mainScript.AlreadyPassed = EditorGUILayout.Toggle("Overlap cells count", mainScript.AlreadyPassed);
+        mainScript.OffsetX = (int)EditorGUILayout.Slider(mainScript.OffsetX, 0, 10000);
+        mainScript.OffsetY = (int)EditorGUILayout.Slider(mainScript.OffsetY, 0, 10000);
+        
+        
+        mainScript.Scale = EditorGUILayout.Slider(mainScript.Scale, 3f, 35f);
+        mainScript.Octaves = (int)EditorGUILayout.Slider(mainScript.Octaves, 1, 8);
 
+        mainScript.Persistance = EditorGUILayout.Slider(mainScript.Persistance, 0.1f, 0.9f);
+        mainScript.Lacunarity = EditorGUILayout.Slider(mainScript.Lacunarity, 0.5f, 10f);
 
-        if (GUILayout.Button("Generate RandomWalk Randomisation"))// gen something
+        mainScript.Threshold = EditorGUILayout.Slider(mainScript.Threshold, 0.1f, 0.9f);
+
+        if (GUILayout.Button("Generate Noise"))
         {
-            AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
-            mainScript.PcgManager.gridArray2D = AlgosUtils.RandomWalk2DCol(mainScript.Iterations, !mainScript.AlreadyPassed, mainScript.PcgManager.gridArray2D[0].Length, mainScript.PcgManager.gridArray2D.Length, randomStart: !mainScript.StartFromMiddle);
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
+            mainScript.PcgManager.gridArray2D = AlgosUtils.PerlinNoise2D(mainScript.PcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.Threshold);
+
+            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+
             mainScript.Started = true;
         }
 
 
+
+
+
+
+        //general
 
 
 
@@ -130,6 +141,12 @@ public class RandomWalkEditor : Editor
             }
 
 
+
+
+
+
+
+
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space();
@@ -217,6 +234,15 @@ public class RandomWalkEditor : Editor
 
 
 
+
+
+
+
+
+
+
+
+
             if (GUILayout.Button("Generate Mesh"))
             {
                 mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
@@ -224,6 +250,14 @@ public class RandomWalkEditor : Editor
 
 
         }
+
+
+
+
+
+
+
+
     }
 
 

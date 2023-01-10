@@ -30,7 +30,13 @@ public class LSystemEditor : Editor
                 AssetDatabase.Refresh();
             }
 
-            AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/{ruleDec.fileName}.asset");
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/L-systemRuleSets"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources", "L-systemRuleSets");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/L-systemRuleSets/{ruleDec.fileName}.asset");
             AssetDatabase.SaveAssets();
 
         }
