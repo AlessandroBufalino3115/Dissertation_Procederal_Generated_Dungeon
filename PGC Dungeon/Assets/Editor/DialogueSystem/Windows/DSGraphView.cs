@@ -1,5 +1,4 @@
 using DS.Elements;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -14,9 +13,6 @@ namespace DS.Windows
     using System;
     using System.IO;
     using System.Linq;
-    using Unity.VisualScripting;
-    using UnityEditor.Graphs;
-    using UnityEngine.Windows;
 
     public class DSGraphView : GraphView
     {
@@ -59,7 +55,7 @@ namespace DS.Windows
                 anchored = true,
             };
 
-            miniMap.SetPosition(new Rect(15, 50, 200, 100));
+            miniMap.SetPosition(new Rect(15, 50, 200, 200));
 
             this.Add(miniMap);
 
