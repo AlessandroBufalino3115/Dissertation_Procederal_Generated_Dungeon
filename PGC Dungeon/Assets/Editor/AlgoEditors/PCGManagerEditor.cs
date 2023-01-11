@@ -8,6 +8,19 @@ using UnityEngine;
 [CustomEditor(typeof(PCGManager))]
 public class PCGManagerEditor : Editor
 {
+
+
+    [MenuItem("PCG Algorithms/Main Algo")]
+    static void SpawnObject() 
+    {
+        var objToSpawn = new GameObject("Cool GameObject made from Code");
+        //Add Components
+        objToSpawn.transform.name = "PCG element";
+        objToSpawn.AddComponent<PCGManager>();
+    }
+
+
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
