@@ -4687,7 +4687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1344085598
 Transform:
   m_ObjectHideFlags: 0
@@ -5127,8 +5127,8 @@ MonoBehaviour:
   - {fileID: 8505394300355001830, guid: 20ab04c2513ed394fad4bc3969f7d028, type: 3}
   - {fileID: 919132149155446097, guid: 2062fa3a51a72c74cb75da9c80727e6f, type: 3}
   - {fileID: 919132149155446097, guid: a494cf85db0689c4d97e872d87b97b40, type: 3}
-  ruleSetFolderName: NewRuleSet
-  tileSetFolderName: RoadTiles
+  ruleSetFileName: 
+  tileSetFileName: 
 --- !u!114 &1344085619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5160,7 +5160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   axium: A
   iterations: 2
-  fileName: eqwiuyweyuiwe
+  fileName: newnewRuleType
   points:
   - {x: 0, y: 0, z: 0}
   - {x: 10, y: 0, z: 0}

@@ -20,9 +20,7 @@ public class LSystemEditor : Editor
 
         if (GUILayout.Button("New rule Set"))
         {
-            var ruleSet = ScriptableObject.CreateInstance<LSystemRuleSet>();
-
-
+            var ruleSet = ScriptableObject.CreateInstance<LSystemRuleObj>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -44,8 +42,7 @@ public class LSystemEditor : Editor
 
         if (GUILayout.Button("Load Rule Set"))
         {
-
-            var ruleSet = Resources.Load<LSystemRuleSet>(ruleDec.fileName);
+            var ruleSet = Resources.Load<LSystemRuleObj>(ruleDec.fileName);
 
             ruleDec.A_RuleSet = ruleSet.A_RuleSet;
             ruleDec.B_RuleSet = ruleSet.B_RuleSet;
@@ -61,9 +58,6 @@ public class LSystemEditor : Editor
         {
             ruleDec.RunIteration();
         }
-
-
-
     }
 }
 
