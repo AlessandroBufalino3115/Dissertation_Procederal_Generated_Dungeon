@@ -440,7 +440,7 @@ public static class AlgosUtils
 
     #region Random Walk
 
-    // new addition on basic tile 
+
     public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
     {
         int iterationsLeft = iterations;
@@ -535,6 +535,105 @@ public static class AlgosUtils
         return _gridarray2D;
 
     }
+
+
+    public static BasicTile[][] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
+    {
+
+        int maxY = boundsRoom.zMax - boundsRoom.zMin;
+        int maxX = boundsRoom.xMax - boundsRoom.xMin;
+
+        int iterations = (maxX) * (maxY);
+
+
+        int iterationsLeft = iterations;
+
+
+        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+
+        for (int y = 0; y < maxY; y++)
+        {
+            _gridarray2D[y] = new BasicTile[maxX];
+
+            for (int x = 0; x < maxX; x++)
+            {
+                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x].position = new Vector2Int(x, y);
+            }
+        }
+
+
+        Vector2Int currentHead = new Vector2Int(maxX / 2, maxY / 2);
+
+        while (iterationsLeft > 0)
+        {
+
+
+            int ranDir = Random.Range(0, 4);
+
+            switch (ranDir)
+            {
+                case 0:    //for
+
+                    if (currentHead.y + 1 >= _gridarray2D.Length)
+                    { }
+                    else
+                    {
+                        currentHead.y++;
+                    }
+
+                    break;
+
+                case 1:    //back
+                    if (currentHead.y - 1 < 0)
+                    { }
+                    else
+                    {
+                        currentHead.y--;
+                    }
+                    break;
+
+                case 2:    //left
+                    if (currentHead.x - 1 < 0)
+                    { }
+                    else
+                    {
+                        currentHead.x--;
+                    }
+                    break;
+
+                case 3:   //rigth
+                    if (currentHead.x + 1 >= _gridarray2D[0].Length)
+                    { }
+                    else
+                    {
+                        currentHead.x++;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+
+                _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+                iterationsLeft--;
+            
+        }
+
+
+
+        RunCaIteration2D(_gridarray2D, 4);
+
+
+        return _gridarray2D;
+
+    }
+
+
+
+
+
 
     //also ask if it wants to start from the middle or no
     public static void RandomWalk2DCol(TileOBJ[][] _gridarray2D, int iterations, bool alreadyPassed)
@@ -1213,7 +1312,7 @@ public static class AlgosUtils
     /// </summary>
     /// <param name="gridArr"></param>
     /// <param name="ranValue"></param>
-    public static void SpawnRandomPointsObj2D(BasicTile[][] gridArr, float ranValue) 
+    public static void SpawnRandomPointsCA(BasicTile[][] gridArr, float ranValue) 
     {
         for (int y = 0; y < gridArr.Length; y++)
         {
@@ -1222,7 +1321,6 @@ public static class AlgosUtils
                 if (Random.value > ranValue) 
                 {
                     gridArr[y][x].tileWeight = 0;
-
                 }
                 else 
                 {
@@ -1355,6 +1453,38 @@ public static class AlgosUtils
             }
         }
     }
+
+
+
+    public static BasicTile[][] compartimentalisedCA(BoundsInt boundsRoom) 
+    {
+
+        int maxY = boundsRoom.zMax - boundsRoom.zMin;
+        int maxX = boundsRoom.xMax - boundsRoom.xMin;
+
+        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+
+        for (int y = 0; y < maxY; y++)
+        {
+            _gridarray2D[y] = new BasicTile[maxX];
+
+            for (int x = 0; x < maxX; x++)
+            {
+                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x].position = new Vector2Int(x, y);
+            }
+        }
+
+
+        SpawnRandomPointsCA(_gridarray2D, 0.55f);
+        RunCaIteration2D(_gridarray2D, 4);
+        RunCaIteration2D(_gridarray2D, 4);
+        CleanUp2dCA(_gridarray2D, 4);
+
+        return _gridarray2D;
+    }
+
+
 
 
     #endregion
@@ -2121,7 +2251,6 @@ public static class AlgosUtils
                 gridArr[y][x].position = new Vector2Int(x, y);
                 gridArr[y][x].tileType = BasicTile.TileType.VOID;
                 gridArr[y][x].color = Color.white;
-
             }
         }
 

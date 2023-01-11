@@ -72,13 +72,41 @@ public class RanRoomGenMA : MonoBehaviour
     }
 
 
-    public  List<RoomsClassInUI> roomList = new List<RoomsClassInUI>();
+    public List<RoomsClassInUI> roomList = new List<RoomsClassInUI>();
     private List<BoundsInt> roomsListBPSAlgo = new List<BoundsInt>();
 
     public List<BoundsInt> RoomList
     {
         get { return roomsListBPSAlgo; }
     }
+
+
+
+
+
+
+    public List<List<BasicTile>> rooms = new List<List<BasicTile>>();
+    public List<Edge> edges = new List<Edge>();
+
+
+
+    public enum PathFindingType
+    {
+        A_STAR,
+        DJISTRA,
+        BFS,
+        DFS
+    }
+    private PathFindingType pathFindingType;
+    public PathFindingType PathfindingType
+    {
+        get { return pathFindingType; }
+        set { pathFindingType = value; }
+    }
+
+
+
+
 
 
     public void InspectorAwake()
@@ -99,6 +127,7 @@ public class RanRoomGenMA : MonoBehaviour
             for (int i = 0; i < room.tileCoords.Count; i++)
             {
                 gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileWeight = 1;
+                gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileType = BasicTile.TileType.FLOORROOM;
             }
         }
     }
@@ -146,9 +175,6 @@ public class RanRoomGenMA : MonoBehaviour
 
                 currRoom.maxX = ranStartPoint.x;
                 currRoom.minX = ranStartPoint.x + ranWidth;
-
-
-                Debug.Log($"{currRoom.minX} {currRoom.maxX}");
             }
             else
             {
@@ -160,7 +186,6 @@ public class RanRoomGenMA : MonoBehaviour
                 currRoom.maxX = ranStartPoint.x + ranWidth;
 
 
-                Debug.Log($"{currRoom.minX} {currRoom.maxX}");
             }
 
 
@@ -173,8 +198,6 @@ public class RanRoomGenMA : MonoBehaviour
                 currRoom.maxY = ranStartPoint.y;
                 currRoom.minY = ranStartPoint.y + ranHeight;
 
-
-                Debug.Log($"{currRoom.minY} {currRoom.maxY}");
             }
             else
             {
@@ -185,7 +208,6 @@ public class RanRoomGenMA : MonoBehaviour
                 currRoom.minY = ranStartPoint.y;
                 currRoom.maxY = ranStartPoint.y + ranHeight;
 
-                Debug.Log($"{currRoom.minY} {currRoom.maxY}");
             }
 
             currRoom.WorkOutCoords();
@@ -244,8 +266,6 @@ public class RanRoomGenMA : MonoBehaviour
     {
         room.tileCoords = new List<Vector2Int>();
 
-        //Debug.Log($"{currRoom.minY} {currRoom.maxY} {currRoom.minX} {currRoom.maxX}");
-
         for (int y = room.minY; y < room.maxY + 1; y++)
         {
             for (int x = room.minX; x < room.maxX + 1; x++)
@@ -266,7 +286,7 @@ public class RanRoomGenMA : MonoBehaviour
         BoundsInt map = new BoundsInt();
 
         map.min = new Vector3Int(0, 0, 0);
-        map.max = new Vector3Int(gridArray2D[0].Length -1, 0, gridArray2D.Length -1);
+        map.max = new Vector3Int(gridArray2D[0].Length - 1, 0, gridArray2D.Length - 1);
 
         roomsListBPSAlgo = BPSAlgo2d(map);
 
@@ -406,7 +426,64 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
+    public void RanRoom(bool usingBPS, bool usingCA)
+    {
+        pcgManager.Restart();
 
+
+        if (!usingBPS)
+        {
+
+            foreach (var room in roomList)
+            {
+                roomsListBPSAlgo.Add(new BoundsInt() { xMin = room.minX, xMax = room.maxX, zMin = room.minY, zMax = room.maxY });
+            }
+        }
+
+
+
+        foreach (var room in roomsListBPSAlgo)
+        {
+
+            var gridArrRoom = new BasicTile[0][];
+
+            if (usingCA)
+            {
+                gridArrRoom = AlgosUtils.compartimentalisedCA(room);
+            }
+            else
+            {
+                gridArrRoom = AlgosUtils.CompartimentalisedRandomWalk(room);
+            }
+
+
+
+            for (int y = 0; y < gridArrRoom.Length; y++)
+            {
+                for (int x = 0; x < gridArrRoom[0].Length; x++)
+                {
+                    if (gridArrRoom[y][x].tileWeight == 1)
+                    {
+                        pcgManager.gridArray2D[y + room.zMin][x + room.xMin].tileWeight = 1;
+                    }
+                    else
+                    {
+                        pcgManager.gridArray2D[y + room.zMin][x + room.xMin].tileWeight = 0;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+        PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(PcgManager.gridArray2D, true);
+
+
+    }
 
 
 

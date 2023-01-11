@@ -41,13 +41,13 @@ public class UICellularAutomataState : UiBaseState
             {
               
                 case StateUIManager.Dimension.TWOD:
-                    AlgosUtils.SpawnRandomPointsObj2D(currentMenu.gridArrayObj2D, startingPerc);
+                    AlgosUtils.SpawnRandomPointsCA(currentMenu.gridArrayObj2D, startingPerc);
                     AlgosUtils.SetColorAllObjAnchor(currentMenu.gridArrayObj2D);
 
                     break;
               
                 case StateUIManager.Dimension.PLANE:
-                    AlgosUtils.SpawnRandomPointsObj2D(currentMenu.gridArray2D, startingPerc);
+                    AlgosUtils.SpawnRandomPointsCA(currentMenu.gridArray2D, startingPerc);
                    
                     currentMenu.plane.GetComponent<Renderer>().material.mainTexture = AlgosUtils.SetUpTextBiColAnchor(currentMenu.gridArray2D);
 

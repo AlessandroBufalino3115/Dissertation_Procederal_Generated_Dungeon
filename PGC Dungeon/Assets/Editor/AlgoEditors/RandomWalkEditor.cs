@@ -45,7 +45,6 @@ public class RandomWalkEditor : Editor
 
         if (mainScript.Started)
         {
-            //stuff for the Cellular automata
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -60,10 +59,8 @@ public class RandomWalkEditor : Editor
                     status = "Cellular Automata Settings";
                 }
 
-
                 GUILayout.Label("How many neighbours");
                 mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(mainScript.NeighboursNeeded, 3, 5);
-
 
                 if (GUILayout.Button("Clean Up CA"))
                 {
