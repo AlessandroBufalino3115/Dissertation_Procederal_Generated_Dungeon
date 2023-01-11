@@ -290,7 +290,7 @@ public class RanRoomGenMA : MonoBehaviour
 
         roomsListBPSAlgo = BPSAlgo2d(map);
 
-        while (roomsListBPSAlgo.Count > numOfRoom + 1)
+        while (roomsListBPSAlgo.Count > numOfRoom)
         {
             int ranIDX = Random.Range(0, roomsListBPSAlgo.Count - 1);
 
@@ -492,9 +492,10 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
+    //for bps when in addivite and special it doesn add
+    // for both when in additive and special it changed the type of gen for all
 
-
-
+    //noraml additive works fine
 
 
 }
