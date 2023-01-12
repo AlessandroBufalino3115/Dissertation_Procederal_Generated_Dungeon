@@ -16,16 +16,6 @@ public class WFCRuleDecipher : MonoBehaviour
     public string tileSetFileName = "";
 
 
-
-    //public static WFCRuleDecipher instance;
-
-    //private void Awake()
-    //{
-    //    instance = this; 
-    //}
-
-
-
 }
 
 

@@ -315,7 +315,7 @@ namespace DS.Windows
 
         public void LoadGraph(string filename) 
         {
-            graphViewCont = Resources.Load<GraphViewDataCont>(filename);
+            graphViewCont = Resources.Load<GraphViewDataCont>("WFC RuleSets/" + filename);
 
             if (graphViewCont == null) { return; }
 

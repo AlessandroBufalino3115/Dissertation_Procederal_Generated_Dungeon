@@ -55,7 +55,7 @@ public class WFCRuleDecipherEditor : Editor
 
             ruleDec.ruleSet.Clear();
 
-            var graphViewCont = Resources.Load<GraphViewDataCont>(ruleDec.ruleSetFileName);
+            var graphViewCont = Resources.Load<GraphViewDataCont>("WFC RuleSets/" + ruleDec.ruleSetFileName);
 
 
 
@@ -79,8 +79,15 @@ public class WFCRuleDecipherEditor : Editor
 
                     if (!present) 
                     {
-                        Debug.Log(dictNameIdx[idx]);
-                        ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx , mainAsset = Resources.Load(dictNameIdx[idx]) as GameObject });
+                        ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx, mainAsset = ruleDec.tileSet[idx] });
+
+                        //var tileRef = new WFCTileRule();
+
+
+
+                        //ruleDec.ruleSet.Add(tileRef);
+
+
                     }
                 }
             }
@@ -163,21 +170,61 @@ public class WFCRuleDecipherEditor : Editor
 
                 }
 
-                ruleDec.tileSet = new GameObject[ruleDec.ruleSet.Count];
+                //ruleDec.tileSet = new GameObject[ruleDec.ruleSet.Count];
 
 
-                foreach (var rule in ruleDec.ruleSet)
-                {
-                    ruleDec.tileSet[rule.assetIdx] = rule.mainAsset;
-                }
-
-
+                //foreach (var rule in ruleDec.ruleSet)
+                //{
+                //    ruleDec.tileSet[rule.assetIdx] = rule.mainAsset;
+                //}
 
             }
         }
+
+
+
+        if (GUILayout.Button("Load rule tiel set"))
+        {
+
+            var namesList = new List<string>();
+
+
+            var fileName = "Assets/Resources/" + ruleDec.tileSetFileName;
+
+            var info = new DirectoryInfo(fileName);
+            var fileInfo = info.GetFiles();
+
+
+            var currIdx = 0;
+
+            foreach (var file in fileInfo)
+            {
+
+                Debug.Log(file);
+                if (file.Name.Contains("meta"))
+                {
+                    continue;
+                }
+
+                int index = file.Name.IndexOf(".");
+                var manipString = file.Name.Substring(0, index);
+
+                namesList.Add(ruleDec.tileSetFileName + "/" + manipString);
+
+                currIdx++;
+            }
+
+
+            ruleDec.tileSet = new GameObject[ruleDec.ruleSet.Count];
+            for (int i = 0; i < ruleDec.tileSet.Length; i++)
+            {
+                ruleDec.tileSet[i] = Resources.Load(namesList[i]) as GameObject;
+            }
+
+        }
+
+
+
     }
-
-
-
 
 }
