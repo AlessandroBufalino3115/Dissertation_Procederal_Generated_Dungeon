@@ -237,7 +237,7 @@ public class UIDrunkWalk : UiBaseState
             {
                 currentMenu.working = true;
 
-                currentMenu.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(currentMenu.gridArray2D,currentMenu.ySize), false));
+                currentMenu.DrawTileMap();
 
                 currentMenu.working = false;
             }

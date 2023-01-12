@@ -42,6 +42,9 @@ public class StateUIManager : MonoBehaviour
     public int ySize;
     public int height;
 
+    public GameObject wall;
+    public GameObject floor;
+
     public enum Dimension 
     {
         NONE,
@@ -60,6 +63,37 @@ public class StateUIManager : MonoBehaviour
         currState = statesList[0];
 
         currState.onStart(this);
+
+        var objRef = Instantiate(wall, this.transform);
+
+        objRef.transform.position = new Vector3(0, 0, 0);
+        objRef.transform.Rotate(0, 0, 0);
+        objRef.transform.name = "0";
+
+
+
+         objRef = Instantiate(wall, this.transform);
+
+        objRef.transform.position = new Vector3(0, 0, 0);
+        objRef.transform.Rotate(0, 90, 0);
+        objRef.transform.name = "90";
+
+
+
+         objRef = Instantiate(wall, this.transform);
+
+        objRef.transform.position = new Vector3(0, 0, 0);
+        objRef.transform.Rotate(0, 180, 0);
+        objRef.transform.name = "180";
+
+
+         objRef = Instantiate(wall, this.transform);
+
+        objRef.transform.position = new Vector3(0, 0, 0);
+        objRef.transform.Rotate(0, 270, 0);
+        objRef.transform.name = "270";
+
+
     }
     void Update()
     {
@@ -160,6 +194,7 @@ public class StateUIManager : MonoBehaviour
         this.width = width;
         this.height = height;
 
+        plane.transform.Rotate(0, 90, 0);
 
         plane.transform.localScale = new Vector3(width/4, 1, height/4);
 
@@ -219,6 +254,163 @@ public class StateUIManager : MonoBehaviour
 
         var collider = newPart.AddComponent<MeshCollider>();
         collider.convex = false;
+    }
+
+
+
+    public void DrawTileMap()
+    {
+        int iter = 0;
+
+        for (int z = 0; z < 3; z++)  // this is the heihgt of the room
+        {
+            for (int y = 0; y < gridArray2D.Length; y++)
+            {
+                for (int x = 0; x < gridArray2D[0].Length; x++)
+                {
+
+
+                    if (z == 0 || z == 3 - 1) //we draw everything as this is the ceiling and the floor
+                    {
+                        if (gridArray2D[y][x].tileType != BasicTile.TileType.VOID)
+                        {
+                            var objRef = Instantiate(floor, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            iter++;
+                        }
+                    }
+                    
+
+
+                    if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL)
+                    {
+                        var checkVector = new Vector2Int(x, y);
+
+                        checkVector = new Vector2Int(x + 1, y);// riht check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(wall, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 90, 0);
+
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(wall, this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 90, 0);
+
+                                iter++;
+                            }
+                        }
+
+
+
+                        checkVector = new Vector2Int(x - 1, y);// left check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(wall, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 270, 0);
+
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(wall, this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 270, 0);
+
+                                iter++;
+
+                            }
+                        }
+
+
+
+
+                        checkVector = new Vector2Int(x, y + 1);// above check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(wall, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.name = "0";
+
+                            objRef.transform.Rotate(0, 0, 0);
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(wall, this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.name = "0";
+
+                                objRef.transform.Rotate(0, 0, 0);
+
+                                iter++;
+                            }
+                        }
+
+
+
+
+
+                        checkVector = new Vector2Int(x, y - 1);// down check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(wall, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 180, 0);
+                            objRef.transform.name = "180";
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(wall, this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 180, 0);
+                                objRef.transform.name = "180";
+
+
+                                iter++;
+                            }
+                        }
+
+                    }
+
+
+
+
+
+
+                }
+            }
+        }
+
+        Debug.Log($"{iter}");
+
     }
 
 }
