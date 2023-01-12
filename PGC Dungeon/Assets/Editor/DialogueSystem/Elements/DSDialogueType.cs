@@ -5,13 +5,14 @@ using UnityEngine;
 
 
 
-namespace DS .Enumerations
+namespace DS.Enumerations
 {
     public enum DSDialogueType
     {
         SingleChoice,
         MultiChoice,
-        InfoNode
+        InfoNode,
+        QuickRule
     }
 
 }

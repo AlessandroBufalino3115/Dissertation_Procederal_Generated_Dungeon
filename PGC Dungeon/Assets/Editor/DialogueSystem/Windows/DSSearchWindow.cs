@@ -32,33 +32,37 @@ namespace DS.Windows
             List<SearchTreeEntry> searchTreeEntries = new List<SearchTreeEntry>()
            {
                new SearchTreeGroupEntry(new GUIContent("create element")),
-               new SearchTreeGroupEntry(new GUIContent("dialogue node"),1),
-               new SearchTreeEntry(new GUIContent("Single node",indentationText))
+               new SearchTreeGroupEntry(new GUIContent("Rule Node Types"),1),
+               new SearchTreeEntry(new GUIContent("Sub Tile Rule Node",indentationText))
                {
                 level = 2,
                 userData = DSDialogueType.SingleChoice
                },
 
-               new SearchTreeEntry(new GUIContent("multi node",indentationText))
+               new SearchTreeEntry(new GUIContent("Main Tile Rule Node",indentationText))
                {
                 level = 2,
                 userData = DSDialogueType.MultiChoice
                },
-
-          
-
-               new SearchTreeGroupEntry(new GUIContent("dialogue group"),1),
-               new SearchTreeEntry(new GUIContent("Single group", indentationText))
+                new SearchTreeEntry(new GUIContent("Quick Tile Rule Node",indentationText))
                {
                 level = 2,
-                userData = DSDialogueType.SingleChoice
+                userData = DSDialogueType.QuickRule
                },
 
-               new SearchTreeEntry(new GUIContent("multi group", indentationText))
-               {
-                level = 2,
-                userData = DSDialogueType.MultiChoice
-               },
+
+               //new SearchTreeGroupEntry(new GUIContent("dialogue group"),1),
+               //new SearchTreeEntry(new GUIContent("Single group", indentationText))
+               //{
+               // level = 2,
+               // userData = DSDialogueType.SingleChoice
+               //},
+
+               //new SearchTreeEntry(new GUIContent("multi group", indentationText))
+               //{
+               // level = 2,
+               // userData = DSDialogueType.MultiChoice
+               //},
 
            };
 
@@ -88,7 +92,12 @@ namespace DS.Windows
                     _graphView.AddElement(createdNodeM);
                     return true;
 
-              
+                case DSDialogueType.QuickRule:
+                    DSQuickRuleNode createdNodeQ = (DSQuickRuleNode)_graphView.CreateNode(DSDialogueType.QuickRule, localMousePos);
+                    _graphView.AddElement(createdNodeQ);
+                    return true;
+
+
 
                 case Group _:
                     Group group = (Group)_graphView.CreateGroup("dialogue groupd", context.screenMousePosition);

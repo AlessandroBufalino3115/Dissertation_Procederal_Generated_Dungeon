@@ -45,7 +45,6 @@ namespace DS.Windows
 
 
             AddMiniMap();
-
             AddStyles();
         }
         private void AddMiniMap() 
@@ -79,8 +78,9 @@ namespace DS.Windows
 
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
-            this.AddManipulator(CreateNodeContextualMenu("Add node (Rule Node)", DSDialogueType.SingleChoice));
-            this.AddManipulator(CreateNodeContextualMenu("Add node (Tile Node)", DSDialogueType.MultiChoice));
+            this.AddManipulator(CreateNodeContextualMenu("Main Rule Node", DSDialogueType.SingleChoice));
+            this.AddManipulator(CreateNodeContextualMenu("Sub Rule Node", DSDialogueType.MultiChoice));
+            this.AddManipulator(CreateNodeContextualMenu("Quick Rule Node", DSDialogueType.QuickRule));
             this.AddManipulator(new ContentDragger());
 
 
@@ -216,8 +216,6 @@ namespace DS.Windows
 
         public GraphElement CreateGroup(string title, Vector2 pos) 
         {
-            
-
             Group group = new Group() 
             {
                 title = title
@@ -239,12 +237,12 @@ namespace DS.Windows
                 );
 
 
-
             return contextualMenuManipulator;
         }
+
+
         public DSNode CreateNode(DSDialogueType type,Vector2 pos)
         {
-
             Type nodeType = Type.GetType($"DS.Elements.DS{type}Node");
 
             DSNode node = (DSNode)Activator.CreateInstance(nodeType);
@@ -270,8 +268,6 @@ namespace DS.Windows
             node.Draw();
 
 
-
-
             return node;
         }
 
@@ -295,13 +291,12 @@ namespace DS.Windows
             return compatiblePorts;
         }
 
-        public Vector2 GetLocalMousePos (Vector2 pos, bool isSearchWindow = false) 
+        public Vector2 GetLocalMousePos(Vector2 pos, bool isSearchWindow = false) 
         {
             Vector2 worldMousePos = pos;
 
             if (searchWindow) 
             {
-
                 worldMousePos -= editorWindow.position.position;
             }
 
