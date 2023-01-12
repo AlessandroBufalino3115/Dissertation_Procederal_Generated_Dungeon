@@ -229,24 +229,22 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-    public void CallWallsFind() => FindWalls.instance.FindWalls2D(gridArray2D);
+   // public void CallWallsFind() => FindWalls.instance.FindWalls2D(gridArray2D);
     
-    public void CallBasicPerlinNoise2D() => PerlinNoise.Instance.GenPerlinNoise2D(gridArray2D);
-    public void CallBasicPerlinNoise3D() => PerlinNoise.Instance.GenPerlinNoise3D(gridArray3D);
-    //public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
+   // //public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
 
-   // public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
+   //// public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
 
-    public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
+   // public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
 
-    public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
+   // public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
 
-    //public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
-    //public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
+   // //public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
+   // //public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
 
 
 
-    public void CallDiamons() => DiamondSquare.instance.RunDiamondSquare();
+   // public void CallDiamons() => DiamondSquare.instance.RunDiamondSquare();
 
 
 

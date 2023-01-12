@@ -13,7 +13,6 @@ namespace DS.Elements
     using System;
     using UnityEditor;
     using UnityEditor.Experimental.GraphView;
-    using UnityEngine.UI;
     using UnityEngine.UIElements;
 
     public class DSSingleChoiceNode : DSNode

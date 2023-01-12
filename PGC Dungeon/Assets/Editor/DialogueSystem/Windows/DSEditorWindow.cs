@@ -19,10 +19,10 @@ namespace DS.Windows
 
 
 
-        [MenuItem("PCG Algorithms/Wave Function Collapse/type 1 GV")]
+        [MenuItem("PCG Algorithms/WFC RuleBuilder")]
         public static void ShowExample()
         {
-            DSEditorWindow wnd = GetWindow<DSEditorWindow>("WFC GraphView type 1");
+            DSEditorWindow wnd = GetWindow<DSEditorWindow>("WFC RuleBuilder");
         }
 
 

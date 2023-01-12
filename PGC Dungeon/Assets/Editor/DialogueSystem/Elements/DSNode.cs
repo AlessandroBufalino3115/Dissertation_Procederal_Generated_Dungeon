@@ -31,8 +31,6 @@ namespace DS.Elements
 
         public virtual void Initialize(Vector2 pos, DSGraphView graphView) 
         {
-
-
             this._graphView = graphView;
             nodeGuid = GUID.Generate().ToString();
 

@@ -10,7 +10,6 @@ namespace DS.Elements
 
     using DS.Utilities;
     using DS.Windows;
-    using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 
     public class DSMultiChoiceNode : DSNode
     {

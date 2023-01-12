@@ -170,15 +170,147 @@ public class WFCRuleDecipherEditor : Editor
 
                 }
 
-                //ruleDec.tileSet = new GameObject[ruleDec.ruleSet.Count];
 
-
-                //foreach (var rule in ruleDec.ruleSet)
-                //{
-                //    ruleDec.tileSet[rule.assetIdx] = rule.mainAsset;
-                //}
 
             }
+
+
+
+
+            foreach (var quickNode in graphViewCont.quickNodeData)
+            {
+                //first of all check if the index exixts, then fore xapmple if i start with the above i need to get the index of evertyhing is open on the bottom and add it 
+                int idx = int.Parse(quickNode.IndexTile);
+
+
+                bool present = false;
+
+                foreach (var rule in ruleDec.ruleSet)
+                {
+                    if (rule.assetIdx == idx)
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+
+                if (!present)
+                {
+                    ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = idx, mainAsset = ruleDec.tileSet[idx] });
+                }
+
+
+
+
+
+                WFCTileRule savedRuleRef = new WFCTileRule();
+
+                foreach (var rule in ruleDec.ruleSet)
+                {
+                    if (rule.assetIdx == idx) 
+                    {
+                        savedRuleRef = rule;
+                        break;
+                    }
+                }
+
+
+                foreach (var otherQuickNodes in graphViewCont.quickNodeData)
+                {
+                    if (quickNode.IsOpenBelow) 
+                    {
+                        if (otherQuickNodes.IsOpenAbove) 
+                        {
+                            if (!savedRuleRef.allowedObjBelow.Contains(int.Parse(otherQuickNodes.IndexTile))) 
+                            {
+                                savedRuleRef.allowedObjBelow.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (!otherQuickNodes.IsOpenAbove)
+                        {
+                            if (!savedRuleRef.allowedObjBelow.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjBelow.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+
+
+                    if (quickNode.IsOpenAbove)
+                    {
+                        if (otherQuickNodes.IsOpenBelow)
+                        {
+                            if (!savedRuleRef.allowedObjAbove.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjAbove.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (!otherQuickNodes.IsOpenBelow)
+                        {
+                            if (!savedRuleRef.allowedObjAbove.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjAbove.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+
+
+                    if (quickNode.IsOpenLeft)
+                    {
+                        if (otherQuickNodes.IsOpenRight)
+                        {
+                            if (!savedRuleRef.allowedObjLeft.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjLeft.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (!otherQuickNodes.IsOpenRight)
+                        {
+                            if (!savedRuleRef.allowedObjLeft.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjLeft.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+
+
+                    if (quickNode.IsOpenRight)
+                    {
+                        if (otherQuickNodes.IsOpenLeft)
+                        {
+                            if (!savedRuleRef.allowedObjRight.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjRight.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (!otherQuickNodes.IsOpenLeft)
+                        {
+                            if (!savedRuleRef.allowedObjRight.Contains(int.Parse(otherQuickNodes.IndexTile)))
+                            {
+                                savedRuleRef.allowedObjRight.Add(int.Parse(otherQuickNodes.IndexTile));
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+
+
+
         }
 
 

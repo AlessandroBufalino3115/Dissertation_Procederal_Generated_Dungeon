@@ -10,6 +10,7 @@ namespace DS.Windows
 
     using DS.Enumerations;
     using DS.Utilities;
+    using NUnit.Framework;
     using System;
     using System.IO;
     using System.Linq;
@@ -29,13 +30,12 @@ namespace DS.Windows
         private GraphViewDataCont graphViewCont;
 
         private DSInfoNodeNode ruleNode;
-        public IDictionary<int,string> ruleDict = new Dictionary<int,string>();
+        public IDictionary<int, string> ruleDict = new Dictionary<int, string>();
 
 
-        public DSGraphView( DSEditorWindow dSEditorWindow) 
+        public DSGraphView(DSEditorWindow dSEditorWindow)
+
         {
-      
-
             editorWindow = dSEditorWindow;
 
             AddManipulators();
@@ -47,7 +47,8 @@ namespace DS.Windows
             AddMiniMap();
             AddStyles();
         }
-        private void AddMiniMap() 
+
+        private void AddMiniMap()
         {
             MiniMap miniMap = new MiniMap()
             {
@@ -59,23 +60,21 @@ namespace DS.Windows
             this.Add(miniMap);
 
         }
-
-        private void AddSearchWindow() 
+        private void AddSearchWindow()
         {
-            if (searchWindow == null) 
+            if (searchWindow == null)
             {
                 searchWindow = ScriptableObject.CreateInstance<DSSearchWindow>();
 
                 searchWindow.Initilize(this);
-            
+
             }
 
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
-            
-        }
-        private void AddManipulators() 
-        {
 
+        }
+        private void AddManipulators()
+        {
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
             this.AddManipulator(CreateNodeContextualMenu("Main Rule Node", DSDialogueType.SingleChoice));
@@ -89,8 +88,6 @@ namespace DS.Windows
 
             this.AddManipulator(CreateGroupContextualMenu());
         }
-
-
         private void AddGridBackground()
         {
             GridBackground gridBackground = new GridBackground();
@@ -106,6 +103,7 @@ namespace DS.Windows
             styleSheets.Add(styleSheet);
 
         }
+
 
         public void RefreshRules(string fileName)
         {
@@ -128,7 +126,7 @@ namespace DS.Windows
             }
 
 
-            if (respawn) 
+            if (respawn)
             {
                 ruleNode = (DSInfoNodeNode)CreateNode(DSDialogueType.InfoNode, Vector2.zero);
                 this.AddElement(ruleNode);
@@ -151,7 +149,7 @@ namespace DS.Windows
 
             foreach (var file in fileInfo)
             {
-                if (file.Name.Contains("meta")) 
+                if (file.Name.Contains("meta"))
                 {
                     continue;
                 }
@@ -170,8 +168,6 @@ namespace DS.Windows
 
             AddRuleNode(fileNames);
         }
-
-
         private void AddRuleNode(List<string> TileSetNames)
         {
 
@@ -192,7 +188,7 @@ namespace DS.Windows
             {
 
                 Label tileName = new Label() { text = TileSetNames[i] };
-                Label tileIndex = new Label() { text = "    " +i.ToString() };
+                Label tileIndex = new Label() { text = "    " + i.ToString() };
 
                 ruleNode.inputContainer.Add(tileName);
                 ruleNode.outputContainer.Add(tileIndex);
@@ -206,17 +202,16 @@ namespace DS.Windows
         private IManipulator CreateGroupContextualMenu()
         {
             ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
-                menuEvent => menuEvent.menu.AppendAction("Add group", actionEvent => AddElement(CreateGroup("Dialouge group", GetLocalMousePos( actionEvent.eventInfo.localMousePosition))))
+                menuEvent => menuEvent.menu.AppendAction("Add group", actionEvent => AddElement(CreateGroup("Dialouge group", GetLocalMousePos(actionEvent.eventInfo.localMousePosition))))
                 );
 
 
 
             return contextualMenuManipulator;
         }
-
-        public GraphElement CreateGroup(string title, Vector2 pos) 
+        public GraphElement CreateGroup(string title, Vector2 pos)
         {
-            Group group = new Group() 
+            Group group = new Group()
             {
                 title = title
             };
@@ -226,11 +221,7 @@ namespace DS.Windows
             return group;
 
         }
-
-
-
-
-        private IManipulator CreateNodeContextualMenu(string actionTitle, DSDialogueType type) 
+        private IManipulator CreateNodeContextualMenu(string actionTitle, DSDialogueType type)
         {
             ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
                 menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(type, GetLocalMousePos(actionEvent.eventInfo.localMousePosition))))
@@ -241,19 +232,17 @@ namespace DS.Windows
         }
 
 
-        public DSNode CreateNode(DSDialogueType type,Vector2 pos)
+        public DSNode CreateNode(DSDialogueType type, Vector2 pos)
         {
             Type nodeType = Type.GetType($"DS.Elements.DS{type}Node");
 
             DSNode node = (DSNode)Activator.CreateInstance(nodeType);
 
-            node.Initialize(pos,this);
+            node.Initialize(pos, this);
             node.Draw();
 
             return node;
         }
-
-
         public DSNode CreateNode(DSDialogueType type, Vector2 pos, string indexVal, string Guid)
         {
 
@@ -261,41 +250,61 @@ namespace DS.Windows
 
             DSNode node = (DSNode)Activator.CreateInstance(nodeType);
 
-            node.Initialize(pos,this);
+            node.Initialize(pos, this);
             node.indexVal = indexVal;
             node.nodeGuid = Guid;
+
+            node.Draw();
+
+
+            return node;
+        }
+        public DSNode CreateQuickNode(DSDialogueType type, Vector2 pos, string indexVal, string Guid, bool above, bool below, bool left, bool right)
+        {
+
+            Type nodeType = Type.GetType($"DS.Elements.DS{type}Node");
+
+            DSQuickRuleNode node = (DSQuickRuleNode)Activator.CreateInstance(nodeType);
+
+            node.Initialize(pos, this);
+            node.indexVal = indexVal;
+            node.nodeGuid = Guid;
+            node.isOpenAboveBool = above;
+            node.isOpenBelowBool = below;
+            node.isOpenLeftBool = left;
+            node.isOpenRightBool = right;
             
+            
+
             node.Draw();
 
 
             return node;
         }
 
-
-
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
             List<Port> compatiblePorts = new List<Port>();
 
-            ports.ForEach(port => {
-            
-            if (startPort == port) { return; }
+            ports.ForEach(port =>
+            {
 
-            if (startPort.node == port.node) { return; }
+                if (startPort == port) { return; }
 
-            if (startPort.direction == port.direction) { return; }
+                if (startPort.node == port.node) { return; }
+
+                if (startPort.direction == port.direction) { return; }
 
                 compatiblePorts.Add(port);
             });
 
             return compatiblePorts;
         }
-
-        public Vector2 GetLocalMousePos(Vector2 pos, bool isSearchWindow = false) 
+        public Vector2 GetLocalMousePos(Vector2 pos, bool isSearchWindow = false)
         {
             Vector2 worldMousePos = pos;
 
-            if (searchWindow) 
+            if (searchWindow)
             {
                 worldMousePos -= editorWindow.position.position;
             }
@@ -308,7 +317,7 @@ namespace DS.Windows
 
 
 
-        public void LoadGraph(string filename) 
+        public void LoadGraph(string filename)
         {
             graphViewCont = Resources.Load<GraphViewDataCont>("WFC RuleSets/" + filename);
 
@@ -318,17 +327,42 @@ namespace DS.Windows
 
             ClearGraph();
             GenNodes();
-
+            GenQuickNodes();
 
             var arr = nodes.ToList().Cast<DSNode>().ToList();
             ConnectNodes(arr);
 
-            
+
 
             RefreshRules(editorWindow._fileNameResources);
 
         }
+        private void ClearGraph()
+        {
 
+            foreach (var edge in edges)
+            {
+                this.RemoveElement(edge);
+            }
+
+            foreach (var node in nodes)
+            {
+                this.RemoveElement(node);
+            }
+        }
+        private void GenNodes()
+        {
+
+            var list = new List<DSNode>();
+
+            foreach (var node in graphViewCont.nodeData)
+            {
+                var createdNode = CreateNode(node.dialogueType, node.position, node.IndexTile, node.nodeGuid);
+                list.Add(createdNode);
+                this.AddElement(createdNode);
+            }
+
+        }
         private void ConnectNodes(List<DSNode> arr)
         {
 
@@ -343,13 +377,13 @@ namespace DS.Windows
 
                 foreach (var node in arr)
                 {
-                    if (node.nodeGuid == nodeCon.TargetNodeGuid) 
+                    if (node.nodeGuid == nodeCon.TargetNodeGuid)
                     {
                         inputNode = node;
                     }
                     else if (node.nodeGuid == nodeCon.BaseNodeGuid)
                     {
-                        outputNode = node; 
+                        outputNode = node;
                     }
                 }
 
@@ -371,45 +405,28 @@ namespace DS.Windows
 
         }
 
-        private void GenNodes() 
+        private void GenQuickNodes()
         {
-
-            var list = new List<DSNode>();
-
-            foreach (var node in graphViewCont.nodeData)
+            foreach (var quickNode in graphViewCont.quickNodeData)
             {
-                var createdNode = CreateNode(node.dialogueType, node.position, node.IndexTile, node.nodeGuid);
-                list.Add(createdNode);
+
+                var createdNode = CreateQuickNode(quickNode.dialogueType, quickNode.position, quickNode.IndexTile, quickNode.nodeGuid, 
+                    quickNode.IsOpenAbove, quickNode.IsOpenBelow, quickNode.IsOpenLeft, quickNode.IsOpenRight);
+
                 this.AddElement(createdNode);
-            }
 
-        }
-
-        private void ClearGraph() 
-        {
-
-            foreach (var edge in edges)
-            {
-                this.RemoveElement(edge);
-            }
-
-            foreach (var node in nodes)
-            {
-                this.RemoveElement(node);
             }
         }
 
 
-        public void SaveGraph(string filename) 
+
+        public void SaveGraph(string filename)
         {
-            
+            var edges = this.edges.ToList();
+            var nodes = this.nodes.ToList();
 
 
-            var edges = this.edges.ToList();  
-            var nodes = this.nodes.ToList();  
-
-
-            if (!edges.Any()) return;
+            //if (!edges.Any()) return;
 
 
 
@@ -424,8 +441,6 @@ namespace DS.Windows
                 var inputNode = connectedPorts[i].input.node as DSNode;
 
                 GVcont.nodeLinkData.Add(new NodeLinkData() { BaseNodeGuid = outputNode.nodeGuid, PortName = connectedPorts[i].input.portName, TargetNodeGuid = inputNode.nodeGuid });
-
-
             }
 
             bool save = true;
@@ -434,18 +449,42 @@ namespace DS.Windows
             {
                 DSNode iterNode = GVnode as DSNode;
 
-                if (iterNode.dialogueType == DSDialogueType.InfoNode)  { continue; }
-                if (iterNode.allowed == false) 
+                if (iterNode.dialogueType == DSDialogueType.InfoNode)
+                { continue; }
+                if (iterNode.allowed == false)
                 {
-                    save  =false;
+                    save = false;
                     EditorUtility.DisplayDialog("Inavlid Index Given", "lase ensure all the index are within range", "OK!");
                     break;
                 }
-                GVcont.nodeData.Add(new NodeData() { position = iterNode.GetPosition().position,     nodeGuid = iterNode.nodeGuid  ,  dialogueType = iterNode.dialogueType,    IndexTile = iterNode.indexVal          });
+
+
+                if (iterNode.dialogueType == DSDialogueType.QuickRule)
+                {
+
+                    var refNode = GVnode as DSQuickRuleNode;
+
+                    GVcont.quickNodeData.Add(new QuickNodeData()
+                    {
+                        position = iterNode.GetPosition().position,
+                        nodeGuid = iterNode.nodeGuid,
+                        dialogueType = iterNode.dialogueType,
+                        IndexTile = iterNode.indexVal,
+                        IsOpenAbove = refNode.isOpenAboveBool,
+                        IsOpenBelow = refNode.isOpenBelowBool,
+                        IsOpenLeft = refNode.isOpenLeftBool,
+                        IsOpenRight = refNode.isOpenRightBool
+                    });
+                }
+                else
+                {
+                    GVcont.nodeData.Add(new NodeData() { position = iterNode.GetPosition().position, nodeGuid = iterNode.nodeGuid, dialogueType = iterNode.dialogueType, IndexTile = iterNode.indexVal });
+                }
+
             }
 
 
-            if (save == false) 
+            if (save == false)
             {
                 return;
             }
@@ -466,8 +505,8 @@ namespace DS.Windows
 
             AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WFC RuleSets/{filename}.asset");
             AssetDatabase.SaveAssets();
-           
-        
+
+
         }
 
     }
