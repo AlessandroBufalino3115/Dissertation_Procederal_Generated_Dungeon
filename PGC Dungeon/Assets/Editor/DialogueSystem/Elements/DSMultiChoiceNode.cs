@@ -17,13 +17,11 @@ namespace DS.Elements
 
         public override void Initialize(Vector2 pos, DSGraphView graphView)
         {
-
             base.Initialize(pos, graphView);
 
             titleString = "\n Main Rule";
             dialogueType = DSDialogueType.MultiChoice;
 
-           // Choices.Add("New choice");
         }
 
 

@@ -10,17 +10,17 @@ namespace DS.Windows
 
     using DS.Enumerations;
     using DS.Utilities;
-    using NUnit.Framework;
     using System;
     using System.IO;
     using System.Linq;
+    using static System.Runtime.CompilerServices.RuntimeHelpers;
 
     public class DSGraphView : GraphView
     {
 
         //need to add checks for whne the val is incorrect
         // add a text under the sub rule node to say which one is sleected
-
+       
 
 
         private DSSearchWindow searchWindow;
@@ -34,9 +34,11 @@ namespace DS.Windows
 
 
         public DSGraphView(DSEditorWindow dSEditorWindow)
-
         {
             editorWindow = dSEditorWindow;
+
+            this.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+
 
             AddManipulators();
 
@@ -46,6 +48,35 @@ namespace DS.Windows
 
             AddMiniMap();
             AddStyles();
+        }
+
+        void OnKeyDown(KeyDownEvent ev)
+        {
+
+            switch (ev.keyCode)
+            {
+               
+                case KeyCode.A:
+                    var ruleNodeA = (DSMultiChoiceNode)CreateNode(DSDialogueType.MultiChoice, Vector2.zero);
+                    this.AddElement(ruleNodeA);
+
+                    break;
+                
+                case KeyCode.D:
+                    var ruleNodeD = (DSSingleChoiceNode)CreateNode(DSDialogueType.SingleChoice, Vector2.zero);
+                    this.AddElement(ruleNodeD);
+                    break;
+               
+                case KeyCode.S:
+                    var ruleNodeS = (DSQuickRuleNode)CreateNode(DSDialogueType.QuickRule, Vector2.zero);
+                    this.AddElement(ruleNodeS);
+                    break;
+                
+                default:
+                    break;
+            }
+
+
         }
 
         private void AddMiniMap()

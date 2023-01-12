@@ -30,7 +30,6 @@ namespace DS.Windows
 
         private void CreateGUI()
         {
-        
             AddGraphView();
             AddToolbar();
             AddStyles();
@@ -86,6 +85,10 @@ namespace DS.Windows
             toolbar.Add(refreshRules);
 
 
+            Label rulesGV = new Label() { text = " Use the SpaceBar  --  Mouse  -- A S D   to spawn the Nodes" };
+
+
+            toolbar.Add(rulesGV);
 
             rootVisualElement.Add(toolbar);
 
