@@ -17,32 +17,27 @@
  * 
  * 
  * 
+ *   There is an issue with the WFC algo, it is a coding index issue, the other edges when given a the outer tile on the lefr and right edges they throw errors. ,most likely an index issue
  * 
+ *   The fact that the marching cubes does what it does is annoying , there needs to be a way toeither flatten or not draw the other tris
  * 
+ *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
  * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * there can be just a an algo that performs prims
- * using poissons?
- * 
- * 
- * for the WFc there seems to be an issue with the outskits on the lef tside everything works outsikrts wise but on the other sieds it  doesn this is persistant, might be an issue with code instead
- * 
- * 
- *    go into th other pathfinding ones
- *     
- *    for the return and all the inputs being a bit meh, for the returns instead of doing a specific way do a generalised codpy of the thing similar to how sqauredimaond returns  a list of float in a diff array * 
+ *   there is the issue of the redrawing in the BPS and all of those thigns with the additive 
  *   
- *    
- *    worm/river gen same thing   in the perlinnois.cs
- *    
+ *   Look into making the flow better with less time wasted
  *   
- *   the fact that we need to do the rooms again when deleting them is bad 
  *   
+ *   
+ *   still need to add:
+ * 
+ *   GRAPH GRAMMAR
+ *   OTHER PATHFINDINGS
+ *   PERLIN WORMS
+ *   
+ *   
+ *   
+ *   
+ *   
+ * 
  */
