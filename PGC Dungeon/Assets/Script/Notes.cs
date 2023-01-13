@@ -27,6 +27,13 @@
  *   
  *   Look into making the flow better with less time wasted
  *   
+ *   Weigthed tiles
+ *   
+ *   Costs for the pathfinding
+ *   
+ *   a nice way to do the choosing for the pathFidning
+ *   
+ *   
  *   
  *   
  *   still need to add:

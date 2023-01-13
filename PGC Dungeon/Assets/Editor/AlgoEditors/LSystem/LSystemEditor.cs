@@ -38,8 +38,6 @@ public class LSystemEditor : Editor
         if (GUILayout.Button("Load Rule Set"))
         {
             var ruleSet = Resources.Load<LSystemRuleObj>("L-systemRuleSets/" +ruleDec.fileName);
-            Debug.Log($"{ruleDec.A_dist} ");
-            Debug.Log($"{ruleSet.A_Length} ");
 
             ruleDec.A_dist = ruleSet.A_Length;
             ruleDec.B_dist = ruleSet.B_Length;

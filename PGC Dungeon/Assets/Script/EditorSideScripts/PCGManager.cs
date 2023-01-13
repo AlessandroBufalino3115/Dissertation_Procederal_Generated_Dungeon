@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -10,8 +9,8 @@ public class PCGManager : MonoBehaviour
 {
     public Dictionary<BasicTile.TileType, float> tileTypeToCostDict = new Dictionary<BasicTile.TileType, float>();
 
-    public bool working;
-    public bool gizmo;
+    private bool working;
+    private bool gizmo;
 
 
     [Tooltip("Test material given to draw the mesh generated variant of the outcome")]
@@ -58,6 +57,9 @@ public class PCGManager : MonoBehaviour
 
     [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
     public MainAlgo mainAlgo;
+
+
+    [Tooltip("Name of file of the Rule that contains the tiles")]
     public string TileSetRuleFileName = "";
 
     public List<GameObject> FloorTiles = new List<GameObject>();
@@ -256,7 +258,7 @@ public class PCGManager : MonoBehaviour
         if (WallsTiles.Count == 0|| CeilingTiles.Count == 0|| FloorTiles.Count == 0) 
         {
 
-            EditorUtility.DisplayDialog("Inavlid Index Given", "lase ensure all the index are within range", "OK!");
+            EditorUtility.DisplayDialog("Invalid tile Rules given", "Please make sure you have loaded all of the tile object correctly and all the 3 lists have at least one object in them to use this Generation method", "OK!");
             return;
         }
 

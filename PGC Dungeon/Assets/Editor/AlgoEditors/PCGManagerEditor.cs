@@ -20,7 +20,6 @@ public class PCGManagerEditor : Editor
     }
 
 
-
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -28,7 +27,25 @@ public class PCGManagerEditor : Editor
         PCGManager mainScript = (PCGManager)target;
 
 
-        if (GUILayout.Button(mainScript.Plane == null? "Generate Plane":"Refresh Plane"))
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+
+
+        GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
+            "Before starting, you can load the tiles that will be used for the generation by creating a new rule and loading that rule\n\n" +
+            "Then choose the starting main algorithm which will shape your dungeon");
+
+
+
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+
+
+        if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
 
             if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
@@ -52,7 +69,7 @@ public class PCGManagerEditor : Editor
 
         if (mainScript.Plane != null || mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
         {
-            if (GUILayout.Button(mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh Main Algo Component" : "Load New Algo Component"))
+            if (GUILayout.Button(new GUIContent() { text = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh Main Algorithm Component" : "Load New Algorithm Component", tooltip = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh the algorithm component" : "Load the choosen algorithm component to start to use it" }))
             {
                 if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
                 {
@@ -64,7 +81,6 @@ public class PCGManagerEditor : Editor
                 }
                 else 
                 {
-
                     mainScript.Restart();
                     mainScript.LoadMainAlgo();
                 }
@@ -73,25 +89,16 @@ public class PCGManagerEditor : Editor
 
 
 
-
-
-
-
-
-        if (GUILayout.Button("New tileSet rule"))
+        if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
         {
 
-
             var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
-
-
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
                 AssetDatabase.CreateFolder("Assets", "Resources");
                 AssetDatabase.Refresh();
             }
-
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources/Tile_Sets_Ruleset"))
             {
@@ -105,10 +112,10 @@ public class PCGManagerEditor : Editor
         }
 
 
-        if (GUILayout.Button("Load tileSet rule"))
+
+
+        if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
         {
-
-
 
             var tileRules = Resources.Load<TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 

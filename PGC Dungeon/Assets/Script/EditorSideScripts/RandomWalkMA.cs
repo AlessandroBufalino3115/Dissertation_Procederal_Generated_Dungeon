@@ -54,8 +54,8 @@ public class RandomWalkMA : MonoBehaviour
         set { neighboursNeeded = value; }
     }
 
-    private bool typeOfTri;
-    public bool TypeOfTri
+    private int typeOfTri;
+    public int TypeOfTri
     {
         get { return typeOfTri; }
         set { typeOfTri = value; }
