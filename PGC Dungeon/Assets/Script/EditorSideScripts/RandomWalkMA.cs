@@ -97,9 +97,6 @@ public class RandomWalkMA : MonoBehaviour
     }
 
 
-
-
-
     public void InspectorAwake() 
     {
         pcgManager = this.transform.GetComponent<PCGManager>();

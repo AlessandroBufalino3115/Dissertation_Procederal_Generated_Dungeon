@@ -63,12 +63,11 @@ public class RanRoomGenMA : MonoBehaviour
     }
 
 
-
-    private bool additive;
-    public bool Additive
+    private bool started;
+    public bool Started
     {
-        get { return additive; }
-        set { additive = value; }
+        get { return started; }
+        set { started = value; }
     }
 
 
@@ -81,8 +80,19 @@ public class RanRoomGenMA : MonoBehaviour
     }
 
 
+    private bool pathType = false;
+    public bool PathType
+    {
+        get { return pathType; }
+        set { pathType = value; }
+    }
 
-
+    private int minSizeRoom = 40;
+    public int MinSizeRoom
+    {
+        get { return minSizeRoom; }
+        set { minSizeRoom = value; }
+    }
 
 
     public List<List<BasicTile>> rooms = new List<List<BasicTile>>();
@@ -430,10 +440,10 @@ public class RanRoomGenMA : MonoBehaviour
     {
         pcgManager.Restart();
 
-
         if (!usingBPS)
         {
 
+            roomsListBPSAlgo.Clear();
             foreach (var room in roomList)
             {
                 roomsListBPSAlgo.Add(new BoundsInt() { xMin = room.minX, xMax = room.maxX, zMin = room.minY, zMax = room.maxY });
@@ -481,7 +491,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
         PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(PcgManager.gridArray2D, true);
-
+        
 
     }
 

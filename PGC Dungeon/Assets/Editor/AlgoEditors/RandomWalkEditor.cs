@@ -38,7 +38,7 @@ public class RandomWalkEditor : Editor
 
         if (showRules)
         {
-            GUILayout.TextArea("You have choosen RandomWalk algorithm as your initial algorithm\n\nExplenation: \n\nStep 1: Decide how many iterations the algorithm will have to generate the base map and its sub parameters." +
+            GUILayout.TextArea("You have choosen RandomWalk algorithm as your initial algorithm\n\nExplenation: a \"Head\" moves in a random direction at each step\n\nStep 1: Decide how many iterations the algorithm will have to generate the base map and its sub parameters." +
                 "\n\nStep 2: To round up the rough edges you can decide to use Cellular Automata to help smooth things out." +
                 "\n\nStep 3: It is possible small rooms that are not your what you are looking for have been geenrated, delete them using by setting up the minimum amount of tiles a room should have." +
                 "\n\nStep 4: Depending on the amount of rooms you are able to create corridors by choosing the wanted pathFinding algorithm and the algortihm which decideds which room is connected to which." +
