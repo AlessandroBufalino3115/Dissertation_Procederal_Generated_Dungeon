@@ -1,10 +1,6 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
-using DS.Windows;
-using System.IO;
-using System;
 
 [CustomEditor(typeof(NewLSystem))]
 

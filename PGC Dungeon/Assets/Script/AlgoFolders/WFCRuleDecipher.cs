@@ -7,11 +7,11 @@ using System;
 public class WFCRuleDecipher : MonoBehaviour
 {
 
+    public GameObject[] tileSet = new GameObject[0];
 
     [SerializeField]
     public List<WFCTileRule> ruleSet = new List<WFCTileRule>();
 
-    public GameObject[] tileSet = new GameObject[0];
     public string ruleSetFileName = "";
     public string tileSetFileName = "";
 

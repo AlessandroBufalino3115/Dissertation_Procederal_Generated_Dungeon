@@ -8,11 +8,8 @@ using static UnityEditor.Progress;
 public class NewWFCAlog : MonoBehaviour
 {
     /// <summary>
-    /// wave function collapse worrks fine, tere are some issues with the editor side but i think its just an issue with unity,
-    /// 
     /// out outksirt checks works its just the currently available tiles are no good
-    /// 
-    /// there is this issue with th ediotr showindg a different index from the actual wanted index which is an issue,  will have to be fixed somehow
+    ///
     /// </summary>
 
 
@@ -21,15 +18,14 @@ public class NewWFCAlog : MonoBehaviour
 
     [SerializeField]
     public WFCTile[][] arrayOfWFCTiles = new WFCTile[0][];
-    public int xSize = 20;
-    public int ySize = 20;
+    private int xSize = 20;
+    private int ySize = 20;
 
     public bool outskirtsCheck = false;
     public int indexOutskirts = 0;
 
-   private WFCRuleDecipher rulesInst;
+    private WFCRuleDecipher rulesInst;
 
-    public bool run = false;
 
 
 
@@ -48,30 +44,19 @@ public class NewWFCAlog : MonoBehaviour
         rulesInst = this.transform.GetComponent<WFCRuleDecipher>();
     }
 
-    void Start()
+
+    public void RunWFCAlgo()
     {
-        run = true;
-        rulesInst = this.GetComponent<WFCRuleDecipher>();
-    }
+        DestroyKids();
+
+        rulesInst = this.transform.GetComponent<WFCRuleDecipher>();
+
+        var arrOfRules = rulesInst.ruleSet;
 
 
+         ySize = pcgManager.height;
+         xSize = pcgManager.width;
 
-    void Update()
-    {
-        if (run)
-        {
-            foreach (Transform child in transform)
-                Destroy(child.gameObject);
-
-            run = false;
-             RunWFCAlgo(rulesInst.ruleSet);
-        }
-    }
-
-
-
-    private void RunWFCAlgo(List<WFCTileRule> arrOfRules)
-    {
 
 
         arrayOfWFCTiles = new WFCTile[ySize][];
@@ -97,15 +82,11 @@ public class NewWFCAlog : MonoBehaviour
         arrayOfWFCTiles[ranStart.y][ranStart.x].solved = true;// choosen idx should be the indx of the item choosen
 
 
-
-
         int ranNum = Random.Range(0, arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Count - 1);
 
 
         arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX = arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs[ranNum];
-
-
-        //was   AllowedObjectsIDXs[arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX]     
+   
 
         var spawnedAsset = Instantiate(rulesInst.tileSet[arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX], this.transform);
         spawnedAsset.transform.position = new Vector3(ranStart.x, 0, ranStart.y);
@@ -164,9 +145,7 @@ public class NewWFCAlog : MonoBehaviour
 
                 arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].solved = true;
             }
-
         }
-
     }
 
 
@@ -228,7 +207,6 @@ public class NewWFCAlog : MonoBehaviour
         }
 
 
-
         if (mainTileCoord.x + 1 < xSize)   // the one on the right  exists
         {
             if (!arrayOfWFCTiles[mainTileCoord.y][mainTileCoord.x + 1].solved)
@@ -253,12 +231,20 @@ public class NewWFCAlog : MonoBehaviour
                 arrayOfWFCTiles[mainTileCoord.y - 1][mainTileCoord.x].NeighbourAllowed(ruleRef.allowedObjBelow);
         }
 
-
     }
 
 
 
+    public void DestroyKids() 
+    {
 
+        while (this.transform.childCount > 0) 
+        {
+            foreach (Transform child in transform)
+                DestroyImmediate(child.gameObject);
+        }
+
+    }
 
 
 
@@ -280,7 +266,6 @@ public class NewWFCAlog : MonoBehaviour
                 AllowedObjectsIDXs.Add(i);
             }
         }
-
 
         public void NeighbourAllowed(List<int> neighbourAllowedIDXs)
         {

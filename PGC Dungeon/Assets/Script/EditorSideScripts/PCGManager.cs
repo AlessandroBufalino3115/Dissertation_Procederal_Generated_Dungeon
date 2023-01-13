@@ -66,8 +66,6 @@ public class PCGManager : MonoBehaviour
 
         plane =  GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-        //plane = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Plane), this.transform);
-
         plane.transform.position = Vector3.zero;
         plane.transform.parent = this.transform;
 
@@ -94,8 +92,6 @@ public class PCGManager : MonoBehaviour
         if (plane != null)
             DestroyImmediate(plane);
     }
-
-
 
     public void LoadMainAlgo()
     {
@@ -163,8 +159,6 @@ public class PCGManager : MonoBehaviour
 
     }
 
-
-
     public void DelPrevAlgo()
     {
         switch (currMainAlgoIDX)
@@ -192,6 +186,10 @@ public class PCGManager : MonoBehaviour
             case 6:
                 DestroyImmediate(this.transform.GetComponent<NewWFCAlog>());
                 DestroyImmediate(this.transform.GetComponent<WFCRuleDecipher>());
+
+                foreach (Transform child in transform)
+                    DestroyImmediate(child.gameObject);
+                
                 break;
             case 7:
                 DestroyImmediate(this.transform.GetComponent<PerlinNoiseMA>());
@@ -209,7 +207,6 @@ public class PCGManager : MonoBehaviour
         currMainAlgoIDX = 10;
 
     }
-
 
     public void FormObject(Mesh mesh)
     {

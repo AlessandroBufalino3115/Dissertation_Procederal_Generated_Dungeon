@@ -30,10 +30,15 @@ public class PCGManagerEditor : Editor
 
         if (GUILayout.Button(mainScript.Plane == null? "Generate Plane":"Refresh Plane"))
         {
-             mainScript.CreatePlane();
 
-            mainScript.Restart();
-
+            if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
+            {
+            }
+            else
+            {
+                mainScript.CreatePlane();
+                mainScript.Restart();
+            }
         }
 
         if(mainScript.Plane != null) 
