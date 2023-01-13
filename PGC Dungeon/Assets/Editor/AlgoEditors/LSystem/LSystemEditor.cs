@@ -32,13 +32,16 @@ public class LSystemEditor : Editor
 
             AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/L-systemRuleSets/{ruleDec.fileName}.asset");
             AssetDatabase.SaveAssets();
-
         }
 
 
         if (GUILayout.Button("Load Rule Set"))
         {
             var ruleSet = Resources.Load<LSystemRuleObj>(ruleDec.fileName);
+
+            ruleDec.A_dist = ruleSet.A_Length;
+            ruleDec.B_dist = ruleSet.B_Length;
+            ruleDec.C_dist = ruleSet.C_Length;
 
             ruleDec.A_RuleSet = ruleSet.A_RuleSet;
             ruleDec.B_RuleSet = ruleSet.B_RuleSet;

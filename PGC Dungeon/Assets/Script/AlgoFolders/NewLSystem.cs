@@ -13,14 +13,18 @@ public class NewLSystem : MonoBehaviour
 
     public string fileName = "";
 
-    public List<Vector3> points = new List<Vector3>();
-    public GameObject head;
+    private List<Vector3Int> points = new List<Vector3Int>();
+    private Vector3Int head;
     
-    public string endingWord;
+    private string endingWord;
 
-    public bool run;
+    private bool run;
 
     private int currDirection = 0;
+
+    public int A_dist;
+    public int B_dist;
+    public int C_dist;
 
     public List<string> A_RuleSet = new List<string>();
     public List<string> B_RuleSet = new List<string>();
@@ -40,7 +44,7 @@ public class NewLSystem : MonoBehaviour
 
     public void InspectorAwake()
     {
-        head.transform.position = Vector3.zero;
+        head = Vector3Int.zero;
         pcgManager = this.transform.GetComponent<PCGManager>();
     }
 
@@ -172,7 +176,7 @@ public class NewLSystem : MonoBehaviour
 
     public void RunIteration() 
     {
-        head.transform.position = Vector3.zero;
+        head = Vector3Int.zero;
 
         points.Clear();
         currDirection = 0;
@@ -183,7 +187,7 @@ public class NewLSystem : MonoBehaviour
 
     private void ProcessSentence() 
     {
-        Stack<Vector3> lastPositions = new Stack<Vector3>();
+        Stack<Vector3Int> lastPositions = new Stack<Vector3Int>();
 
         for (int i = 0; i < endingWord.Length; i++)
         {
@@ -191,30 +195,30 @@ public class NewLSystem : MonoBehaviour
             switch (endingWord[i])
             {
                 case 'A':
-                    MoveHead(10);
-                    if (!points.Contains(head.transform.position))
-                        points.Add(head.transform.position);
+                    MoveHead(A_dist);
+                    if (!points.Contains(head))
+                        points.Add(head);
                     break;
 
                 case 'B':
-                    MoveHead(15);
-                    if (!points.Contains(head.transform.position))
-                        points.Add(head.transform.position);
+                    MoveHead(B_dist);
+                    if (!points.Contains(head))
+                        points.Add(head);
                     break;
 
                 case 'C':
-                    MoveHead(20);
-                    if (!points.Contains(head.transform.position))
-                        points.Add(head.transform.position);
+                    MoveHead(C_dist);
+                    if (!points.Contains(head))
+                        points.Add(head);
                     break;
 
 
                 case 'S':
-                    lastPositions.Push(head.transform.position);
+                    lastPositions.Push(head);
                     break;
 
                 case 'L':
-                    head.transform.position=  lastPositions.Pop();
+                    head=  lastPositions.Pop();
                     break;
 
 
@@ -262,22 +266,22 @@ public class NewLSystem : MonoBehaviour
         switch (currDirection)
         {
             case 1:
-                head.transform.Translate(new Vector3(moveAmount, 0, 0));
+                head += new Vector3Int(moveAmount, 0, 0);
                 break;
 
 
             case 2:
-                head.transform.Translate(new Vector3(0, 0, moveAmount));
+                head += new Vector3Int(0, 0, moveAmount);
                 break;
 
 
             case 3:
-                head.transform.Translate(new Vector3(-moveAmount, 0, 0));
+                head += new Vector3Int(-moveAmount, 0, 0);
                 break;
 
 
             case 4:
-                head.transform.Translate(new Vector3(0, 0, -moveAmount));
+                head += new Vector3Int(0, 0, -moveAmount);
                 break;
 
 
@@ -289,22 +293,22 @@ public class NewLSystem : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        //    Gizmos.color = Color.red;
 
-        foreach (var points in points)
-        {
-            Gizmos.DrawSphere(points, 1f);
-        }
+        //    foreach (var points in points)
+        //    {
+        //        Gizmos.DrawSphere(points, 1f);
+        //    }
 
-        Gizmos.color = Color.green;
+        //    Gizmos.color = Color.green;
 
 
-        for (int i = 0; i < points.Count; i++)
-        {
-            if (i != points.Count - 1)
-            Gizmos.DrawLine(points[i], points[i + 1]);
+        //    for (int i = 0; i < points.Count; i++)
+        //    {
+        //        if (i != points.Count - 1)
+        //        Gizmos.DrawLine(points[i], points[i + 1]);
 
-        }
+        //    }
 
     }
 
