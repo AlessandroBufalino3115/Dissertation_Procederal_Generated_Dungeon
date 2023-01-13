@@ -22,9 +22,9 @@ public class NewLSystem : MonoBehaviour
 
     private int currDirection = 0;
 
-    public int A_dist;
-    public int B_dist;
-    public int C_dist;
+    public int A_dist= 0;
+    public int B_dist = 0;
+    public int C_dist = 0;
 
     public List<string> A_RuleSet = new List<string>();
     public List<string> B_RuleSet = new List<string>();
@@ -33,6 +33,15 @@ public class NewLSystem : MonoBehaviour
     public List<string> L_RuleSet = new List<string>();
     public List<string> P_RuleSet = new List<string>();
     public List<string> N_RuleSet = new List<string>();
+
+
+
+    public bool modePath;
+    //public bool ModePath
+    //{
+    //    get { return modePath; }
+    //    set { modePath = value;  }
+    //}
 
 
     private PCGManager pcgManager;
@@ -176,12 +185,13 @@ public class NewLSystem : MonoBehaviour
 
     public void RunIteration() 
     {
-        head = Vector3Int.zero;
+        head = new Vector3Int(pcgManager.width/2,0,pcgManager.height/2);
 
         points.Clear();
         currDirection = 0;
         endingWord = RunLSystem(axium);
         ProcessSentence();
+        SetUpCorridors();
     }
 
 
@@ -290,7 +300,28 @@ public class NewLSystem : MonoBehaviour
         }
     }
 
+    private void SetUpCorridors()
+    {
 
+        for (int i = 0; i < points.Count; i++)
+        {
+            if (i != points.Count - 1)
+            {
+                Debug.Log($"{points[i]}    +    {points[i + 1]}");
+                var path = AlgosUtils.A_StarPathfinding2DNorm(pcgManager.gridArray2D, new Vector2Int(points[i].x, points[i].z), new Vector2Int(points[i + 1].x, points[i + 1].z), modePath);
+
+                foreach (var tile in path.Item1)
+                {
+                    tile.tileWeight = 1;
+                }
+            }
+
+        }
+
+        pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(pcgManager.gridArray2D, true);
+
+
+    }
     private void OnDrawGizmos()
     {
         //    Gizmos.color = Color.red;

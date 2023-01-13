@@ -1661,23 +1661,22 @@ public static class AlgosUtils
             {
                 for (int x = 0; x < marchingCubesArr.GetLength(0); x++)
                 {
-              
                     if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
-                        marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0);
+                        marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0,0);
                     }
                     else // this is justt he wall
                     {
 
                         if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL) // draw everything but the floor
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y),1);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 1,1);
                         }
                         else // set the floor to 0 
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0, 0);
                         }
-                            
+
                     }
                 }
             }
@@ -1685,8 +1684,6 @@ public static class AlgosUtils
 
         return marchingCubesArr;
     }
-
-
 
 
 
@@ -1712,7 +1709,7 @@ public static class AlgosUtils
                     {
                         continue;
                     }
-
+                    
                     var midPosArr = new Vector3[12]
                     {
                             Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
@@ -1728,8 +1725,7 @@ public static class AlgosUtils
                             Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
                             Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
                     };
-
-
+                    
                     int index = positionVertex[x, y, z].state * 1 +
                                     positionVertex[x + 1, y, z].state * 2 +
                                     positionVertex[x + 1, y + 1, z].state * 4 +
@@ -1783,15 +1779,6 @@ public static class AlgosUtils
     }
 
     
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2412,11 +2399,13 @@ public class MarchingCubeClass
 {
     public Vector3Int position;
     public int state;
+    public float weight;
 
-    public MarchingCubeClass(Vector3Int position, int state)
+    public MarchingCubeClass(Vector3Int position, int state, float weight)
     {
         this.position = position;
         this.state = state;
+        this.weight = weight;
     }
 }
 

@@ -37,7 +37,9 @@ public class LSystemEditor : Editor
 
         if (GUILayout.Button("Load Rule Set"))
         {
-            var ruleSet = Resources.Load<LSystemRuleObj>(ruleDec.fileName);
+            var ruleSet = Resources.Load<LSystemRuleObj>("L-systemRuleSets/" +ruleDec.fileName);
+            Debug.Log($"{ruleDec.A_dist} ");
+            Debug.Log($"{ruleSet.A_Length} ");
 
             ruleDec.A_dist = ruleSet.A_Length;
             ruleDec.B_dist = ruleSet.B_Length;
@@ -50,7 +52,6 @@ public class LSystemEditor : Editor
             ruleDec.P_RuleSet = ruleSet.Psign_RuleSet;
             ruleDec.S_RuleSet = ruleSet.S_RuleSet;
             ruleDec.L_RuleSet = ruleSet.L_RuleSet;
-
         }
 
         if (GUILayout.Button("Run Iteration"))

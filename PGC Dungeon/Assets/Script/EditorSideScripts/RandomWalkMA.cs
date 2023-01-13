@@ -37,12 +37,6 @@ public class RandomWalkMA : MonoBehaviour
 
 
 
-
-
-
-
-
-
     //general
 
     private bool pathType = false;

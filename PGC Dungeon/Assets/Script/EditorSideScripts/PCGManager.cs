@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PCGManager : MonoBehaviour
 {
@@ -11,9 +13,12 @@ public class PCGManager : MonoBehaviour
     public bool working;
     public bool gizmo;
 
+
+    [Tooltip("Test material given to draw the mesh generated variant of the outcome")]
     public Material mat;
 
     public BasicTile[][] gridArray2D = new BasicTile[1][];
+
 
     private GameObject plane;
     public GameObject Plane
@@ -21,31 +26,43 @@ public class PCGManager : MonoBehaviour
         get { return plane; }
     }
 
+    [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
     [Range(40f, 650f)]
     public int width = 50;
+    [Tooltip("How tall the drawing canvas where the algorithms will take place will be")]
     [Range(40f, 650f)]
     public int height = 50;
 
+    [Tooltip("How tall the dungeon will be.")]
     [Range(4f, 8f)]
     public int RoomHeight = 6;
 
 
+    [Tooltip("How many floors will the dungeons have")]
     [Range(1f, 4f)]
     public int DungeonFloors=1;
+
 
     public enum MainAlgo
     {
         VORONI = 0,
         RANDOM_WALK = 1,
         ROOM_GEN = 2,
-        CA =3,
+        CELLULAR_AUTOMATA =3,
         L_SYSTEM = 4,
-        DELU = 5,
+        DELUNARY = 5,
         WFC = 6,
         PERLIN_NOISE = 7,
         DIAMOND_SQUARE =8
     }
+
+    [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
     public MainAlgo mainAlgo;
+    public string TileSetRuleFileName = "";
+
+    public List<GameObject> FloorTiles = new List<GameObject>();
+    public List<GameObject> CeilingTiles = new List<GameObject>();
+    public List<GameObject> WallsTiles = new List<GameObject>();
 
 
     private int currMainAlgoIDX = 10;
@@ -231,5 +248,156 @@ public class PCGManager : MonoBehaviour
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(gridArray2D);
     }
 
+    public void DrawTileMap()
+    {
+        int iter = 0;
 
+
+        if (WallsTiles.Count == 0|| CeilingTiles.Count == 0|| FloorTiles.Count == 0) 
+        {
+
+            EditorUtility.DisplayDialog("Inavlid Index Given", "lase ensure all the index are within range", "OK!");
+            return;
+        }
+
+
+
+        for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
+        {
+            for (int y = 0; y < gridArray2D.Length; y++)
+            {
+                for (int x = 0; x < gridArray2D[0].Length; x++)
+                {
+                    if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor
+                    {
+                        if (gridArray2D[y][x].tileType != BasicTile.TileType.VOID)
+                        {
+                            var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[Random.Range(0, FloorTiles.Count)] : FloorTiles[0], this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            iter++;
+                        }
+                    }
+
+                    if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL)
+                    {
+                        var checkVector = new Vector2Int(x, y);
+
+                        checkVector = new Vector2Int(x + 1, y);// riht check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 90, 0);
+
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 90, 0);
+
+                                iter++;
+                            }
+                        }
+
+
+
+                        checkVector = new Vector2Int(x - 1, y);// left check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 270, 0);
+
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 270, 0);
+
+                                iter++;
+
+                            }
+                        }
+
+
+
+
+                        checkVector = new Vector2Int(x, y + 1);// above check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.name = "0";
+
+                            objRef.transform.Rotate(0, 0, 0);
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.name = "0";
+
+                                objRef.transform.Rotate(0, 0, 0);
+
+                                iter++;
+                            }
+                        }
+
+
+
+
+
+                        checkVector = new Vector2Int(x, y - 1);// down check
+
+                        if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
+                        {
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.transform.Rotate(0, 180, 0);
+                            objRef.transform.name = "180";
+                            iter++;
+                        }
+                        else
+                        {
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            {
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+
+                                objRef.transform.position = new Vector3(x, z, y);
+                                objRef.transform.Rotate(0, 180, 0);
+                                objRef.transform.name = "180";
+
+                                iter++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"{iter}");
+
+    }
 }

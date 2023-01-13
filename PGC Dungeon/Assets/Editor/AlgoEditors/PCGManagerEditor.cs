@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -14,7 +15,6 @@ public class PCGManagerEditor : Editor
     static void SpawnObject() 
     {
         var objToSpawn = new GameObject("Cool GameObject made from Code");
-        //Add Components
         objToSpawn.transform.name = "PCG element";
         objToSpawn.AddComponent<PCGManager>();
     }
@@ -69,6 +69,73 @@ public class PCGManagerEditor : Editor
                     mainScript.LoadMainAlgo();
                 }
             }
+        }
+
+
+
+
+
+
+
+
+        if (GUILayout.Button("New tileSet rule"))
+        {
+
+
+            var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
+
+
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Resources");
+                AssetDatabase.Refresh();
+            }
+
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Tile_Sets_Ruleset"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources", "Tile_Sets_Ruleset");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/Tile_Sets_Ruleset/{mainScript.TileSetRuleFileName}.asset");
+            AssetDatabase.SaveAssets();
+
+        }
+
+
+        if (GUILayout.Button("Load tileSet rule"))
+        {
+
+
+
+            var tileRules = Resources.Load<TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
+
+            mainScript.WallsTiles.Clear();
+            mainScript.FloorTiles.Clear();
+            mainScript.CeilingTiles.Clear();
+
+
+            foreach (var item in tileRules.WallsTiles)
+            {
+                mainScript.WallsTiles.Add(item);
+            }
+
+
+
+            foreach (var item in tileRules.FloorTiles)
+            {
+                mainScript.FloorTiles.Add(item);
+            }
+
+
+            foreach (var item in tileRules.CeilingTiles)
+            {
+                mainScript.CeilingTiles.Add(item);
+            }
+
+
         }
     }
 

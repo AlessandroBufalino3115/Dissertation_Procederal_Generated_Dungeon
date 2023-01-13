@@ -46,11 +46,59 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public TileOBJ[][] gridArray2D = new TileOBJ[1][];
 
+    public BasicTile[][] gridarr2d = new BasicTile[0][];
 
     private void Awake()
     {
         Instance = this;
+
+
+        gridarr2d = new BasicTile[4][];
+
+
+        gridarr2d[0] = new BasicTile[10] { new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL } };
+        gridarr2d[1] = new BasicTile[10] { new BasicTile() { tileWeight =1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL } };
+        gridarr2d[2] = new BasicTile[10] { new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL } };
+        gridarr2d[3] = new BasicTile[10] { new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL } };
+
+        //for (int y = 0; y < gridarr2d.Length; y++)
+        //{
+        //    gridarr2d[y] = new BasicTile[x_Length];
+
+        //    for (int x = 0; x < gridarr2d[y].Length; x++)
+        //    {
+        //        gridarr2d[y][x] = new BasicTile();
+
+
+
+
+        //        gridarr2d[y][x].tileWeight = 1;
+
+        //    }
+        //}
+
+
+        FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(gridarr2d, z_Width), false));
+
     }
+
+    public void FormObject(Mesh mesh)
+    {
+        GameObject newPart = new GameObject();
+        newPart.transform.position = this.transform.position;
+        newPart.transform.rotation = this.transform.rotation;
+        newPart.transform.localScale = this.transform.localScale;
+
+        var renderer = newPart.AddComponent<MeshRenderer>();
+
+        var filter = newPart.AddComponent<MeshFilter>();
+        filter.mesh = mesh;
+
+        var collider = newPart.AddComponent<MeshCollider>();
+        collider.convex = false;
+    }
+
+
 
     public void Gen3DVolume()
     {

@@ -14,6 +14,8 @@ public class RandomWalkEditor : Editor
 
     bool showPath = false;
 
+    bool meshTypeGen = false;
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -111,6 +113,14 @@ public class RandomWalkEditor : Editor
 
             if (GUILayout.Button("Delete small rooms"))
             {
+
+                if (mainScript.rooms.Count == 0)
+                {
+                    mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
+                }
+
+
+
                 foreach (var room in mainScript.rooms)
                 {
                     if (room.Count < mainScript.MinSize)
@@ -172,7 +182,7 @@ public class RandomWalkEditor : Editor
                             var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
 
-                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), mainScript.PathType);
+                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType);
 
 
                             foreach (var tile in path.Item1)
@@ -214,9 +224,24 @@ public class RandomWalkEditor : Editor
 
 
 
-            if (GUILayout.Button("Generate Mesh"))
+            meshTypeGen = EditorGUILayout.Toggle("What Type of Generation", meshTypeGen);
+
+
+            if (meshTypeGen) 
             {
-                mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
+
+                if (GUILayout.Button(new GUIContent() { text = "Generate Mesh with Vertices", tooltip = "This is a  text" }  ))
+                {
+                    mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
+                }
+            }
+            else 
+            {
+
+                if (GUILayout.Button("Generate Mesh with TileSet"))
+                {
+                    mainScript.PcgManager.DrawTileMap() ;
+                }
             }
 
 
