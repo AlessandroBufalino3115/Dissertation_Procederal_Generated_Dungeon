@@ -15,7 +15,6 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- *      fix diamond square
  * 
  *   There is an issue with the WFC algo, it is a coding index issue, the other edges when given a the outer tile on the lefr and right edges they throw errors. ,most likely an index issue
  * 
@@ -27,8 +26,6 @@
  *   
  *   Look into making the flow better with less time wasted
  *   
- *   Weigthed tiles
- *   
  *   
  *   
  *   
@@ -37,8 +34,9 @@
  * 
  *   GRAPH GRAMMAR
  *   OTHER PATHFINDINGS
- *   PERLIN WORMS  --  done
+ *   PERLIN WORMS  --  to check
  *   
+ *      fix diamond square
  *   
  *   
  *   

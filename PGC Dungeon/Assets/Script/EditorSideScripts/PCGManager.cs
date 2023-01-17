@@ -39,7 +39,7 @@ public class PCGManager : MonoBehaviour
 
     [Tooltip("How many floors will the dungeons have")]
     [Range(1f, 4f)]
-    public int DungeonFloors=1;
+    public int DungeonFloors = 1;
 
 
     public enum MainAlgo
@@ -47,13 +47,13 @@ public class PCGManager : MonoBehaviour
         VORONI = 0,
         RANDOM_WALK = 1,
         ROOM_GEN = 2,
-        CELLULAR_AUTOMATA =3,
+        CELLULAR_AUTOMATA = 3,
         L_SYSTEM = 4,
         DELUNARY = 5,
         WFC = 6,
         PERLIN_NOISE = 7,
         PERLIN_WORM = 8,
-        DIAMOND_SQUARE =7
+        DIAMOND_SQUARE = 7
     }
 
     [Header("       ")]
@@ -84,14 +84,14 @@ public class PCGManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     public void CreatePlane()
     {
         RefreshPlane();
 
-        plane =  GameObject.CreatePrimitive(PrimitiveType.Plane);
+        plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
         plane.transform.position = Vector3.zero;
         plane.transform.parent = this.transform;
@@ -114,7 +114,7 @@ public class PCGManager : MonoBehaviour
     }
 
 
-    public void RefreshPlane() 
+    public void RefreshPlane()
     {
         if (plane != null)
             DestroyImmediate(plane);
@@ -130,12 +130,12 @@ public class PCGManager : MonoBehaviour
 
 
 
-        if ((int)mainAlgo == 0) 
+        if ((int)mainAlgo == 0)
         {
-             var comp = this.transform.AddComponent<VoronoiMA>();
+            var comp = this.transform.AddComponent<VoronoiMA>();
             comp.InspectorAwake();
         }
-        else if ((int)mainAlgo == 1) 
+        else if ((int)mainAlgo == 1)
         {
             var comp = this.transform.AddComponent<RandomWalkMA>();
             comp.InspectorAwake();
@@ -170,7 +170,7 @@ public class PCGManager : MonoBehaviour
         }
         else if ((int)mainAlgo == 7)
         {
-           var  comp = this.transform.AddComponent<PerlinNoiseMA>();
+            var comp = this.transform.AddComponent<PerlinNoiseMA>();
             comp.InspectorAwake();
         }
         else if ((int)mainAlgo == 8)
@@ -183,7 +183,7 @@ public class PCGManager : MonoBehaviour
             var comp = this.transform.AddComponent<DiamondSquareMA>();
             comp.InspectorAwake();
         }
-        else 
+        else
         {
             Debug.Log($"There was a n issue with this setting");
         }
@@ -221,7 +221,7 @@ public class PCGManager : MonoBehaviour
 
                 foreach (Transform child in transform)
                     DestroyImmediate(child.gameObject);
-                
+
                 break;
             case 7:
                 DestroyImmediate(this.transform.GetComponent<PerlinNoiseMA>());
@@ -260,7 +260,7 @@ public class PCGManager : MonoBehaviour
         collider.convex = false;
     }
 
-    public void Restart() 
+    public void Restart()
     {
         AlgosUtils.RestartArr(gridArray2D);
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(gridArray2D);
@@ -269,11 +269,10 @@ public class PCGManager : MonoBehaviour
     public void DrawTileMap()
     {
         int iter = 0;
+        ChunkCreate(35, 35);
 
-
-        if (WallsTiles.Count == 0|| CeilingTiles.Count == 0|| FloorTiles.Count == 0) 
+        if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
         {
-
             EditorUtility.DisplayDialog("Invalid tile Rules given", "Please make sure you have loaded all of the tile object correctly and all the 3 lists have at least one object in them to use this Generation method", "OK!");
             return;
         }
@@ -291,6 +290,9 @@ public class PCGManager : MonoBehaviour
                         if (gridArray2D[y][x].tileType != BasicTile.TileType.VOID)
                         {
                             var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[Random.Range(0, FloorTiles.Count)] : FloorTiles[0], this.transform);
+                            this.transform.GetChild(0);
+
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
 
                             objRef.transform.position = new Vector3(x, z, y);
                             iter++;
@@ -310,6 +312,7 @@ public class PCGManager : MonoBehaviour
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 90, 0);
 
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             iter++;
                         }
                         else
@@ -321,6 +324,7 @@ public class PCGManager : MonoBehaviour
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 90, 0);
 
+                                objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
                             }
                         }
@@ -336,6 +340,7 @@ public class PCGManager : MonoBehaviour
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 270, 0);
 
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             iter++;
                         }
                         else
@@ -347,6 +352,7 @@ public class PCGManager : MonoBehaviour
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 270, 0);
 
+                                objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
 
                             }
@@ -364,6 +370,7 @@ public class PCGManager : MonoBehaviour
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.name = "0";
 
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             objRef.transform.Rotate(0, 0, 0);
                             iter++;
                         }
@@ -378,6 +385,7 @@ public class PCGManager : MonoBehaviour
 
                                 objRef.transform.Rotate(0, 0, 0);
 
+                                objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
                             }
                         }
@@ -394,6 +402,8 @@ public class PCGManager : MonoBehaviour
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 180, 0);
+
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             objRef.transform.name = "180";
                             iter++;
                         }
@@ -407,6 +417,8 @@ public class PCGManager : MonoBehaviour
                                 objRef.transform.Rotate(0, 180, 0);
                                 objRef.transform.name = "180";
 
+                                objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
+
                                 iter++;
                             }
                         }
@@ -418,4 +430,93 @@ public class PCGManager : MonoBehaviour
         Debug.Log($"{iter}");
 
     }
+
+
+    public void ChunkCreate(int height, int width)
+    {
+
+        int maxWidth = gridArray2D[0].Length;
+        int maxHeight = gridArray2D.Length;
+
+
+        Vector2Int BLhead = Vector2Int.zero;
+        Vector2Int TRhead = Vector2Int.zero;
+
+        int correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
+
+        TRhead = new Vector2Int(0, TRhead.y + correctHeight);
+
+        List<Chunk> chunks = new List<Chunk>();
+        while (true)
+        {
+
+            if (TRhead.x + 1 >= maxWidth)  // needs to go in the new line
+            {
+                if (TRhead.y + 1 >= maxHeight)  // this checks if we are dont with the algo
+                {
+                    break;
+                }
+
+                BLhead = new Vector2Int(0, TRhead.y);
+
+                correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
+
+                TRhead = new Vector2Int(0, TRhead.y + correctHeight + 1);
+
+            }
+            else
+            {
+                int correctWidth = (maxWidth - 1) - TRhead.x >= width ? width : (maxWidth - 1) - TRhead.x;
+
+                TRhead = new Vector2Int(TRhead.x + correctWidth + 1, TRhead.y);
+
+                chunks.Add(new Chunk());
+
+                var currChunk = chunks[chunks.Count - 1];
+                currChunk.topRight = TRhead;
+                currChunk.bottomLeft = BLhead;
+                currChunk.index = chunks.Count - 1;
+
+                BLhead = new Vector2Int(TRhead.x, BLhead.y);
+            }
+
+        }
+
+
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            var objRef = new GameObject();
+            objRef.transform.parent = this.transform;
+            objRef.transform.name = i.ToString();
+
+            int widthChunk = chunks[i].topRight.x - chunks[i].bottomLeft.x;
+            int heightChunk = chunks[i].topRight.y - chunks[i].bottomLeft.y;
+
+            for (int y = 0; y < heightChunk; y++)
+            {
+                for (int x = 0; x < widthChunk; x++)
+                {
+                    gridArray2D[y + chunks[i].bottomLeft.y][x + chunks[i].bottomLeft.x].idx = chunks[i].index;
+                }
+            }
+        }
+
+    }
+
 }
+
+
+
+public class Chunk
+{
+    public Vector2Int topRight = Vector2Int.zero;
+    public Vector2Int bottomLeft = Vector2Int.zero;
+
+    public int index = 0;
+    public GameObject mainParent = null;
+    public List<GameObject> listOfObjInChunk = new List<GameObject>();
+
+
+
+}
+
