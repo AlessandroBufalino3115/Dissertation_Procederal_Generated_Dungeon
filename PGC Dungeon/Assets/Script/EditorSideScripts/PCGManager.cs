@@ -52,19 +52,27 @@ public class PCGManager : MonoBehaviour
         DELUNARY = 5,
         WFC = 6,
         PERLIN_NOISE = 7,
-        DIAMOND_SQUARE =8
+        PERLIN_WORM = 8,
+        DIAMOND_SQUARE =7
     }
 
+    [Header("       ")]
     [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
     public MainAlgo mainAlgo;
 
-
+    [Header("       ")]
     [Tooltip("Name of file of the Rule that contains the tiles")]
     public string TileSetRuleFileName = "";
 
     public List<GameObject> FloorTiles = new List<GameObject>();
     public List<GameObject> CeilingTiles = new List<GameObject>();
     public List<GameObject> WallsTiles = new List<GameObject>();
+
+    [Header("       ")]
+    [Tooltip("Name of file of the Rule that contains the tiles")]
+    public string WeightRuleFileName = "";
+    public float[] tileCosts = new float[0];
+
 
 
     private int currMainAlgoIDX = 10;
@@ -167,6 +175,11 @@ public class PCGManager : MonoBehaviour
         }
         else if ((int)mainAlgo == 8)
         {
+            var comp = this.transform.AddComponent<PerlinWormsMA>();
+            comp.InspectorAwake();
+        }
+        else if ((int)mainAlgo == 9)
+        {
             var comp = this.transform.AddComponent<DiamondSquareMA>();
             comp.InspectorAwake();
         }
@@ -214,6 +227,9 @@ public class PCGManager : MonoBehaviour
                 DestroyImmediate(this.transform.GetComponent<PerlinNoiseMA>());
                 break;
             case 8:
+                DestroyImmediate(this.transform.GetComponent<PerlinWormsMA>());
+                break;
+            case 9:
                 DestroyImmediate(this.transform.GetComponent<DiamondSquareMA>());
                 break;
 

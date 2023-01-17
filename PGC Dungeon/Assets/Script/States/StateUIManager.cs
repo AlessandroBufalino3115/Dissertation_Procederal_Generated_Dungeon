@@ -122,8 +122,6 @@ public class StateUIManager : MonoBehaviour
 
 
 
-
-
     public void Gen2DVolume( int heightY, int lengthX, bool clearBlock = false, bool scaleToggle = false)
     {
         width = lengthX;
@@ -183,6 +181,8 @@ public class StateUIManager : MonoBehaviour
         Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
         // 1 tick seems to be 1 millisecond
     }
+
+
 
     public void CreatePlane(int width, int height) 
     {
@@ -281,7 +281,6 @@ public class StateUIManager : MonoBehaviour
                         }
                     }
                     
-
 
                     if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL)
                     {

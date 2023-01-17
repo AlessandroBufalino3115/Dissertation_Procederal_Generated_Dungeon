@@ -15,7 +15,7 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- * 
+ *      fix diamond square
  * 
  *   There is an issue with the WFC algo, it is a coding index issue, the other edges when given a the outer tile on the lefr and right edges they throw errors. ,most likely an index issue
  * 
@@ -29,9 +29,6 @@
  *   
  *   Weigthed tiles
  *   
- *   Costs for the pathfinding
- *   
- *   a nice way to do the choosing for the pathFidning
  *   
  *   
  *   
@@ -40,7 +37,7 @@
  * 
  *   GRAPH GRAMMAR
  *   OTHER PATHFINDINGS
- *   PERLIN WORMS
+ *   PERLIN WORMS  --  done
  *   
  *   
  *   

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -87,7 +88,13 @@ public static class GeneralUtil
         return Mathf.Abs((point1.x - point2.x)) + Mathf.Abs((point1.y - point2.y));
     }
 
-
+    public static void Spaces(int spaceNum)
+    {
+        for (int i = 0; i < spaceNum; i++)
+        {
+            EditorGUILayout.Space();
+        }
+    }
 
 }
 

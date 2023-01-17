@@ -76,11 +76,14 @@ public class PerlinNoiseEditor : Editor
 
         mainScript.Threshold = EditorGUILayout.Slider(mainScript.Threshold, 0.1f, 0.9f);
 
+
+
+
         if (GUILayout.Button("Generate Noise"))
         {
             mainScript.PcgManager.gridArray2D = AlgosUtils.PerlinNoise2D(mainScript.PcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.Threshold);
 
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D,true);
 
             mainScript.Started = true;
         }
@@ -146,14 +149,11 @@ public class PerlinNoiseEditor : Editor
             if (showRooms)
             {
 
-
-
                 if (GUILayout.Button("Get all rooms"))
                 {
                     mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                     mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextSelfCol(mainScript.PcgManager.gridArray2D);
                 }
-
 
 
                 mainScript.MinSize = (int)EditorGUILayout.Slider(mainScript.MinSize, 30, 200);

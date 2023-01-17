@@ -11,7 +11,7 @@ public class PCGManagerEditor : Editor
 {
 
 
-    [MenuItem("PCG Algorithms/Main Algo")]
+    [MenuItem("PCG Algorithms/Main Algo", priority = 1)]
     static void SpawnObject() 
     {
         var objToSpawn = new GameObject("Cool GameObject made from Code");
@@ -27,10 +27,12 @@ public class PCGManagerEditor : Editor
         PCGManager mainScript = (PCGManager)target;
 
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+        Spaces(2);
+
+
+
+
+        Spaces(4);
 
 
         GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
@@ -39,11 +41,11 @@ public class PCGManagerEditor : Editor
 
 
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+        Spaces(4);
 
+
+
+        Spaces(2);
 
         if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
@@ -87,6 +89,7 @@ public class PCGManagerEditor : Editor
             }
         }
 
+        Spaces(3);
 
 
         if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
@@ -144,7 +147,67 @@ public class PCGManagerEditor : Editor
 
 
         }
+
+
+
+
+        Spaces(3);
+
+
+        if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
+        {
+
+            var GVcont = ScriptableObject.CreateInstance<WeightRuleSet>();
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Resources");
+                AssetDatabase.Refresh();
+            }
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/WeightPathfindingRuleSet"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources", "WeightPathfindingRuleSet");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WeightPathfindingRuleSet/NewWeightRuleSet.asset");
+            AssetDatabase.SaveAssets();
+
+        }
+
+
+
+
+        if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
+        {
+
+            var tileRules = Resources.Load<WeightRuleSet>("WeightPathfindingRuleSet/" + mainScript.WeightRuleFileName);
+
+            mainScript.tileCosts = new float[6];
+
+            mainScript.tileCosts[0] = tileRules.VOID;
+            mainScript.tileCosts[1] = tileRules.FLOORROOM;
+            mainScript.tileCosts[2] = tileRules.WALL;
+            mainScript.tileCosts[3] = tileRules.ROOF;
+            mainScript.tileCosts[4] = tileRules.FLOORCORRIDOR;
+            mainScript.tileCosts[5] = tileRules.AVOID;
+        }
+
+
+
+
     }
+
+
+    private void Spaces(int spaceNum)
+    {
+        for (int i = 0; i < spaceNum; i++)
+        {
+            EditorGUILayout.Space();
+        }
+    }
+
 
 }
 

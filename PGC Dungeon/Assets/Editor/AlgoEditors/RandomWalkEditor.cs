@@ -17,6 +17,7 @@ public class RandomWalkEditor : Editor
 
     bool showRules = false;
 
+    bool useWeights = false;
 
 
     int selGridPathType = 0;
@@ -25,6 +26,14 @@ public class RandomWalkEditor : Editor
 
     int selGridGenType = 0;
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algortihm Marhcing cubes create a mesh object whihc can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tielset provided" } };
+
+
+
+
+
+
+
+
 
 
     public override void OnInspectorGUI()
@@ -207,7 +216,9 @@ public class RandomWalkEditor : Editor
                     EditorGUILayout.Space();
 
                     mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                    useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = ""}, useWeights);
 
+                    
 
                     if (GUILayout.Button("Connect all the rooms"))// gen something
                     {
@@ -248,7 +259,7 @@ public class RandomWalkEditor : Editor
                             var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
 
-                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType);
+                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
 
                             foreach (var tile in path.Item1)

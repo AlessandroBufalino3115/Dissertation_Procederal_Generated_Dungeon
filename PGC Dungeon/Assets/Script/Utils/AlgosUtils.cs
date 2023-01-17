@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
+using static Unity.VisualScripting.Metadata;
 
 
 public static class AlgosUtils
@@ -280,11 +281,12 @@ public static class AlgosUtils
 
 
 
-
-
-    public static Tuple<List<BasicTile>, List<BasicTile>> A_StarPathfinding2DNorm(BasicTile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false)
+    public static Tuple<List<BasicTile>, List<BasicTile>> A_StarPathfinding2DNorm(BasicTile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
+
+        bool checkForUse = useWeights == true && arrWeights != null ? true : false;
+
 
         // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
         List<AStar_Node> openList = new List<AStar_Node>();
@@ -404,8 +406,18 @@ public static class AlgosUtils
                     else
                         child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
 
-                    child.f = child.g + child.h;   //added value here
-                    child.parent = currNode;
+
+
+                    if (checkForUse) 
+                    {
+                        child.f = child.g + child.h + arrWeights[(int)child.refToBasicTile.tileType];   //added value here
+                        child.parent = currNode;
+                    }
+                    else 
+                    {
+                        child.f = child.g + child.h;   //added value here
+                        child.parent = currNode;
+                    }
 
 
                     foreach (var openListItem in openList)
@@ -854,7 +866,7 @@ public static class AlgosUtils
 
                 if (threashold != 0)
                 {
-                    if (threashold > _gridArray2D[y][x].tileWeight)
+                    if (threashold < _gridArray2D[y][x].tileWeight)
                         _gridArray2D[y][x].tileWeight = 1;
                     else
                         _gridArray2D[y][x].tileWeight = 0;
@@ -968,8 +980,100 @@ public static class AlgosUtils
 
 
 
+    public static BasicTile[][] PerlinWorms(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, float minThreshold) 
+    {
+        // we create a copy arrya
+        int height = _gridArray2D.Length;
+        int width = _gridArray2D[0].Length;
+        var gridArray2DToReturn = new BasicTile[height][];
+
+        for (int y = 0; y < height; y++)
+        {
+            gridArray2DToReturn[y] = new BasicTile[width];
+
+            for (int x = 0; x < width; x++)
+            {
+                gridArray2DToReturn[y][x] = new BasicTile();
+                gridArray2DToReturn[y][x].position = new Vector2Int(x, y);
+                gridArray2DToReturn[y][x].tileType = BasicTile.TileType.VOID;
+            }
+        }
+
+
+
+        //save the 
+        _gridArray2D = PerlinNoise2D(_gridArray2D,  scale,  octaves,  persistance,  lacu,  offsetX,  offsetY,  threshold);
+
+        var rooms = GetAllRooms(_gridArray2D);
+
+        _gridArray2D = PerlinNoise2D(_gridArray2D, scale, octaves, persistance, lacu, offsetX, offsetY);
+
+        foreach (var roomTiles in rooms)
+        {
+            var currentPos = roomTiles[Random.Range(0, roomTiles.Count)].position;
+
+            bool foundSmaller = true;
+
+            int[,] childPosArry = new int[0, 0];
+            int[] savedNextNode = new int[2];
+
+            childPosArry = GeneralUtil.childPosArry8Side;
+
+            gridArray2DToReturn[currentPos.y][currentPos.x].tileWeight = 1;
+
+            while (foundSmaller) 
+            {
+
+                float savedWeight = _gridArray2D[currentPos.y][currentPos.x].tileWeight;
+                foundSmaller = false;
+               
+
+                for (int i = 0; i < childPosArry.Length / 2; i++)
+                {
+                    int x_buff = childPosArry[i, 0];
+                    int y_buff = childPosArry[i, 1];
+
+                    int[] node_position = { currentPos.x + x_buff, currentPos.y + y_buff };
+
+
+                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= _gridArray2D[0].Length || node_position[1] >= _gridArray2D.Length)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (savedWeight > _gridArray2D[node_position[1]][node_position[0]].tileWeight)   // the weight is smaller
+                        {
+                            foundSmaller = true;
+                            savedNextNode = node_position;
+                            savedWeight = _gridArray2D[node_position[1]][node_position[0]].tileWeight;
+                            gridArray2DToReturn[node_position[1]][node_position[0]].tileWeight = 1;
+                        }
+                    }
+                }
+                if (_gridArray2D[savedNextNode[1]][savedNextNode[0]].tileWeight <= minThreshold)
+                {
+                    foundSmaller = false;
+                }
+                else 
+                {
+
+                    currentPos = new Vector2Int(savedNextNode[0], savedNextNode[1]);
+                }
+
+            }
+        }
+
+        return gridArray2DToReturn;
+    }
+
+
+
 
     #endregion
+
+
+
 
     #region Triangulation
 
@@ -1289,7 +1393,6 @@ public static class AlgosUtils
             {
                 list.Add(new Vector2Int(x, y));
                 gridArray2D[y][x].visited=true;
-
                 Flood2DAnchor(x + 1, y, list, gridArray2D);
                 Flood2DAnchor(x - 1, y, list, gridArray2D);
                 Flood2DAnchor(x, y + 1, list, gridArray2D);
@@ -1488,6 +1591,10 @@ public static class AlgosUtils
 
 
     #endregion
+
+
+
+
 
     //not working
     #region DiamondSquare algo
@@ -2117,11 +2224,6 @@ public static class AlgosUtils
                     }
 
 
-                    //if (neigh >= 2)
-                    //{
-                    //    gridArray2D[y][x].tileWeight = 1;
-                    //    gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
-                    //}
 
                 }
             }
@@ -2160,6 +2262,7 @@ public static class AlgosUtils
 
             if (iter >= 1000)
             {
+                Debug.Log($"<color=red>Reached max number of rooms there might be an issue</color>");
                 break;
             }
 

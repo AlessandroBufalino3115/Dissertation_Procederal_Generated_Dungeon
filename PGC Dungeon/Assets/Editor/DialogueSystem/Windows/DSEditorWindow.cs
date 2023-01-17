@@ -19,7 +19,7 @@ namespace DS.Windows
 
 
 
-        [MenuItem("PCG Algorithms/WFC RuleBuilder")]
+        [MenuItem("PCG Algorithms/WFC RuleBuilder", priority = 12)]
         public static void ShowExample()
         {
             DSEditorWindow wnd = GetWindow<DSEditorWindow>("WFC RuleBuilder");
