@@ -8,12 +8,15 @@ using static UnityEditor.Progress;
 public class NewWFCAlog : MonoBehaviour
 {
     /// <summary>
-    /// out outksirt checks works its just the currently available tiles are no good
+    /// there is an issue with the outskirt it seems to be half working 
+    /// normal WFC works fine 
+    /// 
+    /// 
     ///
     /// </summary>
 
 
-
+    public int iterNum = 0;
 
 
     [SerializeField]
@@ -69,6 +72,7 @@ public class NewWFCAlog : MonoBehaviour
             {
                 arrayOfWFCTiles[y][x] = new WFCTile(rulesInst.tileSet.Count());
                 arrayOfWFCTiles[y][x].coord = new Vector2Int(x, y);
+
             }
         }
 
@@ -76,17 +80,22 @@ public class NewWFCAlog : MonoBehaviour
         if (outskirtsCheck)
             SetOutSkirts();
 
+        //Debug.Log($"{arrayOfWFCTiles[0][0].AllowedObjectsIDXs.Count}");
 
+        //foreach (var item in arrayOfWFCTiles[0][0].AllowedObjectsIDXs)
+        //{
+        //    Debug.Log(item);
+        //}
 
         var ranStart = GeneralUtil.RanVector2Int(xSize, ySize);
         arrayOfWFCTiles[ranStart.y][ranStart.x].solved = true;// choosen idx should be the indx of the item choosen
 
 
-        int ranNum = Random.Range(0, arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Count - 1);
+        int ranNum = Random.Range(0, arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Count);
 
 
         arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX = arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs[ranNum];
-   
+
 
         var spawnedAsset = Instantiate(rulesInst.tileSet[arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX], this.transform);
         spawnedAsset.transform.position = new Vector3(ranStart.x, 0, ranStart.y);
@@ -95,9 +104,8 @@ public class NewWFCAlog : MonoBehaviour
         ResetNeighbours(arrayOfWFCTiles, ranStart, arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX);
 
 
-
         bool finishedAlgo = false;
-
+        //int iter = 0;
 
         while (!finishedAlgo)
         {
@@ -134,7 +142,7 @@ public class NewWFCAlog : MonoBehaviour
                 }
                 else
                 {
-                    arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].choosenIDX = arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].AllowedObjectsIDXs[Random.Range(0, arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].AllowedObjectsIDXs.Count - 1)];
+                    arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].choosenIDX = arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].AllowedObjectsIDXs[Random.Range(0, arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].AllowedObjectsIDXs.Count)];
                 }
 
                 spawnedAsset = Instantiate(rulesInst.tileSet[arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].choosenIDX], this.transform);
@@ -145,6 +153,12 @@ public class NewWFCAlog : MonoBehaviour
 
                 arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].solved = true;
             }
+
+
+            //if (iter >= iterNum) { break; }
+
+            //iter++;
+
         }
     }
 
@@ -154,7 +168,6 @@ public class NewWFCAlog : MonoBehaviour
 
     private void SetOutSkirts() 
     {
-
         WFCTileRule ruleRef = null;
 
         foreach (var rule in rulesInst.ruleSet)
@@ -167,14 +180,15 @@ public class NewWFCAlog : MonoBehaviour
         }
 
 
+
         for (int x = 0; x < xSize-1; x++)
         {
-            arrayOfWFCTiles[0][x].NeighbourAllowed(ruleRef.allowedObjBelow);
+            arrayOfWFCTiles[0][x].NeighbourAllowed(ruleRef.allowedObjAbove);
         }
 
         for (int x = 0; x < xSize - 1; x++)
         {
-            arrayOfWFCTiles[ySize-1][x].NeighbourAllowed(ruleRef.allowedObjAbove);
+            arrayOfWFCTiles[ySize-1][x].NeighbourAllowed(ruleRef.allowedObjBelow);
         }
 
         for (int y = 0; y < ySize-1; y++)
@@ -186,8 +200,6 @@ public class NewWFCAlog : MonoBehaviour
         {
             arrayOfWFCTiles[y][xSize-1].NeighbourAllowed(ruleRef.allowedObjLeft);
         }
-
-
     }
 
 
@@ -265,6 +277,7 @@ public class NewWFCAlog : MonoBehaviour
             {
                 AllowedObjectsIDXs.Add(i);
             }
+
         }
 
         public void NeighbourAllowed(List<int> neighbourAllowedIDXs)
@@ -272,6 +285,7 @@ public class NewWFCAlog : MonoBehaviour
 
             for (int i = AllowedObjectsIDXs.Count; i-- > 0;)
             {
+
                 bool isThere = false;
 
                 foreach (var allowedIDX in neighbourAllowedIDXs)
@@ -292,18 +306,13 @@ public class NewWFCAlog : MonoBehaviour
             }
 
 
+
             if (AllowedObjectsIDXs.Count == 0)
             {
-                Debug.Log($"THERE IS AN ISSUE");
                 AllowedObjectsIDXs.Add(0);
             }
-
-
         }
-
     }
-
-
 }
 
 
