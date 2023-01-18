@@ -15,9 +15,9 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- * 
- *   There is an issue with the WFC algo, it is a coding index issue, the other edges when given a the outer tile on the lefr and right edges they throw errors. ,most likely an index issue
- * 
+ *      
+ *   WFC the last issue is that on the extreme corners it doesnt work and thats it   
+ *      
  *   The fact that the marching cubes does what it does is annoying , there needs to be a way toeither flatten or not draw the other tris
  * 
  *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
