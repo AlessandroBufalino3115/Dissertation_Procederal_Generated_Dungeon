@@ -29,6 +29,11 @@
  *   
  *   weigthed tiles spawn
  *   
+ *   A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker
+ *   
+ *   k-group/mean to find regions? but what could regions be needed for? different tileset spawn
+ *   
+ *   look into different textures for the marching cubes
  *   
  *   
  *   still need to add:

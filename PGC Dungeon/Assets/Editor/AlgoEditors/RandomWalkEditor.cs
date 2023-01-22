@@ -30,12 +30,6 @@ public class RandomWalkEditor : Editor
 
 
 
-
-
-
-
-
-
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -65,17 +59,13 @@ public class RandomWalkEditor : Editor
         #endregion
 
 
-        Spaces(4);
+        GeneralUtil.Spaces(4);
 
 
         #region Main algo region
 
 
-
-        GUILayout.Label("How many iterations");
-
-
-        mainScript.Iterations = (int)EditorGUILayout.Slider(mainScript.Iterations, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.3f, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.9f);
+        mainScript.Iterations = (int)EditorGUILayout.Slider(new GUIContent() { text = "Iterations", tooltip = "" }, mainScript.Iterations, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.3f, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.9f);
 
         mainScript.StartFromMiddle = EditorGUILayout.Toggle(new GUIContent() { text = "Should The algo start from the middle", tooltip = mainScript.StartFromMiddle == true ? "Start the head from the middle" : "Start the head from a random place on the Canvas" }, mainScript.StartFromMiddle); ;
         mainScript.AlreadyPassed = EditorGUILayout.Toggle(new GUIContent() { text = "Overlap cells count", tooltip = mainScript.AlreadyPassed == true ? "When the head of the walker goes over an already populated cells the iteration still counts" : "When the head of the walker goes over an already populated cells the iteration does not count" }, mainScript.AlreadyPassed);
@@ -93,10 +83,11 @@ public class RandomWalkEditor : Editor
 
         #endregion
 
+
         if (mainScript.Started)
         {
 
-            Spaces(4);
+            GeneralUtil.Spaces(4);
 
 
             #region showCA region
@@ -106,8 +97,7 @@ public class RandomWalkEditor : Editor
             if (showCA)
             {
                
-                GUILayout.Label(new GUIContent() { text = "Neighbours needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" });
-                mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(mainScript.NeighboursNeeded, 3, 5);
+                mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, mainScript.NeighboursNeeded, 3, 5);
 
                 if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
                 {
@@ -132,8 +122,8 @@ public class RandomWalkEditor : Editor
 
             #endregion
 
-           
-            Spaces(4);
+
+            GeneralUtil.Spaces(4);
 
 
 
@@ -154,9 +144,7 @@ public class RandomWalkEditor : Editor
 
 
 
-                mainScript.MinSize = (int)EditorGUILayout.Slider(mainScript.MinSize, 30, 200);
-
-                GUILayout.Label($"Delete all the rooms beneath {mainScript.MinSize} tiles big");
+                mainScript.MinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "" }, mainScript.MinSize, 30, 200);
 
                 if (GUILayout.Button("Delete small rooms"))
                 {
@@ -192,7 +180,7 @@ public class RandomWalkEditor : Editor
 
 
 
-            Spaces(4);
+            GeneralUtil.Spaces(4);
 
 
             #region corridor making region
@@ -275,6 +263,25 @@ public class RandomWalkEditor : Editor
 
 
                         AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
+
+
+                        for (int y = 0; y < mainScript.PcgManager.gridArray2D.Length; y++)
+                        {
+                            for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
+                            {
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                                {
+                                    Debug.Log($"woiqweoieqwopiqewiop");
+                                    mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                }
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                                {
+                                    Debug.Log($"re5trrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+                                }
+                            }
+                        }
+
+                        AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
                         AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
 
                         mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
@@ -309,7 +316,7 @@ public class RandomWalkEditor : Editor
 
 
 
-            Spaces(4);
+           GeneralUtil.Spaces(4);
 
 
 
@@ -328,6 +335,22 @@ public class RandomWalkEditor : Editor
                 switch (selGridGenType)
                 {
                     case 0:
+
+
+                        for (int y = 0; y < mainScript.PcgManager.gridArray2D.Length; y++)
+                        {
+                            for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
+                            {
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) 
+                                {
+                                    mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                }
+                            }
+                        }
+
+                        AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
+
+
                         mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
                         break;
  
@@ -337,16 +360,17 @@ public class RandomWalkEditor : Editor
                 }
             }
 
+            if (selGridGenType ==  1) 
+            {
+                mainScript.PcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk height", tooltip = "" }, mainScript.PcgManager.ChunkHeight, 10, 40);
+                mainScript.PcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, mainScript.PcgManager.ChunkWidth, 10, 40);
+            }
+
+
 
             #endregion
         }
     }
 
-    private void Spaces(int spaceNum) 
-    {
-        for (int i = 0; i < spaceNum; i++)
-        {
-            EditorGUILayout.Space();
-        }
-    }
+   
 }

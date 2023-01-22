@@ -33,7 +33,7 @@ public class PCGManager : MonoBehaviour
     public int height = 50;
 
     [Tooltip("How tall the dungeon will be.")]
-    [Range(4f, 8f)]
+    [Range(3f, 8f)]
     public int RoomHeight = 6;
 
 
@@ -72,6 +72,22 @@ public class PCGManager : MonoBehaviour
     [Tooltip("Name of file of the Rule that contains the tiles")]
     public string WeightRuleFileName = "";
     public float[] tileCosts = new float[0];
+
+
+    private int chunkWidth = 10;
+    public int ChunkWidth
+    {
+        get { return chunkWidth; }
+        set { chunkWidth = value; }
+    }
+
+
+    private int chunkHeight = 10;
+    public int ChunkHeight
+    {
+        get { return chunkHeight; }
+        set { chunkHeight = value; }
+    }
 
 
 
@@ -269,7 +285,7 @@ public class PCGManager : MonoBehaviour
     public void DrawTileMap()
     {
         int iter = 0;
-        ChunkCreate(35, 35);
+        ChunkCreate(chunkWidth, chunkHeight);
 
         if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
         {
@@ -497,6 +513,7 @@ public class PCGManager : MonoBehaviour
                 for (int x = 0; x < widthChunk; x++)
                 {
                     gridArray2D[y + chunks[i].bottomLeft.y][x + chunks[i].bottomLeft.x].idx = chunks[i].index;
+                    
                 }
             }
         }
@@ -515,8 +532,5 @@ public class Chunk
     public int index = 0;
     public GameObject mainParent = null;
     public List<GameObject> listOfObjInChunk = new List<GameObject>();
-
-
-
 }
 

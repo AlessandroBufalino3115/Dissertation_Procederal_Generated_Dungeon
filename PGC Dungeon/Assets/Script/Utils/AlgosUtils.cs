@@ -1770,18 +1770,27 @@ public static class AlgosUtils
                 {
                     if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
-                        marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0,0);
+                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL || gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) 
+                        {
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.95f);
+                        }
+                        else 
+                        {
+
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.05f);
+                        }
+
                     }
                     else // this is justt he wall
                     {
 
-                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL) // draw everything but the floor
+                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL || gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) // draw everything but the floor
                         {
                             marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 1,1);
                         }
                         else // set the floor to 0 
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0, 0);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0, 1);
                         }
 
                     }
@@ -1819,20 +1828,75 @@ public static class AlgosUtils
                     
                     var midPosArr = new Vector3[12]
                     {
-                            Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
-                            Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
-                            Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
-                            Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
-                            Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
-                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
-                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
-                            Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
-                            Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
-                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
-                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
-                            Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
-                    };
+                            Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,      positionVertex[x,y,z].weight / (positionVertex[x,y,z].weight + positionVertex[x + 1,y,z].weight)),    //0   1
+                            Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,  positionVertex[x + 1,y,z].weight / (positionVertex[x + 1,y,z].weight + positionVertex[x + 1,y + 1,z].weight)),   //1   2
+                            Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,      positionVertex[x + 1,y + 1,z].weight / (positionVertex[x + 1,y + 1,z].weight + positionVertex[x,y + 1,z].weight)),       //2   3
+                            Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,          positionVertex[x,y + 1,z].weight / (positionVertex[x,y + 1,z].weight + positionVertex[x,y,z].weight)),           //3   0
+                           
+                            Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,      positionVertex[x,y,z + 1].weight / (positionVertex[x,y,z + 1].weight + positionVertex[x+1,y,z+1].weight)),       //4   5
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,  positionVertex[x+1,y,z+1].weight / (positionVertex[x+1,y,z+1].weight + positionVertex[x + 1,y+1,z+1].weight)),   //5   6
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,    positionVertex[x + 1,y+1,z+1].weight / (positionVertex[x + 1,y+1,z+1].weight + positionVertex[x,y+1,z+1].weight)),       //6   7
+                            Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,     positionVertex[x,y + 1,z +1].weight / (positionVertex[x,y + 1,z +1].weight + positionVertex[x,y,z+1].weight)),          //7   4
+                            
+                            Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,          positionVertex[x,y,z+1].weight / (positionVertex[x,y,z+1].weight + positionVertex[x,y,z].weight)),           //4   0
+                            Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,      positionVertex[x+1,y,z+1].weight / (positionVertex[x+1,y,z+1].weight + positionVertex[x + 1,y,z].weight)),       //5   1
+                            Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,    positionVertex[x + 1,y+1,z+1].weight / (positionVertex[x + 1,y+1,z+1].weight + positionVertex[x+1,y+1,z].weight)),       //6   2
+                            Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,      positionVertex[x,y+1,z+1].weight / (positionVertex[x,y+1,z+1].weight + positionVertex[x,y + 1,z].weight))          //7   3
                     
+
+                            //Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,    positionVertex[x,y,z].weight == 1 ? 0 : 0.5f),    //0   1
+                            //Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,positionVertex[x + 1,y,z].weight == 1 ? 0 : 0.5f),   //1   2
+                            //Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,    positionVertex[x + 1,y + 1,z].weight == 1 ? 0 : 0.5f),       //2   3
+                            //Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,        positionVertex[x,y + 1,z].weight == 1 ? 0 : 0.5f),           //3   0
+                            //Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,    positionVertex[x,y,z + 1].weight == 1 ? 0 : 0.5f),       //4   5
+                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,positionVertex[x+1,y,z+1].weight == 1 ? 0 : 0.5f),   //5   6
+                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,  positionVertex[x + 1,y+1,z+1].weight == 1 ? 0 : 0.5f),       //6   7
+                            //Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,   positionVertex[x,y + 1,z +1].weight == 1 ? 0 : 0.5f),          //7   4
+                            //Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,        positionVertex[x,y,z+1].weight == 1 ? 0 : 0.5f),           //4   0
+                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,    positionVertex[x+1,y,z+1].weight == 1 ? 0 : 0.5f),       //5   1
+                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,  positionVertex[x + 1,y+1,z+1].weight == 1 ? 0 : 0.5f),       //6   2
+                            //Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,    positionVertex[x,y+1,z+1].weight == 1 ? 0 : 0.5f)          //7   3
+                    
+                    
+                            //       Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
+                            //Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
+                            //Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
+                            //Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
+                            //Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
+                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
+                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
+                            //Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
+                            //Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
+                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
+                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
+                            //Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
+                    
+                    };
+
+
+
+
+
+             //       var midPosArr = new Vector3[12]
+             //{
+             //               Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   positionVertex[x,y,z].weight / (positionVertex[x,y,z].weight + positionVertex[x + 1,y,z].weight)),    //0   1
+             //               Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
+             //               Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
+             //               Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
+             //               Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
+             //               Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
+             //               Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
+             //               Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
+             //               Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
+             //               Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
+             //               Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
+             //               Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
+             //};
+
+                    //Vector3.Lerp(botLeft.position, botRight.position, botLeft.weigth / (botLeft.weigth + botRight.weigth));
+
+
+
                     int index = positionVertex[x, y, z].state * 1 +
                                     positionVertex[x + 1, y, z].state * 2 +
                                     positionVertex[x + 1, y + 1, z].state * 4 +
@@ -2218,13 +2282,10 @@ public static class AlgosUtils
                         }
                         else if (copyArr[node_position[1]][node_position[0]].tileType == BasicTile.TileType.VOID)
                         {
-                            gridArray2D[node_position[1]][node_position[0]].tileType = BasicTile.TileType.WALL;
+                            gridArray2D[node_position[1]][node_position[0]].tileType = BasicTile.TileType.WALLCORRIDOR;
                             gridArray2D[node_position[1]][node_position[0]].tileWeight =1;
                         }
                     }
-
-
-
                 }
             }
         }
@@ -2371,6 +2432,7 @@ public class BasicTile
         VOID,
         FLOORROOM,
         WALL,
+        WALLCORRIDOR,
         ROOF,
         FLOORCORRIDOR,
         AVOID
