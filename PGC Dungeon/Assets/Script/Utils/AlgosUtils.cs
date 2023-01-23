@@ -279,7 +279,7 @@ public static class AlgosUtils
 
     #region pathFinding
 
-
+    #region A*
 
     public static Tuple<List<BasicTile>, List<BasicTile>> A_StarPathfinding2DNorm(BasicTile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
     {
@@ -446,7 +446,7 @@ public static class AlgosUtils
 
     }
 
-
+    #endregion
 
     #region beizier
     public static Vector3 CubicBeizier(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Vector2Int pos4, float t)
@@ -484,7 +484,122 @@ public static class AlgosUtils
 
     #endregion
 
+    #region Dijstra
 
+    public static List<BasicTile> DijstraPathfinding(BasicTile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint) 
+    {
+
+
+        int[,] childPosArry = new int[0, 0];
+
+        childPosArry = GeneralUtil.childPosArry4Side;
+
+        List<DjNode> openListDjNodes = new List<DjNode>();
+        DjNode[][] DjNodesArr = new DjNode[gridArr2d.Length][];
+
+        for (int y = 0; y < gridArr2d.Length; y++)
+        {
+            DjNodesArr[y] = new DjNode[gridArr2d[0].Length];
+            for (int x = 0; x < gridArr2d[0].Length; x++)
+            {
+                var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
+
+                DjNodesArr[y][x] = newRef;
+                openListDjNodes.Add(newRef);
+            }
+        }
+
+        DjNode lastNode = null;
+
+        while (openListDjNodes.Count > 1)
+        {
+            float smallestDist = 99999999;
+            DjNode currNode = null;
+
+            foreach (var djNode in openListDjNodes)
+            {
+                if (djNode.distance < smallestDist) 
+                {
+                    smallestDist = djNode.distance;
+                    currNode = djNode;
+                }
+            }
+
+
+            openListDjNodes.Remove(currNode);
+
+
+            for (int i = 0; i < childPosArry.Length / 2; i++)
+            {
+                int x_buff = childPosArry[i, 0];
+                int y_buff = childPosArry[i, 1];
+
+                int[] node_position = { currNode.coord.x + x_buff, currNode.coord.y + y_buff };
+
+
+                if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr2d[0].Length || node_position[1] >= gridArr2d.Length)
+                {
+                    continue;
+                }
+                else
+                {
+                    //here an if statment also saying that walkable 
+                    float newDist = currNode.distance + 1;
+
+                    if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance) 
+                    {
+                        DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
+                        DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+
+                    }
+
+
+                }
+            }
+
+
+
+            if (currNode.coord == endPoint)
+            {
+
+                lastNode = currNode;
+
+                break;
+
+            }
+
+        }
+
+        var solutioPath = new List<BasicTile>();
+
+        int iter = 0;
+
+        while(lastNode.parentDJnode != null) 
+        {
+            
+
+            if (iter > 2000) 
+            {
+                Debug.Log($"There is na issue with the solution while");
+                break;
+            }
+            iter++;
+
+
+            solutioPath.Add(lastNode.gridRefTile);
+
+            lastNode = lastNode.parentDJnode;
+
+
+
+        }
+
+        return solutioPath;
+
+
+    }
+
+    #endregion
 
 
 
@@ -683,173 +798,9 @@ public static class AlgosUtils
     }
 
 
-
-
-
-
-    //also ask if it wants to start from the middle or no
-    public static void RandomWalk2DCol(TileOBJ[][] _gridarray2D, int iterations, bool alreadyPassed)
-    {
-        int iterationsLeft = iterations;
-
-        Vector2Int currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
-
-
-        int maxIter = (int)((_gridarray2D.Length * _gridarray2D[0].Length) * 1.4f);
-
-        int iterCount = 0;
-
-        while (iterationsLeft > 0)
-        {
-
-            iterCount++;
-
-            if (iterCount >= maxIter)
-            {
-                Debug.Log($"<color=red>Safety break point reached for the Drunk Walk Algo</color>");
-
-                break;
-            }
-
-            //currentHead = new Vector2Int(startX, startY);
-
-            int ranDir = Random.Range(0, 4);
-
-            switch (ranDir)
-            {
-                case 0:    //for
-
-                    if (currentHead.y + 1 >= _gridarray2D.Length)
-                    { }
-                    else
-                    {
-                        currentHead.y++;
-                    }
-
-                    break;
-
-                case 1:    //back
-                    if (currentHead.y - 1 < 0)
-                    { }
-                    else
-                    {
-                        currentHead.y--;
-                    }
-                    break;
-
-                case 2:    //left
-                    if (currentHead.x - 1 < 0)
-                    { }
-                    else
-                    {
-                        currentHead.x--;
-                    }
-                    break;
-
-                case 3:   //rigth
-                    if (currentHead.x + 1 >= _gridarray2D[0].Length)
-                    { }
-                    else
-                    {
-                        currentHead.x++;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-
-
-            if (alreadyPassed)
-            {
-                if (_gridarray2D[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color != Color.grey)
-                {
-                    _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
-                    iterationsLeft--;
-                }
-            }
-            else
-            {
-                _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileObj.GetComponent<MeshRenderer>().material.color = Color.grey;
-                iterationsLeft--;
-            }
-        }
-
-
-    }
- 
-
     #endregion
 
     #region PerlinNoise
-
-    public static TileOBJ[][] PerlinNoise2DTileSet(TileOBJ[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
-    {
-        float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
-
-        if (scale <= 0)
-        {
-            scale = 0.0001f;
-        }
-
-        float maxN = float.MinValue;
-        float minN = float.MaxValue;
-
-
-        for (int y = 0; y < _gridArray2D.Length; y++)
-        {
-            for (int x = 0; x < _gridArray2D[0].Length; x++)
-            {
-
-                float amplitude = 1;
-                float freq = 1;
-                float noiseHeight = 0;
-
-
-                for (int i = 0; i < octaves; i++)
-                {
-
-                    float sampleX = x / scale * freq + offsetX;
-                    float sampleY = y / scale * freq + offsetY;
-
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
-
-                    noiseHeight += perlinValue * amplitude;
-
-                    amplitude *= persistance;
-
-                    freq *= lacu;
-
-                }
-
-
-                if (noiseHeight > maxN) { maxN = noiseHeight; }
-                else if (noiseHeight < minN) { minN = noiseHeight; }
-
-                noiseMap[x, y] = noiseHeight;
-            }
-        }
-
-        for (int y = 0; y < _gridArray2D.Length; y++)
-        {
-            for (int x = 0; x < _gridArray2D[0].Length; x++)
-            {
-                _gridArray2D[y][x].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
-
-                if (threashold != 0)
-                {
-                    if (threashold > _gridArray2D[y][x].tileWeight)
-                        _gridArray2D[y][x].tileWeight=1;
-                    else
-                        _gridArray2D[y][x].tileWeight=0;
-                }
-               
-            }
-        }
-
-        return _gridArray2D;
-    }
-
 
     public static BasicTile[][] PerlinNoise2D(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
@@ -916,11 +867,6 @@ public static class AlgosUtils
 
         return _gridArray2D;
     }
-
-
-
-
-
 
     public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, bool threshBool)
     {
@@ -1018,8 +964,6 @@ public static class AlgosUtils
         return noiseMap;
     }
 
-
-
     public static BasicTile[][] PerlinWorms(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, float minThreshold) 
     {
         // we create a copy arrya
@@ -1108,12 +1052,7 @@ public static class AlgosUtils
     }
 
 
-
-
     #endregion
-
-
-
 
     #region Triangulation
 
@@ -1632,10 +1571,6 @@ public static class AlgosUtils
 
     #endregion
 
-
-
-
-
     //not working
     #region DiamondSquare algo
 
@@ -1754,41 +1689,6 @@ public static class AlgosUtils
         return gridArray2D;
     }
 
-    public static TileOBJ[][] VoronoiObj2D(TileOBJ[][] gridArrayObj2D, List<Vector3> pointsArr)
-    {
-
-        for (int y = 0; y < gridArrayObj2D.Length; y++)
-        {
-            for (int x = 0; x < gridArrayObj2D[y].Length; x++)
-            {
-                int closestIndex = 0;
-                float closestDistance = -1;
-
-                for (int i = 0; i < pointsArr.Count; i++)
-                {
-                    if (closestDistance < 0)  //therefore minus therefoe we just started
-                    {
-                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArrayObj2D[y][x].tileObj.transform.position.x, gridArrayObj2D[y][x].tileObj.transform.position.z));
-                    }
-                    else
-                    {
-                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArrayObj2D[y][x].tileObj.transform.position.x, gridArrayObj2D[y][x].tileObj.transform.position.z));
-
-                        if (closestDistance > newDist)
-                        {
-                            closestDistance = newDist;
-                            closestIndex = i;
-
-                        }
-                    }
-                }
-                gridArrayObj2D[y][x].idx = closestIndex;
-
-            }
-        }
-
-        return gridArrayObj2D;
-    }
 
     #endregion
 
@@ -2097,30 +1997,6 @@ public static class AlgosUtils
         return texture;
     }
 
-
-
-    public static void SetColorAllObjAnchor(TileOBJ[][] gridArr) 
-    {
-        for (int y = 0; y < gridArr.Length; y++)
-        {
-            for (int x = 0; x < gridArr[0].Length; x++)
-            {
-                gridArr[y][x].SetColorBiAncor();
-            }
-        }
-    }
-
-
-    public static void SetColorAllObjBi(TileOBJ[][] gridArr, float minWeight, float maxWeight)
-    {
-        for (int y = 0; y < gridArr.Length; y++)
-        {
-            for (int x = 0; x < gridArr[0].Length; x++)
-            {
-                gridArr[y][x].SetColorBi(minWeight, maxWeight);
-            }
-        }
-    }
 
 
     #endregion
@@ -2449,7 +2325,6 @@ public static class AlgosUtils
     }
     #endregion
 
-
 }
 
 
@@ -2486,53 +2361,6 @@ public class BasicTile
 /// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
 /// </summary>
 
-public class TileOBJ : BasicTile
-{
-    public GameObject tileObj;
-
-    public TileOBJ(GameObject _arrayTileObj, Vector2Int _pos)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector2Int(_pos.x, _pos.y);
-    }
-    public TileOBJ(GameObject _arrayTileObj, int _x, int _y, int _z)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector2Int(_x, _z);
-    }
-    public TileOBJ(GameObject _arrayTileObj, int _x, int _y)
-    {
-        tileObj = _arrayTileObj;
-        position = new Vector2Int(_x, _y);
-    }
-
-
-    public void SetColorBi(float minWeight, float maxWeight)
-    {
-        float num = Mathf.InverseLerp(minWeight, maxWeight, tileWeight);
-        color = new Color(num, num, num, 1f);
-
-        tileObj.GetComponent<MeshRenderer>().material.color = color;
-    }
-
-    public void SetColor(Color _color)
-    {
-        this.color = _color;
-        tileObj.GetComponent<MeshRenderer>().material.color = _color;
-    }
-
-
-    public void SetColorBiAncor(bool black = true)
-    {
-
-        if (black)
-            this.color = this.tileWeight == 0 ? Color.white : Color.black;
-        else
-            this.color = this.tileWeight == 0 ? Color.white : Color.grey;
-
-        tileObj.GetComponent<MeshRenderer>().material.color = this.color;
-    }
-}
 
 #region triangulation classes
 
@@ -2614,7 +2442,14 @@ public class MarchingCubeClass
     }
 }
 
+public class DjNode 
+{
+    public float distance = 99999;
+    public DjNode parentDJnode = null;
+    public BasicTile gridRefTile = null;
+    public Vector2Int coord = Vector2Int.zero;
 
+}
 
 
 

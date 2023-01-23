@@ -28,7 +28,9 @@
  *   
  *   create rooms from corridors   --- high priority
  *   
- *   weigthed tiles spawn   
+ *   weigthed tiles spawn   --- high priority
+ *   
+ *   corridor size changing thing  --- mid priority
  *   
  *   
  *   
@@ -43,10 +45,10 @@
  *   
  *   still need to add:
  * 
- *   GRAPH GRAMMAR
- *   OTHER PATHFINDINGS
- *   PERLIN WORMS  --  to check
- *   fix diamond square
+ *   GRAPH GRAMMAR  -- mid priority
+ *   OTHER PATHFINDINGS   -- high priority
+ *   PERLIN WORMS  --  to check    -- mid priority
+ *   fix diamond square   -- high priority
  *   
  *   
  *   

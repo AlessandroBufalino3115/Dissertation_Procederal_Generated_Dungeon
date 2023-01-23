@@ -47,9 +47,9 @@ public class TileVolumeGenerator : MonoBehaviour
     public int acceptedRoomFailures;
 
 
-    public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
+    //public TileOBJ[][][] gridArray3D = new TileOBJ[1][][];
 
-    public TileOBJ[][] gridArray2D = new TileOBJ[1][];
+   // public TileOBJ[][] gridArray2D = new TileOBJ[1][];
 
     public BasicTile[][] gridarr2d = new BasicTile[0][];
 
@@ -125,152 +125,152 @@ public class TileVolumeGenerator : MonoBehaviour
 
 
 
-    public void Gen3DVolume()
-    {
-        int timerStart = Environment.TickCount & Int32.MaxValue;
-        int blockNum = 0;
+    //public void Gen3DVolume()
+    //{
+    //    int timerStart = Environment.TickCount & Int32.MaxValue;
+    //    int blockNum = 0;
 
-        gridArray3D = new TileOBJ[z_Width][][];
+    //    gridArray3D = new TileOBJ[z_Width][][];
 
-        for (int z = 0; z < gridArray3D.Length; z++)
-        {
+    //    for (int z = 0; z < gridArray3D.Length; z++)
+    //    {
 
-            gridArray3D[z] = new TileOBJ[y_Height][];
-            for (int y = 0; y < gridArray3D[z].Length; y++)
-            {
+    //        gridArray3D[z] = new TileOBJ[y_Height][];
+    //        for (int y = 0; y < gridArray3D[z].Length; y++)
+    //        {
 
-                gridArray3D[z][y] = new TileOBJ[x_Length];
+    //            gridArray3D[z][y] = new TileOBJ[x_Length];
 
-                for (int x = 0; x < gridArray3D[z][y].Length; x++)
-                {
-                    Vector3 position = new Vector3(x, y, z);
-
-
-
-                    GameObject newRef = null;
-
-                    if (clearBlock)
-                    {
-                        newRef = Instantiate(emptyBlock, this.gameObject.transform);
-                    }
-                    else
-                    {
-                        newRef = Instantiate(CubeBlock, this.gameObject.transform);
-                    }
-
-                    newRef.transform.position = position;
-                    if (scaleToggle)
-                    {
-                        newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                    }
-
-                    newRef.transform.name = x.ToString() + " " + y.ToString();
-
-                    gridArray3D[z][y][x] = new TileOBJ(newRef, x, y, z);
-                    gridArray3D[z][y][x].tileType = TileOBJ.TileType.VOID;
-
-                    blockNum++;
-                }
-            }
-        }
-
-
-        int half_x = (x_Length - 1) / 2;
-        int half_y = (y_Height - 1) / 2;
-        int half_z = (z_Width - 1) / 2;
+    //            for (int x = 0; x < gridArray3D[z][y].Length; x++)
+    //            {
+    //                Vector3 position = new Vector3(x, y, z);
 
 
 
-        gridArray3D[half_z][half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
-        int timerEnd = Environment.TickCount & Int32.MaxValue;
+    //                GameObject newRef = null;
 
-        int totalTicks = timerEnd - timerStart;
-        Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
+    //                if (clearBlock)
+    //                {
+    //                    newRef = Instantiate(emptyBlock, this.gameObject.transform);
+    //                }
+    //                else
+    //                {
+    //                    newRef = Instantiate(CubeBlock, this.gameObject.transform);
+    //                }
 
-    }
+    //                newRef.transform.position = position;
+    //                if (scaleToggle)
+    //                {
+    //                    newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+    //                }
 
+    //                newRef.transform.name = x.ToString() + " " + y.ToString();
 
+    //                gridArray3D[z][y][x] = new TileOBJ(newRef, x, y, z);
+    //                gridArray3D[z][y][x].tileType = TileOBJ.TileType.VOID;
 
-    public void Gen2DVolume()
-    {
-        int timerStart = Environment.TickCount & Int32.MaxValue;
-        int blockNum = 0;
-
-        gridArray2D = new TileOBJ[y_Height][];
-
-        for (int y = 0; y < gridArray2D.Length; y++)
-        {
-            gridArray2D[y] = new TileOBJ[x_Length];
-
-            for (int x = 0; x < gridArray2D[y].Length; x++)
-            {
-                Vector3 position = new Vector3(x, 0, y);
-
-
-
-                GameObject newRef = null;
-
-                if (clearBlock)
-                {
-                    newRef = Instantiate(emptyBlock, this.gameObject.transform);
-                }
-                else
-                {
-                    newRef = Instantiate(CubeBlock, this.gameObject.transform);
-                }
-
-                newRef.transform.position = position;
-
-                if (scaleToggle)
-                {
-                    newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                }
-                newRef.transform.name = x.ToString() + " " + y.ToString();
-
-                gridArray2D[y][x] = new TileOBJ(newRef, x, y);
-                gridArray2D[y][x].tileType = TileOBJ.TileType.VOID;
-
-                blockNum++;
-            }
-        }
+    //                blockNum++;
+    //            }
+    //        }
+    //    }
 
 
-        int half_x = (x_Length - 1) / 2;
-        int half_y = (y_Height - 1) / 2;
-
-        gridArray2D[half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
-
-        int timerEnd = Environment.TickCount & Int32.MaxValue;
-
-        int totalTicks = timerEnd - timerStart;
-        Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
-        // 1 tick seems to be 1 millisecond
-    }
+    //    int half_x = (x_Length - 1) / 2;
+    //    int half_y = (y_Height - 1) / 2;
+    //    int half_z = (z_Width - 1) / 2;
 
 
 
-    public void DestroyAllTiles()
-    {
-        int timerStart = Environment.TickCount & Int32.MaxValue;
+    //    gridArray3D[half_z][half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
+    //    int timerEnd = Environment.TickCount & Int32.MaxValue;
 
+    //    int totalTicks = timerEnd - timerStart;
+    //    Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
 
-        foreach (Transform child in transform)
-            Destroy(child.gameObject);
-
-
-        gridArray3D = new TileOBJ[1][][];
-
-        gridArray2D = new TileOBJ[1][];
-
-        int timerEnd = Environment.TickCount & Int32.MaxValue;
-
-        int totalTicks = timerEnd - timerStart;
+    //}
 
 
 
-        Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>");
+    //public void Gen2DVolume()
+    //{
+    //    int timerStart = Environment.TickCount & Int32.MaxValue;
+    //    int blockNum = 0;
 
-    }
+    //    gridArray2D = new TileOBJ[y_Height][];
+
+    //    for (int y = 0; y < gridArray2D.Length; y++)
+    //    {
+    //        gridArray2D[y] = new TileOBJ[x_Length];
+
+    //        for (int x = 0; x < gridArray2D[y].Length; x++)
+    //        {
+    //            Vector3 position = new Vector3(x, 0, y);
+
+
+
+    //            GameObject newRef = null;
+
+    //            if (clearBlock)
+    //            {
+    //                newRef = Instantiate(emptyBlock, this.gameObject.transform);
+    //            }
+    //            else
+    //            {
+    //                newRef = Instantiate(CubeBlock, this.gameObject.transform);
+    //            }
+
+    //            newRef.transform.position = position;
+
+    //            if (scaleToggle)
+    //            {
+    //                newRef.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+    //            }
+    //            newRef.transform.name = x.ToString() + " " + y.ToString();
+
+    //            gridArray2D[y][x] = new TileOBJ(newRef, x, y);
+    //            gridArray2D[y][x].tileType = TileOBJ.TileType.VOID;
+
+    //            blockNum++;
+    //        }
+    //    }
+
+
+    //    int half_x = (x_Length - 1) / 2;
+    //    int half_y = (y_Height - 1) / 2;
+
+    //    gridArray2D[half_y][half_x].tileObj.GetComponent<MeshRenderer>().material.color = Color.yellow;
+
+    //    int timerEnd = Environment.TickCount & Int32.MaxValue;
+
+    //    int totalTicks = timerEnd - timerStart;
+    //    Debug.Log($"<color=yellow>Performance: The total time this has taken was {totalTicks} Ticks, to generate {blockNum} positions</color>");
+    //    // 1 tick seems to be 1 millisecond
+    //}
+
+
+
+    //public void DestroyAllTiles()
+    //{
+    //    int timerStart = Environment.TickCount & Int32.MaxValue;
+
+
+    //    foreach (Transform child in transform)
+    //        Destroy(child.gameObject);
+
+
+    //    gridArray3D = new TileOBJ[1][][];
+
+    //    gridArray2D = new TileOBJ[1][];
+
+    //    int timerEnd = Environment.TickCount & Int32.MaxValue;
+
+    //    int totalTicks = timerEnd - timerStart;
+
+
+
+    //    Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>");
+
+    //}
 
 
 

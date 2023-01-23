@@ -71,7 +71,7 @@ public class RanRoomGenMA : MonoBehaviour
     }
 
 
-    public List<RoomsClassInUI> roomList = new List<RoomsClassInUI>();
+    public List<RoomsClass> roomList = new List<RoomsClass>();
     private List<BoundsInt> roomsListBPSAlgo = new List<BoundsInt>();
 
     public List<BoundsInt> RoomList
@@ -164,7 +164,7 @@ public class RanRoomGenMA : MonoBehaviour
 
             Vector2Int ranStartPoint = new Vector2Int(Random.Range(0, gridArray2D[0].Length), Random.Range(0, gridArray2D.Length));
 
-            RoomsClassInUI currRoom = new RoomsClassInUI();
+            RoomsClass currRoom = new RoomsClass();
 
             int ranWidth = Random.Range(minWidth, maxWidth);
             if (Random.value > 0.5f)
@@ -251,7 +251,7 @@ public class RanRoomGenMA : MonoBehaviour
     /// <param name="newRoom"></param>
     /// <param name="oldRoom"></param>
     /// <returns></returns>
-    public bool AABBCol(RoomsClassInUI newRoom, RoomsClassInUI oldRoom)
+    public bool AABBCol(RoomsClass newRoom, RoomsClass oldRoom)
     {
 
         for (int i = 0; i < newRoom.verticesList.Count; i++)
@@ -272,7 +272,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-    public void WorkoutRegion(RoomsClassInUI room)
+    public void WorkoutRegion(RoomsClass room)
     {
         room.tileCoords = new List<Vector2Int>();
 
@@ -318,7 +318,7 @@ public class RanRoomGenMA : MonoBehaviour
 
         foreach (var room in roomsListBPSAlgo)
         {
-            roomList.Add(new RoomsClassInUI() { maxX = room.xMax, maxY = room.zMax, minX = room.xMin, minY = room.zMin });
+            roomList.Add(new RoomsClass() { maxX = room.xMax, maxY = room.zMax, minX = room.xMin, minY = room.zMin });
 
             WorkoutRegion(roomList[roomList.Count - 1]);
         }
