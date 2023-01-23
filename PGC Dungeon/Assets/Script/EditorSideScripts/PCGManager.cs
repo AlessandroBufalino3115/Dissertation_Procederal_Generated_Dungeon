@@ -37,7 +37,7 @@ public class PCGManager : MonoBehaviour
     public int RoomHeight = 6;
 
 
-    [Tooltip("How many floors will the dungeons have")]
+    [Tooltip("How many floors will the dungeons have///THIS IS DISABLED")]
     [Range(1f, 4f)]
     public int DungeonFloors = 1;
 
@@ -450,7 +450,6 @@ public class PCGManager : MonoBehaviour
 
     public void ChunkCreate(int height, int width)
     {
-
         int maxWidth = gridArray2D[0].Length;
         int maxHeight = gridArray2D.Length;
 
@@ -517,9 +516,7 @@ public class PCGManager : MonoBehaviour
                 }
             }
         }
-
     }
-
 }
 
 

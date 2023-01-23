@@ -18,15 +18,18 @@ public class RandomWalkEditor : Editor
     bool useWeights = false;
 
 
-    int selGridPathType = 0;
-    GUIContent[] selStringsPathType = { new GUIContent() {text = "Prims's algo", tooltip=  "Create a singualr path that traverses the whole dungeon"}, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have manu corridors" }, new GUIContent() { text = "Prim's algo + random", tooltip = "Create a singualr path that traverses the whole dungeon, with some random diviation" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridors" } };
+    int selGridConnectionType = 0;
+    GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualr path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have manu corridors" }, new GUIContent() { text = "Prim's algo + random", tooltip = "Create a singualr path that traverses the whole dungeon, with some random diviation" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridors" } };
+    int primRan = 1;
+
+    int selGridPathGenType = 0;
+    GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "" }, new GUIContent() { text = "Dijistra", tooltip = "" }, new GUIContent() { text = "BFS", tooltip = "" }, new GUIContent() { text = "DFS", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "" } };
+    int margin = 20;
 
 
     int selGridGenType = 0;
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algortihm Marhcing cubes create a mesh object whihc can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tielset provided" } };
 
-    private Vector2Int startPos = new Vector2Int(10,10);
-    private Vector2Int endPos = new Vector2Int(100,20);
 
     public override void OnInspectorGUI()
     {
@@ -44,7 +47,7 @@ public class RandomWalkEditor : Editor
                 "\n\nStep 3: It is possible small rooms that are not your what you are looking for have been geenrated, delete them using by setting up the minimum amount of tiles a room should have." +
                 "\n\nStep 4: Depending on the amount of rooms you are able to create corridors by choosing the wanted pathFinding algorithm and the algortihm which decideds which room is connected to which." +
                 "\n\nStep 5: Generate the algorithm using the tileSet provided or create the blank gameobject whihc can then be exported and manipulated");
-            
+
         }
 
         if (!Selection.activeTransform)
@@ -94,7 +97,7 @@ public class RandomWalkEditor : Editor
 
             if (showCA)
             {
-               
+
                 mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, mainScript.NeighboursNeeded, 3, 5);
 
                 if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
@@ -148,7 +151,7 @@ public class RandomWalkEditor : Editor
                 {
 
                     mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
-                    
+
                     foreach (var room in mainScript.rooms)
                     {
                         if (room.Count < mainScript.MinSize)
@@ -189,24 +192,71 @@ public class RandomWalkEditor : Editor
 
                 if (showPath)
                 {
-                    GUILayout.Label("Decide What Pathfinding Algorithm to use");
+                    GUILayout.Label("Choose how to order the connection of the rooms");
 
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
+                    GeneralUtil.Spaces(2);
 
                     GUILayout.BeginVertical("Box");
-                    selGridPathType = GUILayout.SelectionGrid(selGridPathType, selStringsPathType, 1);
+                    selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, selStringsConnectionType, 1);
                     GUILayout.EndVertical();
 
-                    EditorGUILayout.Space();
-                    EditorGUILayout.Space();
+                    GeneralUtil.Spaces(3);
 
-                    mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
-                    useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = ""}, useWeights);
+                    switch (selGridConnectionType)
+                    {
+
+                        case 2:   // prims ran
+
+                            primRan = (int)EditorGUILayout.Slider(new GUIContent() { text = "prim random rooms", tooltip = "To add /// TO FINISH" }, primRan, 1, mainScript.rooms.Count/2);
+                            GeneralUtil.Spaces(2);
+                            break;
+
+                        case 3:   // beizier 
+
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+
 
                     
 
-                    if (GUILayout.Button("Connect all the rooms"))// gen something
+                    GUILayout.Label("Choose the algorithm to that creates the corridor");
+
+                    GeneralUtil.Spaces(2);
+
+                    GUILayout.BeginVertical("Box");
+                    selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, selStringPathGenType, 1);
+                    GUILayout.EndVertical();
+
+                    GeneralUtil.Spaces(2);
+
+
+
+
+                    switch (selGridPathGenType)
+                    {
+                        case 0:   // A* pathfindind
+                            mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                            useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
+                            break;
+
+                        case 4:   // beizier 
+
+                            margin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Margin", tooltip = "beizeir curve thing to change" }, margin, 10, 50);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+
+
+                    if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                     {
 
                         mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
@@ -220,9 +270,8 @@ public class RandomWalkEditor : Editor
 
                         //there is 4 ways 
 
-                        switch (selGridPathType)
+                        switch (selGridConnectionType)
                         {
-
                             case 0:
                                 mainScript.edges = AlgosUtils.PrimAlgoNoDelu(centerPoints);
                                 break;
@@ -230,6 +279,46 @@ public class RandomWalkEditor : Editor
                                 mainScript.edges = AlgosUtils.DelunayTriangulation2D(centerPoints).Item2;
                                 break;
                             case 2://prim ran
+                                mainScript.edges = AlgosUtils.PrimAlgoNoDelu(centerPoints);
+
+                                int len = mainScript.edges.Count - 1;
+
+
+                                for (int i = 0; i < primRan; i++)
+                                {
+                                    var pointA = mainScript.edges[Random.Range(0, len)].edge[0];
+                                    var pointBEdgeCheck = mainScript.edges[Random.Range(0, len)];
+
+                                    var pointB = Vector3.zero;
+
+                                    if (pointA == pointBEdgeCheck.edge[0])
+                                        pointB = pointBEdgeCheck.edge[1];
+                                    else if (pointA == pointBEdgeCheck.edge[1])
+                                        pointB = pointBEdgeCheck.edge[0];
+                                    else
+                                        pointB = pointBEdgeCheck.edge[1];
+
+
+                                    Edge newEdge = new Edge(pointA, pointB);
+
+                                    bool toAdd = true;
+
+                                    foreach (var primEdge in mainScript.edges)
+                                    {
+                                        if (AlgosUtils.LineIsEqual(primEdge, newEdge))
+                                        {
+                                            toAdd = false;
+                                            break;
+                                        }
+                                    }
+
+
+                                    if (toAdd)
+                                    {
+                                        mainScript.edges.Add(newEdge);
+                                    }
+                                }
+
                                 break;
                             case 3://ran
                                 break;
@@ -237,25 +326,95 @@ public class RandomWalkEditor : Editor
 
 
 
-                        foreach (var edge in mainScript.edges)
+
+
+                        switch (selGridPathGenType)
                         {
+                            case 0:   //A* pathfingin
 
-                            //use where so we get soemthing its not the wall but not necessary
-                            var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
-                            var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
+                                foreach (var edge in mainScript.edges)
+                                {
+
+                                    //use where so we get soemthing its not the wall but not necessary
+                                    var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
+                                    var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
 
-                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
 
-                            foreach (var tile in path.Item1)
-                            {
-                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    foreach (var tile in path.Item1)
+                                    {
+                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
 
-                                tile.tileWeight = 0.75f;
-                            }
+                                        tile.tileWeight = 0.75f;
+                                    }
+                                }
+
+                                break;
+                            case 1:  //dijistra
+                                break;
+                            case 2://   bfs
+                                break;
+                            case 3://  dfs
+                                break;
+                            case 4://  beizier curve
+                                foreach (var edge in mainScript.edges)
+                                {
+
+                                    var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
+                                    var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
+
+                                    var startPos = new Vector2Int(tileA.x, tileA.y);
+                                    var endPos = new Vector2Int(tileB.x, tileB.y);
+
+                                    var prevCoord = new Vector2Int(0, 0);
+
+                                    var positions = AlgosUtils.ExtrapolatePos(startPos, endPos, margin);
+
+                                    var mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
+                                    var mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
+
+                                    for (float t = 0; t < 1; t += 0.05f)
+                                    {
+                                        float currT = t;
+                                        float prevT = t - 0.05f;
+
+                                        var currCord = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
+
+                                        if (prevT < 0)
+                                        {
+                                            prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                                            continue;
+                                        }
+                                        else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
+                                        { continue; }
+
+                                        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
+
+                                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+
+                                        foreach (var tile in path.Item1)
+                                        {
+                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                            tile.tileWeight = 0.75f;
+                                        }
+                                    }
+                                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+
+                                }
+                                break;
+
+                            default:
+                                break;
                         }
+
+
+
+
 
 
 
@@ -286,11 +445,13 @@ public class RandomWalkEditor : Editor
             }
             else
             {
-                if (GUILayout.Button("Generate walls"))
-                {
-                    AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
-                }
+
+                GUILayout.Label("to Access the corridor making function you need to\nclick on one of the room buttons first");
+                //if (GUILayout.Button("Generate walls"))
+                //{
+                //    AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
+                //    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+                //}
             }
 
 
@@ -302,7 +463,7 @@ public class RandomWalkEditor : Editor
             EditorGUILayout.EndFoldoutHeaderGroup();
 
             EditorGUILayout.Space();
-            EditorGUILayout.Space(); 
+            EditorGUILayout.Space();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 
@@ -311,45 +472,47 @@ public class RandomWalkEditor : Editor
 
 
 
-            if (GUILayout.Button(new GUIContent() { text = "bezier curve path tester, to delete" }))
-            {
-                var prevCoord = new Vector2Int(0,0);
+            //if (GUILayout.Button(new GUIContent() { text = "bezier curve path tester, to delete" }))
+            //{
+            //    var prevCoord = new Vector2Int(0,0);
 
-                var positions = GeneralUtil.ExtrapolatePos(startPos, endPos,30);
+            //    var positions = AlgosUtils.ExtrapolatePos(startPos, endPos,margin);
 
-              var  mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
-               var  mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
+            //    var  mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
+            //    var  mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
 
-                for (float t = 0; t < 1; t += 0.05f)
-                {
-                    float currT = t;
-                    float prevT = t - 0.05f;
+            //    for (float t = 0; t < 1; t += 0.05f)
+            //    {
+            //        float currT = t;
+            //        float prevT = t - 0.05f;
 
-                    var currCord = GeneralUtil.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
+            //        var currCord = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
 
-                    if (prevT < 0)
-                    {
-                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-                        continue;
-                    }
+            //        if (prevT < 0)
+            //        {
+            //            prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+            //            continue;
+            //        }
+            //        else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
+            //        { continue; }
 
-                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D,prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
 
-                    prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
-                    Debug.Log($"{prevCoord}       {new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z))}");
+            //        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D,prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
 
-                    foreach (var tile in path.Item1)
-                    {
-                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+            //        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
-                        tile.tileWeight = 0.75f;
-                    }
 
-                }
-                mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
-            }
+            //        foreach (var tile in path.Item1)
+            //        {
+            //            if (tile.tileType != BasicTile.TileType.FLOORROOM)
+            //                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+            //            tile.tileWeight = 0.75f;
+            //        }
+            //    }
+            //    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+            //}
 
 
 
@@ -367,7 +530,7 @@ public class RandomWalkEditor : Editor
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 
-            if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!"}))
+            if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
             {
                 switch (selGridGenType)
                 {
@@ -378,7 +541,7 @@ public class RandomWalkEditor : Editor
                         {
                             for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                             {
-                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) 
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
                                 {
                                     mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
                                 }
@@ -390,14 +553,14 @@ public class RandomWalkEditor : Editor
 
                         mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
                         break;
- 
+
                     case 1:
                         mainScript.PcgManager.DrawTileMap();
                         break;
                 }
             }
 
-            if (selGridGenType ==  1) 
+            if (selGridGenType == 1)
             {
                 mainScript.PcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk height", tooltip = "" }, mainScript.PcgManager.ChunkHeight, 10, 40);
                 mainScript.PcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, mainScript.PcgManager.ChunkWidth, 10, 40);
@@ -409,5 +572,5 @@ public class RandomWalkEditor : Editor
         }
     }
 
-   
+
 }
