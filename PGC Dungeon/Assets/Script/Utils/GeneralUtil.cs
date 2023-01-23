@@ -96,11 +96,42 @@ public static class GeneralUtil
         }
     }
 
+
+
+    public static Vector3 CubicBeizier(Vector2Int pos1, Vector2Int pos2, Vector2Int pos3, Vector2Int pos4, float t)
+    {
+        var correctedPos1 = new Vector3(pos1.x, 0, pos1.y);
+        var correctedPos2 = new Vector3(pos2.x, 0, pos2.y);
+        var correctedPos3 = new Vector3(pos3.x, 0, pos3.y);
+        var correctedPos4 = new Vector3(pos4.x, 0, pos4.y);
+
+        return (Mathf.Pow((1 - t), 3) * correctedPos1) + (3 * (Mathf.Pow((1 - t), 2)) * t * correctedPos2) + (3 * (1 - t) * t * t * correctedPos3) + t * t * t * correctedPos4;
+    }
+
+    public static Tuple<Vector2, Vector2> ExtrapolatePos(Vector2 startPos, Vector2 EndPos,int margin)
+    {
+        float lerpPoint2 = Random.Range(0.15f, 0.40f);
+        float lerpPoint3 = Random.Range(0.60f, 0.80f);
+
+        margin = Mathf.Abs(margin);
+
+
+        Vector2 dir = startPos - EndPos;
+
+        var normalised = Vector2.Perpendicular(dir).normalized;
+        var point2 = Vector2.Lerp(startPos, EndPos, lerpPoint2);
+        point2 = point2 + normalised * Random.Range(margin *-1, margin);
+
+
+        normalised = Vector2.Perpendicular(dir).normalized;
+        var point3 = Vector2.Lerp(startPos, EndPos, lerpPoint3);
+        point3 = point3 + normalised * Random.Range(margin * -1, margin);
+ 
+
+        return Tuple.Create(point2, point3);
+    }
 }
 
 
-
-
-//do some ineritance
 
 

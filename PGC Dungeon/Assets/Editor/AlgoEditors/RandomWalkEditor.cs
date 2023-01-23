@@ -1,11 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Diagnostics.Eventing.Reader;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 [CustomEditor(typeof(RandomWalkMA))]
 public class RandomWalkEditor : Editor
@@ -27,8 +25,8 @@ public class RandomWalkEditor : Editor
     int selGridGenType = 0;
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algortihm Marhcing cubes create a mesh object whihc can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tielset provided" } };
 
-
-
+    private Vector2Int startPos = new Vector2Int(10,10);
+    private Vector2Int endPos = new Vector2Int(100,20);
 
     public override void OnInspectorGUI()
     {
@@ -271,12 +269,10 @@ public class RandomWalkEditor : Editor
                             {
                                 if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
                                 {
-                                    Debug.Log($"woiqweoieqwopiqewiop");
                                     mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
                                 }
                                 if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
                                 {
-                                    Debug.Log($"re5trrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
                                 }
                             }
                         }
@@ -315,8 +311,49 @@ public class RandomWalkEditor : Editor
 
 
 
+            if (GUILayout.Button(new GUIContent() { text = "bezier curve path tester, to delete" }))
+            {
+                var prevCoord = new Vector2Int(0,0);
 
-           GeneralUtil.Spaces(4);
+                var positions = GeneralUtil.ExtrapolatePos(startPos, endPos,30);
+
+              var  mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
+               var  mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
+
+                for (float t = 0; t < 1; t += 0.05f)
+                {
+                    float currT = t;
+                    float prevT = t - 0.05f;
+
+                    var currCord = GeneralUtil.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
+
+                    if (prevT < 0)
+                    {
+                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                        continue;
+                    }
+
+                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D,prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
+
+                    prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+
+                    Debug.Log($"{prevCoord}       {new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z))}");
+
+                    foreach (var tile in path.Item1)
+                    {
+                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                        tile.tileWeight = 0.75f;
+                    }
+
+                }
+                mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+            }
+
+
+
+            GeneralUtil.Spaces(4);
 
 
 

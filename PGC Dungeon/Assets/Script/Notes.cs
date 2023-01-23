@@ -16,24 +16,29 @@
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
  *      
- *   WFC the last issue is that on the extreme corners it doesnt work and thats it   
- *      
- *   The fact that the marching cubes does what it does is annoying , there needs to be a way toeither flatten or not draw the other tris
+ *   WFC the last issue is that on the extreme corners it doesnt work and thats it     -- high priority
  * 
- *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
+ *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system    --- mid priority
  * 
- *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   --  addition will not be added
- *   Need to add room to room connection
+ *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   --  addition will not be added     high priority
  *   
- *   Look into making the flow better with less time wasted
+ *   Need to add room to room connection    ---- high priority
  *   
- *   weigthed tiles spawn
+ *   Look into making the flow better with less time wasted    --- mid priority
  *   
- *   A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker
+ *   create rooms from corridors   --- high priority
  *   
- *   k-group/mean to find regions? but what could regions be needed for? different tileset spawn
+ *   weigthed tiles spawn   
  *   
- *   look into different textures for the marching cubes
+ *   
+ *   
+ *   A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker      --- minor priority
+ *   
+ *   k-group/mean to find regions? but what could regions be needed for? different tileset spawn    --- minor priority
+ *   
+ *   look into different textures for the marching cubes     --- minor priority
+ *   
+ *   
  *   
  *   
  *   still need to add:

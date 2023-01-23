@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
-using UnityEngine.UIElements;
-
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -20,7 +18,7 @@ public class TileVolumeGenerator : MonoBehaviour
     [SerializeField] GameObject emptyBlock;
     [SerializeField] GameObject CubeBlock;
     public bool clearBlock = false;
-    public bool Gizmos;
+    public bool Gizmoss;
 
     /*
      *  void OnDrawGizmosSelected()
@@ -32,6 +30,13 @@ public class TileVolumeGenerator : MonoBehaviour
      * 
      * 
      */
+
+    public Transform point1;
+    public Vector2 point2;
+    public Vector2 point3;
+    public Transform point4;
+
+    public float time = 0.5f;
 
 
 
@@ -48,6 +53,11 @@ public class TileVolumeGenerator : MonoBehaviour
 
     public BasicTile[][] gridarr2d = new BasicTile[0][];
 
+
+
+    public bool reCalc = false;
+
+
     private void Awake()
     {
         Instance = this;
@@ -60,6 +70,9 @@ public class TileVolumeGenerator : MonoBehaviour
         gridarr2d[1] = new BasicTile[10] { new BasicTile() { tileWeight =1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL } };
         gridarr2d[2] = new BasicTile[10] { new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.FLOORROOM }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL } };
         gridarr2d[3] = new BasicTile[10] { new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1 , tileType = BasicTile.TileType.WALL }, new BasicTile() { tileWeight = 1, tileType = BasicTile.TileType.WALL } };
+
+
+        reCalc = true;
 
         //for (int y = 0; y < gridarr2d.Length; y++)
         //{
@@ -82,6 +95,18 @@ public class TileVolumeGenerator : MonoBehaviour
 
     }
 
+
+
+
+    private void Update()
+    {
+        if (reCalc) 
+        {
+            reCalc = false;
+            extrapolatePos(point1.position, point4.position);
+
+        }
+    }
     public void FormObject(Mesh mesh)
     {
         GameObject newPart = new GameObject();
@@ -272,27 +297,80 @@ public class TileVolumeGenerator : MonoBehaviour
     }
 
 
+    private void OnDrawGizmos()
+    {
+        for (double t = 0; t < 1; t += 0.05)
+        {
+            Gizmos.DrawSphere( CubicBeizier(point1.position,point2,point3, point4.position,(float)t) ,0.5f);
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pos1">start of the curve</param>
+    /// <param name="pos2"></param>
+    /// <param name="pos3"></param>
+    /// <param name="pos4">end of the curve</param>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    private Vector3 CubicBeizier(Vector3 pos1, Vector3 pos2, Vector3 pos3, Vector3 pos4, float t) 
+    {
+        return (Mathf.Pow((1 - t), 3) * pos1) + (3 * (Mathf.Pow((1 - t), 2)) * t * pos2) + (3 * (1 - t) * t * t * pos3) + t * t * t * pos4; 
+    }
+
+
+    private Tuple<Vector2,Vector2> extrapolatePos(Vector3 startPos, Vector3 EndPos) 
+    {
+        float lerpPoint2 = Random.Range(0.15f, 0.40f);
+        float lerpPoint3 = Random.Range(0.60f, 0.80f);
 
 
 
+        Vector2 dir = startPos - EndPos;
+
+        var normalised = Vector2.Perpendicular(dir).normalized;
+        var point2 = Vector2.Lerp(startPos, EndPos, lerpPoint2);
+
+        point2 = point2 + normalised * Random.Range(-10, 10);
+        Debug.Log(point2);
+        Debug.Log(startPos);
 
 
-   // public void CallWallsFind() => FindWalls.instance.FindWalls2D(gridArray2D);
-    
-   // //public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
+        normalised = Vector2.Perpendicular(dir).normalized;
+        var point3 = Vector2.Lerp(startPos, EndPos, lerpPoint3);
 
-   //// public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
+        point3 = point3 + normalised * Random.Range(-10, 10);
+        Debug.Log(EndPos);
+        Debug.Log(point3);
 
-   // public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
-
-   // public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
-
-   // //public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
-   // //public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
+        this.point3 = point3;
+        this.point2 = point2;
 
 
+        return Tuple.Create(point2, point3);
 
-   // public void CallDiamons() => DiamondSquare.instance.RunDiamondSquare();
+    }
+
+
+
+    // public void CallWallsFind() => FindWalls.instance.FindWalls2D(gridArray2D);
+
+    // //public void Init2DCa() => CellularAutomataBasicAlgo.instance.Init2DCallAuto(gridArray2D, x_Length, y_Height);
+
+    //// public void InitA_StarPathFinding() => A_StarPathFinding.instance.SolveA_StarPathfinding2DTest(gridArray2D);
+
+    // public void CallForVoronoi() => VoronoiDiagram.instance.CallVoronoiGen2D(gridArray2D);
+
+    // public void CallGenLinesRoom2D() => LineMakingRoomThing.instance.GenRoomLines2D(gridArray2D);
+
+    // //public void CallDrunkWalk2D() => DrunkWalkAlgo.instance.DrunkWalk2D(gridArray2D);
+    // //public void CallDrunkWalk3D() => DrunkWalkAlgo.instance.DrunkWalk3D(gridArray3D);
+
+
+
+    // public void CallDiamons() => DiamondSquare.instance.RunDiamondSquare();
 
 
 
