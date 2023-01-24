@@ -279,7 +279,7 @@ public class PCGManager : MonoBehaviour
     public void Restart()
     {
         AlgosUtils.RestartArr(gridArray2D);
-        Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(gridArray2D);
+        Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArray2D);
     }
 
     public void DrawTileMap()

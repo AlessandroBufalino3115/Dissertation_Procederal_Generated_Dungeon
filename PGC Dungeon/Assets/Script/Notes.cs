@@ -15,14 +15,11 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- *      
- *   WFC the last issue is that on the extreme corners it doesnt work and thats it     -- high priority
+ *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system    ---   mid priority
  * 
- *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system    --- mid priority
- * 
- *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   --  addition will not be added     high priority
+ *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   ---  addition will not be added     high priority
  *   
- *   Need to add room to room connection    ---- high priority
+ *   Need to add room to room connection    --- high priority
  *   
  *   Look into making the flow better with less time wasted    --- mid priority
  *   
@@ -30,7 +27,11 @@
  *   
  *   weigthed tiles spawn   --- high priority
  *   
- *   corridor size changing thing  --- mid priority
+ *   Fix the graph thing placement --- mid priority
+ *   
+ *   Ui builder in the window thing  --- to look into 
+ *   
+ *   
  *   
  *   
  *   
@@ -46,7 +47,7 @@
  *   still need to add:
  * 
  *   GRAPH GRAMMAR  -- mid priority
- *   OTHER PATHFINDINGS   -- high priority
+ *   OTHER PATHFINDINGS   -- high priority       Might drop BFS and Do DFS only
  *   PERLIN WORMS  --  to check    -- mid priority
  *   fix diamond square   -- high priority
  *   

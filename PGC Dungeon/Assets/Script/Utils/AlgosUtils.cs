@@ -277,7 +277,7 @@ public static class AlgosUtils
 
     #endregion
 
-    #region pathFinding
+    #region PathFinding
 
     #region A*
 
@@ -486,7 +486,7 @@ public static class AlgosUtils
 
     #region Dijstra
 
-    public static List<BasicTile> DijstraPathfinding(BasicTile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint) 
+    public static List<BasicTile> DijstraPathfinding(BasicTile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false) 
     {
 
 
@@ -502,10 +502,25 @@ public static class AlgosUtils
             DjNodesArr[y] = new DjNode[gridArr2d[0].Length];
             for (int x = 0; x < gridArr2d[0].Length; x++)
             {
-                var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
 
-                DjNodesArr[y][x] = newRef;
-                openListDjNodes.Add(newRef);
+                if (avoidWalls)
+                {
+                    if (gridArr2d[y][x].tileType != BasicTile.TileType.WALLCORRIDOR)
+                    {
+                        var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
+
+                        DjNodesArr[y][x] = newRef;
+                        openListDjNodes.Add(newRef);
+
+                    }
+                }
+                else
+                {
+                    var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
+
+                    DjNodesArr[y][x] = newRef;
+                    openListDjNodes.Add(newRef);
+                }
             }
         }
 
@@ -543,55 +558,53 @@ public static class AlgosUtils
                 }
                 else
                 {
-                    //here an if statment also saying that walkable 
-                    float newDist = currNode.distance + 1;
 
-                    if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance) 
+                    if (avoidWalls)
                     {
-                        DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
-                        DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+                        if (gridArr2d[node_position[1]][node_position[0]].tileType != BasicTile.TileType.WALLCORRIDOR)
+                        {
+                            float newDist = currNode.distance + 1;
 
+                            if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance)
+                            {
+                                DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
+                                DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+
+                            }
+
+                        }
                     }
+                    else
+                    {
+                        float newDist = currNode.distance + 1;
 
+                        if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance)
+                        {
+                            DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
+                            DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+
+                        }
+                    }
 
                 }
             }
 
-
-
             if (currNode.coord == endPoint)
             {
-
                 lastNode = currNode;
 
                 break;
-
             }
 
         }
 
         var solutioPath = new List<BasicTile>();
 
-        int iter = 0;
-
         while(lastNode.parentDJnode != null) 
         {
-            
-
-            if (iter > 2000) 
-            {
-                Debug.Log($"There is na issue with the solution while");
-                break;
-            }
-            iter++;
-
-
             solutioPath.Add(lastNode.gridRefTile);
 
             lastNode = lastNode.parentDJnode;
-
-
-
         }
 
         return solutioPath;
@@ -602,6 +615,23 @@ public static class AlgosUtils
     #endregion
 
 
+    #region BFS  -- to do
+
+    public static void BFSPathFinding() 
+    {
+        
+    }
+
+    #endregion
+
+    #region DFS  -- to do
+
+    public static void DFSPathFinding()
+    {
+
+    }
+
+    #endregion
 
     #endregion
 
@@ -984,8 +1014,6 @@ public static class AlgosUtils
         }
 
 
-
-        //save the 
         _gridArray2D = PerlinNoise2D(_gridArray2D,  scale,  octaves,  persistance,  lacu,  offsetX,  offsetY,  threshold);
 
         var rooms = GetAllRooms(_gridArray2D);
@@ -1041,7 +1069,7 @@ public static class AlgosUtils
                 }
                 else 
                 {
-
+                    gridArray2DToReturn[savedNextNode[1]][savedNextNode[0]].tileType = BasicTile.TileType.FLOORCORRIDOR;
                     currentPos = new Vector2Int(savedNextNode[0], savedNextNode[1]);
                 }
 
@@ -1897,111 +1925,8 @@ public static class AlgosUtils
 
 
 
-    //random util should go in the general util with the classes benath
-    #region Random Util
-    // the widht and height should be relative to the size of thearra not a given input
-    /// <summary>
-    /// Set the shade of black and white with a given max and min weight then weight
-    /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="gridArray2D"></param>
-    /// <returns></returns>
-    public static Texture2D SetUpTextBiColShade(BasicTile[][] gridArray2D, float minWeight, float maxWeight, bool inverse = false)
-    {
 
-        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
-        //plane.GetComponent<Renderer>().material.mainTexture = texture;
-
-        for (int y = 0; y < texture.height; y++)
-        {
-            for (int x = 0; x < texture.width; x++)
-            {
-                float num = Mathf.InverseLerp(minWeight, maxWeight, gridArray2D[y][x].tileWeight);
-
-                if (inverse)
-                    gridArray2D[y][x].color = new Color(1-num, 1-num, 1 - num, 1f);
-                else
-                    gridArray2D[y][x].color = new Color(num, num, num, 1f);
-
-
-                texture.SetPixel(x, y, gridArray2D[y][x].color);
-            }
-        }
-        texture.filterMode = FilterMode.Point;
-        texture.Apply();
-
-
-        return texture;
-    }
-
-    /// <summary>
-    /// either black or white, if = 0 white if = 1 black
-    /// </summary>
-    /// <param name="gridArray2D"></param>
-    /// <param name="black"></param>
-    /// <returns></returns>
-    public static Texture2D SetUpTextBiColAnchor(BasicTile[][] gridArray2D, bool black = false)
-    {
-
-        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
-
-        for (int y = 0; y < texture.height; y++)
-        {
-            for (int x = 0; x < texture.width; x++)
-            {
-                Color color = new Color();
-
-                if (black)
-                {
-                    color = ((gridArray2D[y][x].tileWeight) == 0 ? Color.white : Color.black);
-                }
-                else
-                {
-                    color = ((gridArray2D[y][x].tileWeight) == 0 ? Color.white : Color.grey);
-                }
-
-                texture.SetPixel(x, y, color);
-            }
-        }
-        texture.filterMode = FilterMode.Point;
-        texture.Apply();
-
-
-        return texture;
-    }
-
-    /// <summary>
-    /// Sets the colour of the pixel that is saved in the class instance
-    /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="gridArray2D"></param>
-    /// <returns></returns>
-    public static Texture2D SetUpTextSelfCol( BasicTile[][] gridArray2D)
-    {
-
-        Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
-
-        for (int y = 0; y < texture.height; y++)
-        {
-            for (int x = 0; x < texture.width; x++)
-            {
-                texture.SetPixel(x, y, gridArray2D[y][x].color);
-            }
-        }
-        texture.filterMode = FilterMode.Point;
-        texture.Apply();
-
-
-        return texture;
-    }
-
-
-
-    #endregion
-
-    #region to sort
+    #region Type and Utility section
 
     /// <summary>
     /// given a set of points finds the mid points of those points
@@ -2330,7 +2255,7 @@ public static class AlgosUtils
 
 
 /// <summary>
-/// This is the base tile which hopefully everything inherits from
+/// This is the basic tile call 
 /// </summary>
 public class BasicTile
 {
@@ -2357,9 +2282,7 @@ public class BasicTile
   
 }
 
-/// <summary>
-/// this class inherits from the basic Tile class and the only thing it has more is that it contains an object in 3D space
-/// </summary>
+
 
 
 #region triangulation classes
@@ -2427,7 +2350,6 @@ public class AStar_Node
 
 }
 
-
 public class MarchingCubeClass
 {
     public Vector3Int position;
@@ -2450,9 +2372,5 @@ public class DjNode
     public Vector2Int coord = Vector2Int.zero;
 
 }
-
-
-
-
 
 

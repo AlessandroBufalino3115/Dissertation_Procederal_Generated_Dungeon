@@ -6,7 +6,6 @@ using System;
 
 public class WFCRuleDecipher : MonoBehaviour
 {
-
     public GameObject[] tileSet = new GameObject[0];
 
     [SerializeField]
@@ -14,8 +13,6 @@ public class WFCRuleDecipher : MonoBehaviour
 
     public string ruleSetFileName = "";
     public string tileSetFileName = "";
-
-
 }
 
 

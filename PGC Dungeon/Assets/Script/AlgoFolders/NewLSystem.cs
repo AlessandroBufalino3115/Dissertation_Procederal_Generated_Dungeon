@@ -315,13 +315,12 @@ public class NewLSystem : MonoBehaviour
                     tile.tileWeight = 1;
                 }
             }
-
         }
 
-        pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(pcgManager.gridArray2D, true);
-
+        pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(pcgManager.gridArray2D, true);
 
     }
+
     private void OnDrawGizmos()
     {
         //    Gizmos.color = Color.red;

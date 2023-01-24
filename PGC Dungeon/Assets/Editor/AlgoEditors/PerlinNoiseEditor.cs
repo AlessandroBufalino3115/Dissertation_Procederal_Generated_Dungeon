@@ -38,8 +38,6 @@ public class PerlinNoiseEditor : Editor
         PerlinNoiseMA mainScript = (PerlinNoiseMA)target;
 
 
-
-
         #region explanation
 
         showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
@@ -61,47 +59,40 @@ public class PerlinNoiseEditor : Editor
 
 
 
-
-        //specific to Main algo
-
-        mainScript.OffsetX = (int)EditorGUILayout.Slider(mainScript.OffsetX, 0, 10000);
-        mainScript.OffsetY = (int)EditorGUILayout.Slider(mainScript.OffsetY, 0, 10000);
-        
-        
-        mainScript.Scale = EditorGUILayout.Slider(mainScript.Scale, 3f, 35f);
-        mainScript.Octaves = (int)EditorGUILayout.Slider(mainScript.Octaves, 1, 8);
-
-        mainScript.Persistance = EditorGUILayout.Slider(mainScript.Persistance, 0.1f, 0.9f);
-        mainScript.Lacunarity = EditorGUILayout.Slider(mainScript.Lacunarity, 0.5f, 10f);
-
-        mainScript.Threshold = EditorGUILayout.Slider(mainScript.Threshold, 0.1f, 0.9f);
+        #region Main Algo
 
 
+        mainScript.OffsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.OffsetX, 0, 10000);
+        mainScript.OffsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.OffsetY, 0, 10000);
+
+
+        mainScript.Scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.Scale, 3f, 35f);
+        mainScript.Octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.Octaves, 1, 8);
+
+        mainScript.Persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "" }, mainScript.Persistance, 0.1f, 0.9f);
+        mainScript.Lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "" }, mainScript.Lacunarity, 0.5f, 10f);
+
+        mainScript.Threshold = EditorGUILayout.Slider(new GUIContent() { text = "Max Threshold", tooltip = "" }, mainScript.Threshold, 0.1f, 0.9f);
 
 
         if (GUILayout.Button("Generate Noise"))
         {
             mainScript.PcgManager.gridArray2D = AlgosUtils.PerlinNoise2D(mainScript.PcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.Threshold);
 
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D,true);
+            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D,true);
 
             mainScript.Started = true;
         }
 
 
-
-
-
-
-        //general
-
+        #endregion
 
 
 
         if (mainScript.Started)
         {
 
-            Spaces(4);
+            GeneralUtil.SpacesUILayout(4);
 
 
             #region showCA region
@@ -118,12 +109,12 @@ public class PerlinNoiseEditor : Editor
                 {
                     AlgosUtils.CleanUp2dCA(mainScript.PcgManager.gridArray2D, mainScript.NeighboursNeeded);
 
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
                 }
                 if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
                 {
                     AlgosUtils.RunCaIteration2D(mainScript.PcgManager.gridArray2D, mainScript.NeighboursNeeded);
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
                 }
 
             }
@@ -138,8 +129,7 @@ public class PerlinNoiseEditor : Editor
             #endregion
 
 
-            Spaces(4);
-
+            GeneralUtil.SpacesUILayout(4);
 
 
             #region Room Region
@@ -152,7 +142,7 @@ public class PerlinNoiseEditor : Editor
                 if (GUILayout.Button("Get all rooms"))
                 {
                     mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextSelfCol(mainScript.PcgManager.gridArray2D);
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(mainScript.PcgManager.gridArray2D);
                 }
 
 
@@ -177,7 +167,7 @@ public class PerlinNoiseEditor : Editor
                         }
                     }
 
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
                 }
 
             }
@@ -193,8 +183,7 @@ public class PerlinNoiseEditor : Editor
             #endregion
 
 
-
-            Spaces(4);
+            GeneralUtil.SpacesUILayout(4);
 
 
             #region corridor making region
@@ -276,7 +265,7 @@ public class PerlinNoiseEditor : Editor
                         AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
                         AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
 
-                        mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+                        mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
                     }
                 }
             }
@@ -285,7 +274,7 @@ public class PerlinNoiseEditor : Editor
                 if (GUILayout.Button("Generate walls"))
                 {
                     AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
                 }
             }
 
@@ -306,10 +295,7 @@ public class PerlinNoiseEditor : Editor
             #endregion
 
 
-
-
-            Spaces(4);
-
+            GeneralUtil.SpacesUILayout(4);
 
 
             #region Dungeon Generation region
@@ -339,17 +325,5 @@ public class PerlinNoiseEditor : Editor
 
             #endregion
         }
-
-
-
     }
-
-    private void Spaces(int spaceNum)
-    {
-        for (int i = 0; i < spaceNum; i++)
-        {
-            EditorGUILayout.Space();
-        }
-    }
-
 }

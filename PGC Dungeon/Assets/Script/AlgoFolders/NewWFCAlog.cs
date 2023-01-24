@@ -1,23 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 public class NewWFCAlog : MonoBehaviour
 {
-    /// <summary>
-    /// there is an issue with the outskirt it seems to be half working 
-    /// normal WFC works fine 
-    /// 
-    /// 
-    ///
-    /// </summary>
-
-
-    public int iterNum = 0;
-
 
     [SerializeField]
     public WFCTile[][] arrayOfWFCTiles = new WFCTile[0][];
@@ -28,11 +14,6 @@ public class NewWFCAlog : MonoBehaviour
     public int indexOutskirts = 0;
 
     private WFCRuleDecipher rulesInst;
-
-
-
-
-
 
     private PCGManager pcgManager;
     public PCGManager PcgManager
@@ -54,13 +35,8 @@ public class NewWFCAlog : MonoBehaviour
 
         rulesInst = this.transform.GetComponent<WFCRuleDecipher>();
 
-        var arrOfRules = rulesInst.ruleSet;
-
-
-         ySize = pcgManager.height;
-         xSize = pcgManager.width;
-
-
+        ySize = pcgManager.height;
+        xSize = pcgManager.width;
 
         arrayOfWFCTiles = new WFCTile[ySize][];
 
@@ -80,12 +56,12 @@ public class NewWFCAlog : MonoBehaviour
         if (outskirtsCheck)
             SetOutSkirts();
 
-        //Debug.Log($"{arrayOfWFCTiles[0][0].AllowedObjectsIDXs.Count}");
+        Debug.Log($"{arrayOfWFCTiles[0][0].AllowedObjectsIDXs.Count}  {0} {0}");
+        Debug.Log($"{arrayOfWFCTiles[0][49].AllowedObjectsIDXs.Count} {0} {49}");
+        Debug.Log($"{arrayOfWFCTiles[49][0].AllowedObjectsIDXs.Count} {49} {0}");
+        Debug.Log($"{arrayOfWFCTiles[49][49].AllowedObjectsIDXs.Count}{49} {49}");
 
-        //foreach (var item in arrayOfWFCTiles[0][0].AllowedObjectsIDXs)
-        //{
-        //    Debug.Log(item);
-        //}
+        
 
         var ranStart = GeneralUtil.RanVector2Int(xSize, ySize);
         arrayOfWFCTiles[ranStart.y][ranStart.x].solved = true;// choosen idx should be the indx of the item choosen
@@ -105,11 +81,10 @@ public class NewWFCAlog : MonoBehaviour
 
 
         bool finishedAlgo = false;
-        //int iter = 0;
 
         while (!finishedAlgo)
         {
-          
+
 
             finishedAlgo = true;
             int lowestSuperposition = 999;
@@ -154,11 +129,6 @@ public class NewWFCAlog : MonoBehaviour
                 arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].solved = true;
             }
 
-
-            //if (iter >= iterNum) { break; }
-
-            //iter++;
-
         }
     }
 
@@ -166,7 +136,7 @@ public class NewWFCAlog : MonoBehaviour
 
 
 
-    private void SetOutSkirts() 
+    private void SetOutSkirts()
     {
         WFCTileRule ruleRef = null;
 
@@ -179,24 +149,22 @@ public class NewWFCAlog : MonoBehaviour
             }
         }
 
-
-
-        for (int x = 0; x < xSize-1; x++)
+        for (int x = 0; x < xSize; x++)
         {
             arrayOfWFCTiles[0][x].NeighbourAllowed(ruleRef.allowedObjAbove);
         }
 
-        for (int x = 0; x < xSize - 1; x++)
+        for (int x = 0; x < xSize ; x++)
         {
             arrayOfWFCTiles[ySize-1][x].NeighbourAllowed(ruleRef.allowedObjBelow);
         }
 
-        for (int y = 0; y < ySize-1; y++)
+        for (int y = 0; y < ySize; y++)
         {
             arrayOfWFCTiles[y][0].NeighbourAllowed(ruleRef.allowedObjRight);
         }
 
-        for (int y = 0; y < ySize - 1; y++)
+        for (int y = 0; y < ySize; y++)
         {
             arrayOfWFCTiles[y][xSize-1].NeighbourAllowed(ruleRef.allowedObjLeft);
         }
@@ -247,21 +215,14 @@ public class NewWFCAlog : MonoBehaviour
 
 
 
-    public void DestroyKids() 
+    public void DestroyKids()
     {
-
-        while (this.transform.childCount > 0) 
+        while (this.transform.childCount > 0)
         {
             foreach (Transform child in transform)
                 DestroyImmediate(child.gameObject);
         }
-
     }
-
-
-
-
-
 
     public class WFCTile
     {

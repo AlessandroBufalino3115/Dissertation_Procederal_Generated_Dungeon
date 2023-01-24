@@ -27,7 +27,7 @@ public class PerlinWormsEditor : Editor
 
     bool started = false;
 
-
+    int thicknessWorm = 2;
 
 
 
@@ -60,40 +60,59 @@ public class PerlinWormsEditor : Editor
 
         #endregion
 
-
-
-
-        GeneralUtil.Spaces(4);
+        GeneralUtil.SpacesUILayout(4);
 
         #region Main algo region
 
+        mainScript.OffsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.OffsetX, 0, 10000);
+        mainScript.OffsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.OffsetY, 0, 10000);
 
 
+        mainScript.Scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.Scale, 3f, 35f);
+        mainScript.Octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.Octaves, 1, 8);
 
-        mainScript.OffsetX = (int)EditorGUILayout.Slider(mainScript.OffsetX, 0, 10000);
-        mainScript.OffsetY = (int)EditorGUILayout.Slider(mainScript.OffsetY, 0, 10000);
+        mainScript.Persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "" }, mainScript.Persistance, 0.1f, 0.9f);
+        mainScript.Lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "" }, mainScript.Lacunarity, 0.5f, 10f);
 
+        mainScript.MinThreshold = EditorGUILayout.Slider(new GUIContent() { text = "Min Threshold", tooltip = "" }, mainScript.MinThreshold, 0.1f, 0.9f);
+        mainScript.MaxThreshold = EditorGUILayout.Slider(new GUIContent() { text = "Max Threshold", tooltip = "" }, mainScript.MaxThreshold, 0.1f, 0.9f);
 
-        mainScript.Scale = EditorGUILayout.Slider(mainScript.Scale, 3f, 35f);
-        mainScript.Octaves = (int)EditorGUILayout.Slider(mainScript.Octaves, 1, 8);
+        thicknessWorm = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness Worm", tooltip = "" }, thicknessWorm, 2, 4);
 
-        mainScript.Persistance = EditorGUILayout.Slider(mainScript.Persistance, 0.1f, 0.9f);
-        mainScript.Lacunarity = EditorGUILayout.Slider(mainScript.Lacunarity, 0.5f, 10f);
-
-        mainScript.MinThreshold = EditorGUILayout.Slider(mainScript.MinThreshold, 0.1f, 0.9f);
-        mainScript.MaxThreshold = EditorGUILayout.Slider(mainScript.MaxThreshold, 0.1f, 0.9f);
 
         if (GUILayout.Button("Run worm Gen"))
         {
             mainScript.PcgManager.gridArray2D = AlgosUtils.PerlinWorms(mainScript.PcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.MaxThreshold, mainScript.MinThreshold);
 
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+
+            AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
+
+            for (int i = 0; i < thicknessWorm - 1; i++)
+            {
+                for (int y = 0; y < mainScript.PcgManager.gridArray2D.Length; y++)
+                {
+                    for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
+                    {
+                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                        {
+                            mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                        }
+                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                        {
+                        }
+                    }
+                }
+
+                AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
+            }
+
+
+            AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
+
+            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
 
             started = true;
         }
-
-
-
 
         #endregion
 

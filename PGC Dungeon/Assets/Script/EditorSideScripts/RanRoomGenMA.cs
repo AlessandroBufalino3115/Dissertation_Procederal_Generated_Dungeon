@@ -490,7 +490,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-        PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = AlgosUtils.SetUpTextBiColAnchor(PcgManager.gridArray2D, true);
+        PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(PcgManager.gridArray2D, true);
         
 
     }
