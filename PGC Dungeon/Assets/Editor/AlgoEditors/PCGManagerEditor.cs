@@ -11,7 +11,7 @@ public class PCGManagerEditor : Editor
 {
 
 
-    [MenuItem("PCG Algorithms/Main Algo", priority = 1)]
+    [MenuItem("PCG Algorithms/Main Generator", priority = 1)]
     static void SpawnObject() 
     {
         var objToSpawn = new GameObject("Cool GameObject made from Code");

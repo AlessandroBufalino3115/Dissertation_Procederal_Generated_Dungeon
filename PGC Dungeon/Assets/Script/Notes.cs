@@ -10,7 +10,7 @@
  *  
  *  Debug.Log($"<color=yellow></color>");      this is for performance
  *  
- * Debug.Log($"<color=green></color>");      successs
+ *  Debug.Log($"<color=green></color>");      success
  * 
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
@@ -19,18 +19,19 @@
  * 
  *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   ---  addition will not be added     high priority
  *   
- *   Need to add room to room connection    --- high priority
+ *   Need to add room to room connection    ---  high priority
  *   
- *   Look into making the flow better with less time wasted    --- mid priority
+ *   Look into making the flow better with less time wasted    ---  mid priority
  *   
- *   create rooms from corridors   --- high priority
+ *   create rooms from corridors   ---  high priority
  *   
- *   weigthed tiles spawn   --- high priority
+ *   weigthed tiles spawn   ---  high priority
  *   
- *   Fix the graph thing placement --- mid priority
+ *   Fix the graph thing placement ---  mid priority
  *   
- *   Ui builder in the window thing  --- to look into 
+ *   Ui builder in the window thing  ---  to look into  Monior priority
  *   
+ *   Similar to the particle effect have a random between two integers thing  --- mid priority
  *   
  *   
  *   

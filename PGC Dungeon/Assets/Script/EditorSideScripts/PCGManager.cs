@@ -9,15 +9,10 @@ public class PCGManager : MonoBehaviour
 {
     public Dictionary<BasicTile.TileType, float> tileTypeToCostDict = new Dictionary<BasicTile.TileType, float>();
 
-    private bool working;
-    private bool gizmo;
-
-
     [Tooltip("Test material given to draw the mesh generated variant of the outcome")]
     public Material mat;
 
     public BasicTile[][] gridArray2D = new BasicTile[1][];
-
 
     private GameObject plane;
     public GameObject Plane

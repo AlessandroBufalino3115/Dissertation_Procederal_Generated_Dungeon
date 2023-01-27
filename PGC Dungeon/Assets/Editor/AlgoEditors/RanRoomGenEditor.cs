@@ -7,6 +7,8 @@ using UnityEngine;
 [CustomEditor(typeof(RanRoomGenMA))]
 public class RanRoomGenEditor : Editor
 {
+    
+
 
     bool specialAlgo;
     bool CAselected;
@@ -57,7 +59,6 @@ public class RanRoomGenEditor : Editor
         mainScript.BPSg = EditorGUILayout.Toggle(mainScript.BPSg == true ? "BPS selected" : "Random room allocation selected", mainScript.BPSg);
         if (!mainScript.BPSg)
         {
-           // GUILayout.Label($"Max heihgt of the room {mainScript.MaxHeight}");
             mainScript.MaxHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max heihgt of the room", tooltip = "" }, mainScript.MaxHeight, 15, 125);
 
             if (mainScript.MaxHeight <= mainScript.MinHeight)
@@ -66,8 +67,6 @@ public class RanRoomGenEditor : Editor
             }
         }
        
-
-       // GUILayout.Label($"Min Height of the room {mainScript.MinHeight}");
         mainScript.MinHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Height of the room", tooltip = "" }, mainScript.MinHeight, 10, 75);
 
 
@@ -75,7 +74,6 @@ public class RanRoomGenEditor : Editor
 
         if (!mainScript.BPSg)
         {
-            //GUILayout.Label($"Max width of the room {mainScript.MaxWidth}");
             mainScript.MaxWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max width of the room", tooltip = "" }, mainScript.MaxWidth, 15, 125);
             if (mainScript.MaxWidth <= mainScript.MinWidth)
             {
@@ -84,15 +82,9 @@ public class RanRoomGenEditor : Editor
 
         }
 
-
-       // GUILayout.Label($"Min Width of the room {mainScript.MinWidth}");
         mainScript.MinWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Width of the room", tooltip = "" }, mainScript.MinWidth, 10, 75);
 
-
-       // GUILayout.Label($"maximum number of rooms to try and spawn {mainScript.NumOfRoom}");
         mainScript.NumOfRoom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum number of rooms to spawn", tooltip = "" }, mainScript.NumOfRoom, 3, 30);
-
-
 
 
         specialAlgo = EditorGUILayout.Toggle("special algo toggle", specialAlgo);
@@ -126,7 +118,6 @@ public class RanRoomGenEditor : Editor
 
                 mainScript.Started = true;
             }
-
         }
         else 
         {
@@ -149,9 +140,6 @@ public class RanRoomGenEditor : Editor
                 mainScript.Started = true;
             }
         }
-
-
-
 
 
         if (mainScript.Started)

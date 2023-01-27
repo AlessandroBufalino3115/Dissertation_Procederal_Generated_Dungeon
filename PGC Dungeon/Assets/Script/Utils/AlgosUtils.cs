@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
-using static Unity.VisualScripting.Metadata;
 
 
 public static class AlgosUtils
@@ -1137,7 +1136,6 @@ public static class AlgosUtils
             primsAlgo.Add(edgesWithPointSort[0]);
         }
 
-        Debug.Log($"{primsAlgo.Count} count for prims");
 
         return primsAlgo;
     }
@@ -1928,6 +1926,37 @@ public static class AlgosUtils
 
     #region Type and Utility section
 
+
+
+    public static void SetUpTileCorridorTypesUI(BasicTile[][] gridArr, int width) 
+    {
+
+
+        AlgosUtils.SetUpTileTypesCorridor(gridArr);
+
+        for (int i = 0; i < width - 1; i++)
+        {
+            for (int y = 0; y < gridArr.Length; y++)
+            {
+                for (int x = 0; x < gridArr[0].Length; x++)
+                {
+                    if (gridArr[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                    {
+                        gridArr[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                    }
+                    if (gridArr[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                    {
+                    }
+                }
+            }
+
+            AlgosUtils.SetUpTileTypesCorridor(gridArr);
+        }
+
+        AlgosUtils.SetUpTileTypesFloorWall(gridArr);
+    }
+
+
     /// <summary>
     /// given a set of points finds the mid points of those points
     /// </summary>
@@ -2252,7 +2281,7 @@ public static class AlgosUtils
 
 }
 
-
+#region classes
 
 /// <summary>
 /// This is the basic tile call 
@@ -2370,7 +2399,7 @@ public class DjNode
     public DjNode parentDJnode = null;
     public BasicTile gridRefTile = null;
     public Vector2Int coord = Vector2Int.zero;
-
 }
 
 
+#endregion
