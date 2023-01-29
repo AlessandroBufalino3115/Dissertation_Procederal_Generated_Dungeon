@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -95,7 +96,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
         {
 
-            var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
+            var GVcont = ScriptableObject.CreateInstance<ScriptableOBJUtil.TilesRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -120,19 +121,16 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
         {
 
-            var tileRules = Resources.Load<TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
+            var tileRules = Resources.Load<ScriptableOBJUtil.TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 
             mainScript.WallsTiles.Clear();
             mainScript.FloorTiles.Clear();
             mainScript.CeilingTiles.Clear();
 
-
             foreach (var item in tileRules.WallsTiles)
             {
                 mainScript.WallsTiles.Add(item);
             }
-
-
 
             foreach (var item in tileRules.FloorTiles)
             {
@@ -148,7 +146,7 @@ public class PCGManagerEditor : Editor
 
         }
 
-
+        //scriptable objects public class
 
 
         Spaces(3);
@@ -156,7 +154,7 @@ public class PCGManagerEditor : Editor
 
         if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
         {
-
+            
             var GVcont = ScriptableObject.CreateInstance<WeightRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))

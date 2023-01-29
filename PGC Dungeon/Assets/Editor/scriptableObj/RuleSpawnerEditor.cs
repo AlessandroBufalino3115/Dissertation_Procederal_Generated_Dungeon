@@ -29,6 +29,8 @@ public class RuleSpawnerEditor : Editor
         AssetDatabase.SaveAssets();
     }
 
+
+
     [MenuItem("PCG Algorithms/Spawn L-System Rule", priority = 25)]
     private static void SpawnLSystemRule()
     {
@@ -49,6 +51,9 @@ public class RuleSpawnerEditor : Editor
         AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/L-systemRuleSets/NewLSystemRuleSet.asset");
         AssetDatabase.SaveAssets();
     }
+
+
+
 
     [MenuItem("PCG Algorithms/Spawn Weight Rule", priority = 26)]
     private static void SpawnWeightRule()
@@ -72,10 +77,12 @@ public class RuleSpawnerEditor : Editor
     }
 
 
+
+
     [MenuItem("PCG Algorithms/Spawn TileSet Rule", priority = 27)]
     private static void SpawnTileSetRule()
     {
-        var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
+        var GVcont = ScriptableObject.CreateInstance<ScriptableOBJUtil.TilesRuleSet>();
 
         if (!AssetDatabase.IsValidFolder("Assets/Resources"))
         {

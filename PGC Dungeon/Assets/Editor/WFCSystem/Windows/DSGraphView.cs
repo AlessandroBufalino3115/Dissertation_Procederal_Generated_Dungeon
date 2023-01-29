@@ -258,7 +258,6 @@ namespace DS.Windows
                 menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(type, GetLocalMousePos(actionEvent.eventInfo.localMousePosition))))
                 );
 
-
             return contextualMenuManipulator;
         }
 

@@ -7,9 +7,6 @@ using UnityEngine;
 [CustomEditor(typeof(RanRoomGenMA))]
 public class RanRoomGenEditor : Editor
 {
-    
-
-
     bool specialAlgo;
     bool CAselected;
 
@@ -28,6 +25,21 @@ public class RanRoomGenEditor : Editor
 
     int selGridPathType = 0;
     GUIContent[] selStringsPathType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualr path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have manu corridors" }, new GUIContent() { text = "Prim's algo + random", tooltip = "Create a singualr path that traverses the whole dungeon, with some random diviation" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridors" } };
+
+
+
+
+
+    int selDungGenType = 0;
+    GUIContent[] selStringsDungGenType = { new GUIContent() { text = "BPS", tooltip = "" }, new GUIContent() { text = "Random", tooltip = "" }, new GUIContent() { text = "Room to Room", tooltip = "" } };
+
+
+
+
+
+
+
+
 
 
     int selGridGenType = 0;
@@ -56,90 +68,276 @@ public class RanRoomGenEditor : Editor
         RanRoomGenMA mainScript = (RanRoomGenMA)target;
 
 
-        mainScript.BPSg = EditorGUILayout.Toggle(mainScript.BPSg == true ? "BPS selected" : "Random room allocation selected", mainScript.BPSg);
-        if (!mainScript.BPSg)
+        GUILayout.BeginVertical("Box");
+        selDungGenType = GUILayout.SelectionGrid(selDungGenType, selStringsDungGenType, 1);
+        GUILayout.EndVertical();
+
+        GeneralUtil.SpacesUILayout(3);
+
+
+        switch (selDungGenType)
         {
-            mainScript.MaxHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max heihgt of the room", tooltip = "" }, mainScript.MaxHeight, 15, 125);
+            case 0:   //bps
 
-            if (mainScript.MaxHeight <= mainScript.MinHeight)
-            {
-                mainScript.MaxHeight = mainScript.MinHeight + 1;
-            }
-        }
-       
-        mainScript.MinHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Height of the room", tooltip = "" }, mainScript.MinHeight, 10, 75);
+                mainScript.MinHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Height of the room", tooltip = "" }, mainScript.MinHeight, 10, 75);
 
+                mainScript.MinWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Width of the room", tooltip = "" }, mainScript.MinWidth, 10, 75);
 
+                mainScript.NumOfRoom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum number of rooms to spawn", tooltip = "" }, mainScript.NumOfRoom, 3, 30);
 
-
-        if (!mainScript.BPSg)
-        {
-            mainScript.MaxWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max width of the room", tooltip = "" }, mainScript.MaxWidth, 15, 125);
-            if (mainScript.MaxWidth <= mainScript.MinWidth)
-            {
-                mainScript.MaxWidth = mainScript.MinWidth + 1;
-            }
-
-        }
-
-        mainScript.MinWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min Width of the room", tooltip = "" }, mainScript.MinWidth, 10, 75);
-
-        mainScript.NumOfRoom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum number of rooms to spawn", tooltip = "" }, mainScript.NumOfRoom, 3, 30);
-
-
-        specialAlgo = EditorGUILayout.Toggle("special algo toggle", specialAlgo);
-        if (specialAlgo) 
-        {
-            CAselected = EditorGUILayout.Toggle(CAselected == true ? "CA selected for gen" : "drunk walk selected", CAselected);
-            if(CAselected) 
-            {
-
-                NeighboursNeeded = (int)EditorGUILayout.Slider(NeighboursNeeded, 3, 5);
-            }
-        }
-
-
-        if (mainScript.BPSg) 
-        {
-            if (GUILayout.Button("Use BPS algo"))// gen something
-            {
-                mainScript.RoomList.Clear();
-
-                mainScript.rooms.Clear();
-
-                mainScript.PcgManager.gridArray2D = AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
-                
-
-                mainScript.BPSRoomGen(mainScript.PcgManager.gridArray2D);
-                mainScript.SetUpWeights(mainScript.PcgManager.gridArray2D);
-                mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+                specialAlgo = EditorGUILayout.Toggle("special algo toggle", specialAlgo);
                 if (specialAlgo)
-                    mainScript.RanRoom(mainScript.BPSg, CAselected);
+                {
+                    CAselected = EditorGUILayout.Toggle(CAselected == true ? "CA selected for gen" : "drunk walk selected", CAselected);
+                    if (CAselected)
+                    {
 
-                mainScript.Started = true;
-            }
-        }
-        else 
-        {
-            if (GUILayout.Button("Use random Room gen"))// gen something
-            {
-                mainScript.roomList.Clear();
-                mainScript.rooms.Clear();
+                        NeighboursNeeded = (int)EditorGUILayout.Slider(NeighboursNeeded, 3, 5);
+                    }
+                }
+
+                if (GUILayout.Button("Use BPS algo"))// gen something
+                {
+                    mainScript.RoomList.Clear();
+
+                    mainScript.rooms.Clear();
 
                     mainScript.PcgManager.gridArray2D = AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
-                
 
-                mainScript.RandomRoomGen(mainScript.PcgManager.gridArray2D);
-                mainScript.SetUpWeights(mainScript.PcgManager.gridArray2D);
-                mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
 
+                    mainScript.BPSRoomGen(mainScript.PcgManager.gridArray2D);
+                    mainScript.SetUpWeights(mainScript.PcgManager.gridArray2D);
+                    if (specialAlgo)
+                        mainScript.RanRoom(mainScript.BPSg, CAselected);
+
+
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+
+
+                    mainScript.Started = true;
+                }
+
+
+                break;
+
+            case 1:  //random
+
+                mainScript.MaxHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max height of the room", tooltip = "" }, mainScript.MaxHeight, 15, 125);
+
+                if (mainScript.MaxHeight <= mainScript.MinHeight)
+                {
+                    mainScript.MaxHeight = mainScript.MinHeight + 1;
+                }
+                mainScript.MinHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min height of the room", tooltip = "" }, mainScript.MinHeight, 10, 75);
+
+
+                mainScript.MaxWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max width of the room", tooltip = "" }, mainScript.MaxWidth, 15, 125);
+                if (mainScript.MaxWidth <= mainScript.MinWidth)
+                {
+                    mainScript.MaxWidth = mainScript.MinWidth + 1;
+                }
+
+                mainScript.MinWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min width of the room", tooltip = "" }, mainScript.MinWidth, 10, 75);
+
+                mainScript.NumOfRoom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum number of rooms to spawn", tooltip = "" }, mainScript.NumOfRoom, 3, 30);
+
+
+                specialAlgo = EditorGUILayout.Toggle("special algo toggle", specialAlgo);
                 if (specialAlgo)
-                    mainScript.RanRoom(mainScript.BPSg, CAselected);
+                {
+                    CAselected = EditorGUILayout.Toggle(CAselected == true ? "CA selected for gen" : "drunk walk selected", CAselected);
+                    if (CAselected)
+                    {
+
+                        NeighboursNeeded = (int)EditorGUILayout.Slider(NeighboursNeeded, 3, 5);
+                    }
+                }
 
 
-                mainScript.Started = true;
-            }
+                if (GUILayout.Button("Use random Room gen"))// gen something
+                {
+                    mainScript.roomList.Clear();
+                    mainScript.rooms.Clear();
+
+                    mainScript.PcgManager.gridArray2D = AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
+
+
+                    mainScript.RandomRoomGen(mainScript.PcgManager.gridArray2D);
+                    mainScript.SetUpWeights(mainScript.PcgManager.gridArray2D);
+                    
+
+                    if (specialAlgo)
+                        mainScript.RanRoom(mainScript.BPSg, CAselected);
+
+
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+                    mainScript.Started = true;
+                }
+
+
+
+                break;
+
+
+
+
+
+
+            case 2:  //cor cor
+
+
+
+
+                mainScript.MaxHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max height of the room", tooltip = "" }, mainScript.MaxHeight, 15, 125);
+
+                if (mainScript.MaxHeight <= mainScript.MinHeight)
+                {
+                    mainScript.MaxHeight = mainScript.MinHeight + 1;
+                }
+                mainScript.MinHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min height of the room", tooltip = "" }, mainScript.MinHeight, 10, 75);
+
+
+                mainScript.MaxWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Max width of the room", tooltip = "" }, mainScript.MaxWidth, 15, 125);
+                if (mainScript.MaxWidth <= mainScript.MinWidth)
+                {
+                    mainScript.MaxWidth = mainScript.MinWidth + 1;
+                }
+
+                mainScript.MinWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "Min width of the room", tooltip = "" }, mainScript.MinWidth, 10, 75);
+
+                mainScript.NumOfRoom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum number of rooms to spawn", tooltip = "" }, mainScript.NumOfRoom, 3, 30);
+
+                if (GUILayout.Button("create attached rooms"))// gen something
+                {
+                    //overlapping
+
+
+                    mainScript.roomList.Clear();
+                    mainScript.rooms.Clear();
+
+                    mainScript.PcgManager.gridArray2D = AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
+
+
+                    //gonna have the head as the bottom left
+
+                    var currentHeadRoomGenerator = new Vector2Int((int)mainScript.PcgManager.gridArray2D[0].Length/2, (int)mainScript.PcgManager.gridArray2D.Length/2);
+
+
+
+                    mainScript.roomList.Add( new RoomsClass() { minY = currentHeadRoomGenerator.y, maxX = currentHeadRoomGenerator.x + Random.Range(mainScript.MinWidth, mainScript.MaxWidth), maxY = currentHeadRoomGenerator.y + Random.Range(mainScript.MinHeight, mainScript.MaxHeight), minX = currentHeadRoomGenerator.x });
+                    mainScript.WorkoutRegion(mainScript.roomList[0]);
+
+
+                    for (int i = 0; i < mainScript.NumOfRoom * 2; i++)
+                    {
+                        if (mainScript.roomList.Count == mainScript.NumOfRoom) { break; }
+
+                        int actualWidth = Random.Range(mainScript.MinWidth, mainScript.MaxWidth);
+                        int actualHeight = Random.Range(mainScript.MinHeight, mainScript.MaxHeight);
+
+                        var decidedRoom = mainScript.roomList[mainScript.roomList.Count == 0 ? 0 : Random.Range(0, mainScript.roomList.Count)];
+
+                        float ranVal = Random.value;
+
+                        var newRoom = new RoomsClass();
+
+                        if (ranVal < 0.25f)
+                        {
+                            newRoom.minX = decidedRoom.maxX + 3;
+                            newRoom.maxX = newRoom.minX + actualWidth;
+
+                            newRoom.maxY = decidedRoom.maxY;
+                            newRoom.minY = decidedRoom.minY;
+                        }  
+
+                        else if (ranVal < 0.5f)
+                        {
+                            newRoom.maxX = decidedRoom.minX - 3;
+                            newRoom.minX = newRoom.maxX - actualWidth;
+
+                            newRoom.maxY = decidedRoom.maxY;
+                            newRoom.minY = decidedRoom.minY;
+                        } 
+
+                        else if (ranVal < 0.75f)
+                        {
+                            newRoom.maxY = decidedRoom.minY - 3;
+                            newRoom.minY = newRoom.maxY - actualHeight;
+
+                            newRoom.maxX = decidedRoom.maxX;
+                            newRoom.minX = decidedRoom.minX;
+                        }  
+
+                        else
+                        {
+                            newRoom.minY = decidedRoom.maxY + 3;
+                            newRoom.maxY = newRoom.minY + actualHeight;
+
+                            newRoom.maxX = decidedRoom.maxX;
+                            newRoom.minX = decidedRoom.minX;
+                        }  
+
+                        bool occupied = false;
+
+                        if (newRoom.minX < 0 || newRoom.minX > mainScript.PcgManager.gridArray2D[0].Length
+                            || newRoom.minY < 0 || newRoom.minY > mainScript.PcgManager.gridArray2D[0].Length
+                            || newRoom.maxY < 0 || newRoom.maxY > mainScript.PcgManager.gridArray2D[0].Length
+                            || newRoom.maxX < 0 || newRoom.maxX > mainScript.PcgManager.gridArray2D[0].Length) { occupied = true; }
+
+                            if (!occupied) {
+                                foreach (var otherRoom in mainScript.roomList)
+                                {
+                                    if (mainScript.AABBCol(newRoom, otherRoom))
+                                    {
+                                        occupied = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        if (!occupied)
+                        {
+                            mainScript.WorkoutRegion(newRoom);
+                            decidedRoom.childRooms.Add(newRoom);
+                            mainScript.roomList.Add(newRoom);
+                        }
+
+                    }
+
+                    mainScript.SetUpWeights(mainScript.PcgManager.gridArray2D);
+
+                    foreach (var room in mainScript.roomList)
+                    {
+                        var mainRoomCent = Vector2.Lerp(new Vector2Int(room.minX, room.minY), new Vector2Int(room.maxX, room.maxY), 0.5f);
+
+                        foreach (var childRoom in room.childRooms)
+                        {
+                            var childRoomCent = Vector2.Lerp(new Vector2Int(childRoom.minX, childRoom.minY), new Vector2Int(childRoom.maxX, childRoom.maxY), 0.5f);
+                            
+                            var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, new Vector2Int((int)childRoomCent.x, (int)childRoomCent.y), new Vector2Int((int)mainRoomCent.x, (int)mainRoomCent.y));
+                            
+                            foreach (var tile in path)
+                            {
+                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                tile.tileWeight = 0.75f;
+                            }
+                        }
+                    }
+
+                    AlgosUtils.SetUpTileCorridorTypesUI(mainScript.PcgManager.gridArray2D, 2);
+
+                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D,0,1, true);
+
+                }
+
+                break;
+
+            default:
+                break;
         }
+
 
 
         if (mainScript.Started)
@@ -525,11 +723,6 @@ public class RanRoomGenEditor : Editor
 
             #endregion
 
-
-
-            //if (GUILayout.Button(new GUIContent() { text = "Test buton" }))
-            //{
-            //}
 
 
 

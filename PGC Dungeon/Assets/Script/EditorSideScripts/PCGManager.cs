@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static ScriptableOBJUtil;
 using Random = UnityEngine.Random;
 
 public class PCGManager : MonoBehaviour
@@ -48,7 +49,7 @@ public class PCGManager : MonoBehaviour
         WFC = 6,
         PERLIN_NOISE = 7,
         PERLIN_WORM = 8,
-        DIAMOND_SQUARE = 7
+        DIAMOND_SQUARE = 9
     }
 
     [Header("       ")]
@@ -59,9 +60,11 @@ public class PCGManager : MonoBehaviour
     [Tooltip("Name of file of the Rule that contains the tiles")]
     public string TileSetRuleFileName = "";
 
-    public List<GameObject> FloorTiles = new List<GameObject>();
-    public List<GameObject> CeilingTiles = new List<GameObject>();
-    public List<GameObject> WallsTiles = new List<GameObject>();
+
+    public List<ScriptableOBJUtil.TileRuleSet> FloorTiles = new List<ScriptableOBJUtil.TileRuleSet>();
+    public List<ScriptableOBJUtil.TileRuleSet> CeilingTiles = new List<ScriptableOBJUtil.TileRuleSet>();
+    public List<ScriptableOBJUtil.TileRuleSet> WallsTiles = new List<ScriptableOBJUtil.TileRuleSet>();
+ 
 
     [Header("       ")]
     [Tooltip("Name of file of the Rule that contains the tiles")]
@@ -288,19 +291,17 @@ public class PCGManager : MonoBehaviour
             return;
         }
 
-
-
         for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
         {
             for (int y = 0; y < gridArray2D.Length; y++)
             {
                 for (int x = 0; x < gridArray2D[0].Length; x++)
-                {
-                    if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor
+                {  
+                    if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                     {
                         if (gridArray2D[y][x].tileType != BasicTile.TileType.VOID)
                         {
-                            var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[Random.Range(0, FloorTiles.Count)] : FloorTiles[0], this.transform);
+                            var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[RatioBasedChoice(FloorTiles)].Tile : FloorTiles[0].Tile, this.transform);
                             this.transform.GetChild(0);
 
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
@@ -314,11 +315,13 @@ public class PCGManager : MonoBehaviour
                     {
                         var checkVector = new Vector2Int(x, y);
 
-                        checkVector = new Vector2Int(x + 1, y);// riht check
+                        checkVector = new Vector2Int(x + 1, y);// right check
 
                         if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
                         {
-                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
+
+
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 90, 0);
@@ -330,7 +333,7 @@ public class PCGManager : MonoBehaviour
                         {
                             if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
                             {
-                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 90, 0);
@@ -346,7 +349,7 @@ public class PCGManager : MonoBehaviour
 
                         if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
                         {
-                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 270, 0);
@@ -358,7 +361,7 @@ public class PCGManager : MonoBehaviour
                         {
                             if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
                             {
-                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 270, 0);
@@ -376,7 +379,7 @@ public class PCGManager : MonoBehaviour
 
                         if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
                         {
-                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.name = "0";
@@ -389,7 +392,7 @@ public class PCGManager : MonoBehaviour
                         {
                             if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
                             {
-                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                                var objRef = Instantiate(WallsTiles.Count > 1 ?      WallsTiles[RatioBasedChoice(WallsTiles)].Tile        : WallsTiles[0].Tile, this.transform);
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.name = "0";
@@ -409,7 +412,7 @@ public class PCGManager : MonoBehaviour
 
                         if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArray2D[0].Length || checkVector.y >= gridArray2D.Length)
                         {
-                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 180, 0);
@@ -422,7 +425,7 @@ public class PCGManager : MonoBehaviour
                         {
                             if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
                             {
-                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[Random.Range(0, WallsTiles.Count)] : WallsTiles[0], this.transform);
+                                var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 180, 0);
@@ -438,9 +441,36 @@ public class PCGManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"{iter}");
-
     }
+
+    private int RatioBasedChoice(List<ScriptableOBJUtil.TileRuleSet> objects) 
+    {
+        int totRatio = 0;
+
+        foreach (var obj in objects) 
+        {
+            totRatio += obj.occurance;
+        }
+
+        int ranNum = Random.Range(1, totRatio);
+
+        int countRatio = 0;
+        int savedIdx = 0;
+        for (int i = 1; i < objects.Count; i++)
+        {
+            if (ranNum > countRatio && ranNum <= countRatio + objects[i].occurance) 
+            {
+                savedIdx = i;
+                break;
+            }
+
+            countRatio += objects[i].occurance;
+        }
+
+        return savedIdx;
+    }
+
+
 
 
     public void ChunkCreate(int height, int width)
@@ -525,4 +555,5 @@ public class Chunk
     public GameObject mainParent = null;
     public List<GameObject> listOfObjInChunk = new List<GameObject>();
 }
+
 

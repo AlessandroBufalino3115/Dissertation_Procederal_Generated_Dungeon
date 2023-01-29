@@ -15,37 +15,48 @@
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- *   for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system    ---   mid priority
- * 
- *   there is the issue of the redrawing in the BPS and all of those thigns with the additive   ---  addition will not be added     high priority
+ *      vvvvvv HIGH PRIORITY vvvvvv
+ *          
+ *          create rooms from corridors
+ *          
+ *          weigthed tiles spawn for WFC
+ *          
+ *          
+ *          
+ *      
+ *      vvvvvv MID PRIORITY vvvvvv
+ *      
+ *         for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
+ *         
+ *         Look into making the flow better with less time wasted
+ *         
+ *         Fix the graph thing placement
+ *         
+ *         Similar to the particle effect have a random between two integers thing
+ *         
+ *         Add undo button
+ *         
+ *         Need to move all the scriptable objects into the new class
+ *      
+ *      
+ *      
+ *      vvvvvv LOW PRIORITY vvvvvv
+ *  
+ *          A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker  
  *   
- *   Need to add room to room connection    ---  high priority
+ *          k-group/mean to find regions? but what could regions be needed for? different tileset spawn
  *   
- *   Look into making the flow better with less time wasted    ---  mid priority
+ *          look into different textures for the marching cubes    
  *   
- *   create rooms from corridors   ---  high priority
- *   
- *   weigthed tiles spawn   ---  high priority
- *   
- *   Fix the graph thing placement ---  mid priority
- *   
- *   Ui builder in the window thing  ---  to look into  Monior priority
- *   
- *   Similar to the particle effect have a random between two integers thing  --- mid priority
+ *          Add gizmos to the scene to show each room detail IDK  
  *   
  *   
  *   
  *   
- *   A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker      --- minor priority
- *   
- *   k-group/mean to find regions? but what could regions be needed for? different tileset spawn    --- minor priority
- *   
- *   look into different textures for the marching cubes     --- minor priority
  *   
  *   
  *   
- *   
- *   still need to add:
+ *   ALGOS ISSUE:
  * 
  *   GRAPH GRAMMAR  -- mid priority
  *   OTHER PATHFINDINGS   -- high priority       Might drop BFS and Do DFS only
@@ -53,7 +64,14 @@
  *   fix diamond square   -- high priority
  *   
  *   
+ *   ALGOS NOTES:
+ * 
  *   
  *   
+ *   
+ *   
+ *   KNOWN BUGS:
+ *   
+ *   still not reaching the end on the bezier curve could be the fact that it chooses a wall
  * 
  */

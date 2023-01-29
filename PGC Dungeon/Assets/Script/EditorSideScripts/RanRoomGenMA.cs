@@ -129,7 +129,10 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-
+    /// <summary>
+    /// from the remaining rooms set up the weights
+    /// </summary>
+    /// <param name="gridArr"></param>
     public void SetUpWeights(BasicTile[][] gridArr)
     {
         foreach (var room in roomList)
@@ -177,7 +180,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-            if (ranWidth < 0)   // so the added withd is negative so the ranPoint x is the most positve
+            if (ranWidth < 0)   
             {
                 if (ranStartPoint.x + ranWidth < 0)
                     continue;
@@ -200,7 +203,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-            if (ranHeight < 0)   // so the added withd is negative so the ranPoint x is the most positve
+            if (ranHeight < 0)  
             {
                 if (ranStartPoint.y + ranHeight < 0)
                     continue;
@@ -220,15 +223,12 @@ public class RanRoomGenMA : MonoBehaviour
 
             }
 
-            currRoom.WorkOutCoords();
-
             bool toAdd = true;
 
             for (int i = 0; i < roomList.Count; i++)
             {
                 if (AABBCol(currRoom, roomList[i]))
                 {
-                    //Debug.Log($"DId this call {roomsList.Count}");
                     toAdd = false;
                     break;
                 }
@@ -254,14 +254,16 @@ public class RanRoomGenMA : MonoBehaviour
     public bool AABBCol(RoomsClass newRoom, RoomsClass oldRoom)
     {
 
-        for (int i = 0; i < newRoom.verticesList.Count; i++)
-        {
-            if ((oldRoom.minX <= newRoom.verticesList[i].x && newRoom.verticesList[i].x <= oldRoom.maxX) && (oldRoom.minY <= newRoom.verticesList[i].y && newRoom.verticesList[i].y <= oldRoom.maxY))
+       
+            if (newRoom.minX >= oldRoom.minX && newRoom.minX <= oldRoom.maxX || newRoom.maxX >= oldRoom.minX && newRoom.maxX <= oldRoom.maxX)
             {
-                return true;
+                if (newRoom.minY >= oldRoom.minY && newRoom.minY <= oldRoom.maxY || newRoom.maxY >= oldRoom.minY && newRoom.maxY <= oldRoom.maxY)
+                {
+                    return true;
+                }
             }
-        }
 
+        
 
         return false;
     }
@@ -290,8 +292,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-
-    public void BPSRoomGen(BasicTile[][] gridArray2D)
+    public void BPSRoomGen(BasicTile[][] gridArray2D,bool solve = true)
     {
         BoundsInt map = new BoundsInt();
 
@@ -300,17 +301,28 @@ public class RanRoomGenMA : MonoBehaviour
 
         roomsListBPSAlgo = BPSAlgo2d(map);
 
-        while (roomsListBPSAlgo.Count > numOfRoom)
+
+        if (solve) 
         {
-            int ranIDX = Random.Range(0, roomsListBPSAlgo.Count - 1);
+            while (roomsListBPSAlgo.Count > numOfRoom)
+            {
+                int ranIDX = Random.Range(0, roomsListBPSAlgo.Count - 1);
 
-            roomsListBPSAlgo.RemoveAt(ranIDX);
+                roomsListBPSAlgo.RemoveAt(ranIDX);
+            }
+
+
+            BoundsToWeights();
         }
-
-
-        BoundsToWeights();
+        else 
+        {
+            BoundsToWeights();
+        }
+       
 
     }
+
+
 
     public void BoundsToWeights()
     {
@@ -319,7 +331,6 @@ public class RanRoomGenMA : MonoBehaviour
         foreach (var room in roomsListBPSAlgo)
         {
             roomList.Add(new RoomsClass() { maxX = room.xMax, maxY = room.zMax, minX = room.xMin, minY = room.zMin });
-
             WorkoutRegion(roomList[roomList.Count - 1]);
         }
     }
@@ -499,15 +510,6 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-
-
-
-    //for bps when in addivite and special it doesn add
-    // for both when in additive and special it changed the type of gen for all
-
-    //noraml additive works fine
-
-
 }
 
 
@@ -522,31 +524,8 @@ public class RoomsClass
     public int minY;
     public int maxY;
 
-    public Vector2Int topLeftCoord;
-    public Vector2Int topRightCoord;
-    public Vector2Int botLeftCoord;
-    public Vector2Int botRightCoord;
-    public List<Vector2Int> verticesList = new List<Vector2Int>();
-
-    public int width;
-    public int height;
-
     public List<Vector2Int> tileCoords = new List<Vector2Int>();
-    public GameObject tile;
 
+    public List<RoomsClass> childRooms = new List<RoomsClass>();
 
-    public void WorkOutCoords()
-    {
-        verticesList = new List<Vector2Int>();
-
-        topLeftCoord = new Vector2Int(minX, maxY);
-        topRightCoord = new Vector2Int(maxX, maxY);
-        botLeftCoord = new Vector2Int(minX, minY);
-        botRightCoord = new Vector2Int(maxX, minY);
-
-        verticesList.Add(topLeftCoord);
-        verticesList.Add(topRightCoord);
-        verticesList.Add(botLeftCoord);
-        verticesList.Add(botRightCoord);
-    }
 }
