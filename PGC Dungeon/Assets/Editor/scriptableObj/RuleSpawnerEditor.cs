@@ -82,7 +82,7 @@ public class RuleSpawnerEditor : Editor
     [MenuItem("PCG Algorithms/Spawn TileSet Rule", priority = 27)]
     private static void SpawnTileSetRule()
     {
-        var GVcont = ScriptableObject.CreateInstance<ScriptableOBJUtil.TilesRuleSet>();
+        var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
 
         if (!AssetDatabase.IsValidFolder("Assets/Resources"))
         {

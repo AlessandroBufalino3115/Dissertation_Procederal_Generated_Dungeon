@@ -12,6 +12,9 @@
  *  
  *  Debug.Log($"<color=green></color>");      success
  * 
+ *  at thestart you cant have the timer
+ * 
+ * 
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
@@ -19,7 +22,11 @@
  *          
  *          create rooms from corridors
  *          
+ *          MAJOR ISSUE WITH THE SCRIPTABLE OBJ THING AGAIN IT CANT BE IN ANOTHER CLASS OR IT CRASHES
+ *          
  *          weigthed tiles spawn for WFC
+ *          
+ *          when we skip the path gen because of one room the walls dont get generated therefore the fll gen doesnt work
  *          
  *          
  *          

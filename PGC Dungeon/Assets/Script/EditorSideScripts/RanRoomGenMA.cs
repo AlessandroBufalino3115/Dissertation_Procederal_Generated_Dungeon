@@ -253,7 +253,6 @@ public class RanRoomGenMA : MonoBehaviour
     /// <returns></returns>
     public bool AABBCol(RoomsClass newRoom, RoomsClass oldRoom)
     {
-
        
             if (newRoom.minX >= oldRoom.minX && newRoom.minX <= oldRoom.maxX || newRoom.maxX >= oldRoom.minX && newRoom.maxX <= oldRoom.maxX)
             {

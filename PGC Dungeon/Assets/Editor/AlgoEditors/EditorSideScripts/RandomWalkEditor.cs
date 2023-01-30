@@ -438,7 +438,7 @@ public class RandomWalkEditor : Editor
                            
                             if (mainScript.rooms.Count >= 4)
                             {
-                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 1, mainScript.rooms.Count / 2);
+                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
                                 GeneralUtil.SpacesUILayout(2);
                             }
                             break;
@@ -447,7 +447,7 @@ public class RandomWalkEditor : Editor
 
                             if (mainScript.rooms.Count >= 4) 
                             {
-                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 1, mainScript.rooms.Count / 2);
+                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
                                 GeneralUtil.SpacesUILayout(2);
                             }
                             break;

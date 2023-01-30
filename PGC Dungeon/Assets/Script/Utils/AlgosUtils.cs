@@ -286,8 +286,6 @@ public static class AlgosUtils
 
         bool checkForUse = useWeights == true && arrWeights != null ? true : false;
 
-
-        // here we need a way to turn the whatever given tileset into nodes prob inheritance is best here
         List<AStar_Node> openList = new List<AStar_Node>();
         List<AStar_Node> closedList = new List<AStar_Node>();
 

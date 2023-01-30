@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using static ScriptableOBJUtil;
+using static Unity.VisualScripting.Metadata;
 using Random = UnityEngine.Random;
 
 public class PCGManager : MonoBehaviour
@@ -52,24 +52,32 @@ public class PCGManager : MonoBehaviour
         DIAMOND_SQUARE = 9
     }
 
-    [Header("       ")]
+    [Space(30)]
     [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
     public MainAlgo mainAlgo;
 
-    [Header("       ")]
+    [Space(30)]
     [Tooltip("Name of file of the Rule that contains the tiles")]
     public string TileSetRuleFileName = "";
 
 
-    public List<ScriptableOBJUtil.TileRuleSet> FloorTiles = new List<ScriptableOBJUtil.TileRuleSet>();
-    public List<ScriptableOBJUtil.TileRuleSet> CeilingTiles = new List<ScriptableOBJUtil.TileRuleSet>();
-    public List<ScriptableOBJUtil.TileRuleSet> WallsTiles = new List<ScriptableOBJUtil.TileRuleSet>();
+    public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
+    public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
+    public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
  
 
-    [Header("       ")]
+    [Space(30)]
     [Tooltip("Name of file of the Rule that contains the tiles")]
     public string WeightRuleFileName = "";
     public float[] tileCosts = new float[0];
+
+
+    [Tooltip("How many floors will the dungeons have///THIS IS DISABLED")]
+    [Header("THIS IS WHERE THE PLAYER GOES IN CASE OF TILESET GEN")]
+    public List<GameObject> player = new List<GameObject>();
+
+    [HideInInspector]
+    public List<Chunk> chunks;
 
 
     private int chunkWidth = 10;
@@ -98,8 +106,94 @@ public class PCGManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(chunks.Count);
+    }
+
+
+    private void Update()
+    {
+        if (chunks.Count > 0) 
+        {
+            Debug.Log($"Getting calledd");
+
+
+            CheckChunkRender();
+        }
+    }
+
+    //to change
+    private void CheckChunkRender() 
+    {
+
+        int length = gridArray2D[0].Length / chunkWidth;
+        int width = gridArray2D.Length / chunkHeight;
+
+        var indexesToDraw = new HashSet<int>();
+
+       
+
+
+
+        foreach (var player in player)
+        {
+            int collidedIndex = -1;
+            for (int i = 0; i < chunks.Count; i++)
+            {
+                if (AABBCol(player.transform.position, chunks[i]))
+                {
+                    collidedIndex = i;
+                    break;
+                }
+            }
+
+
+            if (collidedIndex == -1)
+            {
+                Debug.Log($"The plyaer is out of bounds");
+            }
+            else
+            {
+                indexesToDraw.Add(collidedIndex);
+
+                // this is where we add the other 8 things
+
+            }
+
+
+
+        }
+
+
 
     }
+
+
+
+    /// <summary>
+    /// returns true if it collides
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="chunk"></param>
+    /// <returns></returns>
+    private bool AABBCol(Vector3 player, Chunk chunk)
+    {
+
+        if (player.x >= chunk.bottomLeft.x && player.x < chunk.topRight.x    ) 
+        {
+            if (player.z >= chunk.bottomLeft.y && player.z < chunk.topRight.y) 
+            {
+                return true;
+            }
+        }
+
+
+
+        return false;
+    }
+
+
+
+
 
     public void CreatePlane()
     {
@@ -126,7 +220,6 @@ public class PCGManager : MonoBehaviour
             }
         }
     }
-
 
     public void RefreshPlane()
     {
@@ -443,7 +536,7 @@ public class PCGManager : MonoBehaviour
 
     }
 
-    private int RatioBasedChoice(List<ScriptableOBJUtil.TileRuleSet> objects) 
+    private int RatioBasedChoice(List<TileRuleSetPCG> objects) 
     {
         int totRatio = 0;
 
@@ -470,8 +563,16 @@ public class PCGManager : MonoBehaviour
         return savedIdx;
     }
 
-
-
+    //public void CombineMeshes() 
+    //{
+    //    foreach (Transform child in transform)
+    //    {
+    //        if (child.GetComponent<CombineMeshes>()) 
+    //        {
+    //            child.GetComponent<CombineMeshes>().CombineChildrenMeshes();
+    //        }
+    //    }
+    //}
 
     public void ChunkCreate(int height, int width)
     {
@@ -486,7 +587,7 @@ public class PCGManager : MonoBehaviour
 
         TRhead = new Vector2Int(0, TRhead.y + correctHeight);
 
-        List<Chunk> chunks = new List<Chunk>();
+        chunks = new List<Chunk>();
         while (true)
         {
 
@@ -510,7 +611,7 @@ public class PCGManager : MonoBehaviour
 
                 TRhead = new Vector2Int(TRhead.x + correctWidth + 1, TRhead.y);
 
-                chunks.Add(new Chunk());
+                chunks.Add(new Chunk() { width = correctWidth, height = correctHeight });
 
                 var currChunk = chunks[chunks.Count - 1];
                 currChunk.topRight = TRhead;
@@ -519,15 +620,18 @@ public class PCGManager : MonoBehaviour
 
                 BLhead = new Vector2Int(TRhead.x, BLhead.y);
             }
-
         }
-
 
         for (int i = 0; i < chunks.Count; i++)
         {
             var objRef = new GameObject();
+           // objRef.AddComponent<CombineMeshes>();
+            //objRef.AddComponent<MeshFilter>();
+            //objRef.AddComponent<MeshRenderer>();
             objRef.transform.parent = this.transform;
             objRef.transform.name = i.ToString();
+
+            chunks[i].mainParent = objRef;
 
             int widthChunk = chunks[i].topRight.x - chunks[i].bottomLeft.x;
             int heightChunk = chunks[i].topRight.y - chunks[i].bottomLeft.y;
@@ -537,23 +641,43 @@ public class PCGManager : MonoBehaviour
                 for (int x = 0; x < widthChunk; x++)
                 {
                     gridArray2D[y + chunks[i].bottomLeft.y][x + chunks[i].bottomLeft.x].idx = chunks[i].index;
-                    
                 }
             }
+
         }
     }
+
+
 }
 
 
-
+[Serializable]
 public class Chunk
 {
     public Vector2Int topRight = Vector2Int.zero;
     public Vector2Int bottomLeft = Vector2Int.zero;
 
+    public int width;
+    public int height;
+
     public int index = 0;
     public GameObject mainParent = null;
     public List<GameObject> listOfObjInChunk = new List<GameObject>();
+
+}
+
+[Serializable]
+public class TilesRuleSetPCG
+{
+    public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
+    public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
+    public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
 }
 
 
+[Serializable]
+public class TileRuleSetPCG
+{
+    public GameObject Tile;
+    public int occurance = 1;
+}

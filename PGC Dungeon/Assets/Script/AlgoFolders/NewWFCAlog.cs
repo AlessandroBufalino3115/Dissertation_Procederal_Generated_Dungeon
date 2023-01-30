@@ -217,10 +217,9 @@ public class NewWFCAlog : MonoBehaviour
 
     public void DestroyKids()
     {
-        while (this.transform.childCount > 0)
+        while (transform.childCount > 0)
         {
-            foreach (Transform child in transform)
-                DestroyImmediate(child.gameObject);
+            DestroyImmediate(transform.GetChild(0).gameObject);
         }
     }
 

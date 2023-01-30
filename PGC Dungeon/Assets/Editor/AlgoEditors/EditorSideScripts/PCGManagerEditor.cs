@@ -28,12 +28,10 @@ public class PCGManagerEditor : Editor
         PCGManager mainScript = (PCGManager)target;
 
 
-        Spaces(2);
+        GUILayout.Space(30);
 
 
 
-
-        Spaces(4);
 
 
         GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
@@ -42,12 +40,8 @@ public class PCGManagerEditor : Editor
 
 
 
-        Spaces(4);
 
-
-
-        Spaces(2);
-
+        GUILayout.Space(30);
         if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
 
@@ -90,13 +84,14 @@ public class PCGManagerEditor : Editor
             }
         }
 
-        Spaces(3);
+
+        GUILayout.Space(30);
 
 
         if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
         {
 
-            var GVcont = ScriptableObject.CreateInstance<ScriptableOBJUtil.TilesRuleSet>();
+            var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -121,7 +116,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
         {
 
-            var tileRules = Resources.Load<ScriptableOBJUtil.TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
+            var tileRules = Resources.Load<TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 
             mainScript.WallsTiles.Clear();
             mainScript.FloorTiles.Clear();
@@ -129,18 +124,18 @@ public class PCGManagerEditor : Editor
 
             foreach (var item in tileRules.WallsTiles)
             {
-                mainScript.WallsTiles.Add(item);
+                mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
             }
 
             foreach (var item in tileRules.FloorTiles)
             {
-                mainScript.FloorTiles.Add(item);
+                mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
             }
 
 
             foreach (var item in tileRules.CeilingTiles)
             {
-                mainScript.CeilingTiles.Add(item);
+                mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
             }
 
 
@@ -149,7 +144,7 @@ public class PCGManagerEditor : Editor
         //scriptable objects public class
 
 
-        Spaces(3);
+        GUILayout.Space(30);
 
 
         if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
@@ -195,16 +190,15 @@ public class PCGManagerEditor : Editor
 
 
 
-    }
-
-
-    private void Spaces(int spaceNum)
-    {
-        for (int i = 0; i < spaceNum; i++)
+        if (GUILayout.Button(new GUIContent() { text = "test test", tooltip = "" }))
         {
-            EditorGUILayout.Space();
+            //mainScript.CombineMeshes();
         }
+
+
+
     }
+
 
 
 }
