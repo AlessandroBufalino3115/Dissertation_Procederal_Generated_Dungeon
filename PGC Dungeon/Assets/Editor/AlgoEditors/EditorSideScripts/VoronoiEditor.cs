@@ -1,13 +1,20 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEditor;
 
-[CustomEditor(typeof(RandomWalkMA))]
-public class RandomWalkEditor : Editor
+
+
+[CustomEditor(typeof(VoronoiMA))]
+public class VoronoiEditor : Editor
 {
-    bool showCA = false;
+    int vorPoints = 5;
+    int minSize = 0;
+    List<List<BasicTile>> rooms = new List<List<BasicTile>>();
+
+    bool pathType = false;
+
+    bool started = false;
 
     bool showPath = false;
     bool showRooms = false;
@@ -31,16 +38,16 @@ public class RandomWalkEditor : Editor
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
 
     bool algoForBezier = false;
-
-
-
+    List<Edge> edges = new List<Edge>();
 
 
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        RandomWalkMA mainScript = (RandomWalkMA)target;
+        VoronoiMA mainScript = (VoronoiMA)target;
+
+
 
         #region explanation
 
@@ -48,11 +55,7 @@ public class RandomWalkEditor : Editor
 
         if (showRules)
         {
-            GUILayout.TextArea("You have choosen RandomWalk algorithm as your initial algorithm\n\nExplenation: a \"Head\" moves in a random direction at each step\n\nStep 1: Decide how many iterations the algorithm will have to generate the base map and its sub parameters." +
-                "\n\nStep 2: To round up the rough edges you can decide to use Cellular Automata to help smooth things out." +
-                "\n\nStep 3: It is possible small rooms that are not your what you are looking for have been geenrated, delete them using by setting up the minimum amount of tiles a room should have." +
-                "\n\nStep 4: Depending on the amount of rooms you are able to create corridors by choosing the wanted pathFinding algorithm and the algortihm which decideds which room is connected to which." +
-                "\n\nStep 5: Generate the algorithm using the tileSet provided or create the blank gameobject whihc can then be exported and manipulated");
+            GUILayout.TextArea("You have choosen Voronoi");
 
         }
 
@@ -63,81 +66,36 @@ public class RandomWalkEditor : Editor
 
         EditorGUILayout.EndFoldoutHeaderGroup();
 
-        #endregion
 
 
         GeneralUtil.SpacesUILayout(4);
 
 
-        #region Main algo region
-
-
-        mainScript.Iterations = (int)EditorGUILayout.Slider(new GUIContent() { text = "Iterations", tooltip = "This is how many times the head of the algorithm is going to move" }, mainScript.Iterations, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.3f, (mainScript.PcgManager.gridArray2D.Length * mainScript.PcgManager.gridArray2D[0].Length) * 0.9f);
-
-        mainScript.StartFromMiddle = EditorGUILayout.Toggle(new GUIContent() { text = "Should The algo start from the middle", tooltip = "Should the head of the algorithm start from the middle of the canvas or a random position?" }, mainScript.StartFromMiddle); ;
-        mainScript.AlreadyPassed = EditorGUILayout.Toggle(new GUIContent() { text = "Overlap cells count", tooltip = mainScript.AlreadyPassed == true ? "When the head of the walker goes over an already populated cells the iteration still counts" : "When the head of the walker goes over an already populated cells the iteration does not count" }, mainScript.AlreadyPassed);
-
-
-        if (GUILayout.Button("Generate RandomWalk Randomisation"))// gen something
-        {
-            AlgosUtils.RestartArr(mainScript.PcgManager.gridArray2D);
-            mainScript.PcgManager.gridArray2D = AlgosUtils.RandomWalk2DCol(mainScript.Iterations, !mainScript.AlreadyPassed, mainScript.PcgManager.gridArray2D[0].Length, mainScript.PcgManager.gridArray2D.Length, randomStart: !mainScript.StartFromMiddle);
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
-            mainScript.Started = true;
-        }
-
-
-
         #endregion
 
 
-        if (mainScript.Started)
+
+
+
+
+
+        vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of rooms", tooltip = "" }, vorPoints, 5, 40);
+
+        if (GUILayout.Button(new GUIContent() { text = "Generate Voronoi Fracture", tooltip = "" }))// gen something
+        {
+            mainScript.PcgManager.Restart();
+
+            mainScript.PcgManager.gridArray2D = AlgosUtils.Voronoi2D(mainScript.PcgManager.gridArray2D, vorPoints);
+
+            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D, true);
+            started = true;
+        }
+
+
+        if (started)
         {
 
             GeneralUtil.SpacesUILayout(4);
-
-
-            #region showCA region
-
-            showCA = EditorGUILayout.BeginFoldoutHeaderGroup(showCA, "Use Cellular Automata(CA) to tidy up");
-
-            if (showCA)
-            {
-
-                mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, mainScript.NeighboursNeeded, 3, 5);
-
-                if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
-                {
-                    mainScript.PcgManager.CreateBackUpGrid();
-
-
-                    AlgosUtils.CleanUp2dCA(mainScript.PcgManager.gridArray2D, mainScript.NeighboursNeeded);
-
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
-                }
-                if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
-                {
-                    mainScript.PcgManager.CreateBackUpGrid();
-
-
-                    AlgosUtils.RunCaIteration2D(mainScript.PcgManager.gridArray2D, mainScript.NeighboursNeeded);
-                    mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArray2D);
-                }
-
-            }
-
-            if (!Selection.activeTransform)
-            {
-                showCA = false;
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
-
-            #endregion
-
-
-            GeneralUtil.SpacesUILayout(4);
-
 
             #region Room Region
 
@@ -145,29 +103,27 @@ public class RandomWalkEditor : Editor
 
             if (showRooms)
             {
-                mainScript.MinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, mainScript.MinSize, 0, 200);
+                minSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
 
                 if (GUILayout.Button("Generate rooms"))
                 {
-                    mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
+                    rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
 
 
-                    mainScript.PcgManager.CreateBackUpGrid();
 
-                    if (mainScript.MinSize > 0)
+                    if (minSize > 0)
                     {
-
-                        for (int i = mainScript.rooms.Count; i-- > 0;)
+                        for (int i = rooms.Count; i-- > 0;)
                         {
-                            if (mainScript.rooms[i].Count < mainScript.MinSize)
+                            if (rooms[i].Count < minSize)
                             {
-                                foreach (var tile in mainScript.rooms[i])
+                                foreach (var tile in rooms[i])
                                 {
                                     tile.tileWeight = 0;
                                     tile.tileType = BasicTile.TileType.VOID;
                                 }
 
-                                mainScript.rooms.RemoveAt(i);
+                                rooms.RemoveAt(i);
                             }
                         }
                     }
@@ -193,11 +149,11 @@ public class RandomWalkEditor : Editor
             #region corridor making region
 
 
-            if (mainScript.rooms.Count == 1)
+            if (rooms.Count == 1)
             {
                 GUILayout.Label("Only one room detected, Corridor making is not possible");
             }
-            else if (mainScript.rooms.Count == 2)
+            else if (rooms.Count == 2)
             {
                 GUILayout.Label("Only two rooms detected, triangulation not possible");
 
@@ -214,7 +170,7 @@ public class RandomWalkEditor : Editor
                 switch (selGridPathGenType)
                 {
                     case 0:   // A* pathfindind
-                        mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                        pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, pathType);
                         useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
                         break;
 
@@ -230,7 +186,7 @@ public class RandomWalkEditor : Editor
                         {
                             GeneralUtil.SpacesUILayout(1);
 
-                            mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                            pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, pathType);
                             useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
                         }
 
@@ -243,10 +199,10 @@ public class RandomWalkEditor : Editor
 
                 if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                 {
-                    Vector2Int tileA = mainScript.rooms[0][Random.Range(0, mainScript.rooms[0].Count - 1)].position;
-                    Vector2Int tileB = mainScript.rooms[1][Random.Range(0, mainScript.rooms[1].Count - 1)].position;
+                    Vector2Int tileA = rooms[0][Random.Range(0, rooms[0].Count - 1)].position;
+                    Vector2Int tileB = rooms[1][Random.Range(0, rooms[1].Count - 1)].position;
 
-                  
+
 
                     //its checking the edges its not meant tot thweiuyieqw
 
@@ -254,32 +210,32 @@ public class RandomWalkEditor : Editor
                     {
                         case 0:   //A* pathfingin
 
-                           
-                                var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
-                                foreach (var tile in path.Item1)
-                                {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
-                                    tile.tileWeight = 0.75f;
-                                }
-                            
+                            foreach (var tile in path.Item1)
+                            {
+                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                tile.tileWeight = 0.75f;
+                            }
+
 
                             break;
                         case 1:  //dijistra
-                          
 
-                                var pathD = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
 
-                                foreach (var tile in pathD)
-                                {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                            var pathD = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
 
-                                    tile.tileWeight = 0.75f;
-                                }
-                            
+                            foreach (var tile in pathD)
+                            {
+                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                tile.tileWeight = 0.75f;
+                            }
+
 
                             break;
                         case 2://   bfs
@@ -287,24 +243,69 @@ public class RandomWalkEditor : Editor
                         case 3://  dfs
                             break;
                         case 4://  beizier curve
-                           
-                                var startPos = new Vector2Int(tileA.x, tileA.y);
-                                var endPos = new Vector2Int(tileB.x, tileB.y);
 
-                                var prevCoord = new Vector2Int(0, 0);
+                            var startPos = new Vector2Int(tileA.x, tileA.y);
+                            var endPos = new Vector2Int(tileB.x, tileB.y);
 
-                                var positions = AlgosUtils.ExtrapolatePos(startPos, endPos, margin);
+                            var prevCoord = new Vector2Int(0, 0);
+                            var positions = AlgosUtils.ExtrapolatePos(startPos, endPos, margin);
 
-                                var mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
-                                var mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
-
+                            var mid1Pos = new Vector2Int((int)Mathf.Round(positions.Item1.x), (int)Mathf.Round(positions.Item1.y));
+                            var mid2Pos = new Vector2Int((int)Mathf.Round(positions.Item2.x), (int)Mathf.Round(positions.Item2.y));
 
 
-                                var firstBezierPoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
+
+                            var firstBezierPoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
+
+                            if (algoForBezier)
+                            {
+                                var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)Mathf.Round(firstBezierPoint.x), (int)Mathf.Round(firstBezierPoint.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+
+                                foreach (var tile in pathB.Item1)
+                                {
+                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                    tile.tileWeight = 0.75f;
+                                }
+
+                            }
+                            else
+                            {
+                                var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)Mathf.Round(firstBezierPoint.x), (int)Mathf.Round(firstBezierPoint.z)), true);
+
+                                foreach (var tile in pathB)
+                                {
+                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+                                    tile.tileWeight = 0.75f;
+                                }
+                            }
+
+
+
+                            for (float t = 0; t < 1; t += 0.05f)
+                            {
+                                float currT = t;
+                                float prevT = t - 0.05f;
+
+                                var currCord = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
+
+                                if (prevT < 0)
+                                {
+                                    prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
+                                    continue;
+                                }
+                                else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
+                                { continue; }
 
                                 if (algoForBezier)
                                 {
-                                    var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                    var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+
+
+                                    prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
 
                                     foreach (var tile in pathB.Item1)
                                     {
@@ -317,7 +318,9 @@ public class RandomWalkEditor : Editor
                                 }
                                 else
                                 {
-                                    var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), true);
+                                    var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z)), true);
+
+                                    prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
 
                                     foreach (var tile in pathB)
                                     {
@@ -327,86 +330,37 @@ public class RandomWalkEditor : Editor
                                         tile.tileWeight = 0.75f;
                                     }
                                 }
+                            }
 
 
 
-                                for (float t = 0; t < 1; t += 0.05f)
+                            var lastBezierCurvePoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 1);
+
+                            if (algoForBezier)
+                            {
+                                var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)Mathf.Round(lastBezierCurvePoint.x), (int)Mathf.Round(lastBezierCurvePoint.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+
+                                foreach (var tile in pathB.Item1)
                                 {
-                                    float currT = t;
-                                    float prevT = t - 0.05f;
+                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
 
-                                    var currCord = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
-
-                                    if (prevT < 0)
-                                    {
-                                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-                                        continue;
-                                    }
-                                    else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
-                                    { continue; }
-
-                                    if (algoForBezier)
-                                    {
-                                        var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
-
-
-                                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-
-                                        foreach (var tile in pathB.Item1)
-                                        {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
-
-                                            tile.tileWeight = 0.75f;
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
-
-                                        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-
-                                        foreach (var tile in pathB)
-                                        {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
-
-                                            tile.tileWeight = 0.75f;
-                                        }
-                                    }
+                                    tile.tileWeight = 0.75f;
                                 }
 
+                            }
+                            else
+                            {
+                                var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)Mathf.Round(lastBezierCurvePoint.x), (int)Mathf.Round(lastBezierCurvePoint.z)), true);
 
-
-                                var lastBezierCurvePoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 1);
-
-                                if (algoForBezier)
+                                foreach (var tile in pathB)
                                 {
-                                    var pathB = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)MathF.Round(lastBezierCurvePoint.x), (int)MathF.Round(lastBezierCurvePoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
 
-                                    foreach (var tile in pathB.Item1)
-                                    {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
-
-                                        tile.tileWeight = 0.75f;
-                                    }
-
+                                    tile.tileWeight = 0.75f;
                                 }
-                                else
-                                {
-                                    var pathB = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)MathF.Round(lastBezierCurvePoint.x), (int)MathF.Round(lastBezierCurvePoint.z)), true);
-
-                                    foreach (var tile in pathB)
-                                    {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
-
-                                        tile.tileWeight = 0.75f;
-                                    }
-                                }
-
+                            }
 
                             break;
 
@@ -422,7 +376,7 @@ public class RandomWalkEditor : Editor
                 }
 
             }
-            else if (mainScript.rooms.Count > 2)
+            else if (rooms.Count > 2)
             {
                 showPath = EditorGUILayout.BeginFoldoutHeaderGroup(showPath, "Pathfinding Settings");
 
@@ -442,19 +396,19 @@ public class RandomWalkEditor : Editor
                     switch (selGridConnectionType)
                     {
                         case 0:   // prims ran
-                           
-                            if (mainScript.rooms.Count >= 4)
+
+                            if (rooms.Count >= 4)
                             {
-                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
+                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, rooms.Count / 2);
                                 GeneralUtil.SpacesUILayout(2);
                             }
                             break;
 
-                        case 2:  
+                        case 2:
 
-                            if (mainScript.rooms.Count >= 4) 
+                            if (rooms.Count >= 4)
                             {
-                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
+                                randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, rooms.Count / 2);
                                 GeneralUtil.SpacesUILayout(2);
                             }
                             break;
@@ -488,7 +442,7 @@ public class RandomWalkEditor : Editor
                     switch (selGridPathGenType)
                     {
                         case 0:   // A* pathfindind
-                            mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                            pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, pathType);
                             useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
                             break;
 
@@ -500,11 +454,11 @@ public class RandomWalkEditor : Editor
                             margin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, margin, 10, 40);
                             algoForBezier = EditorGUILayout.Toggle(new GUIContent() { text = algoForBezier == true ? "A* Pathfinding is selected" : "Dijistra is selected", tooltip = "" }, algoForBezier);
 
-                            if (algoForBezier) 
+                            if (algoForBezier)
                             {
                                 GeneralUtil.SpacesUILayout(1);
 
-                                mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.PathType);
+                                pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, pathType);
                                 useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
                             }
 
@@ -518,12 +472,10 @@ public class RandomWalkEditor : Editor
                     if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                     {
 
-                        mainScript.PcgManager.CreateBackUpGrid();
-
-                        mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
+                        rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                         var centerPoints = new List<Vector2>();
                         var roomDict = new Dictionary<Vector2, List<BasicTile>>();
-                        foreach (var room in mainScript.rooms)
+                        foreach (var room in rooms)
                         {
                             roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
                             centerPoints.Add(AlgosUtils.FindMiddlePoint(room));
@@ -533,15 +485,15 @@ public class RandomWalkEditor : Editor
                         switch (selGridConnectionType)
                         {
                             case 0:
-                                mainScript.edges = AlgosUtils.PrimAlgoNoDelu(centerPoints);
-                                if (randomAddCorr > 0) 
+                                edges = AlgosUtils.PrimAlgoNoDelu(centerPoints);
+                                if (randomAddCorr > 0)
                                 {
-                                    int len = mainScript.edges.Count - 1;
+                                    int len = edges.Count - 1;
 
                                     for (int i = 0; i < randomAddCorr; i++)
                                     {
-                                        var pointA = mainScript.edges[Random.Range(0, len)].edge[0];
-                                        var pointBEdgeCheck = mainScript.edges[Random.Range(0, len)];
+                                        var pointA = edges[Random.Range(0, len)].edge[0];
+                                        var pointBEdgeCheck = edges[Random.Range(0, len)];
 
                                         var pointB = Vector3.zero;
 
@@ -557,7 +509,7 @@ public class RandomWalkEditor : Editor
 
                                         bool toAdd = true;
 
-                                        foreach (var primEdge in mainScript.edges)
+                                        foreach (var primEdge in edges)
                                         {
                                             if (AlgosUtils.LineIsEqual(primEdge, newEdge))
                                             {
@@ -569,7 +521,7 @@ public class RandomWalkEditor : Editor
 
                                         if (toAdd)
                                         {
-                                            mainScript.edges.Add(newEdge);
+                                            edges.Add(newEdge);
                                         }
                                     }
 
@@ -578,34 +530,34 @@ public class RandomWalkEditor : Editor
                                 break;
 
                             case 1:
-                                mainScript.edges = AlgosUtils.DelunayTriangulation2D(centerPoints).Item2;
+                                edges = AlgosUtils.DelunayTriangulation2D(centerPoints).Item2;
                                 break;
-                            
+
                             case 2://ran
 
 
                                 for (int i = 0; i < centerPoints.Count; i++)
                                 {
-                                    if (i == centerPoints.Count-1) { continue; }
-                                    mainScript.edges.Add(new Edge(new Vector3(centerPoints[i].x, centerPoints[i].y, 0), new Vector3(centerPoints[i+1].x, centerPoints[i+1].y, 0)));
+                                    if (i == centerPoints.Count - 1) { continue; }
+                                        edges.Add(new Edge(new Vector3(centerPoints[i].x, centerPoints[i].y, 0), new Vector3(centerPoints[i + 1].x, centerPoints[i + 1].y, 0)));
                                 }
 
-                                if (randomAddCorr > 0) 
+                                if (randomAddCorr > 0)
                                 {
-                                    int len = mainScript.edges.Count - 1;
+                                    int len = edges.Count - 1;
 
                                     for (int i = 0; i < randomAddCorr; i++)
                                     {
-                                       
-                                        int ranStarter  = Random.Range(0, len);
-                                        int ranEnder  = Random.Range(0, len);
+
+                                        int ranStarter = Random.Range(0, len);
+                                        int ranEnder = Random.Range(0, len);
 
 
                                         if (ranStarter == ranEnder) { continue; }
                                         else if (Mathf.Abs(ranStarter - ranEnder) == 1) { continue; }
                                         else
                                         {
-                                            mainScript.edges.Add(new Edge(new Vector3(centerPoints[ranStarter].x, centerPoints[ranStarter].y, 0), new Vector3(centerPoints[ranEnder].x, centerPoints[ranEnder].y, 0)));
+                                            edges.Add(new Edge(new Vector3(centerPoints[ranStarter].x, centerPoints[ranStarter].y, 0), new Vector3(centerPoints[ranEnder].x, centerPoints[ranEnder].y, 0)));
                                         }
                                     }
                                 }
@@ -618,15 +570,13 @@ public class RandomWalkEditor : Editor
                         {
                             case 0:   //A* pathfingin
 
-                                foreach (var edge in mainScript.edges)
+                                foreach (var edge in edges)
                                 {
-
-                                    //use where so we get soemthing its not the wall but not necessary
                                     var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                     var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
 
-                                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
 
                                     foreach (var tile in path.Item1)
@@ -640,7 +590,7 @@ public class RandomWalkEditor : Editor
 
                                 break;
                             case 1:  //dijistra
-                                foreach (var edge in mainScript.edges)
+                                foreach (var edge in edges)
                                 {
                                     var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                     var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
@@ -662,7 +612,7 @@ public class RandomWalkEditor : Editor
                             case 3://  dfs
                                 break;
                             case 4://  beizier curve
-                                foreach (var edge in mainScript.edges)
+                                foreach (var edge in edges)
                                 {
 
                                     var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
@@ -672,11 +622,10 @@ public class RandomWalkEditor : Editor
                                     var endPos = new Vector2Int(tileB.x, tileB.y);
 
                                     var prevCoord = new Vector2Int(0, 0);
-
                                     var positions = AlgosUtils.ExtrapolatePos(startPos, endPos, margin);
 
-                                    var mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
-                                    var mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
+                                    var mid1Pos = new Vector2Int((int)Mathf.Round(positions.Item1.x), (int)Mathf.Round(positions.Item1.y));
+                                    var mid2Pos = new Vector2Int((int)Mathf.Round(positions.Item2.x), (int)Mathf.Round(positions.Item2.y));
 
 
 
@@ -684,8 +633,7 @@ public class RandomWalkEditor : Editor
 
                                     if (algoForBezier)
                                     {
-            
-                                        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)Mathf.Round(firstBezierPoint.x), (int)Mathf.Round(firstBezierPoint.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
                                         foreach (var tile in path.Item1)
                                         {
@@ -694,11 +642,10 @@ public class RandomWalkEditor : Editor
 
                                             tile.tileWeight = 0.75f;
                                         }
-
                                     }
                                     else
                                     {
-                                        var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), true);
+                                        var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)Mathf.Round(firstBezierPoint.x), (int)Mathf.Round(firstBezierPoint.z)), true);
 
                                         foreach (var tile in path)
                                         {
@@ -710,7 +657,6 @@ public class RandomWalkEditor : Editor
                                     }
 
 
-
                                     for (float t = 0; t < 1; t += 0.05f)
                                     {
                                         float currT = t;
@@ -720,19 +666,19 @@ public class RandomWalkEditor : Editor
 
                                         if (prevT < 0)
                                         {
-                                            prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                                            prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
                                             continue;
                                         }
                                         else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
                                         { continue; }
 
 
-                                        if (algoForBezier) 
+                                        if (algoForBezier)
                                         {
-                                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
+                                            var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
 
-                                            prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                                            prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
 
                                             foreach (var tile in path.Item1)
                                             {
@@ -743,11 +689,11 @@ public class RandomWalkEditor : Editor
                                             }
 
                                         }
-                                        else 
+                                        else
                                         {
-                                            var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
+                                            var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z)), true);
 
-                                            prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                                            prevCoord = new Vector2Int((int)Mathf.Round(currCord.x), (int)Mathf.Round(currCord.z));
 
                                             foreach (var tile in path)
                                             {
@@ -760,15 +706,11 @@ public class RandomWalkEditor : Editor
                                     }
 
 
-
-
                                     var lastBezierCurvePoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 1);
 
                                     if (algoForBezier)
                                     {
-                                        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)MathF.Round(lastBezierCurvePoint.x), (int)MathF.Round(lastBezierCurvePoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
-
-
+                                        var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)Mathf.Round(lastBezierCurvePoint.x), (int)Mathf.Round(lastBezierCurvePoint.z)), !pathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
                                         foreach (var tile in path.Item1)
                                         {
@@ -777,11 +719,10 @@ public class RandomWalkEditor : Editor
 
                                             tile.tileWeight = 0.75f;
                                         }
-
                                     }
                                     else
                                     {
-                                        var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)MathF.Round(lastBezierCurvePoint.x), (int)MathF.Round(lastBezierCurvePoint.z)), true);
+                                        var path = AlgosUtils.DijstraPathfinding(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)Mathf.Round(lastBezierCurvePoint.x), (int)Mathf.Round(lastBezierCurvePoint.z)), true);
 
                                         foreach (var tile in path)
                                         {
@@ -878,6 +819,4 @@ public class RandomWalkEditor : Editor
             #endregion
         }
     }
-
-
 }

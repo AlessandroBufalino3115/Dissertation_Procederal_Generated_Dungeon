@@ -10,11 +10,42 @@ using UnityEngine;
 public class WFCAlgoEditor : Editor
 {
 
+    bool showRules = false;
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
         NewWFCAlog mainScript = (NewWFCAlog)target;
+
+        GeneralUtil.SpacesUILayout(4);
+
+        #region explanation
+
+        showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+
+        if (showRules)
+        {
+            GUILayout.TextArea("You have choosen wfc");
+
+        }
+
+        if (!Selection.activeTransform)
+        {
+            showRules = false;
+        }
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+
+
+        GeneralUtil.SpacesUILayout(4);
+
+
+        #endregion
+
+
+
 
 
         if (GUILayout.Button("Run WFC Algo"))

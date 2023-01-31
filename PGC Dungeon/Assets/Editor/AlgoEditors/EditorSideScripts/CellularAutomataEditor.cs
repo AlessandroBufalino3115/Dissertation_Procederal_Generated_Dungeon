@@ -1,18 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class CellularAutomataEditor : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+
+
+
+[CustomEditor(typeof(CellularAutomataMA))]
+public class CellularAutomataEditor : Editor
+{
+    bool showRules = false;
+
+
+    public override void OnInspectorGUI()
     {
-        
+        base.OnInspectorGUI();
+        CellularAutomataMA mainScript = (CellularAutomataMA)target;
+
+
+        #region explanation
+
+        showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+
+        if (showRules)
+        {
+            GUILayout.TextArea("You have chosen CA");
+
+        }
+
+        if (!Selection.activeTransform)
+        {
+            showRules = false;
+        }
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+        #endregion
+
+
+        GeneralUtil.SpacesUILayout(4);
+
+        GeneralUtil.SpacesUILayout(4);
     }
 }

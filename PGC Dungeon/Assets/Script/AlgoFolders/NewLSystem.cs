@@ -8,24 +8,34 @@ public class NewLSystem : MonoBehaviour
 {
     //https://www.gamedeveloper.com/design/kastle-dungeon-generation-using-l-systems
 
-    public string axium;
-    public int iterations = 2;
-
-    public string fileName = "";
-
     private List<Vector3Int> points = new List<Vector3Int>();
     private Vector3Int head;
-    
+
     private string endingWord;
 
     private bool run;
 
     private int currDirection = 0;
 
+
+
+
+    [Space(30)]
+    public string axium;
+    public int iterations = 2;
+
+
+    [Space(30)]
+    public string fileName = "";
+
+    
+    [Space(30)]
     public int A_dist= 0;
     public int B_dist = 0;
     public int C_dist = 0;
 
+
+    [Space(30)]
     public List<string> A_RuleSet = new List<string>();
     public List<string> B_RuleSet = new List<string>();
     public List<string> C_RuleSet = new List<string>();
@@ -37,11 +47,7 @@ public class NewLSystem : MonoBehaviour
 
 
     public bool modePath;
-    //public bool ModePath
-    //{
-    //    get { return modePath; }
-    //    set { modePath = value;  }
-    //}
+
 
 
     private PCGManager pcgManager;

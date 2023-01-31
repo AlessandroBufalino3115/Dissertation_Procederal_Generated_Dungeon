@@ -59,6 +59,8 @@ public class PerlinNoiseEditor : Editor
 
 
 
+        GeneralUtil.SpacesUILayout(4);
+
         #region Main Algo
 
 

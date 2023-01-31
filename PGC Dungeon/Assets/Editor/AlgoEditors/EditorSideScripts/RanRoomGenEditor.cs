@@ -68,6 +68,37 @@ public class RanRoomGenEditor : Editor
         RanRoomGenMA mainScript = (RanRoomGenMA)target;
 
 
+
+
+        #region explanation
+
+        showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+
+        if (showRules)
+        {
+            GUILayout.TextArea("You have choosen random room allocation");
+
+        }
+
+        if (!Selection.activeTransform)
+        {
+            showRules = false;
+        }
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+
+        GeneralUtil.SpacesUILayout(4);
+
+        #endregion
+
+
+
+        #region main Algo
+
+
+
+
         GUILayout.BeginVertical("Box");
         selDungGenType = GUILayout.SelectionGrid(selDungGenType, selStringsDungGenType, 1);
         GUILayout.EndVertical();
@@ -338,7 +369,7 @@ public class RanRoomGenEditor : Editor
                 break;
         }
 
-
+        #endregion
 
         if (mainScript.Started)
         {

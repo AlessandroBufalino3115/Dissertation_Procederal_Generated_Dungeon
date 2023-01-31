@@ -15,6 +15,8 @@ public class PCGManager : MonoBehaviour
 
     public BasicTile[][] gridArray2D = new BasicTile[1][];
 
+    public BasicTile[][] prevGridArray2D = new BasicTile[1][];
+
     private GameObject plane;
     public GameObject Plane
     {
@@ -31,11 +33,6 @@ public class PCGManager : MonoBehaviour
     [Tooltip("How tall the dungeon will be.")]
     [Range(3f, 8f)]
     public int RoomHeight = 6;
-
-
-    [Tooltip("How many floors will the dungeons have///THIS IS DISABLED")]
-    [Range(1f, 4f)]
-    public int DungeonFloors = 1;
 
 
     public enum MainAlgo
@@ -106,7 +103,6 @@ public class PCGManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(chunks.Count);
     }
 
 
@@ -158,13 +154,7 @@ public class PCGManager : MonoBehaviour
                 // this is where we add the other 8 things
 
             }
-
-
-
         }
-
-
-
     }
 
 
@@ -192,7 +182,36 @@ public class PCGManager : MonoBehaviour
     }
 
 
+    public void CreateBackUpGrid() 
+    {
+        prevGridArray2D = new BasicTile[gridArray2D.Length][];
+        for (int y = 0; y < gridArray2D.Length; y++)
+        {
+            prevGridArray2D[y] = new BasicTile[gridArray2D[0].Length];
+            for (int x = 0; x < gridArray2D[0].Length; x++)
+            {
+                prevGridArray2D[y][x] = new BasicTile(gridArray2D[y][x]);
+            }
+        }
+    }
 
+    public void LoadBackUpGrid() 
+    {
+
+        gridArray2D = new BasicTile[prevGridArray2D.Length][];
+        for (int y = 0; y < prevGridArray2D.Length; y++)
+        {
+            gridArray2D[y] = new BasicTile[prevGridArray2D[0].Length];
+            for (int x = 0; x < prevGridArray2D[0].Length; x++)
+            {
+                gridArray2D[y][x] = new BasicTile(prevGridArray2D[y][x]);
+            }
+        }
+
+
+
+        Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(gridArray2D, 0, 1, true);
+    }
 
 
     public void CreatePlane()
@@ -219,6 +238,7 @@ public class PCGManager : MonoBehaviour
                 gridArray2D[y][x].tileType = BasicTile.TileType.VOID;
             }
         }
+
     }
 
     public void RefreshPlane()
@@ -370,6 +390,7 @@ public class PCGManager : MonoBehaviour
     public void Restart()
     {
         AlgosUtils.RestartArr(gridArray2D);
+        CreateBackUpGrid();
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArray2D);
     }
 
@@ -398,7 +419,7 @@ public class PCGManager : MonoBehaviour
                             this.transform.GetChild(0);
 
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
-
+                            objRef.isStatic = true;
                             objRef.transform.position = new Vector3(x, z, y);
                             iter++;
                         }
@@ -418,7 +439,7 @@ public class PCGManager : MonoBehaviour
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 90, 0);
-
+                            objRef.isStatic = true;
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             iter++;
                         }
@@ -430,7 +451,7 @@ public class PCGManager : MonoBehaviour
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 90, 0);
-
+                                objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
                             }
@@ -446,7 +467,7 @@ public class PCGManager : MonoBehaviour
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 270, 0);
-
+                            objRef.isStatic = true;
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             iter++;
                         }
@@ -458,7 +479,7 @@ public class PCGManager : MonoBehaviour
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 270, 0);
-
+                                objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
 
@@ -475,8 +496,7 @@ public class PCGManager : MonoBehaviour
                             var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
                             objRef.transform.position = new Vector3(x, z, y);
-                            objRef.transform.name = "0";
-
+                            objRef.isStatic = true;
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                             objRef.transform.Rotate(0, 0, 0);
                             iter++;
@@ -488,10 +508,8 @@ public class PCGManager : MonoBehaviour
                                 var objRef = Instantiate(WallsTiles.Count > 1 ?      WallsTiles[RatioBasedChoice(WallsTiles)].Tile        : WallsTiles[0].Tile, this.transform);
 
                                 objRef.transform.position = new Vector3(x, z, y);
-                                objRef.transform.name = "0";
-
                                 objRef.transform.Rotate(0, 0, 0);
-
+                                objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
                                 iter++;
                             }
@@ -509,9 +527,8 @@ public class PCGManager : MonoBehaviour
 
                             objRef.transform.position = new Vector3(x, z, y);
                             objRef.transform.Rotate(0, 180, 0);
-
+                            objRef.isStatic = true;
                             objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
-                            objRef.transform.name = "180";
                             iter++;
                         }
                         else
@@ -522,8 +539,7 @@ public class PCGManager : MonoBehaviour
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 180, 0);
-                                objRef.transform.name = "180";
-
+                                objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
 
                                 iter++;
@@ -533,7 +549,6 @@ public class PCGManager : MonoBehaviour
                 }
             }
         }
-
     }
 
     private int RatioBasedChoice(List<TileRuleSetPCG> objects) 
@@ -562,17 +577,6 @@ public class PCGManager : MonoBehaviour
 
         return savedIdx;
     }
-
-    //public void CombineMeshes() 
-    //{
-    //    foreach (Transform child in transform)
-    //    {
-    //        if (child.GetComponent<CombineMeshes>()) 
-    //        {
-    //            child.GetComponent<CombineMeshes>().CombineChildrenMeshes();
-    //        }
-    //    }
-    //}
 
     public void ChunkCreate(int height, int width)
     {
@@ -625,12 +629,9 @@ public class PCGManager : MonoBehaviour
         for (int i = 0; i < chunks.Count; i++)
         {
             var objRef = new GameObject();
-           // objRef.AddComponent<CombineMeshes>();
-            //objRef.AddComponent<MeshFilter>();
-            //objRef.AddComponent<MeshRenderer>();
             objRef.transform.parent = this.transform;
             objRef.transform.name = i.ToString();
-
+            objRef.isStatic = true;
             chunks[i].mainParent = objRef;
 
             int widthChunk = chunks[i].topRight.x - chunks[i].bottomLeft.x;
@@ -646,8 +647,6 @@ public class PCGManager : MonoBehaviour
 
         }
     }
-
-
 }
 
 

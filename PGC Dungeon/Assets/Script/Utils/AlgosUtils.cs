@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
+using static Unity.VisualScripting.Metadata;
 
 
 public static class AlgosUtils
@@ -289,12 +290,10 @@ public static class AlgosUtils
         List<AStar_Node> openList = new List<AStar_Node>();
         List<AStar_Node> closedList = new List<AStar_Node>();
 
-
         AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
         start_node.parent = null;
 
         AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
-
 
         int[,] childPosArry = new int[0, 0];
 
@@ -325,7 +324,6 @@ public static class AlgosUtils
 
             if (currNode.refToBasicTile.position.x == end_node.refToBasicTile.position.x && currNode.refToBasicTile.position.y == end_node.refToBasicTile.position.y)
             {
-
                 List<AStar_Node> path = new List<AStar_Node>();
 
                 AStar_Node current = currNode;
@@ -341,7 +339,6 @@ public static class AlgosUtils
 
                 if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks_}</color>"); }
 
-
                 var pathOfBasicTiles = new List<BasicTile>();
 
                 foreach (var tile in path)
@@ -349,21 +346,17 @@ public static class AlgosUtils
                     pathOfBasicTiles.Add(tile.refToBasicTile);
                 }
 
-
                 var allVisiteBasicTiles = new List<BasicTile>();
                 foreach (var tile in openList)
                 {
                     allVisiteBasicTiles.Add(tile.refToBasicTile);
                 }
 
-
                 return new Tuple<List<BasicTile>, List<BasicTile>>(pathOfBasicTiles, allVisiteBasicTiles);
-
             }
             else
             {
                 List<AStar_Node> children = new List<AStar_Node>();
-
 
                 for (int i = 0; i < childPosArry.Length / 2; i++)
                 {
@@ -1678,8 +1671,29 @@ public static class AlgosUtils
 
     #region Voronoi
 
-    public static BasicTile[][] Voronoi2D(BasicTile[][] gridArray2D, List<Vector3> pointsArr)
+    public static BasicTile[][] Voronoi2D(BasicTile[][] gridArray2D, int numOfPoints)
     {
+        var pointsArr = new List<Vector2>();
+
+        int totalSize = gridArray2D.Length * gridArray2D[0].Length;
+
+        for (int i = 0; i < numOfPoints; i++)
+        {
+            int ran = Random.Range(0, totalSize);
+
+            var wantedCoor = new Vector2(ran / gridArray2D[0].Length, ran % gridArray2D[0].Length);
+
+            if (pointsArr.Contains(wantedCoor))
+            {
+                i--;
+            }
+            else
+            {
+                pointsArr.Add(wantedCoor);
+            }
+        }
+
+
         for (int y = 0; y < gridArray2D.Length; y++)
         {
             for (int x = 0; x < gridArray2D[y].Length; x++)
@@ -1706,13 +1720,66 @@ public static class AlgosUtils
                 }
 
                 gridArray2D[y][x].idx = closestIndex;
+            }
+        }
+
+        return GetBoundariesVoronoi(gridArray2D);
+    }
+
+
+    private static BasicTile[][] GetBoundariesVoronoi(BasicTile[][] gridArr2d) 
+    {
+        var childPosArry = GeneralUtil.childPosArry4Side;
+
+        for (int y = 0; y < gridArr2d.Length; y++)
+        {
+            for (int x = 0; x < gridArr2d[0].Length; x++)
+            {
+                int wantedIdx = gridArr2d[y][x].idx;
+
+                bool sameIdx = true;
+
+                for (int i = 0; i < childPosArry.Length / 2; i++)
+                {
+                    int x_buff = childPosArry[i, 0];
+                    int y_buff = childPosArry[i, 1];
+
+                    int[] node_position = { x + x_buff, y + y_buff };
+
+
+                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr2d[0].Length || node_position[1] >= gridArr2d.Length)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (gridArr2d[node_position[1]][node_position[0]].idx == wantedIdx) 
+                        {
+                        
+                        }
+                        else 
+                        {
+                            sameIdx = false;
+                            break;
+                        }
+                    }
+                }
+
+
+                if (sameIdx) 
+                {
+                    gridArr2d[y][x].tileWeight = 1;
+                }
+                else 
+                {
+                    gridArr2d[y][x].tileWeight = 0;
+                }
 
             }
         }
 
-        return gridArray2D;
+        return gridArr2d;
     }
-
 
     #endregion
 
@@ -2307,6 +2374,18 @@ public class BasicTile
 
     public TileType tileType = 0;
   
+    public BasicTile() { }
+    public BasicTile(BasicTile toCopy) 
+    {
+        this.color = toCopy.color;
+        this.tileType = toCopy.tileType;
+        this.position = toCopy.position;
+        this.cost = toCopy.cost;
+        this.idx = toCopy.idx;
+        this.visited = toCopy.visited;
+        this.tileWeight = toCopy.tileWeight;
+    }
+
 }
 
 

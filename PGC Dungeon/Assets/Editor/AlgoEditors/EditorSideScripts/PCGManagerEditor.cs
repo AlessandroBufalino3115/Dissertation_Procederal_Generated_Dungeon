@@ -28,10 +28,7 @@ public class PCGManagerEditor : Editor
         PCGManager mainScript = (PCGManager)target;
 
 
-        GUILayout.Space(30);
-
-
-
+        GeneralUtil.SpacesUILayout(4);
 
 
         GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
@@ -41,7 +38,9 @@ public class PCGManagerEditor : Editor
 
 
 
-        GUILayout.Space(30);
+        GeneralUtil.SpacesUILayout(4);
+
+
         if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
 
@@ -85,7 +84,11 @@ public class PCGManagerEditor : Editor
         }
 
 
-        GUILayout.Space(30);
+
+
+
+
+        GeneralUtil.SpacesUILayout(4);
 
 
         if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
@@ -141,10 +144,8 @@ public class PCGManagerEditor : Editor
 
         }
 
-        //scriptable objects public class
 
-
-        GUILayout.Space(30);
+        GeneralUtil.SpacesUILayout(4);
 
 
         if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
@@ -188,8 +189,12 @@ public class PCGManagerEditor : Editor
         }
 
 
+        GeneralUtil.SpacesUILayout(4);
 
-
+        if (GUILayout.Button(new GUIContent() { text = "Undo Step", tooltip = "" }))
+        {
+            mainScript.LoadBackUpGrid();
+        }
         if (GUILayout.Button(new GUIContent() { text = "test test", tooltip = "" }))
         {
             //mainScript.CombineMeshes();

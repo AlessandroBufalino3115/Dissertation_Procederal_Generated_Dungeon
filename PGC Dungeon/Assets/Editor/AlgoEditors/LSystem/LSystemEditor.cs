@@ -6,12 +6,45 @@ using UnityEditor;
 
 public class LSystemEditor : Editor
 {
+    bool showRules = false;
+
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
         NewLSystem ruleDec = (NewLSystem)target;
+
+
+        #region explanation
+
+
+        GeneralUtil.SpacesUILayout(4);
+
+        showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+
+        if (showRules)
+        {
+            GUILayout.TextArea("You have choosen l system");
+
+        }
+
+        if (!Selection.activeTransform)
+        {
+            showRules = false;
+        }
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+
+
+        GeneralUtil.SpacesUILayout(4);
+
+
+        #endregion
+
+
+
 
 
         if (GUILayout.Button("New rule Set"))
