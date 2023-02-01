@@ -26,6 +26,8 @@
  *          
  *          when we skip the path gen because of one room the walls dont get generated therefore the fll gen doesnt work
  *          
+ *          issues with the chunk
+ *          
  *          
  *      
  *      vvvvvv MID PRIORITY vvvvvv

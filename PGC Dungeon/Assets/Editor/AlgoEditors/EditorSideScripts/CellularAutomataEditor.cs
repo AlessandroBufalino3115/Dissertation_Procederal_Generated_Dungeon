@@ -40,7 +40,5 @@ public class CellularAutomataEditor : Editor
 
 
         GeneralUtil.SpacesUILayout(4);
-
-        GeneralUtil.SpacesUILayout(4);
     }
 }

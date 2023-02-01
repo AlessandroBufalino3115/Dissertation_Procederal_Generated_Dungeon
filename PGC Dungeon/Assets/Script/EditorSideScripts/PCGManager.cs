@@ -26,6 +26,7 @@ public class PCGManager : MonoBehaviour
     [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
     [Range(40f, 650f)]
     public int width = 50;
+
     [Tooltip("How tall the drawing canvas where the algorithms will take place will be")]
     [Range(40f, 650f)]
     public int height = 50;
@@ -48,6 +49,7 @@ public class PCGManager : MonoBehaviour
         PERLIN_WORM = 8,
         DIAMOND_SQUARE = 9
     }
+
 
     [Space(30)]
     [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
@@ -91,6 +93,11 @@ public class PCGManager : MonoBehaviour
         get { return chunkHeight; }
         set { chunkHeight = value; }
     }
+    [HideInInspector]
+    public int CLength;
+    [HideInInspector]
+    public int CHeight;
+
 
 
 
@@ -110,24 +117,14 @@ public class PCGManager : MonoBehaviour
     {
         if (chunks.Count > 0) 
         {
-            Debug.Log($"Getting calledd");
-
-
-            CheckChunkRender();
+            //CheckChunkRender();
         }
     }
 
     //to change
     private void CheckChunkRender() 
     {
-
-        int length = gridArray2D[0].Length / chunkWidth;
-        int width = gridArray2D.Length / chunkHeight;
-
         var indexesToDraw = new HashSet<int>();
-
-       
-
 
 
         foreach (var player in player)
@@ -149,11 +146,47 @@ public class PCGManager : MonoBehaviour
             }
             else
             {
+
+                //  var wantedCoor = new Vector2(ran / gridArray2D[0].Length, ran % gridArray2D[0].Length);
                 indexesToDraw.Add(collidedIndex);
 
+                indexesToDraw.Add(collidedIndex-1);  //left
+                indexesToDraw.Add(collidedIndex+1);  //right
+
+                indexesToDraw.Add(collidedIndex + CLength);  //up 
+                indexesToDraw.Add(collidedIndex - CLength);  //down
+
+                indexesToDraw.Add(collidedIndex + CLength - 1);  
+                indexesToDraw.Add(collidedIndex - CLength + 1); 
+                indexesToDraw.Add(collidedIndex + CLength + 1);   
+                indexesToDraw.Add(collidedIndex - CLength - 1);  
+
+                //i have the 1 d index
                 // this is where we add the other 8 things
 
             }
+        }
+
+
+        foreach (var tiles in indexesToDraw)
+        {
+            Debug.Log(tiles);
+        }
+
+
+        Debug.Log("\n\n\n\n");
+
+        foreach (var chunk in chunks)
+        {
+            //if (indexesToDraw.Contains(chunk.index)) 
+            //{
+            //    chunk.mainParent.SetActive(true);
+            //}
+            //else
+            //{
+            //    Debug.Log($"adadada");
+            //    chunk.mainParent.SetActive(false);
+            //}
         }
     }
 
@@ -646,6 +679,13 @@ public class PCGManager : MonoBehaviour
             }
 
         }
+
+
+        CLength = gridArray2D[0].Length / chunkWidth;
+        CHeight = gridArray2D.Length / chunkWidth;
+
+
+
     }
 }
 
