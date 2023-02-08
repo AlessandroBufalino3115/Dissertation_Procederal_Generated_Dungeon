@@ -117,7 +117,7 @@ public class PCGManager : MonoBehaviour
     {
         if (chunks.Count > 0) 
         {
-            //CheckChunkRender();
+            CheckChunkRender();
         }
     }
 
@@ -142,51 +142,74 @@ public class PCGManager : MonoBehaviour
 
             if (collidedIndex == -1)
             {
-                Debug.Log($"The plyaer is out of bounds");
+                Debug.Log($"The player is out of bounds");
             }
             else
             {
 
                 //  var wantedCoor = new Vector2(ran / gridArray2D[0].Length, ran % gridArray2D[0].Length);
+                //indexesToDraw.Add(collidedIndex);
+
+                //indexesToDraw.Add(collidedIndex-1);  //left
+                //indexesToDraw.Add(collidedIndex+1);  //right
+
+                //indexesToDraw.Add(collidedIndex + CLength);  //up 
+                //indexesToDraw.Add(collidedIndex - CLength);  //down
+
+                //indexesToDraw.Add(collidedIndex + CLength - 1);  
+                //indexesToDraw.Add(collidedIndex - CLength + 1); 
+                //indexesToDraw.Add(collidedIndex + CLength + 1);   
+                //indexesToDraw.Add(collidedIndex - CLength - 1);
+
+
+
+                Debug.Log(collidedIndex);
+                Debug.Log(CLength);
+                Debug.Log("\n\n\n\n\n");
                 indexesToDraw.Add(collidedIndex);
 
-                indexesToDraw.Add(collidedIndex-1);  //left
-                indexesToDraw.Add(collidedIndex+1);  //right
 
-                indexesToDraw.Add(collidedIndex + CLength);  //up 
-                indexesToDraw.Add(collidedIndex - CLength);  //down
+                if (collidedIndex - 1 > 0)
+                    indexesToDraw.Add(collidedIndex - 1);  //left
 
-                indexesToDraw.Add(collidedIndex + CLength - 1);  
-                indexesToDraw.Add(collidedIndex - CLength + 1); 
-                indexesToDraw.Add(collidedIndex + CLength + 1);   
-                indexesToDraw.Add(collidedIndex - CLength - 1);  
+                if (collidedIndex + 1 < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + 1);  //right
 
-                //i have the 1 d index
-                // this is where we add the other 8 things
+
+                if (collidedIndex + CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength);  //up 
+
+                if (collidedIndex - CLength > 0)
+                    indexesToDraw.Add(collidedIndex - CLength);  //down
+
+                if (collidedIndex + CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength);
+                if (collidedIndex - CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex - CLength);
+
+
+                if (collidedIndex - CLength + 1 > 0)
+                    indexesToDraw.Add(collidedIndex - CLength + 1);
+                if (collidedIndex + CLength - 1 > 0)
+                    indexesToDraw.Add(collidedIndex + CLength - 1);
+                if (collidedIndex + CLength + 1 < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength + 1);
+                if (collidedIndex - CLength - 1 > 0)
+                    indexesToDraw.Add(collidedIndex - CLength - 1);
 
             }
         }
 
-
-        foreach (var tiles in indexesToDraw)
-        {
-            Debug.Log(tiles);
-        }
-
-
-        Debug.Log("\n\n\n\n");
-
         foreach (var chunk in chunks)
         {
-            //if (indexesToDraw.Contains(chunk.index)) 
-            //{
-            //    chunk.mainParent.SetActive(true);
-            //}
-            //else
-            //{
-            //    Debug.Log($"adadada");
-            //    chunk.mainParent.SetActive(false);
-            //}
+            if (indexesToDraw.Contains(chunk.index))
+            {
+                chunk.mainParent.SetActive(true);
+            }
+            else
+            {
+                chunk.mainParent.SetActive(false);
+            }
         }
     }
 
@@ -621,8 +644,9 @@ public class PCGManager : MonoBehaviour
         Vector2Int TRhead = Vector2Int.zero;
 
         int correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
-
         TRhead = new Vector2Int(0, TRhead.y + correctHeight);
+
+        int timerCheck = 0;
 
         chunks = new List<Chunk>();
         while (true)
@@ -640,10 +664,12 @@ public class PCGManager : MonoBehaviour
                 correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
 
                 TRhead = new Vector2Int(0, TRhead.y + correctHeight + 1);
-
+                timerCheck = 0;
             }
             else
             {
+                timerCheck++;
+                Debug.Log(timerCheck);
                 int correctWidth = (maxWidth - 1) - TRhead.x >= width ? width : (maxWidth - 1) - TRhead.x;
 
                 TRhead = new Vector2Int(TRhead.x + correctWidth + 1, TRhead.y);
@@ -680,9 +706,10 @@ public class PCGManager : MonoBehaviour
 
         }
 
+   
+        
 
-        CLength = gridArray2D[0].Length / chunkWidth;
-        CHeight = gridArray2D.Length / chunkWidth;
+        CLength = timerCheck;
 
 
 

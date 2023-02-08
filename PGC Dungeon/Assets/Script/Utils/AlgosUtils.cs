@@ -21,14 +21,12 @@ public static class AlgosUtils
 {1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 8, 3, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-{9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, //
-
+{9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
 {2, 8, 3, 2, 10, 8, 10, 9, 8, -1, -1, -1, -1, -1, -1, -1},
-
 {3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 11, 2, 8, 11, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {1, 9, 0, 2, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-{1, 11, 2, 1, 9, 11, 9, 8, 11, -1, -1, -1, -1, -1, -1, -1},   //
+{1, 11, 2, 1, 9, 11, 9, 8, 11, -1, -1, -1, -1, -1, -1, -1},  
 {3, 10, 1, 11, 10, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 10, 1, 0, 8, 10, 8, 11, 10, -1, -1, -1, -1, -1, -1, -1},
 {3, 9, 0, 3, 11, 9, 11, 10, 9, -1, -1, -1, -1, -1, -1, -1},
@@ -38,7 +36,6 @@ public static class AlgosUtils
 {0, 1, 9, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {4, 1, 9, 4, 7, 1, 7, 3, 1, -1, -1, -1, -1, -1, -1, -1},
 {1, 2, 10, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-
 {3, 4, 7, 3, 0, 4, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1},
 {9, 2, 10, 9, 0, 2, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1},
 {2, 10, 9, 2, 9, 7, 2, 7, 3, 7, 9, 4, -1, -1, -1, -1},
@@ -890,7 +887,6 @@ public static class AlgosUtils
 
     public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, bool threshBool)
     {
-
         var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale, octaves, persistance, lacu, offsetX, offsetY);
 
         int width = noiseMap.GetLength(0);
@@ -1591,7 +1587,7 @@ public static class AlgosUtils
     //not working
     #region DiamondSquare algo
 
-    public static void DiamondSquare(int maxHeight, int minHeight, float roughness, BasicTile[][] gridArr)
+    public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, BasicTile[][] gridArr)
     {
 
         int timerStart = GeneralUtil.PerfTimer(true);
@@ -1605,8 +1601,7 @@ public static class AlgosUtils
         //need to check for 2n + 1
         if (gridArr.Length != gridArr[0].Length || gridArr[0].Length % 2 == 0)
         {
-            GeneralUitlInstance.instance.SpawnMessagePrefab("This size is not good soz", false);
-            return;
+            return false;
         }
         else
         {
@@ -1662,7 +1657,7 @@ public static class AlgosUtils
 
 
         var end = GeneralUtil.PerfTimer(false, timerStart);
-
+        return true;
 
     }
 
@@ -1990,8 +1985,6 @@ public static class AlgosUtils
 
 
     #region Type and Utility section
-
-
 
     public static void SetUpTileCorridorTypesUI(BasicTile[][] gridArr, int width) 
     {
