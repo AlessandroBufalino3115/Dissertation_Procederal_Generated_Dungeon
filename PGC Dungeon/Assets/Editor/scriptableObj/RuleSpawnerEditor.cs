@@ -1,31 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class RuleSpawnerEditor : Editor
 {
 
+   
+
     //https://hugecalf-studios.github.io/unity-lessons/lessons/editor/menuitem/
     [MenuItem("PCG Algorithms/Spawn WFC Rule", priority = 24)]
     private static void SpawnWFCRule() 
     {
-        var GVcont = ScriptableObject.CreateInstance<GraphViewDataCont>();
+        var asset = CreateInstance<GraphViewDataCont>();
 
-        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+        CheckResourceFolder();
+        CheckMainAlgoFolder();
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/WFC_Rule_Sets"))
         {
-            AssetDatabase.CreateFolder("Assets", "Resources");
+            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "WFC_Rule_Sets");
             AssetDatabase.Refresh();
         }
 
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/WFC RuleSets"))
-        {
-            AssetDatabase.CreateFolder("Assets/Resources", "WFC RuleSets");
-            AssetDatabase.Refresh();
-        }
-
-        AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WFC RuleSets/NewWFCRuleSet.asset");
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/WFC_Rule_Sets/NewWFCRuleSet.asset");
         AssetDatabase.SaveAssets();
     }
 
@@ -34,21 +33,19 @@ public class RuleSpawnerEditor : Editor
     [MenuItem("PCG Algorithms/Spawn L-System Rule", priority = 25)]
     private static void SpawnLSystemRule()
     {
-        var ruleSet = ScriptableObject.CreateInstance<LSystemRuleObj>();
+        var asset = CreateInstance<LSystemRuleObj>();
 
-        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+
+        CheckResourceFolder();
+        CheckMainAlgoFolder();
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
         {
-            AssetDatabase.CreateFolder("Assets", "Resources");
+            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
             AssetDatabase.Refresh();
         }
 
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/L-systemRuleSets"))
-        {
-            AssetDatabase.CreateFolder("Assets/Resources", "L-systemRuleSets");
-            AssetDatabase.Refresh();
-        }
-
-        AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/L-systemRuleSets/NewLSystemRuleSet.asset");
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/NewLSystemRuleSet.asset");
         AssetDatabase.SaveAssets();
     }
 
@@ -58,21 +55,19 @@ public class RuleSpawnerEditor : Editor
     [MenuItem("PCG Algorithms/Spawn Weight Rule", priority = 26)]
     private static void SpawnWeightRule()
     {
-        var GVcont = ScriptableObject.CreateInstance<WeightRuleSet>();
+        var asset = CreateInstance<WeightRuleSet>();
 
-        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+
+        CheckResourceFolder();
+        CheckMainAlgoFolder();
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
         {
-            AssetDatabase.CreateFolder("Assets", "Resources");
+            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
             AssetDatabase.Refresh();
         }
 
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/WeightPathfindingRuleSet"))
-        {
-            AssetDatabase.CreateFolder("Assets/Resources", "WeightPathfindingRuleSet");
-            AssetDatabase.Refresh();
-        }
-
-        AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WeightPathfindingRuleSet/NewWeightRuleSet.asset");
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
         AssetDatabase.SaveAssets();
     }
 
@@ -82,23 +77,42 @@ public class RuleSpawnerEditor : Editor
     [MenuItem("PCG Algorithms/Spawn TileSet Rule", priority = 27)]
     private static void SpawnTileSetRule()
     {
-        var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
+        var asset = CreateInstance<TilesRuleSet>();
 
+        CheckResourceFolder();
+        CheckMainAlgoFolder();
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
+            AssetDatabase.Refresh();
+        }
+
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
+        AssetDatabase.SaveAssets();
+    }
+
+
+    //Resources_Algorithms
+
+
+
+    private static void CheckResourceFolder() 
+    {
         if (!AssetDatabase.IsValidFolder("Assets/Resources"))
         {
             AssetDatabase.CreateFolder("Assets", "Resources");
             AssetDatabase.Refresh();
         }
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Tile_Sets_Ruleset"))
-        {
-            AssetDatabase.CreateFolder("Assets/Resources", "Tile_Sets_Ruleset");
-            AssetDatabase.Refresh();
-        }
-
-        AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
-        AssetDatabase.SaveAssets();
     }
 
+    private static void CheckMainAlgoFolder()
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+            AssetDatabase.Refresh();
+        }
+    }
 
 }

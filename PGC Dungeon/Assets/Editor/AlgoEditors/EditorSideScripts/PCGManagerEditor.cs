@@ -1,9 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 
@@ -93,8 +90,7 @@ public class PCGManagerEditor : Editor
 
         if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
         {
-
-            var GVcont = ScriptableObject.CreateInstance<TilesRuleSet>();
+            var asset = CreateInstance<TilesRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -102,13 +98,19 @@ public class PCGManagerEditor : Editor
                 AssetDatabase.Refresh();
             }
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Tile_Sets_Ruleset"))
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
             {
-                AssetDatabase.CreateFolder("Assets/Resources", "Tile_Sets_Ruleset");
+                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
                 AssetDatabase.Refresh();
             }
 
-            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/Tile_Sets_Ruleset/{mainScript.TileSetRuleFileName}.asset");
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
             AssetDatabase.SaveAssets();
 
         }
@@ -119,7 +121,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
         {
 
-            var tileRules = Resources.Load<TilesRuleSet>("Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
+            var tileRules = Resources.Load<TilesRuleSet>("Resources_Algorithms/Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 
             mainScript.WallsTiles.Clear();
             mainScript.FloorTiles.Clear();
@@ -151,7 +153,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
         {
             
-            var GVcont = ScriptableObject.CreateInstance<WeightRuleSet>();
+            var asset = ScriptableObject.CreateInstance<WeightRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -159,13 +161,19 @@ public class PCGManagerEditor : Editor
                 AssetDatabase.Refresh();
             }
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/WeightPathfindingRuleSet"))
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
             {
-                AssetDatabase.CreateFolder("Assets/Resources", "WeightPathfindingRuleSet");
+                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
                 AssetDatabase.Refresh();
             }
 
-            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WeightPathfindingRuleSet/NewWeightRuleSet.asset");
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
             AssetDatabase.SaveAssets();
 
         }
@@ -176,7 +184,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
         {
 
-            var tileRules = Resources.Load<WeightRuleSet>("WeightPathfindingRuleSet/" + mainScript.WeightRuleFileName);
+            var tileRules = Resources.Load<WeightRuleSet>("Resources_Algorithms/Weight_Pathfinding_RuleSet/" + mainScript.WeightRuleFileName);
 
             mainScript.tileCosts = new float[6];
 
@@ -195,7 +203,7 @@ public class PCGManagerEditor : Editor
         {
             mainScript.LoadBackUpGrid();
         }
-        if (GUILayout.Button(new GUIContent() { text = "test test", tooltip = "" }))
+        if (GUILayout.Button(new GUIContent() { text = "this button is for tests", tooltip = "" }))
         {
             //mainScript.CombineMeshes();
         }

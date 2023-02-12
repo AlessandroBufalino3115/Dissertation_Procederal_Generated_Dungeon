@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.VersionControl;
 
 [CustomEditor(typeof(NewLSystem))]
 
@@ -49,7 +50,7 @@ public class LSystemEditor : Editor
 
         if (GUILayout.Button("New rule Set"))
         {
-            var ruleSet = ScriptableObject.CreateInstance<LSystemRuleObj>();
+            var asset = ScriptableObject.CreateInstance<LSystemRuleObj>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
@@ -57,20 +58,27 @@ public class LSystemEditor : Editor
                 AssetDatabase.Refresh();
             }
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/L-systemRuleSets"))
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
             {
-                AssetDatabase.CreateFolder("Assets/Resources", "L-systemRuleSets");
+                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
                 AssetDatabase.Refresh();
             }
 
-            AssetDatabase.CreateAsset(ruleSet, $"Assets/Resources/L-systemRuleSets/{ruleDec.fileName}.asset");
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/{ruleDec.fileName}.asset");
             AssetDatabase.SaveAssets();
         }
 
 
         if (GUILayout.Button("Load Rule Set"))
         {
-            var ruleSet = Resources.Load<LSystemRuleObj>("L-systemRuleSets/" +ruleDec.fileName);
+            var ruleSet = Resources.Load<LSystemRuleObj>("Resources_Algorithms/L-systemRuleSets/" + ruleDec.fileName);
 
             ruleDec.A_dist = ruleSet.A_Length;
             ruleDec.B_dist = ruleSet.B_Length;

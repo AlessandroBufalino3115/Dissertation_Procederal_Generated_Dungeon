@@ -13,6 +13,7 @@ namespace DS.Windows
     using System;
     using System.IO;
     using System.Linq;
+    using UnityEditor.VersionControl;
     using static System.Runtime.CompilerServices.RuntimeHelpers;
 
     public class DSGraphView : GraphView
@@ -349,7 +350,7 @@ namespace DS.Windows
 
         public void LoadGraph(string filename)
         {
-            graphViewCont = Resources.Load<GraphViewDataCont>("WFC RuleSets/" + filename);
+            graphViewCont = Resources.Load<GraphViewDataCont>("Resources_Algorithms/WFC_Rule_Sets/" + filename);
 
             if (graphViewCont == null) { return; }
 
@@ -520,22 +521,27 @@ namespace DS.Windows
             }
 
 
+
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {
                 AssetDatabase.CreateFolder("Assets", "Resources");
                 AssetDatabase.Refresh();
             }
 
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/WFC RuleSets"))
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
             {
-                AssetDatabase.CreateFolder("Assets/Resources", "WFC RuleSets");
+                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
                 AssetDatabase.Refresh();
             }
 
-            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/WFC RuleSets/{filename}.asset");
-            AssetDatabase.SaveAssets();
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
+                AssetDatabase.Refresh();
+            }
 
+            AssetDatabase.CreateAsset(GVcont, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/{filename}.asset");
+            AssetDatabase.SaveAssets();
 
         }
 

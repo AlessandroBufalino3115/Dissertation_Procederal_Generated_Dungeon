@@ -55,6 +55,8 @@
  *          look into different textures for the marching cubes    
  *   
  *          Add gizmos to the scene to show each room detail IDK  
+ *          
+ *          check on empty strings when loading stuff
  *   
  *   
  *   

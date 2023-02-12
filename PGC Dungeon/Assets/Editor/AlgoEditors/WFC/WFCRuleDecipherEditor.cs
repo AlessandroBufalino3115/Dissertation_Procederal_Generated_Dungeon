@@ -117,7 +117,7 @@ public class WFCRuleDecipherEditor : Editor
 
             ruleDec.ruleSet.Clear();
 
-            var graphViewCont = Resources.Load<GraphViewDataCont>("WFC RuleSets/" + ruleDec.ruleSetFileName);
+            var graphViewCont = Resources.Load<GraphViewDataCont>("Resources_Algorithms/WFC_Rule_Sets/" + ruleDec.ruleSetFileName);
 
 
 
