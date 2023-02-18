@@ -10,7 +10,7 @@ public class VoronoiEditor : Editor
 {
     int vorPoints = 5;
     int minSize = 0;
-    List<List<BasicTile>> rooms = new List<List<BasicTile>>();
+    List<List<Tile>> rooms = new List<List<Tile>>();
 
     bool pathType = false;
 
@@ -120,7 +120,7 @@ public class VoronoiEditor : Editor
                                 foreach (var tile in rooms[i])
                                 {
                                     tile.tileWeight = 0;
-                                    tile.tileType = BasicTile.TileType.VOID;
+                                    tile.tileType = Tile.TileType.VOID;
                                 }
 
                                 rooms.RemoveAt(i);
@@ -215,8 +215,8 @@ public class VoronoiEditor : Editor
 
                             foreach (var tile in path.Item1)
                             {
-                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                 tile.tileWeight = 0.75f;
                             }
@@ -230,8 +230,8 @@ public class VoronoiEditor : Editor
 
                             foreach (var tile in pathD)
                             {
-                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                 tile.tileWeight = 0.75f;
                             }
@@ -263,8 +263,8 @@ public class VoronoiEditor : Editor
 
                                 foreach (var tile in pathB.Item1)
                                 {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    if (tile.tileType != Tile.TileType.FLOORROOM)
+                                        tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                     tile.tileWeight = 0.75f;
                                 }
@@ -276,8 +276,8 @@ public class VoronoiEditor : Editor
 
                                 foreach (var tile in pathB)
                                 {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    if (tile.tileType != Tile.TileType.FLOORROOM)
+                                        tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                     tile.tileWeight = 0.75f;
                                 }
@@ -309,8 +309,8 @@ public class VoronoiEditor : Editor
 
                                     foreach (var tile in pathB.Item1)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -324,8 +324,8 @@ public class VoronoiEditor : Editor
 
                                     foreach (var tile in pathB)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -342,8 +342,8 @@ public class VoronoiEditor : Editor
 
                                 foreach (var tile in pathB.Item1)
                                 {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    if (tile.tileType != Tile.TileType.FLOORROOM)
+                                        tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                     tile.tileWeight = 0.75f;
                                 }
@@ -355,8 +355,8 @@ public class VoronoiEditor : Editor
 
                                 foreach (var tile in pathB)
                                 {
-                                    if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                        tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    if (tile.tileType != Tile.TileType.FLOORROOM)
+                                        tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                     tile.tileWeight = 0.75f;
                                 }
@@ -474,7 +474,7 @@ public class VoronoiEditor : Editor
 
                         rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                         var centerPoints = new List<Vector2>();
-                        var roomDict = new Dictionary<Vector2, List<BasicTile>>();
+                        var roomDict = new Dictionary<Vector2, List<Tile>>();
                         foreach (var room in rooms)
                         {
                             roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
@@ -581,8 +581,8 @@ public class VoronoiEditor : Editor
 
                                     foreach (var tile in path.Item1)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -599,8 +599,8 @@ public class VoronoiEditor : Editor
 
                                     foreach (var tile in path)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -637,8 +637,8 @@ public class VoronoiEditor : Editor
 
                                         foreach (var tile in path.Item1)
                                         {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                            if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                             tile.tileWeight = 0.75f;
                                         }
@@ -649,8 +649,8 @@ public class VoronoiEditor : Editor
 
                                         foreach (var tile in path)
                                         {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                            if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                             tile.tileWeight = 0.75f;
                                         }
@@ -682,8 +682,8 @@ public class VoronoiEditor : Editor
 
                                             foreach (var tile in path.Item1)
                                             {
-                                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                                 tile.tileWeight = 0.75f;
                                             }
@@ -697,8 +697,8 @@ public class VoronoiEditor : Editor
 
                                             foreach (var tile in path)
                                             {
-                                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                                 tile.tileWeight = 0.75f;
                                             }
@@ -714,8 +714,8 @@ public class VoronoiEditor : Editor
 
                                         foreach (var tile in path.Item1)
                                         {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                            if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                             tile.tileWeight = 0.75f;
                                         }
@@ -726,8 +726,8 @@ public class VoronoiEditor : Editor
 
                                         foreach (var tile in path)
                                         {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                            if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                             tile.tileWeight = 0.75f;
                                         }
@@ -789,9 +789,9 @@ public class VoronoiEditor : Editor
                         {
                             for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                             {
-                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                                 {
-                                    mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                                 }
                             }
                         }

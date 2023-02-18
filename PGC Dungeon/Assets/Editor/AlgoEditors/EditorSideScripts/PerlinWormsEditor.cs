@@ -89,11 +89,11 @@ public class PerlinWormsEditor : Editor
                 {
                     for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                     {
-                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                         {
-                            mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                            mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                         }
-                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
                         {
                         }
                     }

@@ -50,7 +50,7 @@ public class LSystemEditor : Editor
 
         if (GUILayout.Button("New rule Set"))
         {
-            var asset = ScriptableObject.CreateInstance<LSystemRuleObj>();
+            var asset = CreateInstance<LSystemRuleObj>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
             {

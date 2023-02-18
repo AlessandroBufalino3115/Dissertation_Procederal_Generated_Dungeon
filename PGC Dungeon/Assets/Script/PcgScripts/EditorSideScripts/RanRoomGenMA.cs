@@ -95,7 +95,7 @@ public class RanRoomGenMA : MonoBehaviour
     }
 
 
-    public List<List<BasicTile>> rooms = new List<List<BasicTile>>();
+    public List<List<Tile>> rooms = new List<List<Tile>>();
     public List<Edge> edges = new List<Edge>();
 
 
@@ -133,14 +133,14 @@ public class RanRoomGenMA : MonoBehaviour
     /// from the remaining rooms set up the weights
     /// </summary>
     /// <param name="gridArr"></param>
-    public void SetUpWeights(BasicTile[][] gridArr)
+    public void SetUpWeights(Tile[][] gridArr)
     {
         foreach (var room in roomList)
         {
             for (int i = 0; i < room.tileCoords.Count; i++)
             {
                 gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileWeight = 1;
-                gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileType = BasicTile.TileType.FLOORROOM;
+                gridArr[room.tileCoords[i].y][room.tileCoords[i].x].tileType = Tile.TileType.FLOORROOM;
             }
         }
     }
@@ -152,7 +152,7 @@ public class RanRoomGenMA : MonoBehaviour
 
     #region Random Room Gen
 
-    public void RandomRoomGen(BasicTile[][] gridArray2D)
+    public void RandomRoomGen(Tile[][] gridArray2D)
     {
         int tries = numOfRoom * 4;
 
@@ -291,7 +291,7 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-    public void BPSRoomGen(BasicTile[][] gridArray2D,bool solve = true)
+    public void BPSRoomGen(Tile[][] gridArray2D,bool solve = true)
     {
         BoundsInt map = new BoundsInt();
 
@@ -465,7 +465,7 @@ public class RanRoomGenMA : MonoBehaviour
         foreach (var room in roomsListBPSAlgo)
         {
 
-            var gridArrRoom = new BasicTile[0][];
+            var gridArrRoom = new Tile[0][];
 
             if (usingCA)
             {

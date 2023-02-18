@@ -8,16 +8,16 @@ using Random = UnityEngine.Random;
 
 public class PCGManager : MonoBehaviour
 {
-    public Dictionary<BasicTile.TileType, float> tileTypeToCostDict = new Dictionary<BasicTile.TileType, float>();
+    public Dictionary<Tile.TileType, float> tileTypeToCostDict = new Dictionary<Tile.TileType, float>();
 
     [Tooltip("Test material given to draw the mesh generated variant of the outcome")]
     public Material mat;
 
-    public BasicTile[][] gridArray2D = new BasicTile[1][];
+    public Tile[][] gridArray2D = new Tile[1][];
 
     //public BasicTile[][] prevGridArray2D = new BasicTile[1][];
 
-    public List<BasicTile[][]> prevGridArray2D = new List<BasicTile[][]>();
+    public List<Tile[][]> prevGridArray2D = new List<Tile[][]>();
     private int maxBackUps = 3;
 
 
@@ -51,7 +51,8 @@ public class PCGManager : MonoBehaviour
         WFC = 6,
         PERLIN_NOISE = 7,
         PERLIN_WORM = 8,
-        DIAMOND_SQUARE = 9
+        DIAMOND_SQUARE = 9,
+        LOAD_PREVIOUS_GEN = 10
     }
 
 
@@ -124,13 +125,13 @@ public class PCGManager : MonoBehaviour
     #region undo Button
     public void CreateBackUpGrid() 
     {
-        var prevGridArray2Dstack = new BasicTile[gridArray2D.Length][];
+        var prevGridArray2Dstack = new Tile[gridArray2D.Length][];
         for (int y = 0; y < gridArray2D.Length; y++)
         {
-            prevGridArray2Dstack[y] = new BasicTile[gridArray2D[0].Length];
+            prevGridArray2Dstack[y] = new Tile[gridArray2D[0].Length];
             for (int x = 0; x < gridArray2D[0].Length; x++)
             {
-                prevGridArray2Dstack[y][x] = new BasicTile(gridArray2D[y][x]);
+                prevGridArray2Dstack[y][x] = new Tile(gridArray2D[y][x]);
             }
         }
         prevGridArray2D.Add(prevGridArray2Dstack);
@@ -146,13 +147,13 @@ public class PCGManager : MonoBehaviour
 
         var prevGridArray2DList = prevGridArray2D[prevGridArray2D.Count -1];
 
-        gridArray2D = new BasicTile[prevGridArray2DList.Length][];
+        gridArray2D = new Tile[prevGridArray2DList.Length][];
         for (int y = 0; y < prevGridArray2DList.Length; y++)
         {
-            gridArray2D[y] = new BasicTile[prevGridArray2DList[0].Length];
+            gridArray2D[y] = new Tile[prevGridArray2DList[0].Length];
             for (int x = 0; x < prevGridArray2DList[0].Length; x++)
             {
-                gridArray2D[y][x] = new BasicTile(prevGridArray2DList[y][x]);
+                gridArray2D[y][x] = new Tile(prevGridArray2DList[y][x]);
             }
         }
 
@@ -160,16 +161,11 @@ public class PCGManager : MonoBehaviour
 
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(gridArray2D, 0, 1, true);
 
-
         return true;
     }
 
 
     public void ClearUndos() => prevGridArray2D.Clear();
-
-
-
-
 
 
     #endregion
@@ -187,17 +183,17 @@ public class PCGManager : MonoBehaviour
 
         plane.transform.localScale = new Vector3(width / 4, 1, height / 4);
 
-        gridArray2D = new BasicTile[height][];
+        gridArray2D = new Tile[height][];
 
         for (int y = 0; y < height; y++)
         {
-            gridArray2D[y] = new BasicTile[width];
+            gridArray2D[y] = new Tile[width];
 
             for (int x = 0; x < width; x++)
             {
-                gridArray2D[y][x] = new BasicTile();
+                gridArray2D[y][x] = new Tile();
                 gridArray2D[y][x].position = new Vector2Int(x, y);
-                gridArray2D[y][x].tileType = BasicTile.TileType.VOID;
+                gridArray2D[y][x].tileType = Tile.TileType.VOID;
             }
         }
 
@@ -272,9 +268,14 @@ public class PCGManager : MonoBehaviour
             var comp = this.transform.AddComponent<DiamondSquareMA>();
             comp.InspectorAwake();
         }
+        else if ((int)mainAlgo == 10)
+        {
+            var comp = this.transform.AddComponent<LoadMapMA>();
+            comp.InspectorAwake();
+        }
         else
         {
-            Debug.Log($"There was a n issue with this setting");
+            Debug.Log($"There was an issue with this setting");
         }
 
 
@@ -321,14 +322,16 @@ public class PCGManager : MonoBehaviour
             case 9:
                 DestroyImmediate(this.transform.GetComponent<DiamondSquareMA>());
                 break;
-
+            case 10:
+                DestroyImmediate(this.transform.GetComponent<LoadMapMA>());
+                break;
 
             default:
                 break;
         }
 
 
-        currMainAlgoIDX = 10;
+        currMainAlgoIDX = 11;
 
     }
 
@@ -577,7 +580,7 @@ public class PCGManager : MonoBehaviour
                 {  
                     if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                     {
-                        if (gridArray2D[y][x].tileType != BasicTile.TileType.VOID)
+                        if (gridArray2D[y][x].tileType != Tile.TileType.VOID)
                         {
                             var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[RatioBasedChoice(FloorTiles)].Tile : FloorTiles[0].Tile, this.transform);
                             this.transform.GetChild(0);
@@ -589,7 +592,7 @@ public class PCGManager : MonoBehaviour
                         }
                     }
 
-                    if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL)
+                    if (gridArray2D[y][x].tileType == Tile.TileType.WALL)
                     {
                         var checkVector = new Vector2Int(x, y);
 
@@ -609,7 +612,7 @@ public class PCGManager : MonoBehaviour
                         }
                         else
                         {
-                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == Tile.TileType.VOID)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -637,7 +640,7 @@ public class PCGManager : MonoBehaviour
                         }
                         else
                         {
-                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == Tile.TileType.VOID)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -667,7 +670,7 @@ public class PCGManager : MonoBehaviour
                         }
                         else
                         {
-                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == Tile.TileType.VOID)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ?      WallsTiles[RatioBasedChoice(WallsTiles)].Tile        : WallsTiles[0].Tile, this.transform);
 
@@ -697,7 +700,7 @@ public class PCGManager : MonoBehaviour
                         }
                         else
                         {
-                            if (gridArray2D[checkVector.y][checkVector.x].tileType == BasicTile.TileType.VOID)
+                            if (gridArray2D[checkVector.y][checkVector.x].tileType == Tile.TileType.VOID)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 

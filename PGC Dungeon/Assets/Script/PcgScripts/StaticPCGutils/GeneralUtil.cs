@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -101,7 +104,7 @@ public static class GeneralUtil
     /// <param name="height"></param>
     /// <param name="gridArray2D"></param>
     /// <returns></returns>
-    public static Texture2D SetUpTextSelfCol(BasicTile[][] gridArray2D)
+    public static Texture2D SetUpTextSelfCol(Tile[][] gridArray2D)
     {
 
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
@@ -126,7 +129,7 @@ public static class GeneralUtil
     /// <param name="gridArray2D"></param>
     /// <param name="black"></param>
     /// <returns></returns>
-    public static Texture2D SetUpTextBiColAnchor(BasicTile[][] gridArray2D, bool black = false)
+    public static Texture2D SetUpTextBiColAnchor(Tile[][] gridArray2D, bool black = false)
     {
 
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
@@ -163,7 +166,7 @@ public static class GeneralUtil
     /// <param name="height"></param>
     /// <param name="gridArray2D"></param>
     /// <returns></returns>
-    public static Texture2D SetUpTextBiColShade(BasicTile[][] gridArray2D, float minWeight, float maxWeight, bool inverse = false)
+    public static Texture2D SetUpTextBiColShade(Tile[][] gridArray2D, float minWeight, float maxWeight, bool inverse = false)
     {
 
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
@@ -196,7 +199,7 @@ public static class GeneralUtil
 
 
 
-    public static void SetUpColorBasedOnType(BasicTile[][] gridArr) 
+    public static void SetUpColorBasedOnType(Tile[][] gridArr) 
     {
         for (int y = 0; y < gridArr.Length; y++)
         {
@@ -204,28 +207,28 @@ public static class GeneralUtil
             {
                 switch (gridArr[y][x].tileType)
                 {
-                    case BasicTile.TileType.VOID:
+                    case Tile.TileType.VOID:
                         gridArr[y][x].color = Color.white;
                         break;
-                    case BasicTile.TileType.FLOORROOM:
+                    case Tile.TileType.FLOORROOM:
 
                         gridArr[y][x].color = Color.grey;
                         break;
-                    case BasicTile.TileType.WALL:
+                    case Tile.TileType.WALL:
 
                         gridArr[y][x].color = Color.black;
                         break;
-                    case BasicTile.TileType.WALLCORRIDOR:
+                    case Tile.TileType.WALLCORRIDOR:
 
                         gridArr[y][x].color = Color.green;
                         break;
-                    case BasicTile.TileType.ROOF:
+                    case Tile.TileType.ROOF:
                         break;
-                    case BasicTile.TileType.FLOORCORRIDOR:
+                    case Tile.TileType.FLOORCORRIDOR:
 
                         gridArr[y][x].color = Color.yellow;
                         break;
-                    case BasicTile.TileType.AVOID:
+                    case Tile.TileType.AVOID:
 
                         gridArr[y][x].color = Color.red;
                         break;
@@ -235,7 +238,94 @@ public static class GeneralUtil
             }
         }
     }
+
+
+
+
+    public static  void SaveMap(Tile[][] grid,string saveFileName)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        MemoryStream stream = new MemoryStream();
+
+        // Create a new array to store the data
+        SerializableTile[][] serializableMap = new SerializableTile[grid.Length][];
+        for (int i = 0; i < grid.Length; i++)
+        {
+            serializableMap[i] = new SerializableTile[grid[i].Length];
+            for (int j = 0; j < grid[i].Length; j++)
+            {
+                serializableMap[i][j] = new SerializableTile(grid[i][j].position, grid[i][j].tileWeight, grid[i][j].cost, grid[i][j].idx, grid[i][j].visited, (int)grid[i][j].tileType);
+            }
+        }
+
+        formatter.Serialize(stream, serializableMap);
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+        {
+            AssetDatabase.CreateFolder("Assets", "Resources");
+            AssetDatabase.Refresh();
+        }
+
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+            AssetDatabase.Refresh();
+        }
+
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Saved_Gen_Data"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Saved_Gen_Data");
+            AssetDatabase.Refresh();
+        }
+
+        File.WriteAllBytes(Application.dataPath + "/Resources/Resources_Algorithms/Saved_Gen_Data/" + saveFileName, stream.ToArray());
+    }
+
+
 }
+
+
+[Serializable]
+public class SerializableTile 
+{
+    public SerialiableVector2Int position = new SerialiableVector2Int();
+    public float tileWeight;
+    public float cost = 0;
+    public int idx = 0;
+    public bool visited = false;
+
+    public int tileType;
+
+    public SerializableTile(Vector2Int position, float tileWeight, float cost , int idx, bool visited, int tileType) 
+    {
+        this.position = new SerialiableVector2Int(position.x, position.y);
+        this.tileWeight = tileWeight;
+        this.cost = cost;
+        this.idx = idx;
+        this.visited = visited;
+        this.tileType = tileType;
+    }
+}
+
+
+[Serializable]
+public struct SerialiableVector2Int
+{
+    public int x;
+    public int y;
+
+    public SerialiableVector2Int(int rX, int rY)
+    {
+        x = rX;
+        y = rY;
+    }
+}
+
+
+
+
 
 
 

@@ -106,7 +106,7 @@ public class PerlinNoiseMA : MonoBehaviour
     }
 
 
-    public List<List<BasicTile>> rooms = new List<List<BasicTile>>();
+    public List<List<Tile>> rooms = new List<List<Tile>>();
     public List<Edge> edges = new List<Edge>();
 
 

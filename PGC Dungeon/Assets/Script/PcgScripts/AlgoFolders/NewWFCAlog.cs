@@ -231,15 +231,12 @@ public class NewWFCAlog : MonoBehaviour
             {
                 AllowedObjectsIDXs.Add(i);
             }
-
         }
 
         public void NeighbourAllowed(List<int> neighbourAllowedIDXs)
         {
-
             for (int i = AllowedObjectsIDXs.Count; i-- > 0;)
             {
-
                 bool isThere = false;
 
                 foreach (var allowedIDX in neighbourAllowedIDXs)
@@ -258,7 +255,6 @@ public class NewWFCAlog : MonoBehaviour
                 }
 
             }
-
 
 
             if (AllowedObjectsIDXs.Count == 0)

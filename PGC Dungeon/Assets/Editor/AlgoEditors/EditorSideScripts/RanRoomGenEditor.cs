@@ -349,8 +349,8 @@ public class RanRoomGenEditor : Editor
                             
                             foreach (var tile in path)
                             {
-                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                 tile.tileWeight = 0.75f;
                             }
@@ -528,7 +528,7 @@ public class RanRoomGenEditor : Editor
 
                         mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                         var centerPoints = new List<Vector2>();
-                        var roomDict = new Dictionary<Vector2, List<BasicTile>>();
+                        var roomDict = new Dictionary<Vector2, List<Tile>>();
                         foreach (var room in mainScript.rooms)
                         {
                             roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
@@ -611,8 +611,8 @@ public class RanRoomGenEditor : Editor
 
                                     foreach (var tile in path.Item1)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -629,8 +629,8 @@ public class RanRoomGenEditor : Editor
 
                                     foreach (var tile in path)
                                     {
-                                        if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                            tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        if (tile.tileType != Tile.TileType.FLOORROOM)
+                                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                         tile.tileWeight = 0.75f;
                                     }
@@ -679,8 +679,8 @@ public class RanRoomGenEditor : Editor
 
                                         foreach (var tile in path.Item1)
                                         {
-                                            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                            if (tile.tileType != Tile.TileType.FLOORROOM)
+                                                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                             tile.tileWeight = 0.75f;
                                         }
@@ -707,11 +707,11 @@ public class RanRoomGenEditor : Editor
                             {
                                 for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                                 {
-                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                                     {
-                                        mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                                     }
-                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
                                     {
                                     }
                                 }
@@ -782,9 +782,9 @@ public class RanRoomGenEditor : Editor
                         {
                             for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                             {
-                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                                if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                                 {
-                                    mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                    mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                                 }
                             }
                         }

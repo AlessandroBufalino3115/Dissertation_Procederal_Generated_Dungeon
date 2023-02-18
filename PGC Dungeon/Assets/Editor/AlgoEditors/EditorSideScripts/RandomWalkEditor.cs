@@ -40,6 +40,8 @@ public class RandomWalkEditor : Editor
 
     int radius = 10;
 
+    string saveMapFileName = "";
+
 
 
 
@@ -111,11 +113,8 @@ public class RandomWalkEditor : Editor
                 }
 
 
-
-
                 break;
             case UISTATE.CA:
-
 
                 allowedToContinue = true;
 
@@ -138,8 +137,6 @@ public class RandomWalkEditor : Editor
                 }
 
 
-
-
                 break;
             case UISTATE.ROOM_GEN:
 
@@ -160,7 +157,7 @@ public class RandomWalkEditor : Editor
                                 foreach (var tile in mainScript.rooms[i])
                                 {
                                     tile.tileWeight = 0;
-                                    tile.tileType = BasicTile.TileType.VOID;
+                                    tile.tileType = Tile.TileType.VOID;
                                 }
 
                                 mainScript.rooms.RemoveAt(i);
@@ -417,7 +414,7 @@ public class RandomWalkEditor : Editor
 
                             mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                             var centerPoints = new List<Vector2>();
-                            var roomDict = new Dictionary<Vector2, List<BasicTile>>();
+                            var roomDict = new Dictionary<Vector2, List<Tile>>();
                             foreach (var room in mainScript.rooms)
                             {
                                 roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
@@ -572,8 +569,6 @@ public class RandomWalkEditor : Editor
                                 AlgosUtils.ReTypeTheRoom(mainScript.rooms[i]);
                             }
 
-
-
                         }
                     }
                     else
@@ -593,11 +588,12 @@ public class RandomWalkEditor : Editor
                     {
                         for (int i = 0; i < deadEndAmount; i++)
                         {
+                            Debug.Log(mainScript.rooms.Count);
                             var room = mainScript.rooms[GeneralUtil.ReturnRandomFromList(mainScript.rooms)];
 
                             var randomTileInRoom = room[GeneralUtil.ReturnRandomFromList(room)];
 
-                            BasicTile randomTileOutsideOfRoom;
+                            Tile randomTileOutsideOfRoom;
 
 
                             while (true)
@@ -616,50 +612,7 @@ public class RandomWalkEditor : Editor
 
                                     AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, algoForBezier, mainScript.PcgManager.gridArray2D, !mainScript.PathType, useWeights: useWeights, tileCosts: mainScript.PcgManager.tileCosts);
 
-
-
-
-                                    //var startPos = new Vector2Int(tileA.x, tileA.y);
-                                    //var endPos = new Vector2Int(tileB.x, tileB.y);
-
-                                    //var prevCoord = new Vector2Int(0, 0);
-
-                                    //var positions = AlgosUtils.ExtrapolatePos(startPos, endPos, margin);
-
-                                    //var mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
-                                    //var mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
-
-
-                                    //var firstBezierPoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
-
-                                    //AlgosUtils.SetUpCorridorWithPath(AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts).Item1, 0.5f);
-
-
-                                    //for (float t = 0; t < 1; t += 0.05f)
-                                    //{
-                                    //    float currT = t;
-                                    //    float prevT = t - 0.05f;
-
-                                    //    var currCord = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
-
-                                    //    if (prevT < 0)
-                                    //    {
-                                    //        prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-                                    //        continue;
-                                    //    }
-                                    //    else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= mainScript.PcgManager.gridArray2D[0].Length || currCord.y >= mainScript.PcgManager.gridArray2D.Length)
-                                    //    { continue; }
-
-                                    //    AlgosUtils.SetUpCorridorWithPath(AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts).Item1, 0.5f);
-
-                                    //    prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-
-                                    //}
-
-                                    //var lastBezierCurvePoint = AlgosUtils.CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 1);
-
-                                    //AlgosUtils.SetUpCorridorWithPath(AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArray2D, endPos, new Vector2Int((int)MathF.Round(lastBezierCurvePoint.x), (int)MathF.Round(lastBezierCurvePoint.z)), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts).Item1, 0.5f);
-                                    break;
+                                     break;
                                 }
                             }
                         }
@@ -703,15 +656,14 @@ public class RandomWalkEditor : Editor
                             {
                                 for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
                                 {
-                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                                    if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                                     {
-                                        mainScript.PcgManager.gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                        mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                                     }
                                 }
                             }
 
                             AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
-
 
                             mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArray2D, mainScript.PcgManager.RoomHeight), false));
                             break;
@@ -728,6 +680,16 @@ public class RandomWalkEditor : Editor
                     mainScript.PcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, mainScript.PcgManager.ChunkWidth, 10, 40);
                 }
 
+
+                GeneralUtil.SpacesUILayout(4);
+
+
+                saveMapFileName =  EditorGUILayout.TextField("Save file name: ", saveMapFileName);
+                if (GUILayout.Button("save")) 
+                {
+                    GeneralUtil.SaveMap(mainScript.PcgManager.gridArray2D, saveMapFileName);
+                    
+                }
 
 
 

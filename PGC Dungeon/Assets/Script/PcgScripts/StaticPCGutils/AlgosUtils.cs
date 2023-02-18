@@ -278,7 +278,7 @@ public static class AlgosUtils
 
     #region A*
 
-    public static Tuple<List<BasicTile>, List<BasicTile>> A_StarPathfinding2DNorm(BasicTile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
+    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2DNorm(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
     {
         int timerStart = Environment.TickCount & Int32.MaxValue;
 
@@ -336,20 +336,20 @@ public static class AlgosUtils
 
                 if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks_}</color>"); }
 
-                var pathOfBasicTiles = new List<BasicTile>();
+                var pathOfBasicTiles = new List<Tile>();
 
                 foreach (var tile in path)
                 {
                     pathOfBasicTiles.Add(tile.refToBasicTile);
                 }
 
-                var allVisiteBasicTiles = new List<BasicTile>();
+                var allVisiteBasicTiles = new List<Tile>();
                 foreach (var tile in openList)
                 {
                     allVisiteBasicTiles.Add(tile.refToBasicTile);
                 }
 
-                return new Tuple<List<BasicTile>, List<BasicTile>>(pathOfBasicTiles, allVisiteBasicTiles);
+                return new Tuple<List<Tile>, List<Tile>>(pathOfBasicTiles, allVisiteBasicTiles);
             }
             else
             {
@@ -471,7 +471,7 @@ public static class AlgosUtils
 
 
 
-    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, bool algoForBezier, BasicTile[][] gridArray2D, bool pathing = false, bool useWeights = false,float[] tileCosts = null) 
+    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, bool algoForBezier, Tile[][] gridArray2D, bool pathing = false, bool useWeights = false,float[] tileCosts = null) 
     {
         var startPos = new Vector2Int(tileA.x, tileA.y);
         var endPos = new Vector2Int(tileB.x, tileB.y);
@@ -565,7 +565,7 @@ public static class AlgosUtils
 
     #region Dijstra
 
-    public static List<BasicTile> DijstraPathfinding(BasicTile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false) 
+    public static List<Tile> DijstraPathfinding(Tile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false) 
     {
 
 
@@ -584,7 +584,7 @@ public static class AlgosUtils
 
                 if (avoidWalls)
                 {
-                    if (gridArr2d[y][x].tileType != BasicTile.TileType.WALLCORRIDOR)
+                    if (gridArr2d[y][x].tileType != Tile.TileType.WALLCORRIDOR)
                     {
                         var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
 
@@ -640,7 +640,7 @@ public static class AlgosUtils
 
                     if (avoidWalls)
                     {
-                        if (gridArr2d[node_position[1]][node_position[0]].tileType != BasicTile.TileType.WALLCORRIDOR)
+                        if (gridArr2d[node_position[1]][node_position[0]].tileType != Tile.TileType.WALLCORRIDOR)
                         {
                             float newDist = currNode.distance + 1;
 
@@ -677,7 +677,7 @@ public static class AlgosUtils
 
         }
 
-        var solutioPath = new List<BasicTile>();
+        var solutioPath = new List<Tile>();
 
         while(lastNode.parentDJnode != null) 
         {
@@ -717,20 +717,20 @@ public static class AlgosUtils
     #region Random Walk
 
 
-    public static BasicTile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
+    public static Tile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
     {
         int iterationsLeft = iterations;
 
 
-        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+        Tile[][] _gridarray2D = new Tile[maxY][];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new BasicTile[maxX];
+            _gridarray2D[y] = new Tile[maxX];
 
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x] = new Tile();
                 _gridarray2D[y][x].position = new Vector2Int(x, y);
             }
         }
@@ -813,7 +813,7 @@ public static class AlgosUtils
     }
 
 
-    public static BasicTile[][] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
+    public static Tile[][] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
     {
 
         int maxY = boundsRoom.zMax - boundsRoom.zMin;
@@ -825,15 +825,15 @@ public static class AlgosUtils
         int iterationsLeft = iterations;
 
 
-        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+        Tile[][] _gridarray2D = new Tile[maxY][];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new BasicTile[maxX];
+            _gridarray2D[y] = new Tile[maxX];
 
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x] = new Tile();
                 _gridarray2D[y][x].position = new Vector2Int(x, y);
             }
         }
@@ -911,7 +911,7 @@ public static class AlgosUtils
 
     #region PerlinNoise
 
-    public static BasicTile[][] PerlinNoise2D(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
+    public static Tile[][] PerlinNoise2D(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
         float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
 
@@ -1072,22 +1072,22 @@ public static class AlgosUtils
         return noiseMap;
     }
 
-    public static BasicTile[][] PerlinWorms(BasicTile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, float minThreshold) 
+    public static Tile[][] PerlinWorms(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, float minThreshold) 
     {
         // we create a copy arrya
         int height = _gridArray2D.Length;
         int width = _gridArray2D[0].Length;
-        var gridArray2DToReturn = new BasicTile[height][];
+        var gridArray2DToReturn = new Tile[height][];
 
         for (int y = 0; y < height; y++)
         {
-            gridArray2DToReturn[y] = new BasicTile[width];
+            gridArray2DToReturn[y] = new Tile[width];
 
             for (int x = 0; x < width; x++)
             {
-                gridArray2DToReturn[y][x] = new BasicTile();
+                gridArray2DToReturn[y][x] = new Tile();
                 gridArray2DToReturn[y][x].position = new Vector2Int(x, y);
-                gridArray2DToReturn[y][x].tileType = BasicTile.TileType.VOID;
+                gridArray2DToReturn[y][x].tileType = Tile.TileType.VOID;
             }
         }
 
@@ -1147,7 +1147,7 @@ public static class AlgosUtils
                 }
                 else 
                 {
-                    gridArray2DToReturn[savedNextNode[1]][savedNextNode[0]].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                    gridArray2DToReturn[savedNextNode[1]][savedNextNode[0]].tileType = Tile.TileType.FLOORCORRIDOR;
                     currentPos = new Vector2Int(savedNextNode[0], savedNextNode[1]);
                 }
 
@@ -1448,7 +1448,7 @@ public static class AlgosUtils
 
     #region Flood Fill
 
-    public static void ResetVisited(BasicTile[][] gridArray2D) 
+    public static void ResetVisited(Tile[][] gridArray2D) 
     {
         for (int y = 0; y < gridArray2D.Length; y++)
         {
@@ -1484,7 +1484,7 @@ public static class AlgosUtils
 
 
 
-    public static List<Vector2Int> NewFloodFill(BasicTile[][] gridArr, Vector2Int start)
+    public static List<Vector2Int> NewFloodFill(Tile[][] gridArr, Vector2Int start)
     {
         int width = gridArr.Length;
         int height = gridArr[0].Length;
@@ -1550,7 +1550,7 @@ public static class AlgosUtils
     /// </summary>
     /// <param name="gridArr"></param>
     /// <param name="ranValue"></param>
-    public static void SpawnRandomPointsCA(BasicTile[][] gridArr, float ranValue) 
+    public static void SpawnRandomPointsCA(Tile[][] gridArr, float ranValue) 
     {
         for (int y = 0; y < gridArr.Length; y++)
         {
@@ -1569,7 +1569,7 @@ public static class AlgosUtils
     }
 
 
-    public static void RunCaIteration2D(BasicTile[][] gridArray2D, int neighboursNeeded) 
+    public static void RunCaIteration2D(Tile[][] gridArray2D, int neighboursNeeded) 
     {
 
         float[][] copyArrayStorage = new float[gridArray2D.Length][];
@@ -1629,7 +1629,7 @@ public static class AlgosUtils
         }
     }
 
-    public static void CleanUp2dCA(BasicTile[][] gridArray2D, int neighboursNeeded)
+    public static void CleanUp2dCA(Tile[][] gridArray2D, int neighboursNeeded)
     {
 
         float[][] copyArrayStorage = new float[gridArray2D.Length][];
@@ -1694,21 +1694,21 @@ public static class AlgosUtils
 
 
 
-    public static BasicTile[][] compartimentalisedCA(BoundsInt boundsRoom) 
+    public static Tile[][] compartimentalisedCA(BoundsInt boundsRoom) 
     {
 
         int maxY = boundsRoom.zMax - boundsRoom.zMin;
         int maxX = boundsRoom.xMax - boundsRoom.xMin;
 
-        BasicTile[][] _gridarray2D = new BasicTile[maxY][];
+        Tile[][] _gridarray2D = new Tile[maxY][];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new BasicTile[maxX];
+            _gridarray2D[y] = new Tile[maxX];
 
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new BasicTile();
+                _gridarray2D[y][x] = new Tile();
                 _gridarray2D[y][x].position = new Vector2Int(x, y);
             }
         }
@@ -1730,7 +1730,7 @@ public static class AlgosUtils
     //not working
     #region DiamondSquare algo
 
-    public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, BasicTile[][] gridArr)
+    public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] gridArr)
     {
 
         int timerStart = GeneralUtil.PerfTimer(true);
@@ -1809,7 +1809,7 @@ public static class AlgosUtils
 
     #region Voronoi
 
-    public static BasicTile[][] Voronoi2D(BasicTile[][] gridArray2D, int numOfPoints)
+    public static Tile[][] Voronoi2D(Tile[][] gridArray2D, int numOfPoints)
     {
         var pointsArr = new List<Vector2>();
 
@@ -1865,7 +1865,7 @@ public static class AlgosUtils
     }
 
 
-    private static BasicTile[][] GetBoundariesVoronoi(BasicTile[][] gridArr2d) 
+    private static Tile[][] GetBoundariesVoronoi(Tile[][] gridArr2d) 
     {
         var childPosArry = GeneralUtil.childPosArry4Side;
 
@@ -1924,7 +1924,7 @@ public static class AlgosUtils
     #region Marching Cubes Generation
 
 
-    public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(BasicTile[][] gridArray2D, int roomHeight = 7) 
+    public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(Tile[][] gridArray2D, int roomHeight = 7) 
     {
         var marchingCubesArr = new MarchingCubeClass[gridArray2D[0].Length, gridArray2D.Length, roomHeight];
 
@@ -1937,7 +1937,7 @@ public static class AlgosUtils
                 {
                     if (z==0 || z== marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
-                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL || gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) 
+                        if (gridArray2D[y][x].tileType == Tile.TileType.WALL || gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR) 
                         {
                             marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.95f);
                         }
@@ -1950,7 +1950,7 @@ public static class AlgosUtils
                     else // this is justt he wall
                     {
 
-                        if (gridArray2D[y][x].tileType == BasicTile.TileType.WALL || gridArray2D[y][x].tileType == BasicTile.TileType.WALLCORRIDOR) // draw everything but the floor
+                        if (gridArray2D[y][x].tileType == Tile.TileType.WALL || gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR) // draw everything but the floor
                         {
                             marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 1,1);
                         }
@@ -2064,7 +2064,7 @@ public static class AlgosUtils
 
     #region Type and Utility section
 
-    public static void SetUpTileCorridorTypesUI(BasicTile[][] gridArr, int width) 
+    public static void SetUpTileCorridorTypesUI(Tile[][] gridArr, int width) 
     {
         SetUpTileTypesCorridor(gridArr);
 
@@ -2074,11 +2074,11 @@ public static class AlgosUtils
             {
                 for (int x = 0; x < gridArr[0].Length; x++)
                 {
-                    if (gridArr[y][x].tileType == BasicTile.TileType.WALLCORRIDOR)
+                    if (gridArr[y][x].tileType == Tile.TileType.WALLCORRIDOR)
                     {
-                        gridArr[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                        gridArr[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                     }
-                    if (gridArr[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                    if (gridArr[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
                     {
                     }
                 }
@@ -2111,7 +2111,7 @@ public static class AlgosUtils
         return midPoint;
 
     }
-    public static Vector2 FindMiddlePoint(List<BasicTile> listOfPoints)
+    public static Vector2 FindMiddlePoint(List<Tile> listOfPoints)
     {
         var midPoint = new Vector2(0, 0);
 
@@ -2132,7 +2132,7 @@ public static class AlgosUtils
     /// </summary>
     /// <param name="gridArray2D"></param>
     /// <param name="diagonalTiles">diag tile depends if it uses the 8 or 4 child arr</param>
-    public static void SetUpTileTypesFloorWall(BasicTile[][] gridArray2D)
+    public static void SetUpTileTypesFloorWall(Tile[][] gridArray2D)
     {
 
         int[,] childPosArry = new int[0, 0];
@@ -2175,12 +2175,12 @@ public static class AlgosUtils
 
                     if (wall)
                     {
-                        gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
+                        gridArray2D[y][x].tileType = Tile.TileType.WALL;
                         gridArray2D[y][x].tileWeight = 1;
                     }
                     else
                     {
-                        gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
+                        gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
                         gridArray2D[y][x].tileWeight = 0.5f;
                     }
                 }
@@ -2188,16 +2188,16 @@ public static class AlgosUtils
         }
 
 
-        var copyArr = new BasicTile[gridArray2D.Length][];
+        var copyArr = new Tile[gridArray2D.Length][];
 
         for (int y = 0; y < copyArr.Length; y++)
         {
-            copyArr[y] = new BasicTile[gridArray2D[0].Length];
+            copyArr[y] = new Tile[gridArray2D[0].Length];
 
             for (int x = 0; x < copyArr[y].Length; x++)
             {
 
-                copyArr[y][x] = new BasicTile();
+                copyArr[y][x] = new Tile();
                 copyArr[y][x].tileType = gridArray2D[y][x].tileType;
                 copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
             }
@@ -2224,7 +2224,7 @@ public static class AlgosUtils
                         {
                             continue;
                         }
-                        else if (copyArr[node_position[1]][node_position[0]].tileType != BasicTile.TileType.VOID)
+                        else if (copyArr[node_position[1]][node_position[0]].tileType != Tile.TileType.VOID)
                         {
                             neigh++;
                         }
@@ -2234,7 +2234,7 @@ public static class AlgosUtils
                     if (neigh >= 2)
                     {
                         gridArray2D[y][x].tileWeight = 1;
-                        gridArray2D[y][x].tileType = BasicTile.TileType.WALL;
+                        gridArray2D[y][x].tileType = Tile.TileType.WALL;
                     }
                   
                 }
@@ -2243,7 +2243,7 @@ public static class AlgosUtils
 
     }
 
-    public static void SetUpTileTypesCorridor(BasicTile[][] gridArray2D)
+    public static void SetUpTileTypesCorridor(Tile[][] gridArray2D)
     {
 
         int[,] childPosArry = new int[0, 0];
@@ -2251,15 +2251,15 @@ public static class AlgosUtils
         childPosArry = GeneralUtil.childPosArry4Side;
 
 
-        var copyArr = new BasicTile[gridArray2D.Length][];
+        var copyArr = new Tile[gridArray2D.Length][];
 
         for (int y = 0; y < copyArr.Length; y++)
         {
-            copyArr[y] = new BasicTile[gridArray2D[0].Length];
+            copyArr[y] = new Tile[gridArray2D[0].Length];
 
             for (int x = 0; x < copyArr[y].Length; x++)
             {
-                copyArr[y][x] = new BasicTile();
+                copyArr[y][x] = new Tile();
                 copyArr[y][x].tileType = gridArray2D[y][x].tileType;
                 copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
             }
@@ -2270,7 +2270,7 @@ public static class AlgosUtils
         {
             for (int x = 0; x < copyArr[0].Length; x++)
             {
-                if (copyArr[y][x].tileType == BasicTile.TileType.FLOORCORRIDOR)
+                if (copyArr[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
                 {
 
                     for (int i = 0; i < childPosArry.Length / 2; i++)
@@ -2284,9 +2284,9 @@ public static class AlgosUtils
                         {
                             continue;
                         }
-                        else if (copyArr[node_position[1]][node_position[0]].tileType == BasicTile.TileType.VOID)
+                        else if (copyArr[node_position[1]][node_position[0]].tileType == Tile.TileType.VOID)
                         {
-                            gridArray2D[node_position[1]][node_position[0]].tileType = BasicTile.TileType.WALLCORRIDOR;
+                            gridArray2D[node_position[1]][node_position[0]].tileType = Tile.TileType.WALLCORRIDOR;
                             gridArray2D[node_position[1]][node_position[0]].tileWeight =1;
                         }
                     }
@@ -2303,9 +2303,9 @@ public static class AlgosUtils
     /// <param name="gridArray2D"></param>
     /// <param name="colorDebug"></param>
     /// <returns>returns a list of a lists of basic tiles = to one room</returns>
-    public static List<List<BasicTile>> GetAllRooms(BasicTile[][] gridArray2D, bool colorDebug = false)
+    public static List<List<Tile>> GetAllRooms(Tile[][] gridArray2D, bool colorDebug = false)
     {
-        var rooms = new List<List<BasicTile>>();
+        var rooms = new List<List<Tile>>();
 
         ResetVisited(gridArray2D);  //sest everything back to false ready for flood
 
@@ -2352,7 +2352,7 @@ public static class AlgosUtils
             }
 
 
-            List<BasicTile> roomBasicTile = new List<BasicTile>();
+            List<Tile> roomBasicTile = new List<Tile>();
 
             for (int y = 0; y < gridArray2D.Length; y++)
             {
@@ -2362,7 +2362,7 @@ public static class AlgosUtils
                     {
                         if (new Vector2Int(x, y) == coord) 
                         {
-                            gridArray2D[y][x].tileType = BasicTile.TileType.FLOORROOM;
+                            gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
                             roomBasicTile.Add(gridArray2D[y][x]);
                         }
                     }
@@ -2397,18 +2397,18 @@ public static class AlgosUtils
         return rooms;
     }
 
-    public static BasicTile[][] RestartArr(BasicTile[][] gridArr) 
+    public static Tile[][] RestartArr(Tile[][] gridArr) 
     {
 
         for (int y = 0; y < gridArr.Length; y++)
         {
-            gridArr[y] = new BasicTile[gridArr[0].Length];
+            gridArr[y] = new Tile[gridArr[0].Length];
 
             for (int x = 0; x < gridArr[0].Length; x++)
             {
-                gridArr[y][x] = new BasicTile();
+                gridArr[y][x] = new Tile();
                 gridArr[y][x].position = new Vector2Int(x, y);
-                gridArr[y][x].tileType = BasicTile.TileType.VOID;
+                gridArr[y][x].tileType = Tile.TileType.VOID;
                 gridArr[y][x].color = Color.white;
             }
         }
@@ -2417,12 +2417,12 @@ public static class AlgosUtils
     }
 
 
-    public static void SetUpCorridorWithPath(List<BasicTile> path, float customWeight = 0.75f) 
+    public static void SetUpCorridorWithPath(List<Tile> path, float customWeight = 0.75f) 
     {
         foreach (var tile in path)
         {
-            if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+            if (tile.tileType != Tile.TileType.FLOORROOM)
+                tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
             tile.tileWeight = customWeight;
         }
@@ -2430,11 +2430,11 @@ public static class AlgosUtils
 
 
 
-    public static void ReTypeTheRoom(List<BasicTile> room) 
+    public static void ReTypeTheRoom(List<Tile> room) 
     {
         for (int i = 0; i < room.Count; i++)
         {
-            room[i].tileType = BasicTile.TileType.FLOORROOM;
+            room[i].tileType = Tile.TileType.FLOORROOM;
         }
     }
 
@@ -2448,10 +2448,10 @@ public static class AlgosUtils
     /// <param name="r"></param>
     /// <param name="tileType"></param>
     /// <returns></returns>
-    public static List<BasicTile> DrawCircle(BasicTile[][] gridArr, Vector2Int center, int r, BasicTile.TileType tileType = BasicTile.TileType.FLOORROOM, bool draw = false)
+    public static List<Tile> DrawCircle(Tile[][] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
     {
 
-        var room = new List<BasicTile>();
+        var room = new List<Tile>();
 
         for (int y = center.y - r; y <= center.y + r; y++)
         {
@@ -2460,7 +2460,7 @@ public static class AlgosUtils
                 bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
                 if (isInCircle)
                 {
-                    if (gridArr[y][x].tileType != BasicTile.TileType.VOID)
+                    if (gridArr[y][x].tileType != Tile.TileType.VOID)
                     {
                         return null;
                     }
@@ -2488,7 +2488,7 @@ public static class AlgosUtils
 /// <summary>
 /// This is the basic tile call 
 /// </summary>
-public class BasicTile
+public class Tile
 {
 
     public Color32 color;
@@ -2511,8 +2511,8 @@ public class BasicTile
 
     public TileType tileType = 0;
   
-    public BasicTile() { }
-    public BasicTile(BasicTile toCopy) 
+    public Tile() { }
+    public Tile(Tile toCopy) 
     {
         this.color = toCopy.color;
         this.tileType = toCopy.tileType;
@@ -2521,6 +2521,16 @@ public class BasicTile
         this.idx = toCopy.idx;
         this.visited = toCopy.visited;
         this.tileWeight = toCopy.tileWeight;
+    }
+
+    public Tile(SerialiableVector2Int position, float tileWeight, float cost, int idx, bool visited, int tileType)
+    {
+        this.tileType = (TileType)tileType;
+        this.position = new Vector2Int(position.x,position.y);
+        this.cost = cost;
+        this.idx = idx;
+        this.visited = visited;
+        this.tileWeight = tileWeight;
     }
 
 }
@@ -2579,14 +2589,14 @@ public class Edge
 public class AStar_Node
 {
 
-    public BasicTile refToBasicTile;
+    public Tile refToBasicTile;
     public AStar_Node parent;
 
     public float g = 0;
     public float f = 0;
     public float h = 0;
 
-    public AStar_Node(BasicTile basicTile)
+    public AStar_Node(Tile basicTile)
     {
         refToBasicTile = basicTile;
     }
@@ -2611,7 +2621,7 @@ public class DjNode
 {
     public float distance = 99999;
     public DjNode parentDJnode = null;
-    public BasicTile gridRefTile = null;
+    public Tile gridRefTile = null;
     public Vector2Int coord = Vector2Int.zero;
 }
 

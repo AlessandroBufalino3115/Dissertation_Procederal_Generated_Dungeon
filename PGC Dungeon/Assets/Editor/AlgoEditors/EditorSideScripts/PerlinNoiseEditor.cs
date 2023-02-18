@@ -164,7 +164,7 @@ public class PerlinNoiseEditor : Editor
                             foreach (var tile in room)
                             {
                                 tile.tileWeight = 0;
-                                tile.tileType = BasicTile.TileType.VOID;
+                                tile.tileType = Tile.TileType.VOID;
                             }
                         }
                     }
@@ -216,7 +216,7 @@ public class PerlinNoiseEditor : Editor
 
                         mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D, true);
                         var centerPoints = new List<Vector2>();
-                        var roomDict = new Dictionary<Vector2, List<BasicTile>>();
+                        var roomDict = new Dictionary<Vector2, List<Tile>>();
                         foreach (var room in mainScript.rooms)
                         {
                             roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
@@ -254,8 +254,8 @@ public class PerlinNoiseEditor : Editor
 
                             foreach (var tile in path.Item1)
                             {
-                                if (tile.tileType != BasicTile.TileType.FLOORROOM)
-                                    tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+                                if (tile.tileType != Tile.TileType.FLOORROOM)
+                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
 
                                 tile.tileWeight = 0.75f;
                             }

@@ -41,7 +41,7 @@ public class PCGManagerEditor : Editor
         if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
 
-            if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
+            if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.LOAD_PREVIOUS_GEN)
             {
             }
             else
@@ -60,11 +60,11 @@ public class PCGManagerEditor : Editor
             }
         }
 
-        if (mainScript.Plane != null || mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
+        if (mainScript.Plane != null || mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.LOAD_PREVIOUS_GEN)
         {
             if (GUILayout.Button(new GUIContent() { text = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh Main Algorithm Component" : "Load New Algorithm Component", tooltip = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh the algorithm component" : "Load the choosen algorithm component to start to use it" }))
             {
-                if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC)
+                if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.LOAD_PREVIOUS_GEN)
                 {
                     if (mainScript.Plane != null)
                     {
