@@ -15,7 +15,11 @@ public class PCGManager : MonoBehaviour
 
     public BasicTile[][] gridArray2D = new BasicTile[1][];
 
-    public BasicTile[][] prevGridArray2D = new BasicTile[1][];
+    //public BasicTile[][] prevGridArray2D = new BasicTile[1][];
+
+    public List<BasicTile[][]> prevGridArray2D = new List<BasicTile[][]>();
+    private int maxBackUps = 3;
+
 
     private GameObject plane;
     public GameObject Plane
@@ -71,7 +75,6 @@ public class PCGManager : MonoBehaviour
     public float[] tileCosts = new float[0];
 
 
-    [Tooltip("How many floors will the dungeons have///THIS IS DISABLED")]
     [Header("THIS IS WHERE THE PLAYER GOES IN CASE OF TILESET GEN")]
     public List<GameObject> player = new List<GameObject>();
 
@@ -93,6 +96,7 @@ public class PCGManager : MonoBehaviour
         get { return chunkHeight; }
         set { chunkHeight = value; }
     }
+
     [HideInInspector]
     public int CLength;
     [HideInInspector]
@@ -120,32 +124,54 @@ public class PCGManager : MonoBehaviour
     #region undo Button
     public void CreateBackUpGrid() 
     {
-        prevGridArray2D = new BasicTile[gridArray2D.Length][];
+        var prevGridArray2Dstack = new BasicTile[gridArray2D.Length][];
         for (int y = 0; y < gridArray2D.Length; y++)
         {
-            prevGridArray2D[y] = new BasicTile[gridArray2D[0].Length];
+            prevGridArray2Dstack[y] = new BasicTile[gridArray2D[0].Length];
             for (int x = 0; x < gridArray2D[0].Length; x++)
             {
-                prevGridArray2D[y][x] = new BasicTile(gridArray2D[y][x]);
+                prevGridArray2Dstack[y][x] = new BasicTile(gridArray2D[y][x]);
             }
         }
+        prevGridArray2D.Add(prevGridArray2Dstack);
+
+        if (prevGridArray2D.Count >= maxBackUps+1)
+            prevGridArray2D.RemoveAt(0);
     }
 
-    public void LoadBackUpGrid() 
+    public bool LoadBackUpGrid() 
     {
+        if (prevGridArray2D.Count == 0)
+            return false;
 
-        gridArray2D = new BasicTile[prevGridArray2D.Length][];
-        for (int y = 0; y < prevGridArray2D.Length; y++)
+        var prevGridArray2DList = prevGridArray2D[prevGridArray2D.Count -1];
+
+        gridArray2D = new BasicTile[prevGridArray2DList.Length][];
+        for (int y = 0; y < prevGridArray2DList.Length; y++)
         {
-            gridArray2D[y] = new BasicTile[prevGridArray2D[0].Length];
-            for (int x = 0; x < prevGridArray2D[0].Length; x++)
+            gridArray2D[y] = new BasicTile[prevGridArray2DList[0].Length];
+            for (int x = 0; x < prevGridArray2DList[0].Length; x++)
             {
-                gridArray2D[y][x] = new BasicTile(prevGridArray2D[y][x]);
+                gridArray2D[y][x] = new BasicTile(prevGridArray2DList[y][x]);
             }
         }
+
+        prevGridArray2D.RemoveAt(prevGridArray2D.Count - 1);
 
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(gridArray2D, 0, 1, true);
+
+
+        return true;
     }
+
+
+    public void ClearUndos() => prevGridArray2D.Clear();
+
+
+
+
+
+
     #endregion
 
 
@@ -311,9 +337,228 @@ public class PCGManager : MonoBehaviour
         AlgosUtils.RestartArr(gridArray2D);
         CreateBackUpGrid();
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArray2D);
+
+        prevGridArray2D.Clear();
     }
 
-    public void DrawTileMap()
+    public void TestFunc() 
+    {
+       
+    }
+
+    #endregion
+
+
+    #region Generation area
+    private void CheckChunkRender()
+    {
+        var indexesToDraw = new HashSet<int>();
+
+
+        foreach (var player in player)
+        {
+            int collidedIndex = -1;
+            for (int i = 0; i < chunks.Count; i++)
+            {
+                if (AABBCol(player.transform.position, chunks[i]))
+                {
+                    collidedIndex = i;
+                    break;
+                }
+            }
+
+
+            if (collidedIndex == -1)
+            {
+                Debug.Log($"The player is out of bounds");
+            }
+            else
+            {
+                indexesToDraw.Add(collidedIndex);
+
+
+                if (collidedIndex - 1 > 0)
+                    indexesToDraw.Add(collidedIndex - 1);  //left
+
+                if (collidedIndex + 1 < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + 1);  //right
+
+
+                if (collidedIndex + CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength);  //up 
+
+                if (collidedIndex - CLength > 0)
+                    indexesToDraw.Add(collidedIndex - CLength);  //down
+
+                if (collidedIndex + CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength);
+                if (collidedIndex - CLength < chunks.Count)
+                    indexesToDraw.Add(collidedIndex - CLength);
+
+
+                if (collidedIndex - CLength + 1 > 0)
+                    indexesToDraw.Add(collidedIndex - CLength + 1);
+                if (collidedIndex + CLength - 1 > 0)
+                    indexesToDraw.Add(collidedIndex + CLength - 1);
+                if (collidedIndex + CLength + 1 < chunks.Count)
+                    indexesToDraw.Add(collidedIndex + CLength + 1);
+                if (collidedIndex - CLength - 1 > 0)
+                    indexesToDraw.Add(collidedIndex - CLength - 1);
+
+            }
+        }
+
+        foreach (var chunk in chunks)
+        {
+            if (indexesToDraw.Contains(chunk.index))
+            {
+                chunk.mainParent.SetActive(true);
+            }
+            else
+            {
+                chunk.mainParent.SetActive(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// returns true if it collides
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="chunk"></param>
+    /// <returns></returns>
+    private bool AABBCol(Vector3 player, Chunk chunk)
+    {
+
+        if (player.x >= chunk.bottomLeft.x && player.x < chunk.topRight.x)
+        {
+            if (player.z >= chunk.bottomLeft.y && player.z < chunk.topRight.y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void FormObject(Mesh mesh)
+    {
+        GameObject newPart = new GameObject();
+        newPart.transform.position = this.transform.position;
+        newPart.transform.rotation = this.transform.rotation;
+        newPart.transform.localScale = this.transform.localScale;
+
+        var renderer = newPart.AddComponent<MeshRenderer>();
+        renderer.sharedMaterial = mat;
+
+        var filter = newPart.AddComponent<MeshFilter>();
+        filter.mesh = mesh;
+
+        var collider = newPart.AddComponent<MeshCollider>();
+        collider.convex = false;
+    }
+
+    private int RatioBasedChoice(List<TileRuleSetPCG> objects) 
+    {
+        int totRatio = 0;
+
+        foreach (var obj in objects) 
+        {
+            totRatio += obj.occurance;
+        }
+
+        int ranNum = Random.Range(1, totRatio);
+
+        int countRatio = 0;
+        int savedIdx = 0;
+        for (int i = 1; i < objects.Count; i++)
+        {
+            if (ranNum > countRatio && ranNum <= countRatio + objects[i].occurance) 
+            {
+                savedIdx = i;
+                break;
+            }
+
+            countRatio += objects[i].occurance;
+        }
+
+        return savedIdx;
+    }
+
+    public void ChunkCreate(int height, int width)
+    {
+        int maxWidth = gridArray2D[0].Length;
+        int maxHeight = gridArray2D.Length;
+
+        Vector2Int BLhead = Vector2Int.zero;
+        Vector2Int TRhead = Vector2Int.zero;
+
+        int correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
+        TRhead = new Vector2Int(0, TRhead.y + correctHeight);
+
+        int timerCheck = 0;
+
+        chunks = new List<Chunk>();
+        while (true)
+        {
+
+            if (TRhead.x + 1 >= maxWidth)  // needs to go in the new line
+            {
+                if (TRhead.y + 1 >= maxHeight)  // this checks if we are dont with the algo
+                {
+                    break;
+                }
+
+                BLhead = new Vector2Int(0, TRhead.y);
+
+                correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
+
+                TRhead = new Vector2Int(0, TRhead.y + correctHeight + 1);
+                timerCheck = 0;
+            }
+            else
+            {
+                timerCheck++;
+                int correctWidth = (maxWidth - 1) - TRhead.x >= width ? width : (maxWidth - 1) - TRhead.x;
+
+                TRhead = new Vector2Int(TRhead.x + correctWidth + 1, TRhead.y);
+
+                chunks.Add(new Chunk() { width = correctWidth, height = correctHeight });
+
+                var currChunk = chunks[chunks.Count - 1];
+                currChunk.topRight = TRhead;
+                currChunk.bottomLeft = BLhead;
+                currChunk.index = chunks.Count - 1;
+
+                BLhead = new Vector2Int(TRhead.x, BLhead.y);
+            }
+        }
+
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            var objRef = new GameObject();
+            objRef.transform.parent = this.transform;
+            objRef.transform.name = i.ToString();
+            objRef.isStatic = true;
+            chunks[i].mainParent = objRef;
+
+            int widthChunk = chunks[i].topRight.x - chunks[i].bottomLeft.x;
+            int heightChunk = chunks[i].topRight.y - chunks[i].bottomLeft.y;
+
+            for (int y = 0; y < heightChunk; y++)
+            {
+                for (int x = 0; x < widthChunk; x++)
+                {
+                    gridArray2D[y + chunks[i].bottomLeft.y][x + chunks[i].bottomLeft.x].idx = chunks[i].index;
+                }
+            }
+        }
+
+        CLength = timerCheck;
+
+    }
+
+    public void DrawTileMapDirectionalWalls()
     {
         int iter = 0;
         ChunkCreate(chunkWidth, chunkHeight);
@@ -468,227 +713,6 @@ public class PCGManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    #endregion
-
-
-    #region Generation area
-    private void CheckChunkRender()
-    {
-        var indexesToDraw = new HashSet<int>();
-
-
-        foreach (var player in player)
-        {
-            int collidedIndex = -1;
-            for (int i = 0; i < chunks.Count; i++)
-            {
-                if (AABBCol(player.transform.position, chunks[i]))
-                {
-                    collidedIndex = i;
-                    break;
-                }
-            }
-
-
-            if (collidedIndex == -1)
-            {
-                Debug.Log($"The player is out of bounds");
-            }
-            else
-            {
-                indexesToDraw.Add(collidedIndex);
-
-
-                if (collidedIndex - 1 > 0)
-                    indexesToDraw.Add(collidedIndex - 1);  //left
-
-                if (collidedIndex + 1 < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + 1);  //right
-
-
-                if (collidedIndex + CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength);  //up 
-
-                if (collidedIndex - CLength > 0)
-                    indexesToDraw.Add(collidedIndex - CLength);  //down
-
-                if (collidedIndex + CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength);
-                if (collidedIndex - CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex - CLength);
-
-
-                if (collidedIndex - CLength + 1 > 0)
-                    indexesToDraw.Add(collidedIndex - CLength + 1);
-                if (collidedIndex + CLength - 1 > 0)
-                    indexesToDraw.Add(collidedIndex + CLength - 1);
-                if (collidedIndex + CLength + 1 < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength + 1);
-                if (collidedIndex - CLength - 1 > 0)
-                    indexesToDraw.Add(collidedIndex - CLength - 1);
-
-            }
-        }
-
-        foreach (var chunk in chunks)
-        {
-            if (indexesToDraw.Contains(chunk.index))
-            {
-                chunk.mainParent.SetActive(true);
-            }
-            else
-            {
-                chunk.mainParent.SetActive(false);
-            }
-        }
-    }
-
-    /// <summary>
-    /// returns true if it collides
-    /// </summary>
-    /// <param name="player"></param>
-    /// <param name="chunk"></param>
-    /// <returns></returns>
-    private bool AABBCol(Vector3 player, Chunk chunk)
-    {
-
-        if (player.x >= chunk.bottomLeft.x && player.x < chunk.topRight.x)
-        {
-            if (player.z >= chunk.bottomLeft.y && player.z < chunk.topRight.y)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    public void FormObject(Mesh mesh)
-    {
-        GameObject newPart = new GameObject();
-        newPart.transform.position = this.transform.position;
-        newPart.transform.rotation = this.transform.rotation;
-        newPart.transform.localScale = this.transform.localScale;
-
-        var renderer = newPart.AddComponent<MeshRenderer>();
-        renderer.sharedMaterial = mat;
-
-        var filter = newPart.AddComponent<MeshFilter>();
-        filter.mesh = mesh;
-
-        var collider = newPart.AddComponent<MeshCollider>();
-        collider.convex = false;
-    }
-
-    private int RatioBasedChoice(List<TileRuleSetPCG> objects) 
-    {
-        int totRatio = 0;
-
-        foreach (var obj in objects) 
-        {
-            totRatio += obj.occurance;
-        }
-
-        int ranNum = Random.Range(1, totRatio);
-
-        int countRatio = 0;
-        int savedIdx = 0;
-        for (int i = 1; i < objects.Count; i++)
-        {
-            if (ranNum > countRatio && ranNum <= countRatio + objects[i].occurance) 
-            {
-                savedIdx = i;
-                break;
-            }
-
-            countRatio += objects[i].occurance;
-        }
-
-        return savedIdx;
-    }
-
-    public void ChunkCreate(int height, int width)
-    {
-        int maxWidth = gridArray2D[0].Length;
-        int maxHeight = gridArray2D.Length;
-
-
-        Vector2Int BLhead = Vector2Int.zero;
-        Vector2Int TRhead = Vector2Int.zero;
-
-        int correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
-        TRhead = new Vector2Int(0, TRhead.y + correctHeight);
-
-        int timerCheck = 0;
-
-        chunks = new List<Chunk>();
-        while (true)
-        {
-
-            if (TRhead.x + 1 >= maxWidth)  // needs to go in the new line
-            {
-                if (TRhead.y + 1 >= maxHeight)  // this checks if we are dont with the algo
-                {
-                    break;
-                }
-
-                BLhead = new Vector2Int(0, TRhead.y);
-
-                correctHeight = (maxHeight - 1) - TRhead.y >= height ? height : (maxHeight - 1) - TRhead.y;
-
-                TRhead = new Vector2Int(0, TRhead.y + correctHeight + 1);
-                timerCheck = 0;
-            }
-            else
-            {
-                timerCheck++;
-                Debug.Log(timerCheck);
-                int correctWidth = (maxWidth - 1) - TRhead.x >= width ? width : (maxWidth - 1) - TRhead.x;
-
-                TRhead = new Vector2Int(TRhead.x + correctWidth + 1, TRhead.y);
-
-                chunks.Add(new Chunk() { width = correctWidth, height = correctHeight });
-
-                var currChunk = chunks[chunks.Count - 1];
-                currChunk.topRight = TRhead;
-                currChunk.bottomLeft = BLhead;
-                currChunk.index = chunks.Count - 1;
-
-                BLhead = new Vector2Int(TRhead.x, BLhead.y);
-            }
-        }
-
-        for (int i = 0; i < chunks.Count; i++)
-        {
-            var objRef = new GameObject();
-            objRef.transform.parent = this.transform;
-            objRef.transform.name = i.ToString();
-            objRef.isStatic = true;
-            chunks[i].mainParent = objRef;
-
-            int widthChunk = chunks[i].topRight.x - chunks[i].bottomLeft.x;
-            int heightChunk = chunks[i].topRight.y - chunks[i].bottomLeft.y;
-
-            for (int y = 0; y < heightChunk; y++)
-            {
-                for (int x = 0; x < widthChunk; x++)
-                {
-                    gridArray2D[y + chunks[i].bottomLeft.y][x + chunks[i].bottomLeft.x].idx = chunks[i].index;
-                }
-            }
-
-        }
-
-   
-        
-
-        CLength = timerCheck;
-
-
-
     }
     #endregion
 }

@@ -199,21 +199,27 @@ public class PCGManagerEditor : Editor
 
         GeneralUtil.SpacesUILayout(4);
 
+
+
+        EditorGUI.BeginDisabledGroup(mainScript.prevGridArray2D.Count == 0 ? true : false);
+
+        GUILayout.Label(new GUIContent() { text = $"You have {mainScript.prevGridArray2D.Count} undos left", tooltip = "" });
         if (GUILayout.Button(new GUIContent() { text = "Undo Step", tooltip = "" }))
         {
             mainScript.LoadBackUpGrid();
         }
+
+        EditorGUI.EndDisabledGroup();
+
+
         if (GUILayout.Button(new GUIContent() { text = "this button is for tests", tooltip = "" }))
         {
-            //mainScript.CombineMeshes();
+            mainScript.TestFunc();
+            //GeneralUtil.SetUpColorBasedOnType(mainScript.gridArray2D);
+
+            //mainScript.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(mainScript.gridArray2D);
         }
-
-
-
     }
-
-
-
 }
 
 

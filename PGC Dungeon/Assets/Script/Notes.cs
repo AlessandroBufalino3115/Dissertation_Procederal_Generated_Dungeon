@@ -23,14 +23,29 @@
  *          create rooms from corridors
  *          
  *          weigthed tiles spawn for WFC
+ *            -texture spawning
  *          
  *          when we skip the path gen because of one room the walls dont get generated therefore the fll gen doesnt work
  *          
- *          issues with the chunk
+ *          issues with the chunk   --- fixed i think
+ *                    
+ *          fix diamond sqaure
+ *          
+ *          
+ *          in the tile generation have a bool for block type gen
+ *          
+ *          
+ *          
+ *          
+ *          
+ *          
+ *          
  *          
  *          
  *      
  *      vvvvvv MID PRIORITY vvvvvv
+ *      
+ *          full bezier cave system as solo algo basically center bit as the arena and then loads of point around delu trig aroudn them
  *      
  *         for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
  *         
@@ -40,9 +55,9 @@
  *         
  *         Similar to the particle effect have a random between two integers thing
  *         
- *         Add undo button
+ *         Add undo button   -- done
  *         
- *         Need to move all the scriptable objects into the new class
+ *         Need to move all the scriptable objects into the new class   -- dropped
  *      
  *      
  *      
@@ -54,19 +69,16 @@
  *   
  *          look into different textures for the marching cubes    
  *   
- *          Add gizmos to the scene to show each room detail IDK  
+ *          Add gizmos to the scene to show each room detail IDK    
  *          
- *          check on empty strings when loading stuff
- *   
- *   
- *   
+ *          check on empty strings when loading stuff can be an easy function relatin back to the pcgManager
  *   
  *   
  *   
  *   
  *   ALGOS ISSUE:
  * 
- *   GRAPH GRAMMAR  -- mid priority
+ *   GRAPH GRAMMAR  -- mid priority    -- new feautre lock
  *   OTHER PATHFINDINGS   -- high priority       Might drop BFS and Do DFS only
  *   PERLIN WORMS  --  to check    -- mid priority
  *   fix diamond square   -- high priority
@@ -78,8 +90,5 @@
  *   
  *   
  *   
- *   KNOWN BUGS:
- *   
- *   still not reaching the end on the bezier curve could be the fact that it chooses a wall
  * 
  */

@@ -55,12 +55,6 @@ public class NewWFCAlog : MonoBehaviour
 
         if (outskirtsCheck)
             SetOutSkirts();
-
-        Debug.Log($"{arrayOfWFCTiles[0][0].AllowedObjectsIDXs.Count}  {0} {0}");
-        Debug.Log($"{arrayOfWFCTiles[0][49].AllowedObjectsIDXs.Count} {0} {49}");
-        Debug.Log($"{arrayOfWFCTiles[49][0].AllowedObjectsIDXs.Count} {49} {0}");
-        Debug.Log($"{arrayOfWFCTiles[49][49].AllowedObjectsIDXs.Count}{49} {49}");
-
         
 
         var ranStart = GeneralUtil.RanVector2Int(xSize, ySize);

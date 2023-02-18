@@ -469,6 +469,98 @@ public static class AlgosUtils
     }
 
 
+
+
+    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, bool algoForBezier, BasicTile[][] gridArray2D, bool pathing = false, bool useWeights = false,float[] tileCosts = null) 
+    {
+        var startPos = new Vector2Int(tileA.x, tileA.y);
+        var endPos = new Vector2Int(tileB.x, tileB.y);
+
+        var prevCoord = new Vector2Int(0, 0);
+
+        var positions = ExtrapolatePos(startPos, endPos, margin);
+
+        var mid1Pos = new Vector2Int((int)MathF.Round(positions.Item1.x), (int)MathF.Round(positions.Item1.y));
+        var mid2Pos = new Vector2Int((int)MathF.Round(positions.Item2.x), (int)MathF.Round(positions.Item2.y));
+
+
+
+        var firstBezierPoint = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
+
+        if (algoForBezier)
+        {
+            var pathB = A_StarPathfinding2DNorm(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+
+            SetUpCorridorWithPath(pathB.Item1);
+        }
+        else
+        {
+            var pathB = DijstraPathfinding(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), true);
+
+            SetUpCorridorWithPath(pathB);
+        }
+
+
+
+        for (float t = 0; t < 1; t += 0.05f)
+        {
+            float currT = t;
+            float prevT = t - 0.05f;
+
+            var currCord = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, currT);
+
+            if (prevT < 0)
+            {
+                prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+                continue;
+            }
+
+            else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= gridArray2D[0].Length || currCord.y >= gridArray2D.Length)
+            { continue; }
+
+            if (algoForBezier)
+            {
+                var pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+
+                prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+
+                SetUpCorridorWithPath(pathB.Item1);
+            }
+            else
+            {
+                var pathB = DijstraPathfinding(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
+
+                prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
+
+                SetUpCorridorWithPath(pathB);
+            }
+        }
+
+
+        if (algoForBezier)
+        {
+            var pathB = A_StarPathfinding2DNorm(gridArray2D, endPos, new Vector2Int((int)MathF.Round(endPos.x), (int)MathF.Round(endPos.y)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+
+            SetUpCorridorWithPath(pathB.Item1);
+        }
+        else
+        {
+            var pathB = DijstraPathfinding(gridArray2D, endPos, new Vector2Int((int)MathF.Round(endPos.x), (int)MathF.Round(endPos.y)), true);
+
+            SetUpCorridorWithPath(pathB);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
     #endregion
 
     #region Dijstra
@@ -800,9 +892,9 @@ public static class AlgosUtils
             }
 
 
-                _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
-                iterationsLeft--;
-            
+            _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+            iterationsLeft--;
+
         }
 
 
@@ -1368,14 +1460,8 @@ public static class AlgosUtils
     }
 
 
-    /// <summary>
-    /// for now this is looking only for the white or wieght = 0 
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="list"></param>
-    /// <param name="gridArray2D"></param>
-    /// <returns>the returned list holds the coords of everything that was true</returns>
+    //this function is retired old flood fill
+    /*
     public static List<Vector2Int> Flood2DAnchor(int x, int y, List<Vector2Int> list, BasicTile[][] gridArray2D)
     {
         
@@ -1394,6 +1480,63 @@ public static class AlgosUtils
 
         return list;
     }
+    */
+
+
+
+    public static List<Vector2Int> NewFloodFill(BasicTile[][] gridArr, Vector2Int start)
+    {
+        int width = gridArr.Length;
+        int height = gridArr[0].Length;
+
+        List<Vector2Int> room = new List<Vector2Int>();
+        room.Add(start);
+
+        for (int i = 0; i < room.Count; i++)
+        {
+            int x = room[i].x;
+            int y = room[i].y;
+
+            if (x -1 >= 0) 
+            {
+                if (gridArr[y][x-1].tileWeight != 0 && gridArr[y][x-1].visited == false)
+                {
+                    gridArr[y][x-1].visited = true;
+                    room.Add(new Vector2Int(x - 1, y));
+                }
+            }
+
+            if (y - 1 >= 0)
+            {
+                if (gridArr[y-1][x].tileWeight != 0 && gridArr[y-1][x].visited == false)
+                {
+                    gridArr[y-1][x].visited = true;
+                    room.Add(new Vector2Int(x, y-1));
+                }
+            }
+
+            if (x + 1 < width)
+            {
+                if (gridArr[y][x + 1].tileWeight != 0 && gridArr[y][x+1].visited == false)
+                {
+                    gridArr[y][x + 1].visited = true;
+                    room.Add(new Vector2Int(x + 1, y));
+                }
+            }
+
+            if (y + 1 < height)
+            {
+                if (gridArr[y+1][x].tileWeight != 0 && gridArr[y+1][x].visited == false)
+                {
+                    gridArr[y+1][x].visited = true;
+                    room.Add(new Vector2Int(x, y+1));
+                }
+            }
+        }
+
+        return room;
+    }
+
 
 
     #endregion
@@ -1783,9 +1926,7 @@ public static class AlgosUtils
 
     public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(BasicTile[][] gridArray2D, int roomHeight = 7) 
     {
-
         var marchingCubesArr = new MarchingCubeClass[gridArray2D[0].Length, gridArray2D.Length, roomHeight];
-
 
 
         for (int z = 0; z < marchingCubesArr.GetLength(2); z++)  // this is the heihgt of the room
@@ -1802,7 +1943,6 @@ public static class AlgosUtils
                         }
                         else 
                         {
-
                             marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.05f);
                         }
 
@@ -1868,60 +2008,8 @@ public static class AlgosUtils
                             Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,      positionVertex[x+1,y,z+1].weight / (positionVertex[x+1,y,z+1].weight + positionVertex[x + 1,y,z].weight)),       //5   1
                             Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,    positionVertex[x + 1,y+1,z+1].weight / (positionVertex[x + 1,y+1,z+1].weight + positionVertex[x+1,y+1,z].weight)),       //6   2
                             Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,      positionVertex[x,y+1,z+1].weight / (positionVertex[x,y+1,z+1].weight + positionVertex[x,y + 1,z].weight))          //7   3
-                    
-
-                            //Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,    positionVertex[x,y,z].weight == 1 ? 0 : 0.5f),    //0   1
-                            //Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,positionVertex[x + 1,y,z].weight == 1 ? 0 : 0.5f),   //1   2
-                            //Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,    positionVertex[x + 1,y + 1,z].weight == 1 ? 0 : 0.5f),       //2   3
-                            //Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,        positionVertex[x,y + 1,z].weight == 1 ? 0 : 0.5f),           //3   0
-                            //Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,    positionVertex[x,y,z + 1].weight == 1 ? 0 : 0.5f),       //4   5
-                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,positionVertex[x+1,y,z+1].weight == 1 ? 0 : 0.5f),   //5   6
-                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,  positionVertex[x + 1,y+1,z+1].weight == 1 ? 0 : 0.5f),       //6   7
-                            //Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,   positionVertex[x,y + 1,z +1].weight == 1 ? 0 : 0.5f),          //7   4
-                            //Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,        positionVertex[x,y,z+1].weight == 1 ? 0 : 0.5f),           //4   0
-                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,    positionVertex[x+1,y,z+1].weight == 1 ? 0 : 0.5f),       //5   1
-                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,  positionVertex[x + 1,y+1,z+1].weight == 1 ? 0 : 0.5f),       //6   2
-                            //Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,    positionVertex[x,y+1,z+1].weight == 1 ? 0 : 0.5f)          //7   3
-                    
-                    
-                            //       Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   0.5f),    //0   1
-                            //Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
-                            //Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
-                            //Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
-                            //Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
-                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
-                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
-                            //Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
-                            //Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
-                            //Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
-                            //Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
-                            //Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
-                    
+                   
                     };
-
-
-
-
-
-             //       var midPosArr = new Vector3[12]
-             //{
-             //               Vector3.Lerp(  positionVertex[x,y,z].position,              positionVertex[x + 1,y,z].position,   positionVertex[x,y,z].weight / (positionVertex[x,y,z].weight + positionVertex[x + 1,y,z].weight)),    //0   1
-             //               Vector3.Lerp(  positionVertex[x + 1,y,z].position,          positionVertex[x + 1,y + 1,z].position,0.5f),   //1   2
-             //               Vector3.Lerp(  positionVertex[x + 1,y + 1,z].position,      positionVertex[x,y + 1,z].position,0.5f),       //2   3
-             //               Vector3.Lerp(  positionVertex[x,y + 1,z].position,          positionVertex[x,y,z].position,0.5f),           //3   0
-             //               Vector3.Lerp(  positionVertex[x,y,z + 1].position,          positionVertex[x+1,y,z+1].position,0.5f),       //4   5
-             //               Vector3.Lerp(  positionVertex[x+1,y,z+1].position ,         positionVertex[x + 1,y+1,z+1].position,0.5f),   //5   6
-             //               Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x,y+1,z+1].position,0.5f),       //6   7
-             //               Vector3.Lerp(  positionVertex[x,y + 1,z +1].position,          positionVertex[x,y,z+1].position,0.5f),          //7   4
-             //               Vector3.Lerp(  positionVertex[x,y,z+1].position,            positionVertex[x,y,z].position,0.5f),           //4   0
-             //               Vector3.Lerp(  positionVertex[x+1,y,z+1].position,          positionVertex[x + 1,y,z].position,0.5f),       //5   1
-             //               Vector3.Lerp(  positionVertex[x + 1,y+1,z+1].position,        positionVertex[x+1,y+1,z].position,0.5f),       //6   2
-             //               Vector3.Lerp(  positionVertex[x,y+1,z+1].position,          positionVertex[x,y + 1,z].position,0.5f)          //7   3
-             //};
-
-                    //Vector3.Lerp(botLeft.position, botRight.position, botLeft.weigth / (botLeft.weigth + botRight.weigth));
-
-
 
                     int index = positionVertex[x, y, z].state * 1 +
                                     positionVertex[x + 1, y, z].state * 2 +
@@ -1955,7 +2043,6 @@ public static class AlgosUtils
             triangles.Reverse();
         }
 
-        Debug.Log(vertecies.Count());
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         mesh.vertices = vertecies.ToArray();
         mesh.triangles = triangles.ToArray();
@@ -1965,31 +2052,21 @@ public static class AlgosUtils
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
 
-
-
         return mesh;
-
-
-
-
 
     }
 
-    
+
 
 
 
     #endregion
 
-
-
     #region Type and Utility section
 
     public static void SetUpTileCorridorTypesUI(BasicTile[][] gridArr, int width) 
     {
-
-
-        AlgosUtils.SetUpTileTypesCorridor(gridArr);
+        SetUpTileTypesCorridor(gridArr);
 
         for (int i = 0; i < width - 1; i++)
         {
@@ -2007,10 +2084,10 @@ public static class AlgosUtils
                 }
             }
 
-            AlgosUtils.SetUpTileTypesCorridor(gridArr);
+            SetUpTileTypesCorridor(gridArr);
         }
 
-        AlgosUtils.SetUpTileTypesFloorWall(gridArr);
+        SetUpTileTypesFloorWall(gridArr);
     }
 
 
@@ -2103,7 +2180,7 @@ public static class AlgosUtils
                     }
                     else
                     {
-                        gridArray2D[y][x].tileType = BasicTile.TileType.FLOORROOM;
+                        gridArray2D[y][x].tileType = BasicTile.TileType.FLOORCORRIDOR;
                         gridArray2D[y][x].tileWeight = 0.5f;
                     }
                 }
@@ -2242,6 +2319,7 @@ public static class AlgosUtils
                     openCoords.Add(new Vector2Int(x, y));
             }
         }
+        //here its populating the list called openCoords with everything apart from tileweight 0 means this is all the possible rooms tiles
 
         int iter = 0;
 
@@ -2257,10 +2335,9 @@ public static class AlgosUtils
             iter++;
 
             var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
+            //room = Flood2DAnchor(ranCoord.x, ranCoord.y, room, gridArray2D);   // this returns old flood fill system
 
-            var room = new List<Vector2Int>();
-
-            room = Flood2DAnchor(ranCoord.x, ranCoord.y, room, gridArray2D);   // this returns 
+            var room = NewFloodFill(gridArray2D, ranCoord);
 
             for (int i = openCoords.Count(); i-- > 0;) //for every open coord 
             {
@@ -2274,6 +2351,7 @@ public static class AlgosUtils
                 }
             }
 
+
             List<BasicTile> roomBasicTile = new List<BasicTile>();
 
             for (int y = 0; y < gridArray2D.Length; y++)
@@ -2282,8 +2360,11 @@ public static class AlgosUtils
                 {
                     foreach (var coord in room)
                     {
-                        if (new Vector2Int(x, y) == coord)
+                        if (new Vector2Int(x, y) == coord) 
+                        {
+                            gridArray2D[y][x].tileType = BasicTile.TileType.FLOORROOM;
                             roomBasicTile.Add(gridArray2D[y][x]);
+                        }
                     }
                 }
             }
@@ -2334,6 +2415,70 @@ public static class AlgosUtils
 
         return gridArr;
     }
+
+
+    public static void SetUpCorridorWithPath(List<BasicTile> path, float customWeight = 0.75f) 
+    {
+        foreach (var tile in path)
+        {
+            if (tile.tileType != BasicTile.TileType.FLOORROOM)
+                tile.tileType = BasicTile.TileType.FLOORCORRIDOR;
+
+            tile.tileWeight = customWeight;
+        }
+    }
+
+
+
+    public static void ReTypeTheRoom(List<BasicTile> room) 
+    {
+        for (int i = 0; i < room.Count; i++)
+        {
+            room[i].tileType = BasicTile.TileType.FLOORROOM;
+        }
+    }
+
+
+
+    /// <summary>
+    /// returns true if nothing was touched
+    /// </summary>
+    /// <param name="gridArr"></param>
+    /// <param name="center"></param>
+    /// <param name="r"></param>
+    /// <param name="tileType"></param>
+    /// <returns></returns>
+    public static List<BasicTile> DrawCircle(BasicTile[][] gridArr, Vector2Int center, int r, BasicTile.TileType tileType = BasicTile.TileType.FLOORROOM, bool draw = false)
+    {
+
+        var room = new List<BasicTile>();
+
+        for (int y = center.y - r; y <= center.y + r; y++)
+        {
+            for (int x = center.x - r; x <= center.x + r; x++)
+            {
+                bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
+                if (isInCircle)
+                {
+                    if (gridArr[y][x].tileType != BasicTile.TileType.VOID)
+                    {
+                        return null;
+                    }
+
+                    if (draw)
+                    {
+                        gridArr[y][x].tileType = tileType;
+                        gridArr[y][x].tileWeight = 0.75f;
+                        room.Add(gridArr[y][x]);
+                    }
+                }
+            }
+        }
+
+        return room;
+        //because we know that this is a room by it self we can just return a list of this rooms instead of calculating everything again
+    }
+
     #endregion
 
 }

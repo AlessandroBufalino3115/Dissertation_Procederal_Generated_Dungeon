@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -190,7 +189,52 @@ public static class GeneralUtil
         return texture;
     }
 
+    public static int ReturnRandomFromList<T>(List<T> list) 
+    {
+        return list.Count == 1 ? 0 : Random.Range(0, list.Count);
+    }
 
+
+
+    public static void SetUpColorBasedOnType(BasicTile[][] gridArr) 
+    {
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                switch (gridArr[y][x].tileType)
+                {
+                    case BasicTile.TileType.VOID:
+                        gridArr[y][x].color = Color.white;
+                        break;
+                    case BasicTile.TileType.FLOORROOM:
+
+                        gridArr[y][x].color = Color.grey;
+                        break;
+                    case BasicTile.TileType.WALL:
+
+                        gridArr[y][x].color = Color.black;
+                        break;
+                    case BasicTile.TileType.WALLCORRIDOR:
+
+                        gridArr[y][x].color = Color.green;
+                        break;
+                    case BasicTile.TileType.ROOF:
+                        break;
+                    case BasicTile.TileType.FLOORCORRIDOR:
+
+                        gridArr[y][x].color = Color.yellow;
+                        break;
+                    case BasicTile.TileType.AVOID:
+
+                        gridArr[y][x].color = Color.red;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 }
 
 

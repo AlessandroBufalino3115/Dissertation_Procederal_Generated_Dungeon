@@ -319,7 +319,7 @@ public class PerlinNoiseEditor : Editor
                         break;
 
                     case 1:
-                        mainScript.PcgManager.DrawTileMap();
+                        mainScript.PcgManager.DrawTileMapDirectionalWalls();
                         break;
                 }
             }
