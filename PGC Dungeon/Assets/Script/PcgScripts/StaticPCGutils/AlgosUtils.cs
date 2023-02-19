@@ -1461,8 +1461,8 @@ public static class AlgosUtils
 
 
     //this function is retired old flood fill
-    /*
-    public static List<Vector2Int> Flood2DAnchor(int x, int y, List<Vector2Int> list, BasicTile[][] gridArray2D)
+    
+    public static List<Vector2Int> Flood2DAnchor(int x, int y, List<Vector2Int> list, Tile[][] gridArray2D)
     {
         
         if (y >= 0 && x >= 0 && y < gridArray2D.Length && x < gridArray2D[y].Length)
@@ -1480,7 +1480,7 @@ public static class AlgosUtils
 
         return list;
     }
-    */
+    
 
 
 
@@ -2180,7 +2180,7 @@ public static class AlgosUtils
                     }
                     else
                     {
-                        gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
+                        gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
                         gridArray2D[y][x].tileWeight = 0.5f;
                     }
                 }
@@ -2335,7 +2335,9 @@ public static class AlgosUtils
             iter++;
 
             var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
-            //room = Flood2DAnchor(ranCoord.x, ranCoord.y, room, gridArray2D);   // this returns old flood fill system
+
+            //var room = new List<Vector2Int>();
+            // room = Flood2DAnchor(ranCoord.x, ranCoord.y, room, gridArray2D);   // this returns old flood fill system
 
             var room = NewFloodFill(gridArray2D, ranCoord);
 
@@ -2428,15 +2430,6 @@ public static class AlgosUtils
         }
     }
 
-
-
-    public static void ReTypeTheRoom(List<Tile> room) 
-    {
-        for (int i = 0; i < room.Count; i++)
-        {
-            room[i].tileType = Tile.TileType.FLOORROOM;
-        }
-    }
 
 
 

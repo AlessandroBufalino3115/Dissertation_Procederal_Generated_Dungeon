@@ -17,7 +17,7 @@ public class LoadMapEditor : Editor
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
 
     bool succesfullLoading = false;
-
+    bool blockGeneration = false;
 
     public override void OnInspectorGUI()
     {
@@ -84,7 +84,7 @@ public class LoadMapEditor : Editor
 
         GeneralUtil.SpacesUILayout(2);
 
-        if (GUILayout.Button(new GUIContent() { text = succesfullLoading == false ? "Frist Load in a map to enable the Generation" : "Generate YOUR Dungeon!" }))
+        if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
         {
             switch (selGridGenType)
             {
@@ -107,16 +107,24 @@ public class LoadMapEditor : Editor
                     break;
 
                 case 1:
-                    mainScript.PcgManager.DrawTileMapDirectionalWalls();
+
+                    if (blockGeneration)
+                        mainScript.PcgManager.DrawTileMapBlockType();
+                    else
+                        mainScript.PcgManager.DrawTileMapDirectionalWalls();
+
                     break;
             }
         }
 
         if (selGridGenType == 1)
         {
+            blockGeneration = EditorGUILayout.Toggle(new GUIContent() { text = blockGeneration == true ? "Block gen selected" : "Wall directional gen selected", tooltip = "" }, blockGeneration);
+            GeneralUtil.SpacesUILayout(1);
             mainScript.PcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk height", tooltip = "" }, mainScript.PcgManager.ChunkHeight, 10, 40);
             mainScript.PcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, mainScript.PcgManager.ChunkWidth, 10, 40);
         }
+
 
         EditorGUI.EndDisabledGroup();
 

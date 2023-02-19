@@ -3,78 +3,52 @@ using UnityEngine;
 
 public class RandomWalkMA : MonoBehaviour
 {
-    private PCGManager pcgManager;
-    public PCGManager PcgManager
-    {
-        get { return pcgManager; }
-    }
+
+    [HideInInspector]
+    public PCGManager pcgManager;
+   
 
     //specific to main algo
+    [HideInInspector]
+    public int iterations;
 
-    private int iterations;
-    public int Iterations
-    {
-        get { return iterations; }
-        set { iterations = value; }
-    }
+    [HideInInspector]
+    public bool startFromMiddle = false;
 
-    private bool startFromMiddle = false;
-    public bool StartFromMiddle
-    {
-        get { return startFromMiddle; }
-        set { startFromMiddle = value; }
-    }
+    [HideInInspector]
+    public bool alreadyPassed;
 
-    private bool alreadyPassed;
-    public bool AlreadyPassed
-    {
-        get { return alreadyPassed; }
-        set { alreadyPassed = value; }
-    }
 
 
 
     //general
 
-    private bool pathType = false;
-    public bool PathType
-    {
-        get { return pathType; }
-        set { pathType = value; }
-    }
+    [HideInInspector]
+    public bool pathType = false;
 
 
-    private int neighboursNeeded = 3;
-    public int NeighboursNeeded
-    {
-        get { return neighboursNeeded; }
-        set { neighboursNeeded = value; }
-    }
 
-    private int typeOfTri;
-    public int TypeOfTri
-    {
-        get { return typeOfTri; }
-        set { typeOfTri = value; }
-    }
+    [HideInInspector]
+    public int neighboursNeeded = 3;
 
-    private int minSize =40;
-    public int MinSize
-    {
-        get { return minSize; }
-        set { minSize = value; }
-    }
+    [HideInInspector]
+    public int typeOfTri;
 
 
-    private bool started;
-    public bool Started
-    {
-        get { return started; }
-        set { started = value; }
-    }
+    [HideInInspector]
+    public int minSize =40;
 
 
+
+    [HideInInspector]
+    public bool started;
+
+
+
+    [HideInInspector]
     public List<List<Tile>> rooms = new List<List<Tile>>();
+
+    [HideInInspector]
     public List<Edge> edges = new List<Edge>();
 
 
@@ -86,19 +60,27 @@ public class RandomWalkMA : MonoBehaviour
        BFS,
        DFS
     }
-    private PathFindingType pathFindingType;
-    public PathFindingType PathfindingType
+    [HideInInspector]
+    public PathFindingType pathFindingType;
+
+
+    public enum UISTATE
     {
-        get { return pathFindingType; }
-        set { pathFindingType = value; }
+        MAIN_ALGO,
+        CA,
+        ROOM_GEN,
+        EXTRA_ROOM_GEN,
+        PATHING,
+        GENERATION
     }
+    [HideInInspector]
+    public UISTATE currUiState = UISTATE.MAIN_ALGO;
+
 
 
     public void InspectorAwake() 
     {
         pcgManager = this.transform.GetComponent<PCGManager>();
     }
-
-
 
 }

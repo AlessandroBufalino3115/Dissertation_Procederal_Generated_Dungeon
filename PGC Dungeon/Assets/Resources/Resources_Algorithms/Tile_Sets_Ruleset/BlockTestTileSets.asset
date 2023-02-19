@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e23da97fa40e2a34091787382c1b9d5f, type: 3}
+  m_Name: BlockTestTileSets
+  m_EditorClassIdentifier: 
+  FloorTiles:
+  - Tile: {fileID: 236138197927731051, guid: d7dcfe9dc3e6c3e41bbb3aa2100f3661, type: 3}
+    occurance: 1
+  CeilingTiles:
+  - Tile: {fileID: 2198642656052706102, guid: 86ff0665354e0174d93df37d8ba17bf2, type: 3}
+    occurance: 1
+  WallsTiles:
+  - Tile: {fileID: 8784097779939622084, guid: 225995ebdd857f74fac2bcd62656589a, type: 3}
+    occurance: 1

@@ -37,11 +37,6 @@ public class RanRoomGenEditor : Editor
 
 
 
-
-
-
-
-
     int selGridGenType = 0;
     GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algortihm Marhcing cubes create a mesh object whihc can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tielset provided" } };
 

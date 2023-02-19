@@ -28,16 +28,16 @@ public class PCGManager : MonoBehaviour
     }
 
     [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
-    [Range(40f, 650f)]
-    public int width = 50;
+    [Range(100, 1000)]
+    public int width = 125;
 
     [Tooltip("How tall the drawing canvas where the algorithms will take place will be")]
-    [Range(40f, 650f)]
-    public int height = 50;
+    [Range(100, 1000)]
+    public int height = 125;
 
     [Tooltip("How tall the dungeon will be.")]
     [Range(3f, 8f)]
-    public int RoomHeight = 6;
+    public int RoomHeight = 4;
 
 
     public enum MainAlgo
@@ -344,12 +344,18 @@ public class PCGManager : MonoBehaviour
         prevGridArray2D.Clear();
     }
 
-    public void TestFunc() 
-    {
-       
-    }
+
 
     #endregion
+
+    public void TestFunc()
+    {
+        GeneralUtil.SetUpColorBasedOnType(gridArray2D);
+
+
+        plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(gridArray2D);
+    }
+
 
 
     #region Generation area
@@ -432,7 +438,6 @@ public class PCGManager : MonoBehaviour
     /// <returns></returns>
     private bool AABBCol(Vector3 player, Chunk chunk)
     {
-
         if (player.x >= chunk.bottomLeft.x && player.x < chunk.topRight.x)
         {
             if (player.z >= chunk.bottomLeft.y && player.z < chunk.topRight.y)
@@ -717,6 +722,72 @@ public class PCGManager : MonoBehaviour
             }
         }
     }
+
+
+
+    public void DrawTileMapBlockType()
+    {
+        int iter = 0;
+        ChunkCreate(chunkWidth, chunkHeight);
+
+        if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
+        {
+            EditorUtility.DisplayDialog("Invalid tile Rules given", "Please make sure you have loaded all of the tile object correctly and all the 3 lists have at least one object in them to use this Generation method", "OK!");
+            return;
+        }
+
+        for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
+        {
+            for (int y = 0; y < gridArray2D.Length; y++)
+            {
+                for (int x = 0; x < gridArray2D[0].Length; x++)
+                {
+                    if (z == 0) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
+                    {
+                        if (gridArray2D[y][x].tileType != Tile.TileType.VOID)
+                        {
+                            var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[RatioBasedChoice(FloorTiles)].Tile : FloorTiles[0].Tile, this.transform);
+                            this.transform.GetChild(0);
+
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
+                            objRef.isStatic = true;
+                            objRef.transform.position = new Vector3(x, z, y);
+                            iter++;
+                        }
+                    }
+                    else if (z == RoomHeight - 1) 
+                    {
+                        if (gridArray2D[y][x].tileType != Tile.TileType.VOID)
+                        {
+                            var objRef = Instantiate(CeilingTiles.Count > 1 ? FloorTiles[RatioBasedChoice(CeilingTiles)].Tile : CeilingTiles[0].Tile, this.transform);
+                            this.transform.GetChild(0);
+
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
+                            objRef.isStatic = true;
+                            objRef.transform.position = new Vector3(x, z, y);
+                            iter++;
+                        }
+                    }
+                    else 
+                    {
+                        if (gridArray2D[y][x].tileType == Tile.TileType.WALL)
+                        {
+                            var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
+
+                            objRef.transform.position = new Vector3(x, z, y);
+                            objRef.isStatic = true;
+                            objRef.transform.parent = this.transform.GetChild(gridArray2D[y][x].idx + 1);
+                            iter++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
     #endregion
 }
 
@@ -743,7 +814,6 @@ public class TilesRuleSetPCG
     public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
     public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
 }
-
 
 [Serializable]
 public class TileRuleSetPCG
