@@ -19,6 +19,15 @@ public class LoadMapEditor : Editor
     bool succesfullLoading = false;
     bool blockGeneration = false;
 
+
+
+
+
+
+
+    //this is where i want to get the 
+
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();

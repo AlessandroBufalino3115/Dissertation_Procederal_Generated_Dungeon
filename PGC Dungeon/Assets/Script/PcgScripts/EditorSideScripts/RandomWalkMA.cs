@@ -38,18 +38,21 @@ public class RandomWalkMA : MonoBehaviour
     [HideInInspector]
     public int minSize =40;
 
-
-
     [HideInInspector]
     public bool started;
-
-
 
     [HideInInspector]
     public List<List<Tile>> rooms = new List<List<Tile>>();
 
     [HideInInspector]
     public List<Edge> edges = new List<Edge>();
+
+    [HideInInspector]
+    public  bool allowedBack;
+    [HideInInspector]
+    public bool allowedForward;
+    [HideInInspector]
+    public int currStateIndex = 0;
 
 
 

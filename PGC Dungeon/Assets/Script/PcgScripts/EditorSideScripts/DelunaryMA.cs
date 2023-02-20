@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class DelunaryMA : MonoBehaviour
 {
-    private PCGManager pcgManager;
-    public PCGManager PcgManager
-    {
-        get { return pcgManager; }
-    }
+    [HideInInspector]
+    public PCGManager pcgManager;
+    
+    [HideInInspector]
+    public bool readyToGen = false;
+
+    [HideInInspector]
+    public List<List<Tile>> rooms = new List<List<Tile>>();
 
 
     public void InspectorAwake()

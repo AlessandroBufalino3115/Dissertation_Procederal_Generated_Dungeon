@@ -38,16 +38,11 @@ public class RandomWalkEditor : Editor
 
     string saveMapFileName = "";
 
+    int width = 0;
+    int height = 0;
 
-
-
-
-
-    private int currStateIndex = 0;
-    private bool allowedToContinue = false;
 
     private bool blockGeneration = false;
-    bool allowedBack = true;
 
     public override void OnInspectorGUI()
     {
@@ -80,16 +75,11 @@ public class RandomWalkEditor : Editor
         GeneralUtil.SpacesUILayout(4);
 
 
-
-
-
-
-
         switch (mainScript.currUiState)
         {
             case RandomWalkMA.UISTATE.MAIN_ALGO:
 
-                allowedBack = false;
+                mainScript.allowedBack = false;
 
                 mainScript.iterations = (int)EditorGUILayout.Slider(new GUIContent() { text = "Iterations", tooltip = "This is how many times the head of the algorithm is going to move" }, mainScript.iterations, (mainScript.pcgManager.gridArray2D.Length * mainScript.pcgManager.gridArray2D[0].Length) * 0.3f, (mainScript.pcgManager.gridArray2D.Length * mainScript.pcgManager.gridArray2D[0].Length) * 0.9f);
 
@@ -101,16 +91,16 @@ public class RandomWalkEditor : Editor
                     AlgosUtils.RestartArr(mainScript.pcgManager.gridArray2D);
                     mainScript.pcgManager.gridArray2D = AlgosUtils.RandomWalk2DCol(mainScript.iterations, !mainScript.alreadyPassed, mainScript.pcgManager.gridArray2D[0].Length, mainScript.pcgManager.gridArray2D.Length, randomStart: !mainScript.startFromMiddle);
                     mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D);
-                  
-                    allowedToContinue = true;
+
+                    mainScript.allowedForward = true;
                 }
 
                 break;
 
             case RandomWalkMA.UISTATE.CA:
 
-                allowedToContinue = true;
-                allowedBack = true;
+                mainScript.allowedForward = true;
+                mainScript.allowedBack = true;
                 mainScript.neighboursNeeded = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, mainScript.neighboursNeeded, 3, 5);
 
                 if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
@@ -134,7 +124,7 @@ public class RandomWalkEditor : Editor
 
                 mainScript.minSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, mainScript.minSize, 0, 200);
 
-                allowedBack = true;
+                mainScript.allowedBack = true;
 
 
                 if (GUILayout.Button("Generate rooms"))
@@ -159,7 +149,7 @@ public class RandomWalkEditor : Editor
                             }
                         }
                     }
-                    allowedToContinue = true;
+                    mainScript.allowedForward = true;
                     mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
                 }
 
@@ -169,8 +159,8 @@ public class RandomWalkEditor : Editor
                 break;
             case RandomWalkMA.UISTATE.EXTRA_ROOM_GEN:
 
-                allowedToContinue = true;
-                allowedBack = false;
+                mainScript.allowedForward = true;
+                mainScript.allowedBack = false;
 
 
                 radius = (int)EditorGUILayout.Slider(new GUIContent() { text = "Radius of the arena", tooltip = "Creates a circular room in a random position on the canvas. The code will try to fit it, if nothing spawns try again or lower the size" }, radius, 10, 40);
@@ -197,8 +187,29 @@ public class RandomWalkEditor : Editor
                 }
 
 
+                GeneralUtil.SpacesUILayout(2);
+
+                height = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, height, 10, 40);
+                width = (int)EditorGUILayout.Slider(new GUIContent() { text = "Widht", tooltip = "" }, width, 10, 40);
 
 
+                if (GUILayout.Button(new GUIContent() { text = "gen Room" }))
+                {
+                    var randomPoint = new Vector2Int(Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D[0].Length - radius - 3), Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D.Length - radius - 3));
+
+
+                    var squareRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, randomPoint, radius + 2);
+
+                    if (squareRoom != null)
+                    {
+                        mainScript.pcgManager.CreateBackUpGrid();
+                        squareRoom = AlgosUtils.SpawnRoom(width, height, randomPoint, mainScript.pcgManager.gridArray2D);
+
+                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+
+                        mainScript.rooms.Add(squareRoom);
+                    }
+                }
                 //need to add the small room
                 //remember to create a backup   mainScript.PcgManager.CreateBackUpGrid();
                 //there is a room like beack here too that deletes them by accdessing the  room list it self
@@ -212,7 +223,7 @@ public class RandomWalkEditor : Editor
                 if (!usedPathing)
                 {
 
-                    allowedBack = true;
+                    mainScript.allowedBack = true;
 
                     if (mainScript.rooms.Count == 1)
                     {
@@ -269,7 +280,7 @@ public class RandomWalkEditor : Editor
                             Vector2Int tileB = mainScript.rooms[1][Random.Range(0, mainScript.rooms[1].Count - 1)].position;
 
 
-                            allowedToContinue = true;
+                            mainScript.allowedForward = true;
                             usedPathing = true;
 
                             switch (selGridPathGenType)
@@ -403,7 +414,7 @@ public class RandomWalkEditor : Editor
 
                         if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                         {
-                            allowedToContinue = true;
+                            mainScript.allowedForward = true;
                             usedPathing = true;
 
                             mainScript.pcgManager.CreateBackUpGrid();
@@ -416,7 +427,6 @@ public class RandomWalkEditor : Editor
                                 roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
                                 centerPoints.Add(AlgosUtils.FindMiddlePoint(room));
                             }
-
 
                             switch (selGridConnectionType)
                             {
@@ -460,8 +470,6 @@ public class RandomWalkEditor : Editor
                                                 mainScript.edges.Add(newEdge);
                                             }
                                         }
-
-
                                     }
                                     break;
 
@@ -488,7 +496,6 @@ public class RandomWalkEditor : Editor
                                             int ranStarter = Random.Range(0, len);
                                             int ranEnder = Random.Range(0, len);
 
-
                                             if (ranStarter == ranEnder) { continue; }
                                             else if (Mathf.Abs(ranStarter - ranEnder) == 1) { continue; }
                                             else
@@ -508,11 +515,9 @@ public class RandomWalkEditor : Editor
 
                                     foreach (var edge in mainScript.edges)
                                     {
-
                                         //use where so we get soemthing its not the wall but not necessary
                                         var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                         var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
-
 
                                         var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.pcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.pathType, useWeights: useWeights, arrWeights: mainScript.pcgManager.tileCosts);
 
@@ -527,7 +532,6 @@ public class RandomWalkEditor : Editor
                                         var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
                                         var path = AlgosUtils.DijstraPathfinding(mainScript.pcgManager.gridArray2D, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
-
 
                                         AlgosUtils.SetUpCorridorWithPath(path);
                                     }
@@ -567,7 +571,7 @@ public class RandomWalkEditor : Editor
                 else
                 {
 
-                    allowedBack = false;
+                    mainScript.allowedBack = false;
 
                     deadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
 
@@ -577,7 +581,6 @@ public class RandomWalkEditor : Editor
                     {
                         for (int i = 0; i < deadEndAmount; i++)
                         {
-                            Debug.Log(mainScript.rooms.Count);
                             var room = mainScript.rooms[GeneralUtil.ReturnRandomFromList(mainScript.rooms)];
 
                             var randomTileInRoom = room[GeneralUtil.ReturnRandomFromList(room)];
@@ -591,7 +594,6 @@ public class RandomWalkEditor : Editor
 
                                 if (tile.tileWeight == 0)
                                 {
-
                                     mainScript.pcgManager.CreateBackUpGrid();
 
                                     randomTileOutsideOfRoom = tile;
@@ -620,7 +622,7 @@ public class RandomWalkEditor : Editor
             case RandomWalkMA.UISTATE.GENERATION:
 
 
-                allowedBack = true;
+                mainScript.allowedBack = true;
 
                 GUILayout.BeginVertical("Box");
                 selGridGenType = GUILayout.SelectionGrid(selGridGenType, selStringsGenType, 1);
@@ -691,28 +693,28 @@ public class RandomWalkEditor : Editor
         {
             GeneralUtil.SpacesUILayout(4);
 
-            EditorGUI.BeginDisabledGroup(allowedBack == false);
+            EditorGUI.BeginDisabledGroup(mainScript.allowedBack == false);
 
-            if (GUILayout.Button(new GUIContent() { text = "Go Back", tooltip = allowedToContinue == true ? "Press this to continue to go back one step" : "You cant go back" }))// gen something
+            if (GUILayout.Button(new GUIContent() { text = "Go Back", tooltip = mainScript.allowedForward == true ? "Press this to go back one step" : "You cant go back" }))// gen something
             {
                 mainScript.pcgManager.ClearUndos();
-                allowedBack = false;
-                currStateIndex--;
-               mainScript.currUiState = (RandomWalkMA.UISTATE)currStateIndex;
+                mainScript.allowedBack = false;
+                mainScript.currStateIndex--;
+                mainScript.currUiState = (RandomWalkMA.UISTATE)mainScript.currStateIndex;
             }
 
             EditorGUI.EndDisabledGroup();
 
 
 
-            EditorGUI.BeginDisabledGroup(allowedToContinue == false);
+            EditorGUI.BeginDisabledGroup(mainScript.allowedForward == false);
 
-            if (GUILayout.Button(new GUIContent() { text = "Continue", tooltip = allowedToContinue == true ? "Press this to continue to the next step" : "You need to finish this step to continue" }))// gen something
+            if (GUILayout.Button(new GUIContent() { text = "Continue", tooltip = mainScript.allowedForward == true ? "Press this to continue to the next step" : "You need to finish this step to continue" }))// gen something
             {
                 mainScript.pcgManager.ClearUndos();
-                allowedToContinue = false;
-                currStateIndex++;
-                mainScript.currUiState = (RandomWalkMA.UISTATE)currStateIndex;
+                mainScript.allowedForward = false;
+                mainScript.currStateIndex++;
+                mainScript.currUiState = (RandomWalkMA.UISTATE)mainScript.currStateIndex;
             }
 
             EditorGUI.EndDisabledGroup();

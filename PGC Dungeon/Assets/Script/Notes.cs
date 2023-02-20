@@ -36,8 +36,9 @@
  *          
  *          
  *          the rnadom dead end doesnt work
+ *          random rooms shit should prob go in the manual editor
  *          
- *          
+ *          started on the delu, the truth is that the edges do draw on each other so neneed to deall with that
  *          
  *          
  *          

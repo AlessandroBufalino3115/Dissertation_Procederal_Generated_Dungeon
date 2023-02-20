@@ -1727,6 +1727,90 @@ public static class AlgosUtils
 
     #endregion
 
+
+    #region Room Gen 
+
+    public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[][] gridArr) 
+    {
+        var room = new List<Tile>();
+
+        int halfWidth = width / 2; 
+        int halfHeight = height / 2;
+
+
+        if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr[0].Length)
+            return null;
+
+        if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.Length)
+            return null;
+
+
+        for (int y = centerPoint.y - halfHeight; y < centerPoint.y + halfHeight; y++)
+        {
+            for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfHeight; x++)
+            {
+                gridArr[y][x].tileType = Tile.TileType.FLOORROOM;
+                gridArr[y][x].tileWeight = 0.75f;
+                room.Add(gridArr[y][x]);
+            }
+        }
+
+
+
+        return room;
+    }
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// returns true if nothing was touched
+    /// </summary>
+    /// <param name="gridArr"></param>
+    /// <param name="center"></param>
+    /// <param name="r"></param>
+    /// <param name="tileType"></param>
+    /// <returns></returns>
+    public static List<Tile> DrawCircle(Tile[][] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
+    {
+
+        var room = new List<Tile>();
+
+        for (int y = center.y - r; y <= center.y + r; y++)
+        {
+            for (int x = center.x - r; x <= center.x + r; x++)
+            {
+                bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
+                if (isInCircle)
+                {
+                    if (gridArr[y][x].tileType != Tile.TileType.VOID)
+                    {
+                        return null;
+                    }
+
+                    if (draw)
+                    {
+                        gridArr[y][x].tileType = tileType;
+                        gridArr[y][x].tileWeight = 0.75f;
+                        room.Add(gridArr[y][x]);
+                    }
+                }
+            }
+        }
+
+        return room;
+        //because we know that this is a room by it self we can just return a list of this rooms instead of calculating everything again
+    }
+
+
+
+    #endregion
+
+
     //not working
     #region DiamondSquare algo
 
@@ -2433,45 +2517,7 @@ public static class AlgosUtils
 
 
 
-    /// <summary>
-    /// returns true if nothing was touched
-    /// </summary>
-    /// <param name="gridArr"></param>
-    /// <param name="center"></param>
-    /// <param name="r"></param>
-    /// <param name="tileType"></param>
-    /// <returns></returns>
-    public static List<Tile> DrawCircle(Tile[][] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
-    {
-
-        var room = new List<Tile>();
-
-        for (int y = center.y - r; y <= center.y + r; y++)
-        {
-            for (int x = center.x - r; x <= center.x + r; x++)
-            {
-                bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
-                if (isInCircle)
-                {
-                    if (gridArr[y][x].tileType != Tile.TileType.VOID)
-                    {
-                        return null;
-                    }
-
-                    if (draw)
-                    {
-                        gridArr[y][x].tileType = tileType;
-                        gridArr[y][x].tileWeight = 0.75f;
-                        room.Add(gridArr[y][x]);
-                    }
-                }
-            }
-        }
-
-        return room;
-        //because we know that this is a room by it self we can just return a list of this rooms instead of calculating everything again
-    }
-
+    
     #endregion
 
 }

@@ -12,6 +12,10 @@ public class LoadMapMA : MonoBehaviour
     public PCGManager PcgManager;
 
 
+
+
+
+
     public void InspectorAwake()
     {
         PcgManager = this.transform.GetComponent<PCGManager>();

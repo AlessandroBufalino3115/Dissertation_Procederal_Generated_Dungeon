@@ -52,7 +52,7 @@ public class PCGManager : MonoBehaviour
         PERLIN_NOISE = 7,
         PERLIN_WORM = 8,
         DIAMOND_SQUARE = 9,
-        LOAD_PREVIOUS_GEN = 10
+        MANUAL_EDITOR = 10
     }
 
 
