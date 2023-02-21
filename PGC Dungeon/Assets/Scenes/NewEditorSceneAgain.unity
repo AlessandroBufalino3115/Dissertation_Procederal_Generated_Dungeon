@@ -217,7 +217,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1765285137
+--- !u!1 &1126797294
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,9 +225,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1765285140}
-  - component: {fileID: 1765285139}
-  - component: {fileID: 1765285138}
+  - component: {fileID: 1126797297}
+  - component: {fileID: 1126797296}
+  - component: {fileID: 1126797295}
   m_Layer: 0
   m_Name: PCG element
   m_TagString: Untagged
@@ -235,37 +235,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1765285138
+--- !u!114 &1126797295
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765285137}
+  m_GameObject: {fileID: 1126797294}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 059e95f0c61ec6b429327215a31a6e82, type: 3}
+  m_Script: {fileID: 11500000, guid: 172966bb4ad3bb74890dd9abc4aa888d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pcgManager: {fileID: 1765285139}
-  readyToGen: 0
---- !u!114 &1765285139
+  PcgManager: {fileID: 1126797296}
+--- !u!114 &1126797296
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765285137}
+  m_GameObject: {fileID: 1126797294}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16af13b90f9d1554b8c1e93eb1b53d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mat: {fileID: 0}
-  width: 314
-  height: 327
+  width: 125
+  height: 125
   RoomHeight: 4
-  mainAlgo: 5
+  mainAlgo: 10
   TileSetRuleFileName: 
   FloorTiles: []
   CeilingTiles: []
@@ -276,13 +275,13 @@ MonoBehaviour:
   chunks: []
   CLength: 0
   CHeight: 0
---- !u!4 &1765285140
+--- !u!4 &1126797297
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765285137}
+  m_GameObject: {fileID: 1126797294}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}

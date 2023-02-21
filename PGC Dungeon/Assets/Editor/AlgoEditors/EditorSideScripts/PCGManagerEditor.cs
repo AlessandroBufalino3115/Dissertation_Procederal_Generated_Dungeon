@@ -55,7 +55,7 @@ public class PCGManagerEditor : Editor
         {
             if (GUILayout.Button("Delete Plane"))
             {
-                mainScript.RefreshPlane();
+                mainScript.DeletePlane();
                 mainScript.DelPrevAlgo();
             }
         }

@@ -15,8 +15,6 @@ public static class GeneralUtil
 
 
 
-
-
     /// <summary>
     /// from 0 
     /// </summary>
@@ -282,6 +280,192 @@ public static class GeneralUtil
 
         File.WriteAllBytes(Application.dataPath + "/Resources/Resources_Algorithms/Saved_Gen_Data/" + saveFileName, stream.ToArray());
     }
+
+
+
+
+    public static void CellularAutomataEditorSection(PCGManager pcgManager, int neighbours, out int setNeighbours) 
+    {
+        Tile[][] gridArr = pcgManager.gridArray2D;
+
+        setNeighbours = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, neighbours, 3, 5);
+
+        if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
+        {
+            pcgManager.CreateBackUpGrid();
+
+            AlgosUtils.CleanUp2dCA(gridArr, neighbours);
+
+            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArr);
+        }
+        if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
+        {
+            pcgManager.CreateBackUpGrid();
+
+            AlgosUtils.RunCaIteration2D(gridArr, neighbours);
+            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArr);
+        }
+    }
+    public static bool CalculateRoomsEditorSection(PCGManager pcgManager, int minSize, out List<List<Tile>> rooms, out int setMinSize) 
+    {
+
+        setMinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
+
+        
+        if (GUILayout.Button("Generate rooms"))
+        {
+            rooms = AlgosUtils.GetAllRooms(pcgManager.gridArray2D, true);
+
+            pcgManager.CreateBackUpGrid();
+
+            if (setMinSize > 0)
+            {
+                for (int i = rooms.Count; i-- > 0;)
+                {
+                    if (rooms[i].Count <= setMinSize)
+                    {
+                        foreach (var tile in rooms[i])
+                        {
+                            tile.tileWeight = 0;
+                            tile.tileType = Tile.TileType.VOID;
+                        }
+
+                        rooms.RemoveAt(i);
+                    }
+                }
+            }
+            //mainScript.allowedForward = true;
+            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(pcgManager.gridArray2D, 0, 1, true);
+
+
+            return true;
+        }
+
+        rooms = null;
+        return false;
+
+
+
+    }
+
+
+
+
+    public static void GenerateDeadEndCorridorEditorSection(PCGManager pcgManager, int deadEndAmount, int deadEndCorridorThickness, List<List<Tile>> rooms ,out int outDeadEndCorridorThickness, out int outDeadEndAmount, int margin, out int outMargin) 
+    {
+        outDeadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
+
+        outDeadEndCorridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness of the dead end corridor", tooltip = "How wide should the corridor be" }, deadEndCorridorThickness, 3, 6);
+
+        outMargin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, margin, 10, 40);
+
+        if (GUILayout.Button(new GUIContent() { text = "Generate dead end corridor" }))
+        {
+            for (int i = 0; i < deadEndAmount; i++)
+            {
+                var room = rooms[GeneralUtil.ReturnRandomFromList(rooms)];
+
+                var randomTileInRoom = room[GeneralUtil.ReturnRandomFromList(room)];
+
+                Tile randomTileOutsideOfRoom;
+
+                while (true)
+                {
+                    var tile = pcgManager.gridArray2D[Random.Range(0, pcgManager.gridArray2D.Length)][Random.Range(0, pcgManager.gridArray2D[0].Length)];
+
+                    if (tile.tileWeight == 0)
+                    {
+                        pcgManager.CreateBackUpGrid();
+
+                        randomTileOutsideOfRoom = tile;
+
+                        var tileA = randomTileOutsideOfRoom.position;
+                        var tileB = randomTileInRoom.position;
+
+                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, true, pcgManager.gridArray2D);
+
+                        break;
+                    }
+                }
+            }
+
+            AlgosUtils.SetUpTileCorridorTypesUI(pcgManager.gridArray2D, deadEndCorridorThickness);
+
+            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(pcgManager.gridArray2D, 0, 1, true);
+        }
+
+    }
+
+
+
+
+
+    public static GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
+
+    public static void GenerateMeshEditorSection(PCGManager pcgManager,  int inSelGridGenType,  bool inBlockGeneration,  string inSaveMapFileName,  out int selGridGenType, out bool blockGeneration, out string saveMapFileName) 
+    {
+        GUILayout.BeginVertical("Box");
+        selGridGenType = GUILayout.SelectionGrid(inSelGridGenType, selStringsGenType, 1);
+        GUILayout.EndVertical();
+
+
+        SpacesUILayout(2);
+
+        if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
+        {
+            switch (selGridGenType)
+            {
+                case 0:
+
+                    for (int y = 0; y < pcgManager.gridArray2D.Length; y++)
+                    {
+                        for (int x = 0; x < pcgManager.gridArray2D[0].Length; x++)
+                        {
+                            if (pcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
+                            {
+                                pcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
+                            }
+                        }
+                    }
+
+                    AlgosUtils.SetUpTileTypesCorridor(pcgManager.gridArray2D);
+
+                    pcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(pcgManager.gridArray2D, pcgManager.RoomHeight), false));
+                    break;
+
+                case 1:
+
+                    if (inBlockGeneration)
+                        pcgManager.DrawTileMapBlockType();
+                    else
+                        pcgManager.DrawTileMapDirectionalWalls();
+
+                    break;
+            }
+        }
+
+        if (selGridGenType == 1)
+        {
+            blockGeneration = EditorGUILayout.Toggle(new GUIContent() { text = inBlockGeneration == true ? "Block gen selected" : "Wall directional gen selected", tooltip = "Block gen is usefull for a tileset made of cubes, directional is used for oriented walls" }, inBlockGeneration);
+            SpacesUILayout(1);
+            pcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk height", tooltip = "" }, pcgManager.ChunkHeight, 10, 40);
+            pcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, pcgManager.ChunkWidth, 10, 40);
+        }
+        else 
+        {
+            blockGeneration = false;
+        }
+
+        SpacesUILayout(4);
+
+        saveMapFileName = EditorGUILayout.TextField("Save file name: ", inSaveMapFileName);
+        if (GUILayout.Button("save"))
+        {
+            SaveMap(pcgManager.gridArray2D, inSaveMapFileName);
+        }
+    }
+
+
 
 
 }

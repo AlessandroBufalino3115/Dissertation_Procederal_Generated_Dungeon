@@ -174,7 +174,7 @@ public class PCGManager : MonoBehaviour
     #region algo Managment
     public void CreatePlane()
     {
-        RefreshPlane();
+        DeletePlane();
 
         plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
@@ -199,16 +199,18 @@ public class PCGManager : MonoBehaviour
 
     }
 
-    public void RefreshPlane()
+    public void DeletePlane()
     {
         if (plane != null)
             DestroyImmediate(plane);
+
+        ClearUndos();
     }
 
     public void LoadMainAlgo()
     {
         DelPrevAlgo();
-
+        CreatePlane();
         currMainAlgoIDX = (int)mainAlgo;
 
 
@@ -351,7 +353,6 @@ public class PCGManager : MonoBehaviour
     public void TestFunc()
     {
         GeneralUtil.SetUpColorBasedOnType(gridArray2D);
-
 
         plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(gridArray2D);
     }

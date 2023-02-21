@@ -278,9 +278,8 @@ public static class AlgosUtils
 
     #region A*
 
-    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2DNorm(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool perf = false, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
+    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2DNorm(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights =null)
     {
-        int timerStart = Environment.TickCount & Int32.MaxValue;
 
         bool checkForUse = useWeights == true && arrWeights != null ? true : false;
 
@@ -290,6 +289,7 @@ public static class AlgosUtils
         AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
         start_node.parent = null;
 
+        Debug.Log(end);
         AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
 
         int[,] childPosArry = new int[0, 0];
@@ -330,11 +330,6 @@ public static class AlgosUtils
                     path.Add(current);
                     current = current.parent;
                 }
-
-                int timerEnd_ = Environment.TickCount & Int32.MaxValue;
-                int totalTicks_ = timerEnd_ - timerStart;
-
-                if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks_}</color>"); }
 
                 var pathOfBasicTiles = new List<Tile>();
 
@@ -420,14 +415,6 @@ public static class AlgosUtils
                 }
             }
         }
-
-
-
-        int timerEnd = Environment.TickCount & Int32.MaxValue;
-        int totalTicks = timerEnd - timerStart;
-
-        if (perf) { Debug.Log($"<color=yellow>Performance: The total time that destorying all the children has taken was {totalTicks}</color>"); }
-
 
         return null;
 
@@ -1235,7 +1222,7 @@ public static class AlgosUtils
 
             foreach (Triangle triangle in triangulation)
             {
-                if (IspointInCircumcircle(triangle.a, triangle.b, triangle.c, point))
+                if (IsPointInCircumcircle(triangle.a, triangle.b, triangle.c, point))
                 {
                     badTriangles.Add(triangle);
                 }
@@ -1298,13 +1285,24 @@ public static class AlgosUtils
         {
             foreach (var edge in tri.edges)
             {
-                edges.Add(edge);
+                bool same = false;
+
+                foreach (var alreadySavedEdeg in edges)
+                {
+                    if (LineIsEqual(alreadySavedEdeg, edge))
+                    {
+                        same = true;
+                        break;
+                    }
+                }
+
+
+                if (same == false)
+                    edges.Add(edge);
             }
         }
 
-
         return new Tuple<List<Triangle>, List<Edge>>(triangulation, edges) ;
-
     }
 
     public static bool LineIsEqual(Edge A, Edge B)
@@ -1313,18 +1311,14 @@ public static class AlgosUtils
         else { return false; }
     }
 
-    public static bool IspointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
+    public static bool IsPointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
     {
-
-
         float ax_ = A[0] - D[0];
         float ay_ = A[1] - D[1];
         float bx_ = B[0] - D[0];
         float by_ = B[1] - D[1];
         float cx_ = C[0] - D[0];
         float cy_ = C[1] - D[1];
-
-
 
         if ((
             (ax_ * ax_ + ay_ * ay_) * (bx_ * cy_ - cx_ * by_) -
@@ -1336,7 +1330,6 @@ public static class AlgosUtils
         }
 
         else { return false; }
-
     }
 
     #endregion
@@ -1517,6 +1510,7 @@ public static class AlgosUtils
 
             if (x + 1 < width)
             {
+
                 if (gridArr[y][x + 1].tileWeight != 0 && gridArr[y][x+1].visited == false)
                 {
                     gridArr[y][x + 1].visited = true;
@@ -1730,7 +1724,7 @@ public static class AlgosUtils
 
     #region Room Gen 
 
-    public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[][] gridArr) 
+    public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[][] gridArr, bool test = false) 
     {
         var room = new List<Tile>();
 
@@ -1747,15 +1741,22 @@ public static class AlgosUtils
 
         for (int y = centerPoint.y - halfHeight; y < centerPoint.y + halfHeight; y++)
         {
-            for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfHeight; x++)
+            for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfWidth; x++)
             {
-                gridArr[y][x].tileType = Tile.TileType.FLOORROOM;
-                gridArr[y][x].tileWeight = 0.75f;
-                room.Add(gridArr[y][x]);
+
+                if (gridArr[y][x].tileType != Tile.TileType.VOID)
+                {
+                    return null;
+                }
+                if (!test) 
+                {
+                    gridArr[y][x].tileType = Tile.TileType.FLOORROOM;
+                    gridArr[y][x].tileWeight = 0.75f;
+                    room.Add(gridArr[y][x]);
+                }
+            
             }
         }
-
-
 
         return room;
     }

@@ -25,7 +25,10 @@
  *          weigthed tiles spawn for WFC
  *            -texture spawning
  *          
- *          when we skip the path gen because of one room the walls dont get generated therefore the fll gen doesnt work
+ *          when we skip the path gen because of one room the walls dont get generated therefore the fll gen doesnt work   -- this seems to work
+ *          -- the issue will be with the undo when the rooms are deleted could do a sort of que or we techincally know the index
+ *          
+ *          
  *          
  *          issues with the chunk   --- fixed i think
  *                    
@@ -38,17 +41,23 @@
  *          the rnadom dead end doesnt work
  *          random rooms shit should prob go in the manual editor
  *          
- *          started on the delu, the truth is that the edges do draw on each other so neneed to deall with that
+ *          started on the delu, the truth is that the edges do draw on each other so neneed to deall with that   -- done 
  *          
  *          
  *          
+ *          delete the djistra from bezier
+ *          
+ *          
+ *          if it recognises them as corridors i can actually load it back in and get the corridors back
+ *          
+ *          for when the random room placement fails debug in the log
  *          
  *      
  *      vvvvvv MID PRIORITY vvvvvv
  *      
- *          full bezier cave system as solo algo basically center bit as the arena and then loads of point around delu trig aroudn them
+ *          full bezier cave system as solo algo basically center bit as the arena and then loads of point around delu trig aroudn them   -- done
  *      
- *         for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system
+ *         for delu do somethign either spanw the points at rnadom and use the triangluation to draw the corridors of use poisson, the workflow should be similar to the L-system   
  *         
  *         Look into making the flow better with less time wasted
  *         
@@ -86,9 +95,10 @@
  *   
  *   
  *   ALGOS NOTES:
- * 
+ *  
  *   
- *   
+ *   voronoi  -- new UI 
+ *            -- choose between connected rooms and deletea  perc
  *   
  *   
  * 
