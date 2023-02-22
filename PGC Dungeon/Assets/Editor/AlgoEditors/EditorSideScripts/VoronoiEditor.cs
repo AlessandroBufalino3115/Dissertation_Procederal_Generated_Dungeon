@@ -13,6 +13,7 @@ public class VoronoiEditor : Editor
     int vorPoints = 5;
     int minNumOfRooms = 1;
     bool typeOfVoronoi = false;
+    bool voronoiCalculation = false;
 
 
     int selGridGenType = 0;
@@ -82,6 +83,7 @@ public class VoronoiEditor : Editor
                     GeneralUtil.SpacesUILayout(1);
 
                     vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of voronoi divisions", tooltip = "" }, vorPoints, 5, 40);
+                    voronoiCalculation = EditorGUILayout.Toggle(new GUIContent() { text = voronoiCalculation == true ? "euclidian" : "manhattan", tooltip = "" }, voronoiCalculation);
 
 
 
@@ -93,7 +95,7 @@ public class VoronoiEditor : Editor
                     {
                         mainScript.pcgManager.Restart();
 
-                        mainScript.pcgManager.gridArray2D = AlgosUtils.Voronoi2D(mainScript.pcgManager.gridArray2D, vorPoints);
+                        mainScript.pcgManager.gridArray2D = AlgosUtils.Voronoi2D(mainScript.pcgManager.gridArray2D, vorPoints, voronoiCalculation);
 
                         mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D, true);
 

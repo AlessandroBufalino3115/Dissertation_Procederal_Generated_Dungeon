@@ -1,20 +1,15 @@
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public static class GeneralUtil 
 {
-
     public static int[,] childPosArry4Side = { { 0, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 } };
     public static int[,] childPosArry8Side = { { 0, -1 }, { 1, -1 }, { -1, -1 },  { -1, 0 }, { 1, 0 },    { 0, 1 }, { 1, 1 }, { -1, 1 } };
-
-
 
     /// <summary>
     /// from 0 
@@ -26,7 +21,6 @@ public static class GeneralUtil
     {
         int ranX = Random.Range(0,maxX);
         int ranY = Random.Range(0, maxY);
-
 
         return new Vector2Int(ranX, ranY);
     }
@@ -72,8 +66,6 @@ public static class GeneralUtil
         }
     }
 
-
-
     public static float EuclideanDistance2D(Vector2 point1, Vector2 point2)
     {
         return MathF.Sqrt(MathF.Pow((point1.x - point2.x), 2) + MathF.Pow((point1.y - point2.y), 2));
@@ -91,8 +83,6 @@ public static class GeneralUtil
             EditorGUILayout.Space();
         }
     }
-
-
 
 
 
@@ -130,7 +120,6 @@ public static class GeneralUtil
     /// <returns></returns>
     public static Texture2D SetUpTextBiColAnchor(Tile[][] gridArray2D, bool black = false)
     {
-
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
 
         for (int y = 0; y < texture.height; y++)
@@ -154,7 +143,6 @@ public static class GeneralUtil
         texture.filterMode = FilterMode.Point;
         texture.Apply();
 
-
         return texture;
     }
 
@@ -167,7 +155,6 @@ public static class GeneralUtil
     /// <returns></returns>
     public static Texture2D SetUpTextBiColShade(Tile[][] gridArray2D, float minWeight, float maxWeight, bool inverse = false)
     {
-
         Texture2D texture = new Texture2D(gridArray2D[0].Length, gridArray2D.Length);
 
         for (int y = 0; y < texture.height; y++)
@@ -195,8 +182,6 @@ public static class GeneralUtil
     {
         return list.Count == 1 ? 0 : Random.Range(0, list.Count);
     }
-
-
 
     public static void SetUpColorBasedOnType(Tile[][] gridArr) 
     {
@@ -253,7 +238,7 @@ public static class GeneralUtil
             serializableMap[i] = new SerializableTile[grid[i].Length];
             for (int j = 0; j < grid[i].Length; j++)
             {
-                serializableMap[i][j] = new SerializableTile(grid[i][j].position, grid[i][j].tileWeight, grid[i][j].cost, grid[i][j].idx, grid[i][j].visited, (int)grid[i][j].tileType);
+                serializableMap[i][j] = new SerializableTile(grid[i][j].position, grid[i][j].tileWeight, grid[i][j].cost, (int)grid[i][j].tileType);
             }
         }
 
@@ -265,13 +250,11 @@ public static class GeneralUtil
             AssetDatabase.Refresh();
         }
 
-
         if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
         {
             AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
             AssetDatabase.Refresh();
         }
-
 
         if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Saved_Gen_Data"))
         {
@@ -283,7 +266,7 @@ public static class GeneralUtil
     }
 
 
-
+    #region Editor
 
     public static void CellularAutomataEditorSection(PCGManager pcgManager, int neighbours, out int setNeighbours) 
     {
@@ -309,9 +292,7 @@ public static class GeneralUtil
     }
     public static bool CalculateRoomsEditorSection(PCGManager pcgManager, int minSize, out List<List<Tile>> rooms, out int setMinSize) 
     {
-
         setMinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
-
         
         if (GUILayout.Button("Generate rooms"))
         {
@@ -394,13 +375,11 @@ public static class GeneralUtil
 
     }
 
-
     public static void GenerateMeshEditorSection(PCGManager pcgManager,  int inSelGridGenType,  bool inBlockGeneration,  string inSaveMapFileName,  out int selGridGenType, out bool blockGeneration, out string saveMapFileName) 
     {
         GUILayout.BeginVertical("Box");
         selGridGenType = GUILayout.SelectionGrid(inSelGridGenType, selStringsGenType, 1);
         GUILayout.EndVertical();
-
 
         SpacesUILayout(2);
 
@@ -458,8 +437,6 @@ public static class GeneralUtil
         }
     }
 
-
-
     public enum UISTATE
     {
         MAIN_ALGO,
@@ -484,7 +461,7 @@ public static class GeneralUtil
 
     public static GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "" }, new GUIContent() { text = "Dijistra", tooltip = "" }, new GUIContent() { text = "BFS (WIP)", tooltip = "" }, new GUIContent() { text = "DFS (WIP)", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "Create curved corridors" } };
 
-  
+    #endregion
 }
 
 
@@ -494,22 +471,17 @@ public class SerializableTile
     public SerialiableVector2Int position = new SerialiableVector2Int();
     public float tileWeight;
     public float cost = 0;
-    public int idx = 0;
-    public bool visited = false;
 
     public int tileType;
 
-    public SerializableTile(Vector2Int position, float tileWeight, float cost , int idx, bool visited, int tileType) 
+    public SerializableTile(Vector2Int position, float tileWeight, float cost, int tileType) 
     {
         this.position = new SerialiableVector2Int(position.x, position.y);
         this.tileWeight = tileWeight;
         this.cost = cost;
-        this.idx = idx;
-        this.visited = visited;
         this.tileType = tileType;
     }
 }
-
 
 [Serializable]
 public struct SerialiableVector2Int

@@ -39,15 +39,9 @@
  *          
  *          the rnadom dead end doesnt work   it does it just creates shit and goes throuhg otehr shit
  *          
- *          
- *          
- *          
- *          delete the djistra from bezier  
- *          delete weights as well    just ahve the
  *                    
  *          
  *          if it recognises them as corridors i can actually load it back in and get the corridors back
- *          
  *    
  *          
  *          
@@ -97,22 +91,34 @@
  *   fix diamond square   -- high priority
  *   
  *   
- *   ALGOS NOTES:
- *  
  *   
- *  voronoi -- done
+ *   
+ *  ALGOS NOTES:
+ *  
+ *  voronoi -- done 
  *  random Walk -- done
  *  CA   -- done
  *  ran room gen --- should be done
  *  Lsystem   -- need to add the room gen from corr
  *  delu   -- need to add the localised random (maybe)      -- when i will try and get all the corrdior this might be a problem
  *  wfc  --- just need to add the texture way
- *  perlin noise  -- 
+ *  perlin noise  -- to do 
  *  perlin worm   -- prob to scrap
- *  diamondSquare  --- to fix          
- *  loader 
+ *  diamondSquare  --- to fix       
  *  
+ *  
+ *  this might have issue with the chunk and how we are actually going to generate everythin
+ *  loader -- the player loads the map, this map should have its corridor set as corridors and room as room
+ *  the loader is used to populate the envi.
+ *  if i have all of the rooms i can show them in a list format of sorts and have them saved in a class this class holst the room, the middle where the gizmos is going to spawn and a select thign so 
+ *  
+ *  its going to ahve a button asking for    small stuff like pebbles
+ *                                           bigger stuff like pillars
+ *                                           
+ *  button telling to generate that stuff in the selected rooms
+ *  
+ *  need to do the dynamic chunk rendering stuff
  *   
- *   
+ *  random dead end needs to be added to the corridor making due to how the build walls function works
  * 
  */

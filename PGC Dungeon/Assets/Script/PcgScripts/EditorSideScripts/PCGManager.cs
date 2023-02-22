@@ -211,7 +211,6 @@ public class PCGManager : MonoBehaviour
                 gridArray2D[y][x].tileType = Tile.TileType.VOID;
             }
         }
-
     }
 
     public void DeletePlane()
@@ -356,8 +355,6 @@ public class PCGManager : MonoBehaviour
                 break;
         }
 
-
-        
         currMainAlgoIDX = 11;
     }
 
@@ -388,7 +385,6 @@ public class PCGManager : MonoBehaviour
     {
         var indexesToDraw = new HashSet<int>();
 
-
         foreach (var player in player)
         {
             int collidedIndex = -1;
@@ -401,7 +397,6 @@ public class PCGManager : MonoBehaviour
                 }
             }
 
-
             if (collidedIndex == -1)
             {
                 Debug.Log($"The player is out of bounds");
@@ -409,7 +404,6 @@ public class PCGManager : MonoBehaviour
             else
             {
                 indexesToDraw.Add(collidedIndex);
-
 
                 if (collidedIndex - 1 > 0)
                     indexesToDraw.Add(collidedIndex - 1);  //left
@@ -438,7 +432,6 @@ public class PCGManager : MonoBehaviour
                     indexesToDraw.Add(collidedIndex + CLength + 1);
                 if (collidedIndex - CLength - 1 > 0)
                     indexesToDraw.Add(collidedIndex - CLength - 1);
-
             }
         }
 
@@ -511,7 +504,6 @@ public class PCGManager : MonoBehaviour
                 savedIdx = i;
                 break;
             }
-
             countRatio += objects[i].occurance;
         }
 
@@ -748,8 +740,6 @@ public class PCGManager : MonoBehaviour
         }
     }
 
-
-
     public void DrawTileMapBlockType()
     {
         int iter = 0;
@@ -809,9 +799,6 @@ public class PCGManager : MonoBehaviour
             }
         }
     }
-
-
-
 
     #endregion
 }

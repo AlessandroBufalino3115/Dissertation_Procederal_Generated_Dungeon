@@ -1886,7 +1886,7 @@ public static class AlgosUtils
 
     #region Voronoi
 
-    public static Tile[][] Voronoi2D(Tile[][] gridArray2D, int numOfPoints)
+    public static Tile[][] Voronoi2D(Tile[][] gridArray2D, int numOfPoints, bool calcType)
     {
         var pointsArr = new List<Vector2>();
 
@@ -1921,11 +1921,19 @@ public static class AlgosUtils
                 {
                     if (closestDistance < 0)
                     {
-                        closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                        if (calcType)
+                            closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                        else
+                            closestDistance = GeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
                     }
                     else
                     {
-                        float newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                        float newDist;
+
+                        if (calcType)
+                            newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                        else
+                            newDist = GeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
 
                         if (closestDistance > newDist)
                         {
@@ -2556,13 +2564,11 @@ public class Tile
         this.tileWeight = toCopy.tileWeight;
     }
 
-    public Tile(SerialiableVector2Int position, float tileWeight, float cost, int idx, bool visited, int tileType)
+    public Tile(SerialiableVector2Int position, float tileWeight, float cost, int tileType)
     {
         this.tileType = (TileType)tileType;
         this.position = new Vector2Int(position.x,position.y);
         this.cost = cost;
-        this.idx = idx;
-        this.visited = visited;
         this.tileWeight = tileWeight;
     }
 
