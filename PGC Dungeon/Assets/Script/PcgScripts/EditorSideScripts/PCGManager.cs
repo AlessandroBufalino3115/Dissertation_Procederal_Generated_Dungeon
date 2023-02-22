@@ -27,6 +27,16 @@ public class PCGManager : MonoBehaviour
         get { return plane; }
     }
 
+
+    private IUndoInteraction undoInteraction;
+    public IUndoInteraction UndoInteraction
+    {
+        set { undoInteraction = value; }
+    }
+
+
+
+
     [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
     [Range(100, 1000)]
     public int width = 125;
@@ -161,6 +171,11 @@ public class PCGManager : MonoBehaviour
 
         Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(gridArray2D, 0, 1, true);
 
+        if (undoInteraction != null)
+            undoInteraction.DeleteLastSavedRoom();
+
+
+
         return true;
     }
 
@@ -212,75 +227,84 @@ public class PCGManager : MonoBehaviour
         DelPrevAlgo();
         CreatePlane();
         currMainAlgoIDX = (int)mainAlgo;
+        undoInteraction = null;
 
+        switch (mainAlgo)
+        {
+            case MainAlgo.VORONI:
+                {
+                    var comp = this.transform.AddComponent<VoronoiMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.RANDOM_WALK:
+                {
+                    var comp = this.transform.AddComponent<RandomWalkMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.ROOM_GEN:
+                {
+                    var comp = this.transform.AddComponent<RanRoomGenMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.CELLULAR_AUTOMATA:
+                {
+                    var comp = this.transform.AddComponent<CellularAutomataMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.L_SYSTEM:
+                {
+                    var comp = this.transform.AddComponent<NewLSystem>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.DELUNARY:
+                {
+                    var comp = this.transform.AddComponent<DelunaryMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.WFC:
+                {
+                    this.transform.AddComponent<WFCRuleDecipher>();
 
-
-
-
-        if ((int)mainAlgo == 0)
-        {
-            var comp = this.transform.AddComponent<VoronoiMA>();
-            comp.InspectorAwake();
+                    var comp = this.transform.AddComponent<NewWFCAlog>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.PERLIN_NOISE:
+                {
+                    var comp = this.transform.AddComponent<PerlinNoiseMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.PERLIN_WORM:
+                {
+                    var comp = this.transform.AddComponent<PerlinWormsMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.DIAMOND_SQUARE:
+                {
+                    var comp = this.transform.AddComponent<DiamondSquareMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            case MainAlgo.MANUAL_EDITOR:
+                {
+                    var comp = this.transform.AddComponent<LoadMapMA>();
+                    comp.InspectorAwake();
+                }
+                break;
+            default:
+                {
+                    Debug.Log($"There was an issue with this setting");
+                }
+                break;
         }
-        else if ((int)mainAlgo == 1)
-        {
-            var comp = this.transform.AddComponent<RandomWalkMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 2)
-        {
-            var comp = this.transform.AddComponent<RanRoomGenMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 3)
-        {
-            var comp = this.transform.AddComponent<CellularAutomataMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 4)
-        {
-            var comp = this.transform.AddComponent<NewLSystem>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 5)
-        {
-            var comp = this.transform.AddComponent<DelunaryMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 6)
-        {
-            this.transform.AddComponent<WFCRuleDecipher>();
-
-
-            var comp = this.transform.AddComponent<NewWFCAlog>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 7)
-        {
-            var comp = this.transform.AddComponent<PerlinNoiseMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 8)
-        {
-            var comp = this.transform.AddComponent<PerlinWormsMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 9)
-        {
-            var comp = this.transform.AddComponent<DiamondSquareMA>();
-            comp.InspectorAwake();
-        }
-        else if ((int)mainAlgo == 10)
-        {
-            var comp = this.transform.AddComponent<LoadMapMA>();
-            comp.InspectorAwake();
-        }
-        else
-        {
-            Debug.Log($"There was an issue with this setting");
-        }
-
-
     }
 
     public void DelPrevAlgo()
@@ -333,8 +357,8 @@ public class PCGManager : MonoBehaviour
         }
 
 
+        
         currMainAlgoIDX = 11;
-
     }
 
     public void Restart()

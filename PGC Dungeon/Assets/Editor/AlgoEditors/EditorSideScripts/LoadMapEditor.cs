@@ -23,9 +23,7 @@ public class LoadMapEditor : Editor
 
 
 
-
-
-    //this is where i want to get the 
+    // this is where i wish the more design positioning thing oriented design goes but it will be tough
 
 
     public override void OnInspectorGUI()

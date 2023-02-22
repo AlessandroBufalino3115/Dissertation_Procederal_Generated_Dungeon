@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
@@ -25,7 +26,17 @@ public class LoadMapMA : MonoBehaviour
 
     public Tile[][] LoadDataCall(string fileName) 
     {
+
+        if (string.IsNullOrEmpty(fileName))
+        {
+            EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
+            return null;
+        }
+        
+
         string filePath = Application.dataPath + "/Resources/Resources_Algorithms/Saved_Gen_Data/" + fileName;
+
+
         if (File.Exists(filePath))
         {
             byte[] data = File.ReadAllBytes(filePath);
@@ -45,6 +56,11 @@ public class LoadMapMA : MonoBehaviour
             }
 
             return map;
+        }
+        else 
+        {
+
+            EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
         }
         return null;
     }

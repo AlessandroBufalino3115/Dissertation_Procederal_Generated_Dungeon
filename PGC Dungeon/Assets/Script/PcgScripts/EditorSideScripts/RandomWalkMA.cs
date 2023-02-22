@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RandomWalkMA : MonoBehaviour
+public class RandomWalkMA : MonoBehaviour,IUndoInteraction
 {
 
     [HideInInspector]
@@ -39,9 +39,6 @@ public class RandomWalkMA : MonoBehaviour
     public int minSize =40;
 
     [HideInInspector]
-    public bool started;
-
-    [HideInInspector]
     public List<List<Tile>> rooms = new List<List<Tile>>();
 
     [HideInInspector]
@@ -56,34 +53,24 @@ public class RandomWalkMA : MonoBehaviour
 
 
 
-    public enum PathFindingType 
-    {
-       A_STAR,
-       DJISTRA,
-       BFS,
-       DFS
-    }
+
     [HideInInspector]
-    public PathFindingType pathFindingType;
+    public GeneralUtil.PathFindingType pathFindingType;
 
 
-    public enum UISTATE
-    {
-        MAIN_ALGO,
-        CA,
-        ROOM_GEN,
-        EXTRA_ROOM_GEN,
-        PATHING,
-        GENERATION
-    }
     [HideInInspector]
-    public UISTATE currUiState = UISTATE.MAIN_ALGO;
+    public GeneralUtil.UISTATE currUiState = GeneralUtil.UISTATE.MAIN_ALGO;
 
-
-
+    public void DeleteLastSavedRoom() 
+    {
+        if (currUiState == GeneralUtil.UISTATE.EXTRA_ROOM_GEN)
+            rooms.RemoveAt(rooms.Count - 1);
+    } 
+    
     public void InspectorAwake() 
     {
         pcgManager = this.transform.GetComponent<PCGManager>();
+        pcgManager.UndoInteraction = this;
     }
 
 }

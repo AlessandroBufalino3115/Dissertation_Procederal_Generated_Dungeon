@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -348,9 +349,6 @@ public static class GeneralUtil
 
     }
 
-
-
-
     public static void GenerateDeadEndCorridorEditorSection(PCGManager pcgManager, int deadEndAmount, int deadEndCorridorThickness, List<List<Tile>> rooms ,out int outDeadEndCorridorThickness, out int outDeadEndAmount, int margin, out int outMargin) 
     {
         outDeadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
@@ -382,7 +380,7 @@ public static class GeneralUtil
                         var tileA = randomTileOutsideOfRoom.position;
                         var tileB = randomTileInRoom.position;
 
-                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, true, pcgManager.gridArray2D);
+                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, pcgManager.gridArray2D);
 
                         break;
                     }
@@ -396,11 +394,6 @@ public static class GeneralUtil
 
     }
 
-
-
-
-
-    public static GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
 
     public static void GenerateMeshEditorSection(PCGManager pcgManager,  int inSelGridGenType,  bool inBlockGeneration,  string inSaveMapFileName,  out int selGridGenType, out bool blockGeneration, out string saveMapFileName) 
     {
@@ -467,7 +460,31 @@ public static class GeneralUtil
 
 
 
+    public enum UISTATE
+    {
+        MAIN_ALGO,
+        CA,
+        ROOM_GEN,
+        EXTRA_ROOM_GEN,
+        PATHING,
+        GENERATION
+    }
 
+    public enum PathFindingType
+    {
+        A_STAR,
+        DJISTRA,
+        BFS,
+        DFS
+    }
+
+    public static GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualar path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have many corridors" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridor connections" } };
+
+    public static GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
+
+    public static GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "" }, new GUIContent() { text = "Dijistra", tooltip = "" }, new GUIContent() { text = "BFS (WIP)", tooltip = "" }, new GUIContent() { text = "DFS (WIP)", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "Create curved corridors" } };
+
+  
 }
 
 

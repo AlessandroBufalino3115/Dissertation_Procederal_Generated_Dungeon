@@ -5,6 +5,7 @@ using System.Linq;
 using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
 using static Unity.VisualScripting.Metadata;
+using static UnityEngine.ParticleSystem;
 
 
 public static class AlgosUtils
@@ -289,7 +290,6 @@ public static class AlgosUtils
         AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
         start_node.parent = null;
 
-        Debug.Log(end);
         AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
 
         int[,] childPosArry = new int[0, 0];
@@ -458,7 +458,7 @@ public static class AlgosUtils
 
 
 
-    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, bool algoForBezier, Tile[][] gridArray2D, bool pathing = false, bool useWeights = false,float[] tileCosts = null) 
+    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, Tile[][] gridArray2D, bool pathing = false) 
     {
         var startPos = new Vector2Int(tileA.x, tileA.y);
         var endPos = new Vector2Int(tileB.x, tileB.y);
@@ -474,18 +474,11 @@ public static class AlgosUtils
 
         var firstBezierPoint = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
 
-        if (algoForBezier)
-        {
-            var pathB = A_StarPathfinding2DNorm(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+       
+         var pathB = A_StarPathfinding2DNorm(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
 
-            SetUpCorridorWithPath(pathB.Item1);
-        }
-        else
-        {
-            var pathB = DijstraPathfinding(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), true);
-
-            SetUpCorridorWithPath(pathB);
-        }
+         SetUpCorridorWithPath(pathB.Item1);
+        
 
 
 
@@ -502,41 +495,47 @@ public static class AlgosUtils
                 continue;
             }
 
-            else if (currCord.x < 0 || currCord.y < 0 || currCord.x >= gridArray2D[0].Length || currCord.y >= gridArray2D.Length)
+
+            else if (currCord.x < 0 || currCord.z < 0 || currCord.x >= gridArray2D[0].Length || currCord.z >= gridArray2D.Length)
             { continue; }
 
-            if (algoForBezier)
+            if ((int)MathF.Round(currCord.x) < 0) 
             {
-                var pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+                currCord.x = 0;
+            }
+            if ((int)MathF.Round(currCord.x) >= gridArray2D[0].Length) 
+            {
+                currCord.x = gridArray2D[0].Length -1;
+            }
+
+
+            if ((int)MathF.Round(currCord.y) < 0)
+            {
+                currCord.y = 0;
+            }
+            if ((int)MathF.Round(currCord.y) >= gridArray2D.Length)
+            {
+                currCord.y = gridArray2D.Length - 1;
+            }
+
+
+
+                 pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
 
                 prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
                 SetUpCorridorWithPath(pathB.Item1);
-            }
-            else
-            {
-                var pathB = DijstraPathfinding(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), true);
-
-                prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
-
-                SetUpCorridorWithPath(pathB);
-            }
+            
+            
         }
 
 
-        if (algoForBezier)
-        {
-            var pathB = A_StarPathfinding2DNorm(gridArray2D, endPos, new Vector2Int((int)MathF.Round(endPos.x), (int)MathF.Round(endPos.y)), !pathing, useWeights: useWeights, arrWeights: tileCosts);
+       
+             pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, endPos, !pathing);
 
             SetUpCorridorWithPath(pathB.Item1);
-        }
-        else
-        {
-            var pathB = DijstraPathfinding(gridArray2D, endPos, new Vector2Int((int)MathF.Round(endPos.x), (int)MathF.Round(endPos.y)), true);
-
-            SetUpCorridorWithPath(pathB);
-        }
-
+        
+        
     }
 
 
@@ -1479,8 +1478,8 @@ public static class AlgosUtils
 
     public static List<Vector2Int> NewFloodFill(Tile[][] gridArr, Vector2Int start)
     {
-        int width = gridArr.Length;
-        int height = gridArr[0].Length;
+        int height = gridArr.Length;
+        int width = gridArr[0].Length;
 
         List<Vector2Int> room = new List<Vector2Int>();
         room.Add(start);
@@ -1688,33 +1687,7 @@ public static class AlgosUtils
 
 
 
-    public static Tile[][] compartimentalisedCA(BoundsInt boundsRoom) 
-    {
-
-        int maxY = boundsRoom.zMax - boundsRoom.zMin;
-        int maxX = boundsRoom.xMax - boundsRoom.xMin;
-
-        Tile[][] _gridarray2D = new Tile[maxY][];
-
-        for (int y = 0; y < maxY; y++)
-        {
-            _gridarray2D[y] = new Tile[maxX];
-
-            for (int x = 0; x < maxX; x++)
-            {
-                _gridarray2D[y][x] = new Tile();
-                _gridarray2D[y][x].position = new Vector2Int(x, y);
-            }
-        }
-
-
-        SpawnRandomPointsCA(_gridarray2D, 0.55f);
-        RunCaIteration2D(_gridarray2D, 4);
-        RunCaIteration2D(_gridarray2D, 4);
-        CleanUp2dCA(_gridarray2D, 4);
-
-        return _gridarray2D;
-    }
+    
 
 
 
@@ -1763,11 +1736,6 @@ public static class AlgosUtils
 
 
 
-
-
-
-
-
     /// <summary>
     /// returns true if nothing was touched
     /// </summary>
@@ -1807,7 +1775,31 @@ public static class AlgosUtils
         //because we know that this is a room by it self we can just return a list of this rooms instead of calculating everything again
     }
 
+    public static Tile[][] CompartimentalisedCA(BoundsInt boundsRoom) 
+    {
+        int maxY = boundsRoom.zMax - boundsRoom.zMin;
+        int maxX = boundsRoom.xMax - boundsRoom.xMin;
 
+        Tile[][] _gridarray2D = new Tile[maxY][];
+
+        for (int y = 0; y < maxY; y++)
+        {
+            _gridarray2D[y] = new Tile[maxX];
+
+            for (int x = 0; x < maxX; x++)
+            {
+                _gridarray2D[y][x] = new Tile();
+                _gridarray2D[y][x].position = new Vector2Int(x, y);
+            }
+        }
+
+        SpawnRandomPointsCA(_gridarray2D, 0.55f);
+        RunCaIteration2D(_gridarray2D, 4);
+        RunCaIteration2D(_gridarray2D, 4);
+        CleanUp2dCA(_gridarray2D, 4);
+
+        return _gridarray2D;
+    }
 
     #endregion
 
@@ -1905,6 +1897,7 @@ public static class AlgosUtils
             int ran = Random.Range(0, totalSize);
 
             var wantedCoor = new Vector2(ran / gridArray2D[0].Length, ran % gridArray2D[0].Length);
+            wantedCoor = new Vector2Int(gridArray2D[(int)wantedCoor.x][(int)wantedCoor.y].position.x, gridArray2D[(int)wantedCoor.x][(int)wantedCoor.y].position.y);
 
             if (pointsArr.Contains(wantedCoor))
             {

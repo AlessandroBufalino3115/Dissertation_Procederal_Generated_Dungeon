@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RanRoomGenMA : MonoBehaviour
+public class RanRoomGenMA : MonoBehaviour, IUndoInteraction
 {
     private PCGManager pcgManager;
     public PCGManager PcgManager
@@ -99,6 +99,26 @@ public class RanRoomGenMA : MonoBehaviour
     public List<Edge> edges = new List<Edge>();
 
 
+    public enum UI_STATE 
+    {
+        MAIN_ALGO,
+        CA,
+        ROOM_GEN,
+        EXTRA_ROOM_GEN,
+        CORRIDOR_MAKING,
+        GENERATE
+    }
+    [HideInInspector]
+    public UI_STATE state = UI_STATE.MAIN_ALGO;
+
+
+    [HideInInspector]
+    public bool allowedBack = false;
+    [HideInInspector]
+    public bool allowedForward = false;
+    [HideInInspector]
+    public int currStateIndex = 0;
+
 
     public enum PathFindingType
     {
@@ -116,17 +136,13 @@ public class RanRoomGenMA : MonoBehaviour
 
 
 
-
-
-
     public void InspectorAwake()
     {
-        pcgManager = this.transform.GetComponent<PCGManager>();
+        pcgManager = transform.GetComponent<PCGManager>();
         roomList.Clear();
         roomsListBPSAlgo.Clear();
+        pcgManager.UndoInteraction = this;
     }
-
-
 
 
     /// <summary>
@@ -144,8 +160,6 @@ public class RanRoomGenMA : MonoBehaviour
             }
         }
     }
-
-
 
 
 
@@ -269,8 +283,6 @@ public class RanRoomGenMA : MonoBehaviour
 
 
     #endregion
-
-
 
 
     public void WorkoutRegion(RoomsClass room)
@@ -444,8 +456,6 @@ public class RanRoomGenMA : MonoBehaviour
     #endregion
 
 
-
-
     public void RanRoom(bool usingBPS, bool usingCA)
     {
         pcgManager.Restart();
@@ -469,7 +479,7 @@ public class RanRoomGenMA : MonoBehaviour
 
             if (usingCA)
             {
-                gridArrRoom = AlgosUtils.compartimentalisedCA(room);
+                gridArrRoom = AlgosUtils.CompartimentalisedCA(room);
             }
             else
             {
@@ -505,10 +515,11 @@ public class RanRoomGenMA : MonoBehaviour
 
     }
 
-
-
-
-
+    public void DeleteLastSavedRoom()
+    {
+        if (state == UI_STATE.EXTRA_ROOM_GEN)
+            rooms.RemoveAt(rooms.Count - 1);
+    }
 }
 
 

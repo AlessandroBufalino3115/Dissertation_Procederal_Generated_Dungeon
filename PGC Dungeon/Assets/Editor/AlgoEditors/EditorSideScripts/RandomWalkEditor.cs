@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,9 +6,6 @@ using Random = UnityEngine.Random;
 [CustomEditor(typeof(RandomWalkMA))]
 public class RandomWalkEditor : Editor
 {
-
-    bool usedPathing = false;
-
     bool showRules = false;
 
     bool useWeights = false;
@@ -18,36 +14,29 @@ public class RandomWalkEditor : Editor
     int corridorThickness = 2;
 
     int selGridConnectionType = 0;
-    GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualar path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have many corridors" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridor connections" } };
+    int selGridPathGenType = 0;
+    int selGridGenType = 0;
+
     int randomAddCorr = 0;
 
-    int selGridPathGenType = 0;
-    GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "" }, new GUIContent() { text = "Dijistra", tooltip = "" }, new GUIContent() { text = "BFS (WIP)", tooltip = "" }, new GUIContent() { text = "DFS (WIP)", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "Create curved corridors" } };
     int margin = 20;
-
-    int selGridGenType = 0;
-    GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
-
-    bool algoForBezier = false;
-
 
     int deadEndAmount = 0;
     int deadEndCorridorThickness = 3;
 
     int radius = 10;
 
+    int width = 10;
+    int height = 10;
+
+    bool blockGeneration = false;
     string saveMapFileName = "";
-
-    int width = 0;
-    int height = 0;
-
-
-    private bool blockGeneration = false;
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
         RandomWalkMA mainScript = (RandomWalkMA)target;
+
         #region explanation
 
         showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
@@ -59,7 +48,6 @@ public class RandomWalkEditor : Editor
                 "\n\nStep 3: It is possible small rooms that are not your what you are looking for have been geenrated, delete them using by setting up the minimum amount of tiles a room should have." +
                 "\n\nStep 4: Depending on the amount of rooms you are able to create corridors by choosing the wanted pathFinding algorithm and the algortihm which decideds which room is connected to which." +
                 "\n\nStep 5: Generate the algorithm using the tileSet provided or create the blank gameobject whihc can then be exported and manipulated");
-
         }
 
         if (!Selection.activeTransform)
@@ -71,13 +59,12 @@ public class RandomWalkEditor : Editor
 
         #endregion
 
-
         GeneralUtil.SpacesUILayout(4);
 
 
         switch (mainScript.currUiState)
         {
-            case RandomWalkMA.UISTATE.MAIN_ALGO:
+            case GeneralUtil.UISTATE.MAIN_ALGO:
 
                 mainScript.allowedBack = false;
 
@@ -97,43 +84,44 @@ public class RandomWalkEditor : Editor
 
                 break;
 
-            case RandomWalkMA.UISTATE.CA:
+            case GeneralUtil.UISTATE.CA:
 
                 mainScript.allowedForward = true;
                 mainScript.allowedBack = true;
 
                 GeneralUtil.CellularAutomataEditorSection(mainScript.pcgManager, mainScript.neighboursNeeded, out mainScript.neighboursNeeded);
 
-
                 break;
-            case RandomWalkMA.UISTATE.ROOM_GEN:
 
+            case GeneralUtil.UISTATE.ROOM_GEN:
 
                 mainScript.allowedBack = true;
 
-
                 List<List<Tile>> rooms;
-                if (GeneralUtil.CalculateRoomsEditorSection(mainScript.pcgManager, mainScript.minSize, out rooms, out mainScript.minSize)) 
+                if (GeneralUtil.CalculateRoomsEditorSection(mainScript.pcgManager, mainScript.minSize, out rooms, out mainScript.minSize))
                 {
                     mainScript.allowedForward = true;
                 }
 
                 if (rooms != null)
+                {
                     mainScript.rooms = rooms;
-
-
+                }
 
                 break;
-            case RandomWalkMA.UISTATE.EXTRA_ROOM_GEN:
+
+            case GeneralUtil.UISTATE.EXTRA_ROOM_GEN:
 
                 mainScript.allowedForward = true;
                 mainScript.allowedBack = false;
-
 
                 radius = (int)EditorGUILayout.Slider(new GUIContent() { text = "Radius of the arena", tooltip = "Creates a circular room in a random position on the canvas. The code will try to fit it, if nothing spawns try again or lower the size" }, radius, 10, 40);
 
                 if (GUILayout.Button(new GUIContent() { text = "Spawn one Arena" }))
                 {
+
+                    bool success = false;
+
                     for (int i = 0; i < 5; i++)
                     {
                         var randomPoint = new Vector2Int(Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D[0].Length - radius - 3), Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D.Length - radius - 3));
@@ -148,9 +136,17 @@ public class RandomWalkEditor : Editor
                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
 
                             mainScript.rooms.Add(room);
+
+                            success = true;
+
                             break;
                         }
                     }
+
+
+                    if (!success)
+                        Debug.Log($"<color=red>I tried to spawn the Room as requested 5 times but couldnt find any free space either try again or lower the size</color>");
+
                 }
 
 
@@ -159,15 +155,15 @@ public class RandomWalkEditor : Editor
                 height = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, height, 10, 40);
                 width = (int)EditorGUILayout.Slider(new GUIContent() { text = "Widht", tooltip = "" }, width, 10, 40);
 
-
                 if (GUILayout.Button(new GUIContent() { text = "gen Room" }))
                 {
 
+                    bool success = false;
                     for (int i = 0; i < 5; i++)
                     {
                         var randomPoint = new Vector2Int(Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D[0].Length - radius - 3), Random.Range(0 + radius + 3, mainScript.pcgManager.gridArray2D.Length - radius - 3));
 
-                        var squareRoom = AlgosUtils.SpawnRoom(width, height, randomPoint, mainScript.pcgManager.gridArray2D,true);
+                        var squareRoom = AlgosUtils.SpawnRoom(width, height, randomPoint, mainScript.pcgManager.gridArray2D, true);
 
                         if (squareRoom != null)
                         {
@@ -177,25 +173,26 @@ public class RandomWalkEditor : Editor
                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
 
                             mainScript.rooms.Add(squareRoom);
+
+                            success = true;
                             break;
                         }
                     }
-                    
+
+                    if (!success)
+                        Debug.Log($"<color=red>I tried to spawn the Room as requested 5 times but couldnt find any free space either try again or lower the size</color>");
+
                 }
 
-
-
                 break;
-            case RandomWalkMA.UISTATE.PATHING:
 
+            case GeneralUtil.UISTATE.PATHING:
 
                 #region corridor making region
-
-                if (!usedPathing)
+                if (mainScript.pcgManager.prevGridArray2D.Count == 0)
                 {
-
                     mainScript.allowedBack = true;
-                    Debug.Log(mainScript.rooms.Count);
+
                     if (mainScript.rooms.Count == 1)
                     {
                         mainScript.allowedForward = true;
@@ -210,7 +207,7 @@ public class RandomWalkEditor : Editor
                         GeneralUtil.SpacesUILayout(2);
 
                         GUILayout.BeginVertical("Box");
-                        selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, selStringPathGenType, 1);
+                        selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, GeneralUtil.selStringPathGenType, 1);
                         GUILayout.EndVertical();
 
                         GeneralUtil.SpacesUILayout(2);
@@ -228,15 +225,12 @@ public class RandomWalkEditor : Editor
                             case 4:   // beizier 
 
                                 margin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "beizeir curve thing to change" }, margin, 10, 40);
-                                algoForBezier = EditorGUILayout.Toggle(new GUIContent() { text = algoForBezier == true ? "A* Pathfinding is selected" : "Dijistra is selected", tooltip = "" }, algoForBezier);
 
-                                if (algoForBezier)
-                                {
-                                    GeneralUtil.SpacesUILayout(1);
 
-                                    mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
-                                    useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
-                                }
+                                GeneralUtil.SpacesUILayout(1);
+
+                                mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
+
 
                                 break;
 
@@ -253,7 +247,6 @@ public class RandomWalkEditor : Editor
 
 
                             mainScript.allowedForward = true;
-                            usedPathing = true;
 
                             switch (selGridPathGenType)
                             {
@@ -278,14 +271,13 @@ public class RandomWalkEditor : Editor
                                     break;
                                 case 4://  beizier curve
 
-                                    AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, algoForBezier, mainScript.pcgManager.gridArray2D, !mainScript.pathType, useWeights: useWeights, tileCosts: mainScript.pcgManager.tileCosts);
+                                    AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, mainScript.pcgManager.gridArray2D, !mainScript.pathType);
 
                                     break;
 
                                 default:
                                     break;
                             }
-
 
 
                             AlgosUtils.SetUpTileCorridorTypesUI(mainScript.pcgManager.gridArray2D, corridorThickness);
@@ -302,11 +294,10 @@ public class RandomWalkEditor : Editor
                         GeneralUtil.SpacesUILayout(2);
 
                         GUILayout.BeginVertical("Box");
-                        selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, selStringsConnectionType, 1);
+                        selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, GeneralUtil.selStringsConnectionType, 1);
                         GUILayout.EndVertical();
 
                         GeneralUtil.SpacesUILayout(3);
-
 
                         switch (selGridConnectionType)
                         {
@@ -348,7 +339,7 @@ public class RandomWalkEditor : Editor
                         GeneralUtil.SpacesUILayout(2);
 
                         GUILayout.BeginVertical("Box");
-                        selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, selStringPathGenType, 1);
+                        selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, GeneralUtil.selStringPathGenType, 1);
                         GUILayout.EndVertical();
 
                         GeneralUtil.SpacesUILayout(2);
@@ -367,15 +358,9 @@ public class RandomWalkEditor : Editor
                             case 4:   // beizier 
 
                                 margin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, margin, 10, 40);
-                                algoForBezier = EditorGUILayout.Toggle(new GUIContent() { text = algoForBezier == true ? "A* Pathfinding is selected" : "Dijistra is selected", tooltip = "" }, algoForBezier);
 
-                                if (algoForBezier)
-                                {
-                                    GeneralUtil.SpacesUILayout(1);
-
-                                    mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.pathType);
-                                    useWeights = EditorGUILayout.Toggle(new GUIContent() { text = "Use weights", tooltip = "" }, useWeights);
-                                }
+                                GeneralUtil.SpacesUILayout(1);
+                                mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.pathType);
 
                                 break;
 
@@ -386,8 +371,8 @@ public class RandomWalkEditor : Editor
 
                         if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                         {
+
                             mainScript.allowedForward = true;
-                            usedPathing = true;
 
                             mainScript.pcgManager.CreateBackUpGrid();
 
@@ -464,7 +449,6 @@ public class RandomWalkEditor : Editor
 
                                         for (int i = 0; i < randomAddCorr; i++)
                                         {
-
                                             int ranStarter = Random.Range(0, len);
                                             int ranEnder = Random.Range(0, len);
 
@@ -519,8 +503,7 @@ public class RandomWalkEditor : Editor
                                         var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                         var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
-
-                                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, algoForBezier, mainScript.pcgManager.gridArray2D, !mainScript.pathType, useWeights: useWeights, tileCosts: mainScript.pcgManager.tileCosts);
+                                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, mainScript.pcgManager.gridArray2D, !mainScript.pathType);
 
                                     }
                                     break;
@@ -538,66 +521,19 @@ public class RandomWalkEditor : Editor
                     {
                         GUILayout.Label("To access the corridor making function you need to\nGenerate the rooms first");
                     }
-
                 }
                 else
                 {
-
                     mainScript.allowedBack = false;
 
                     GeneralUtil.GenerateDeadEndCorridorEditorSection(mainScript.pcgManager, deadEndAmount, deadEndCorridorThickness, mainScript.rooms, out deadEndCorridorThickness, out deadEndAmount, margin, out margin);
-
-
-
-
-
-                    //deadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
-
-                    //deadEndCorridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness of the dead end corridor", tooltip = "How wide should the corridor be" }, deadEndCorridorThickness, 3, 6);
-
-                    //if (GUILayout.Button(new GUIContent() { text = "Generate dead end corridor" }))
-                    //{
-                    //    for (int i = 0; i < deadEndAmount; i++)
-                    //    {
-                    //        var room = mainScript.rooms[GeneralUtil.ReturnRandomFromList(mainScript.rooms)];
-
-                    //        var randomTileInRoom = room[GeneralUtil.ReturnRandomFromList(room)];
-
-                    //        Tile randomTileOutsideOfRoom;
-
-
-                    //        while (true)
-                    //        {
-                    //            var tile = mainScript.pcgManager.gridArray2D[Random.Range(0, mainScript.pcgManager.gridArray2D.Length)][Random.Range(0, mainScript.pcgManager.gridArray2D[0].Length)];
-
-                    //            if (tile.tileWeight == 0)
-                    //            {
-                    //                mainScript.pcgManager.CreateBackUpGrid();
-
-                    //                randomTileOutsideOfRoom = tile;
-
-                    //                var tileA = randomTileOutsideOfRoom.position;
-                    //                var tileB = randomTileInRoom.position;
-
-                    //                AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, algoForBezier, mainScript.pcgManager.gridArray2D, !mainScript.pathType, useWeights: useWeights, tileCosts: mainScript.pcgManager.tileCosts);
-
-                    //                break;
-                    //            }
-                    //        }
-                    //    }
-
-                    //    AlgosUtils.SetUpTileCorridorTypesUI(mainScript.pcgManager.gridArray2D, deadEndCorridorThickness);
-
-                    //    mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
-                    //}
-
                 }
 
                 #endregion
 
                 break;
 
-            case RandomWalkMA.UISTATE.GENERATION:
+            case GeneralUtil.UISTATE.GENERATION:
 
 
                 mainScript.allowedBack = true;
@@ -614,11 +550,8 @@ public class RandomWalkEditor : Editor
 
 
 
-        if (mainScript.currUiState != RandomWalkMA.UISTATE.GENERATION)
+        if (mainScript.currUiState != GeneralUtil.UISTATE.GENERATION)
         {
-
-
-           
             GeneralUtil.SpacesUILayout(4);
 
             EditorGUI.BeginDisabledGroup(mainScript.allowedBack == false);
@@ -628,7 +561,7 @@ public class RandomWalkEditor : Editor
                 mainScript.pcgManager.ClearUndos();
                 mainScript.allowedBack = false;
                 mainScript.currStateIndex--;
-                mainScript.currUiState = (RandomWalkMA.UISTATE)mainScript.currStateIndex;
+                mainScript.currUiState = (GeneralUtil.UISTATE)mainScript.currStateIndex;
             }
 
             EditorGUI.EndDisabledGroup();
@@ -642,7 +575,8 @@ public class RandomWalkEditor : Editor
                 mainScript.pcgManager.ClearUndos();
                 mainScript.allowedForward = false;
                 mainScript.currStateIndex++;
-                mainScript.currUiState = (RandomWalkMA.UISTATE)mainScript.currStateIndex;
+                mainScript.currUiState = (GeneralUtil.UISTATE)mainScript.currStateIndex;
+
             }
 
             EditorGUI.EndDisabledGroup();

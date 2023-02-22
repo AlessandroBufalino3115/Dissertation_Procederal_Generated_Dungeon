@@ -10,7 +10,7 @@ public class PCGManagerEditor : Editor
 
 
     [MenuItem("PCG Algorithms/Main Generator", priority = 1)]
-    static void SpawnObject() 
+    static void SpawnObject()
     {
         var objToSpawn = new GameObject("Cool GameObject made from Code");
         objToSpawn.transform.name = "PCG element";
@@ -51,7 +51,7 @@ public class PCGManagerEditor : Editor
             }
         }
 
-        if(mainScript.Plane != null) 
+        if (mainScript.Plane != null)
         {
             if (GUILayout.Button("Delete Plane"))
             {
@@ -72,7 +72,7 @@ public class PCGManagerEditor : Editor
                     }
                     mainScript.LoadMainAlgo();
                 }
-                else 
+                else
                 {
                     mainScript.Restart();
                     mainScript.LoadMainAlgo();
@@ -88,7 +88,7 @@ public class PCGManagerEditor : Editor
         GeneralUtil.SpacesUILayout(4);
 
 
-        if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use"}))
+        if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use" }))
         {
             var asset = CreateInstance<TilesRuleSet>();
 
@@ -116,31 +116,45 @@ public class PCGManagerEditor : Editor
         }
 
 
-
-
         if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
         {
 
+            if (string.IsNullOrEmpty(mainScript.TileSetRuleFileName))
+            {
+                EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
+                return;
+            }
+
+
             var tileRules = Resources.Load<TilesRuleSet>("Resources_Algorithms/Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 
-            mainScript.WallsTiles.Clear();
-            mainScript.FloorTiles.Clear();
-            mainScript.CeilingTiles.Clear();
-
-            foreach (var item in tileRules.WallsTiles)
+            if (tileRules == null)
             {
-                mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
+                return;
             }
-
-            foreach (var item in tileRules.FloorTiles)
+            else
             {
-                mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
-            }
+                mainScript.WallsTiles.Clear();
+                mainScript.FloorTiles.Clear();
+                mainScript.CeilingTiles.Clear();
+
+                foreach (var item in tileRules.WallsTiles)
+                {
+                    mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                }
+
+                foreach (var item in tileRules.FloorTiles)
+                {
+                    mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                }
 
 
-            foreach (var item in tileRules.CeilingTiles)
-            {
-                mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                foreach (var item in tileRules.CeilingTiles)
+                {
+                    mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                }
+
             }
 
 
@@ -152,7 +166,7 @@ public class PCGManagerEditor : Editor
 
         if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
         {
-            
+
             var asset = ScriptableObject.CreateInstance<WeightRuleSet>();
 
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
@@ -179,21 +193,33 @@ public class PCGManagerEditor : Editor
         }
 
 
-
-
         if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
         {
-
+            if (string.IsNullOrEmpty(mainScript.WeightRuleFileName))
+            {
+                EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
+                return;
+            }
             var tileRules = Resources.Load<WeightRuleSet>("Resources_Algorithms/Weight_Pathfinding_RuleSet/" + mainScript.WeightRuleFileName);
 
-            mainScript.tileCosts = new float[6];
 
-            mainScript.tileCosts[0] = tileRules.VOID;
-            mainScript.tileCosts[1] = tileRules.FLOORROOM;
-            mainScript.tileCosts[2] = tileRules.WALL;
-            mainScript.tileCosts[3] = tileRules.ROOF;
-            mainScript.tileCosts[4] = tileRules.FLOORCORRIDOR;
-            mainScript.tileCosts[5] = tileRules.AVOID;
+            if (tileRules == null) 
+            {
+                EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
+                return;
+            }
+            else 
+            {
+                mainScript.tileCosts = new float[6];
+
+                mainScript.tileCosts[0] = tileRules.VOID;
+                mainScript.tileCosts[1] = tileRules.FLOORROOM;
+                mainScript.tileCosts[2] = tileRules.WALL;
+                mainScript.tileCosts[3] = tileRules.ROOF;
+                mainScript.tileCosts[4] = tileRules.FLOORCORRIDOR;
+                mainScript.tileCosts[5] = tileRules.AVOID;
+            }
+
         }
 
 

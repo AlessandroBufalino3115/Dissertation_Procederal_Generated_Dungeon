@@ -35,22 +35,25 @@
  *          fix diamond sqaure
  *          
  *          
- *          in the tile generation have a bool for block type gen
  *          
  *          
- *          the rnadom dead end doesnt work
- *          random rooms shit should prob go in the manual editor
- *          
- *          started on the delu, the truth is that the edges do draw on each other so neneed to deall with that   -- done 
+ *          the rnadom dead end doesnt work   it does it just creates shit and goes throuhg otehr shit
  *          
  *          
  *          
- *          delete the djistra from bezier
  *          
+ *          delete the djistra from bezier  
+ *          delete weights as well    just ahve the
+ *                    
  *          
  *          if it recognises them as corridors i can actually load it back in and get the corridors back
  *          
- *          for when the random room placement fails debug in the log
+ *    
+ *          
+ *          
+ *          on drawing 
+ *          
+ *      
  *          
  *      
  *      vvvvvv MID PRIORITY vvvvvv
@@ -97,8 +100,18 @@
  *   ALGOS NOTES:
  *  
  *   
- *   voronoi  -- new UI 
- *            -- choose between connected rooms and deletea  perc
+ *  voronoi -- done
+ *  random Walk -- done
+ *  CA   -- done
+ *  ran room gen --- should be done
+ *  Lsystem   -- need to add the room gen from corr
+ *  delu   -- need to add the localised random (maybe)      -- when i will try and get all the corrdior this might be a problem
+ *  wfc  --- just need to add the texture way
+ *  perlin noise  -- 
+ *  perlin worm   -- prob to scrap
+ *  diamondSquare  --- to fix          
+ *  loader 
+ *  
  *   
  *   
  * 

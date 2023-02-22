@@ -8,25 +8,14 @@ using UnityEngine;
 public class PerlinWormsEditor : Editor
 {
 
-    bool showCA = false;
-
-    bool showPath = false;
-    bool showRooms = false;
-
     bool showRules = false;
 
-    bool useWeights = false;
-
-
+   
     int selGridPathType = 0;
-    GUIContent[] selStringsPathType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualr path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have manu corridors" }, new GUIContent() { text = "Prim's algo + random", tooltip = "Create a singualr path that traverses the whole dungeon, with some random diviation" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridors" } };
-
+   
 
     int selGridGenType = 0;
-    GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algortihm Marhcing cubes create a mesh object whihc can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tielset provided" } };
-
-    bool started = false;
-
+   
     int thicknessWorm = 2;
 
 
@@ -107,7 +96,7 @@ public class PerlinWormsEditor : Editor
 
             mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
 
-            started = true;
+            //started = true;
         }
 
         #endregion
