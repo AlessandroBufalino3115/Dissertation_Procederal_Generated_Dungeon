@@ -330,50 +330,6 @@ public static class GeneralUtil
 
     }
 
-    public static void GenerateDeadEndCorridorEditorSection(PCGManager pcgManager, int deadEndAmount, int deadEndCorridorThickness, List<List<Tile>> rooms ,out int outDeadEndCorridorThickness, out int outDeadEndAmount, int margin, out int outMargin) 
-    {
-        outDeadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
-
-        outDeadEndCorridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness of the dead end corridor", tooltip = "How wide should the corridor be" }, deadEndCorridorThickness, 3, 6);
-
-        outMargin = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, margin, 10, 40);
-
-        if (GUILayout.Button(new GUIContent() { text = "Generate dead end corridor" }))
-        {
-            for (int i = 0; i < deadEndAmount; i++)
-            {
-                var room = rooms[GeneralUtil.ReturnRandomFromList(rooms)];
-
-                var randomTileInRoom = room[GeneralUtil.ReturnRandomFromList(room)];
-
-                Tile randomTileOutsideOfRoom;
-
-                while (true)
-                {
-                    var tile = pcgManager.gridArray2D[Random.Range(0, pcgManager.gridArray2D.Length)][Random.Range(0, pcgManager.gridArray2D[0].Length)];
-
-                    if (tile.tileWeight == 0)
-                    {
-                        pcgManager.CreateBackUpGrid();
-
-                        randomTileOutsideOfRoom = tile;
-
-                        var tileA = randomTileOutsideOfRoom.position;
-                        var tileB = randomTileInRoom.position;
-
-                        AlgosUtils.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), margin, pcgManager.gridArray2D);
-
-                        break;
-                    }
-                }
-            }
-
-            AlgosUtils.SetUpTileCorridorTypesUI(pcgManager.gridArray2D, deadEndCorridorThickness);
-
-            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(pcgManager.gridArray2D, 0, 1, true);
-        }
-
-    }
 
     public static void GenerateMeshEditorSection(PCGManager pcgManager,  int inSelGridGenType,  bool inBlockGeneration,  string inSaveMapFileName,  out int selGridGenType, out bool blockGeneration, out string saveMapFileName) 
     {

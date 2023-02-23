@@ -11,8 +11,6 @@ public class DelunaryEditor : Editor
 {
     bool showRules = false;
 
-
-
     int selStartRoomGenType = 0;
     GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "" }, new GUIContent() { text = "square room", tooltip = "" }, new GUIContent() { text = "random WAll", tooltip = "" } };
 

@@ -27,7 +27,6 @@ public class WFCAlgoEditor : Editor
         if (showRules)
         {
             GUILayout.TextArea("You have choosen wfc");
-
         }
 
         if (!Selection.activeTransform)
@@ -38,14 +37,10 @@ public class WFCAlgoEditor : Editor
         EditorGUILayout.EndFoldoutHeaderGroup();
 
 
-
         GeneralUtil.SpacesUILayout(4);
 
 
         #endregion
-
-
-
 
 
         if (GUILayout.Button("Run WFC Algo"))
@@ -57,10 +52,6 @@ public class WFCAlgoEditor : Editor
         {
             mainScript.DestroyKids();
         }
-
-
-
-
 
     }
 }

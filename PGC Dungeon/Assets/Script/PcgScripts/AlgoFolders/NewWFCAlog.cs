@@ -60,12 +60,9 @@ public class NewWFCAlog : MonoBehaviour
         var ranStart = GeneralUtil.RanVector2Int(xSize, ySize);
         arrayOfWFCTiles[ranStart.y][ranStart.x].solved = true;// choosen idx should be the indx of the item choosen
 
-
         int ranNum = Random.Range(0, arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Count);
 
-
         arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX = arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs[ranNum];
-
 
         var spawnedAsset = Instantiate(rulesInst.tileSet[arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX], this.transform);
         spawnedAsset.transform.position = new Vector3(ranStart.x, 0, ranStart.y);
@@ -73,18 +70,13 @@ public class NewWFCAlog : MonoBehaviour
         arrayOfWFCTiles[ranStart.y][ranStart.x].AllowedObjectsIDXs.Clear();
         ResetNeighbours(arrayOfWFCTiles, ranStart, arrayOfWFCTiles[ranStart.y][ranStart.x].choosenIDX);
 
-
         bool finishedAlgo = false;
 
         while (!finishedAlgo)
         {
-
-
             finishedAlgo = true;
             int lowestSuperposition = 999;
             Vector2Int coordOfLowestSuperposition = new Vector2Int(0, 0);
-
-
 
             for (int y = 0; y < arrayOfWFCTiles.Length; y++)
             {
@@ -122,7 +114,6 @@ public class NewWFCAlog : MonoBehaviour
 
                 arrayOfWFCTiles[coordOfLowestSuperposition.y][coordOfLowestSuperposition.x].solved = true;
             }
-
         }
     }
 

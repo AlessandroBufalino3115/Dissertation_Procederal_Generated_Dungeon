@@ -4,9 +4,8 @@ using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
-using static Unity.VisualScripting.Metadata;
-using static UnityEngine.ParticleSystem;
-
+using Newtonsoft.Json.Linq;
+using UnityEngine.UIElements;
 
 public static class AlgosUtils
 {
@@ -454,9 +453,6 @@ public static class AlgosUtils
 
         return Tuple.Create(point2, point3);
     }
-
-
-
 
     public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, Tile[][] gridArray2D, bool pathing = false) 
     {
@@ -1694,7 +1690,6 @@ public static class AlgosUtils
 
     #endregion
 
-
     #region Room Gen 
 
     public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[][] gridArr, bool test = false) 
@@ -1800,6 +1795,164 @@ public static class AlgosUtils
 
         return _gridarray2D;
     }
+
+    #endregion
+
+
+    #region Diffusion-Limited Aggregation
+
+    public static void DiffLimAggregation(Tile[][] gridArr,int moversAmount, int actionTurns) 
+    {
+
+        //movers
+        //actionTurns
+        int height = gridArr.Length; 
+        int length = gridArr[0].Length;
+
+        // you are going to spawn a set number of walkers
+        // each walker every loop is going to move to a new pos where there is no other walker if therre is skip turn
+        // if in the new pos there is a static obj then be static and stop moving
+
+        //after a set number of calls delete all the other objs
+
+
+        List<Vector2Int> moversList = new List<Vector2Int>();
+        List<Vector2Int> holdArray = new List<Vector2Int>();
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < length; x++)
+            {   
+                if (gridArr[y][x].tileType != Tile.TileType.FLOORROOM)
+                    holdArray.Add(new Vector2Int(x, y));
+            }
+        }
+
+        for (int i = 0; i < moversAmount; i++)
+        {
+            int ranVecIndex = Random.Range(0, holdArray.Count - 1);
+
+            moversList.Add(new Vector2Int(holdArray[ranVecIndex].x, holdArray[ranVecIndex].y));
+
+            holdArray.RemoveAt(ranVecIndex);
+        }
+
+
+        for (int i = 0; i < actionTurns; i++)
+        {
+
+
+            for (int j = moversList.Count; j-- > 0;)
+            {
+                int ranDir = Random.Range(1, 5);
+
+                switch (ranDir)
+                {
+                    case 1:  //go right
+                        {
+                            if (moversList[j].x + 1 < gridArr[0].Length)
+                            {
+                                if (!moversList.Contains(new Vector2Int(moversList[j].x + 1, moversList[j].y))) 
+                                {
+                                    moversList[j] = new Vector2Int(moversList[j].x + 1, moversList[j].y);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 2: //go left
+                        {
+                            if (moversList[j].x - 1 >= 0)
+                            {
+                                if (!moversList.Contains(new Vector2Int(moversList[j].x - 1, moversList[j].y)))
+                                {
+                                    moversList[j] = new Vector2Int(moversList[j].x - 1, moversList[j].y);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 3:  //go down
+                        { 
+                            if (moversList[j].y - 1 >= 0)
+                            {
+                                if (!moversList.Contains(new Vector2Int(moversList[j].x, moversList[j].y - 1)))
+                                {
+                                    moversList[j] = new Vector2Int(moversList[j].x, moversList[j].y - 1);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 4:   //go up
+                        {
+                            if (moversList[j].y + 1 < gridArr.Length)
+                            {
+                                if (!moversList.Contains(new Vector2Int(moversList[j].x, moversList[j].y + 1)))
+                                {
+                                    moversList[j] = new Vector2Int(moversList[j].x, moversList[j].y + 1);
+                                }
+                            }
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+
+
+                if (CheckAround(gridArr,moversList[j])) 
+                {
+                    gridArr[moversList[j].y][moversList[j].x].tileWeight = 0.75f;
+                    gridArr[moversList[j].y][moversList[j].x].tileType = Tile.TileType.FLOORCORRIDOR;
+                    moversList.RemoveAt(j);
+                }
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// return true if something next to it is what we want
+    /// </summary>
+    /// <param name="gridArr"></param>
+    /// <param name="currPos"></param>
+    /// <returns></returns>
+    private static bool CheckAround(Tile[][] gridArr, Vector2Int currPos) 
+    {
+        if (currPos.x + 1 < gridArr[0].Length)
+        {
+            if (gridArr[currPos.y][currPos.x + 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y][currPos.x + 1].tileType == Tile.TileType.FLOORCORRIDOR)
+                return true;
+        }
+
+        if (currPos.y + 1 < gridArr.Length)
+        {
+            if (gridArr[currPos.y +1][currPos.x].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y + 1][currPos.x].tileType == Tile.TileType.FLOORCORRIDOR)
+                return true;
+        }
+
+        if (currPos.y - 1 >= 0)
+        {
+            if (gridArr[currPos.y - 1][currPos.x].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y - 1][currPos.x].tileType == Tile.TileType.FLOORCORRIDOR)
+                return true;
+        }
+
+        if (currPos.x - 1 >= 0)
+        {
+            if (gridArr[currPos.y][currPos.x - 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y][currPos.x - 1].tileType == Tile.TileType.FLOORCORRIDOR)
+                return true;
+        }
+
+        return false;
+    }
+
+    #endregion
+
+
+    #region Poissant
 
     #endregion
 
@@ -2149,6 +2302,22 @@ public static class AlgosUtils
     #endregion
 
     #region Type and Utility section
+
+    public static void ShuffleList<T>(this IList<T> ts)
+    {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i)
+        {
+            var r = Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
+        }
+    }
+
+
+
 
     public static void SetUpTileCorridorTypesUI(Tile[][] gridArr, int width) 
     {

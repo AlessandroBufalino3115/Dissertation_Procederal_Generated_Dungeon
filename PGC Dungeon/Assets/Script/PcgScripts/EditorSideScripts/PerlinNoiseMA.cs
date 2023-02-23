@@ -2,13 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PerlinNoiseMA : MonoBehaviour
+public class PerlinNoiseMA : MonoBehaviour, IUndoInteraction
 {
-    private PCGManager pcgManager;
-    public PCGManager PcgManager
-    {
-        get { return pcgManager; }
-    }
+    [HideInInspector]
+    public PCGManager pcgManager;
+ 
 
 
     // main algo specific
@@ -62,80 +60,60 @@ public class PerlinNoiseMA : MonoBehaviour
         set { threshold = value; }
     }
 
-  
+
 
 
 
     //general
 
-    private bool pathType = false;
-    public bool PathType
-    {
-        get { return pathType; }
-        set { pathType = value; }
-    }
+
+    [HideInInspector]
+    public bool pathType = false;
 
 
-    private int neighboursNeeded = 3;
-    public int NeighboursNeeded
-    {
-        get { return neighboursNeeded; }
-        set { neighboursNeeded = value; }
-    }
 
-    private bool typeOfTri;
-    public bool TypeOfTri
-    {
-        get { return typeOfTri; }
-        set { typeOfTri = value; }
-    }
+    [HideInInspector]
+    public int neighboursNeeded = 3;
 
-    private int minSize = 40;
-    public int MinSize
-    {
-        get { return minSize; }
-        set { minSize = value; }
-    }
+    [HideInInspector]
+    public int typeOfTri;
 
 
-    private bool started;
-    public bool Started
-    {
-        get { return started; }
-        set { started = value; }
-    }
+    [HideInInspector]
+    public int minSize = 40;
 
-
+    [HideInInspector]
     public List<List<Tile>> rooms = new List<List<Tile>>();
+
+    [HideInInspector]
     public List<Edge> edges = new List<Edge>();
 
+    [HideInInspector]
+    public bool allowedBack;
+    [HideInInspector]
+    public bool allowedForward;
+    [HideInInspector]
+    public int currStateIndex = 0;
 
 
-    public enum PathFindingType
+
+
+    [HideInInspector]
+    public GeneralUtil.PathFindingType pathFindingType;
+
+
+    [HideInInspector]
+    public GeneralUtil.UISTATE currUiState = GeneralUtil.UISTATE.MAIN_ALGO;
+
+    public void DeleteLastSavedRoom()
     {
-        A_STAR,
-        DJISTRA,
-        BFS,
-        DFS
+        if (currUiState == GeneralUtil.UISTATE.EXTRA_ROOM_GEN)
+            rooms.RemoveAt(rooms.Count - 1);
     }
-    private PathFindingType pathFindingType;
-    public PathFindingType PathfindingType
-    {
-        get { return pathFindingType; }
-        set { pathFindingType = value; }
-    }
-
-
-
-
-
-
-
-
 
     public void InspectorAwake()
     {
         pcgManager = this.transform.GetComponent<PCGManager>();
+        pcgManager.UndoInteraction = this;
     }
-
 }

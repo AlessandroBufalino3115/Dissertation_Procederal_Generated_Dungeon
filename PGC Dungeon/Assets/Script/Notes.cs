@@ -34,13 +34,7 @@
  *                    
  *          fix diamond sqaure
  *          
- *          
- *          
- *          
- *          the rnadom dead end doesnt work   it does it just creates shit and goes throuhg otehr shit
- *          
- *                    
- *          
+ *       
  *          if it recognises them as corridors i can actually load it back in and get the corridors back
  *    
  *          
@@ -101,10 +95,10 @@
  *  ran room gen --- should be done
  *  Lsystem   -- need to add the room gen from corr
  *  delu   -- need to add the localised random (maybe)      -- when i will try and get all the corrdior this might be a problem
- *  wfc  --- just need to add the texture way
- *  perlin noise  -- to do 
+ *  wfc  ---              texture recognition is there just needs to buidl the rule
+ *  perlin noise  --  done
  *  perlin worm   -- prob to scrap
- *  diamondSquare  --- to fix       
+ *  diamondSquare  ---   done    just fix the algo apart from than done         
  *  
  *  
  *  this might have issue with the chunk and how we are actually going to generate everythin
@@ -119,6 +113,15 @@
  *  
  *  need to do the dynamic chunk rendering stuff
  *   
- *  random dead end needs to be added to the corridor making due to how the build walls function works
+ *  maybe add the randombetween  100% can be a function
  * 
+ * 
+ * there is anew algo to implement whic si already done
+ * poissant might need to wait 
+ * 
+ * 
+ * the thing that takes priority right now is the wfc and the diamon
+ * delte the refresh plane button if its the same as the refresh main algo comp buitton
+ * 
+ * https://www.pixilart.com/draw/64x64-6452daa78a#
  */
