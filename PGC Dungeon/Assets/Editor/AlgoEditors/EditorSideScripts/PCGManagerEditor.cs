@@ -84,143 +84,159 @@ public class PCGManagerEditor : Editor
 
 
 
-
-        GeneralUtil.SpacesUILayout(4);
-
-
-        if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use" }))
-        {
-            var asset = CreateInstance<TilesRuleSet>();
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
-            {
-                AssetDatabase.CreateFolder("Assets", "Resources");
-                AssetDatabase.Refresh();
-            }
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
-            {
-                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
-                AssetDatabase.Refresh();
-            }
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
-            {
-                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
-                AssetDatabase.Refresh();
-            }
-
-            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
-            AssetDatabase.SaveAssets();
-
-        }
+        GeneralUtil.SpacesUILayout(2);
 
 
-        if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
+        mainScript.loadSectionOpen = EditorGUILayout.BeginFoldoutHeaderGroup(mainScript.loadSectionOpen, "Loading Assets Section");
+
+        if (mainScript.loadSectionOpen)
         {
 
-            if (string.IsNullOrEmpty(mainScript.TileSetRuleFileName))
+            GeneralUtil.SpacesUILayout(4);
+
+
+            if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use" }))
             {
-                EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
-                return;
-            }
+                var asset = CreateInstance<TilesRuleSet>();
 
-
-            var tileRules = Resources.Load<TilesRuleSet>("Resources_Algorithms/Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
-
-            if (tileRules == null)
-            {
-                EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
-                return;
-            }
-            else
-            {
-                mainScript.WallsTiles.Clear();
-                mainScript.FloorTiles.Clear();
-                mainScript.CeilingTiles.Clear();
-
-                foreach (var item in tileRules.WallsTiles)
+                if (!AssetDatabase.IsValidFolder("Assets/Resources"))
                 {
-                    mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    AssetDatabase.CreateFolder("Assets", "Resources");
+                    AssetDatabase.Refresh();
                 }
 
-                foreach (var item in tileRules.FloorTiles)
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
                 {
-                    mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+                    AssetDatabase.Refresh();
+                }
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
+                    AssetDatabase.Refresh();
+                }
+
+                AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
+                AssetDatabase.SaveAssets();
+
+            }
+
+
+            if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
+            {
+
+                if (string.IsNullOrEmpty(mainScript.TileSetRuleFileName))
+                {
+                    EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
+                    return;
                 }
 
 
-                foreach (var item in tileRules.CeilingTiles)
+                var tileRules = Resources.Load<TilesRuleSet>("Resources_Algorithms/Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
+
+                if (tileRules == null)
                 {
-                    mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
+                    return;
+                }
+                else
+                {
+                    mainScript.WallsTiles.Clear();
+                    mainScript.FloorTiles.Clear();
+                    mainScript.CeilingTiles.Clear();
+
+                    foreach (var item in tileRules.WallsTiles)
+                    {
+                        mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    }
+
+                    foreach (var item in tileRules.FloorTiles)
+                    {
+                        mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    }
+
+
+                    foreach (var item in tileRules.CeilingTiles)
+                    {
+                        mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                    }
+
+                }
+
+
+            }
+
+
+            GeneralUtil.SpacesUILayout(4);
+
+
+            if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
+            {
+
+                var asset = ScriptableObject.CreateInstance<WeightRuleSet>();
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+                {
+                    AssetDatabase.CreateFolder("Assets", "Resources");
+                    AssetDatabase.Refresh();
+                }
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+                    AssetDatabase.Refresh();
+                }
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
+                    AssetDatabase.Refresh();
+                }
+
+                AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
+                AssetDatabase.SaveAssets();
+
+            }
+
+
+            if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
+            {
+                if (string.IsNullOrEmpty(mainScript.WeightRuleFileName))
+                {
+                    EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
+                    return;
+                }
+                var tileRules = Resources.Load<WeightRuleSet>("Resources_Algorithms/Weight_Pathfinding_RuleSet/" + mainScript.WeightRuleFileName);
+
+
+                if (tileRules == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
+                    return;
+                }
+                else
+                {
+                    mainScript.tileCosts = new float[6];
+
+                    mainScript.tileCosts[0] = tileRules.VOID;
+                    mainScript.tileCosts[1] = tileRules.FLOORROOM;
+                    mainScript.tileCosts[2] = tileRules.WALL;
+                    mainScript.tileCosts[3] = tileRules.ROOF;
+                    mainScript.tileCosts[4] = tileRules.FLOORCORRIDOR;
+                    mainScript.tileCosts[5] = tileRules.AVOID;
                 }
 
             }
 
-
         }
 
-
-        GeneralUtil.SpacesUILayout(4);
-
-
-        if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
+        if (!Selection.activeTransform)
         {
-
-            var asset = ScriptableObject.CreateInstance<WeightRuleSet>();
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
-            {
-                AssetDatabase.CreateFolder("Assets", "Resources");
-                AssetDatabase.Refresh();
-            }
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
-            {
-                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
-                AssetDatabase.Refresh();
-            }
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
-            {
-                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
-                AssetDatabase.Refresh();
-            }
-
-            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
-            AssetDatabase.SaveAssets();
-
+            mainScript.loadSectionOpen = false;
         }
 
-
-        if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
-        {
-            if (string.IsNullOrEmpty(mainScript.WeightRuleFileName))
-            {
-                EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
-                return;
-            }
-            var tileRules = Resources.Load<WeightRuleSet>("Resources_Algorithms/Weight_Pathfinding_RuleSet/" + mainScript.WeightRuleFileName);
-
-
-            if (tileRules == null) 
-            {
-                EditorUtility.DisplayDialog("Error", "The weight rule file name is invalid", "OK");
-                return;
-            }
-            else 
-            {
-                mainScript.tileCosts = new float[6];
-
-                mainScript.tileCosts[0] = tileRules.VOID;
-                mainScript.tileCosts[1] = tileRules.FLOORROOM;
-                mainScript.tileCosts[2] = tileRules.WALL;
-                mainScript.tileCosts[3] = tileRules.ROOF;
-                mainScript.tileCosts[4] = tileRules.FLOORCORRIDOR;
-                mainScript.tileCosts[5] = tileRules.AVOID;
-            }
-
-        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
 
 
         GeneralUtil.SpacesUILayout(4);

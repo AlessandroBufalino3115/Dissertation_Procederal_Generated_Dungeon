@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -64,7 +65,7 @@ public class DelunaryEditor : Editor
             case DelunaryMA.UI_STATE.STAGE_1:
                 {
 
-                    EditorGUI.BeginDisabledGroup(mainScript.rooms.Count == 1);
+                    EditorGUI.BeginDisabledGroup(mainScript.rooms.Count >= 1);
 
 
                     GUILayout.BeginVertical("Box");
@@ -88,6 +89,8 @@ public class DelunaryEditor : Editor
 
                         case 2: // random walk
 
+                            height = (int)EditorGUILayout.Slider(new GUIContent() { text = "height", tooltip = "" }, height, 10, 50);
+                            width = (int)EditorGUILayout.Slider(new GUIContent() { text = "width", tooltip = "" }, width, 10, 50);
                             break;
 
                         //case 3:
@@ -106,44 +109,72 @@ public class DelunaryEditor : Editor
                         switch (selStartRoomGenType)
                         {
                             case 0:  //sphere
-
-                                var sphereRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, radius + 2);
-
-                                if (sphereRoom != null)
                                 {
-                                    mainScript.pcgManager.CreateBackUpGrid();
-                                    sphereRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, radius, draw: true);
+                                    var sphereRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, radius + 2);
 
-                                    mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+                                    if (sphereRoom != null)
+                                    {
+                                        mainScript.pcgManager.CreateBackUpGrid();
+                                        sphereRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, radius, draw: true);
 
-                                    mainScript.rooms.Add(sphereRoom);
+                                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+
+                                        mainScript.rooms.Add(sphereRoom);
+                                    }
                                 }
 
                                 break;
 
                             case 1: // room
-
-                                var squareRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, radius + 2);
-
-                                if (squareRoom != null)
                                 {
-                                    mainScript.pcgManager.CreateBackUpGrid();
-                                    squareRoom = AlgosUtils.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArray2D);
+                                    var squareRoom = AlgosUtils.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArray2D,true);
 
-                                    mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+                                    if (squareRoom != null)
+                                    {
+                                        mainScript.pcgManager.CreateBackUpGrid();
+                                        squareRoom = AlgosUtils.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArray2D);
 
-                                    mainScript.rooms.Add(squareRoom);
+                                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+
+                                        mainScript.rooms.Add(squareRoom);
+                                    }
                                 }
 
                                 break;
 
                             case 2: // random walk
+                                {
+                                    var squareRoom = AlgosUtils.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArray2D,true);
+
+                                    if (squareRoom != null)
+                                    {
+                                        
+                                        var roomBounds = new BoundsInt() { xMin = centerPoint.x - width / 2, xMax = centerPoint.x + width / 2, zMin = centerPoint.y - height / 2, zMax = centerPoint.y + height / 2 };
+
+                                        var room = AlgosUtils.CompartimentalisedCA(roomBounds);
+
+                                        for (int y = 0; y < room.Length; y++)
+                                        {
+                                            for (int x = 0; x < room[0].Length; x++)
+                                            {
+                                                if (room[y][x].tileWeight == 1)
+                                                {
+                                                    mainScript.pcgManager.gridArray2D[y + roomBounds.zMin][x + roomBounds.xMin].tileWeight = 1;
+                                                }
+                                                else
+                                                {
+                                                    mainScript.pcgManager.gridArray2D[y + roomBounds.zMin][x + roomBounds.xMin].tileWeight = 0;
+                                                }
+                                            }
+                                        }
+
+                                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+
+                                        AlgosUtils.GetAllRooms(mainScript.pcgManager.gridArray2D);
+                                    }
+                                }
 
                                 break;
-
-                            //case 3:
-                            //    break;
-
 
                             default:
                                 break;
@@ -152,12 +183,10 @@ public class DelunaryEditor : Editor
 
                     EditorGUI.EndDisabledGroup();
 
-                    if (mainScript.rooms.Count >0)
+                    if (mainScript.rooms.Count > 0)
                         mainScript.allowedForward = true;
                     else
                         mainScript.allowedForward = false;
-
-
                 }
 
                 break;
@@ -229,7 +258,7 @@ public class DelunaryEditor : Editor
 
                 mainScript.allowedBack = true;
 
-                GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, selGridGenType, blockGeneration, saveMapFileName, out selGridGenType, out blockGeneration, out saveMapFileName);
+                GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
 
                 break;
 

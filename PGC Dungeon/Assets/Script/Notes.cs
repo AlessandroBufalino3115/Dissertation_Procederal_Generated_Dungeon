@@ -115,13 +115,12 @@
  *   
  *  maybe add the randombetween  100% can be a function
  * 
- * 
- * there is anew algo to implement whic si already done
  * poissant might need to wait 
- * 
  * 
  * the thing that takes priority right now is the wfc and the diamon
  * delte the refresh plane button if its the same as the refresh main algo comp buitton
  * 
  * https://www.pixilart.com/draw/64x64-6452daa78a#
+ * 
+ * redo the order of the pcgmanager scirpt
  */

@@ -1711,7 +1711,6 @@ public static class AlgosUtils
         {
             for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfWidth; x++)
             {
-
                 if (gridArr[y][x].tileType != Tile.TileType.VOID)
                 {
                     return null;
@@ -1722,7 +1721,6 @@ public static class AlgosUtils
                     gridArr[y][x].tileWeight = 0.75f;
                     room.Add(gridArr[y][x]);
                 }
-            
             }
         }
 
@@ -1767,7 +1765,6 @@ public static class AlgosUtils
         }
 
         return room;
-        //because we know that this is a room by it self we can just return a list of this rooms instead of calculating everything again
     }
 
     public static Tile[][] CompartimentalisedCA(BoundsInt boundsRoom) 
@@ -1953,6 +1950,82 @@ public static class AlgosUtils
 
 
     #region Poissant
+
+
+    public static List<Vector2> GeneratePoints(float width, float height, float radius, int numSamplesBeforeRejection = 30)
+    {
+        float cellSize = radius / (float)Math.Sqrt(2);
+        int[,] grid = new int[Mathf.CeilToInt(height / cellSize), Mathf.CeilToInt(width / cellSize)];
+        List<Vector2> points = new List<Vector2>();
+        List<Vector2> spawnPoints = new List<Vector2>();
+        spawnPoints.Add(new Vector2(Random.value * width, Random.value * height));
+
+        while (spawnPoints.Count > 0)
+        {
+            int spawnIndex = Random.Range(0, spawnPoints.Count);
+            Vector2 spawnCenter = spawnPoints[spawnIndex];
+            bool candidateAccepted = false;
+
+            for (int i = 0; i < numSamplesBeforeRejection; i++)
+            {
+                float angle = Random.value * Mathf.PI * 2;
+                Vector2 dir = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+                float r = Random.Range(radius, 2 * radius);
+                Vector2 candidate = spawnCenter + dir * r;
+
+                if (IsValid(candidate, width, height, radius, cellSize, grid, points))
+                {
+                    points.Add(candidate);
+                    spawnPoints.Add(candidate);
+                    grid[(int)(candidate.y / cellSize), (int)(candidate.x / cellSize)] = points.Count;
+                    candidateAccepted = true;
+                    break;
+                }
+            }
+
+            if (!candidateAccepted)
+            {
+                spawnPoints.RemoveAt(spawnIndex);
+            }
+        }
+
+        return points;
+    }
+
+    private static bool IsValid(Vector2 candidate, float width, float height, float radius, float cellSize, int[,] grid, List<Vector2> points)
+    {
+        if (candidate.x < 0 || candidate.x > width || candidate.y < 0 || candidate.y > height)
+        {
+            return false;
+        }
+
+        int cellX = (int)(candidate.x / cellSize);
+        int cellY = (int)(candidate.y / cellSize);
+        int searchStartX = Mathf.Max(0, cellX - 2);
+        int searchEndX = Mathf.Min(cellX + 2, grid.GetLength(1) - 1);
+        int searchStartY = Mathf.Max(0, cellY - 2);
+        int searchEndY = Mathf.Min(cellY + 2, grid.GetLength(0) - 1);
+
+        for (int x = searchStartX; x <= searchEndX; x++)
+        {
+            for (int y = searchStartY; y <= searchEndY; y++)
+            {
+                int pointIndex = grid[y, x] - 1;
+
+                if (pointIndex != -1)
+                {
+                    Vector2 point = points[pointIndex];
+
+                    if (Vector2.Distance(candidate, point) < radius)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 
     #endregion
 

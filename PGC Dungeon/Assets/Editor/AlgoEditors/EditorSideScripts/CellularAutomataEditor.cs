@@ -17,7 +17,6 @@ public class CellularAutomataEditor : Editor
 
     int selGridConnectionType = 0;
     int selGridPathGenType = 0;
-    int selGridGenType = 0;
 
     int randomAddCorr = 0;
 
@@ -32,7 +31,6 @@ public class CellularAutomataEditor : Editor
     int width = 10;
     int height = 10;
 
-    bool blockGeneration = false;
     string saveMapFileName = "";
 
     bool started = false;
@@ -576,7 +574,7 @@ public class CellularAutomataEditor : Editor
                 mainScript.allowedBack = false;
                 mainScript.allowedForward = false;
 
-                GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, selGridGenType, blockGeneration, saveMapFileName, out selGridGenType, out blockGeneration, out saveMapFileName);
+                GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
 
 
 

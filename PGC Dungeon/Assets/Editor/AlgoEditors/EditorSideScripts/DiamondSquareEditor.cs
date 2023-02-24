@@ -595,7 +595,7 @@ public class DiamondSquareEditor : Editor
                 {
                     mainScript.allowedBack = true;
 
-                    GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, selGridGenType, blockGeneration, saveMapFileName, out selGridGenType, out blockGeneration, out saveMapFileName);
+                    GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager,  saveMapFileName, out saveMapFileName);
                 }
 
                 break;

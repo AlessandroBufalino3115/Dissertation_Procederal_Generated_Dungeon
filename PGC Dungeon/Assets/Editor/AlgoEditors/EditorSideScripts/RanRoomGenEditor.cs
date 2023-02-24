@@ -35,7 +35,6 @@ public class RanRoomGenEditor : Editor
     int bezierOndulation = 20;
     int deadEndOndulation = 20;
 
-    bool blockGeneration = false;
     string saveMapFileName = "";
 
     int radius = 10;
@@ -867,7 +866,7 @@ public class RanRoomGenEditor : Editor
             case RanRoomGenMA.UI_STATE.GENERATE:
                 {
 
-                    GeneralUtil.GenerateMeshEditorSection(mainScript.PcgManager, selGridGenType, blockGeneration, saveMapFileName, out selGridGenType, out blockGeneration, out saveMapFileName);
+                    GeneralUtil.GenerateMeshEditorSection(mainScript.PcgManager, saveMapFileName,  out saveMapFileName);
                 }
                 break;
             default:

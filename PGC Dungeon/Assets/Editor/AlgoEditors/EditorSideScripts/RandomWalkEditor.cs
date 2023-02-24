@@ -15,7 +15,6 @@ public class RandomWalkEditor : Editor
 
     int selGridConnectionType = 0;
     int selGridPathGenType = 0;
-    int selGridGenType = 0;
 
     int randomAddCorr = 0;
 
@@ -30,7 +29,6 @@ public class RandomWalkEditor : Editor
     int width = 10;
     int height = 10;
 
-    bool blockGeneration = false;
     string saveMapFileName = "";
 
     public override void OnInspectorGUI()
@@ -576,7 +574,7 @@ public class RandomWalkEditor : Editor
                 {
                     mainScript.allowedBack = true;
 
-                    GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, selGridGenType, blockGeneration, saveMapFileName, out selGridGenType, out blockGeneration, out saveMapFileName);
+                    GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager,saveMapFileName, out saveMapFileName);
                 }
 
                 break;

@@ -62,7 +62,8 @@ public class PCGManager : MonoBehaviour
         PERLIN_NOISE = 7,
         PERLIN_WORM = 8,
         DIAMOND_SQUARE = 9,
-        MANUAL_EDITOR = 10
+        DIFF_LIM_AGGR = 10,
+        MANUAL_EDITOR = 11
     }
 
 
@@ -92,6 +93,8 @@ public class PCGManager : MonoBehaviour
     [HideInInspector]
     public List<Chunk> chunks;
 
+    [HideInInspector]
+    public bool loadSectionOpen = false;
 
     private int chunkWidth = 10;
     public int ChunkWidth
@@ -113,15 +116,11 @@ public class PCGManager : MonoBehaviour
     [HideInInspector]
     public int CHeight;
 
-
-
-    private int currMainAlgoIDX = 10;
+    private int currMainAlgoIDX = 11;
     public int CurrMainAlgoIDX
     {
         get { return currMainAlgoIDX; }
     }
-
-  
 
     private void Update()
     {
@@ -292,6 +291,12 @@ public class PCGManager : MonoBehaviour
                     comp.InspectorAwake();
                 }
                 break;
+            case MainAlgo.DIFF_LIM_AGGR:
+                {
+                    var comp = this.transform.AddComponent<DiffLimAggMA>();
+                    comp.InspectorAwake();
+                }
+                break;
             case MainAlgo.MANUAL_EDITOR:
                 {
                     var comp = this.transform.AddComponent<LoadMapMA>();
@@ -348,6 +353,9 @@ public class PCGManager : MonoBehaviour
                 DestroyImmediate(this.transform.GetComponent<DiamondSquareMA>());
                 break;
             case 10:
+                DestroyImmediate(this.transform.GetComponent<DiffLimAggMA>());
+                break;
+            case 11:
                 DestroyImmediate(this.transform.GetComponent<LoadMapMA>());
                 break;
 
@@ -367,8 +375,6 @@ public class PCGManager : MonoBehaviour
         prevGridArray2D.Clear();
     }
 
-
-
     #endregion
 
     public void TestFunc()
@@ -377,7 +383,6 @@ public class PCGManager : MonoBehaviour
 
         plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(gridArray2D);
     }
-
 
 
     #region Generation area

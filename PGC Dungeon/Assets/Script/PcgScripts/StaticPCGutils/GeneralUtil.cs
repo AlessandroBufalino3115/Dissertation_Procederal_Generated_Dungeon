@@ -331,61 +331,8 @@ public static class GeneralUtil
     }
 
 
-    public static void GenerateMeshEditorSection(PCGManager pcgManager,  int inSelGridGenType,  bool inBlockGeneration,  string inSaveMapFileName,  out int selGridGenType, out bool blockGeneration, out string saveMapFileName) 
+    public static void GenerateMeshEditorSection(PCGManager pcgManager,  string inSaveMapFileName,  out string saveMapFileName) 
     {
-        GUILayout.BeginVertical("Box");
-        selGridGenType = GUILayout.SelectionGrid(inSelGridGenType, selStringsGenType, 1);
-        GUILayout.EndVertical();
-
-        SpacesUILayout(2);
-
-        if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
-        {
-            switch (selGridGenType)
-            {
-                case 0:
-
-                    for (int y = 0; y < pcgManager.gridArray2D.Length; y++)
-                    {
-                        for (int x = 0; x < pcgManager.gridArray2D[0].Length; x++)
-                        {
-                            if (pcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
-                            {
-                                pcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
-                            }
-                        }
-                    }
-
-                    AlgosUtils.SetUpTileTypesCorridor(pcgManager.gridArray2D);
-
-                    pcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(pcgManager.gridArray2D, pcgManager.RoomHeight), false));
-                    break;
-
-                case 1:
-
-                    if (inBlockGeneration)
-                        pcgManager.DrawTileMapBlockType();
-                    else
-                        pcgManager.DrawTileMapDirectionalWalls();
-
-                    break;
-            }
-        }
-
-        if (selGridGenType == 1)
-        {
-            blockGeneration = EditorGUILayout.Toggle(new GUIContent() { text = inBlockGeneration == true ? "Block gen selected" : "Wall directional gen selected", tooltip = "Block gen is usefull for a tileset made of cubes, directional is used for oriented walls" }, inBlockGeneration);
-            SpacesUILayout(1);
-            pcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk height", tooltip = "" }, pcgManager.ChunkHeight, 10, 40);
-            pcgManager.ChunkWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk width", tooltip = "" }, pcgManager.ChunkWidth, 10, 40);
-        }
-        else 
-        {
-            blockGeneration = false;
-        }
-
-        SpacesUILayout(4);
-
         saveMapFileName = EditorGUILayout.TextField("Save file name: ", inSaveMapFileName);
         if (GUILayout.Button("save"))
         {

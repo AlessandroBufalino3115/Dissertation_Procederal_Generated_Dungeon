@@ -11,10 +11,6 @@ public class PerlinWormsEditor : Editor
     bool showRules = false;
 
    
-    int selGridPathType = 0;
-   
-
-    int selGridGenType = 0;
    
     int thicknessWorm = 2;
 
