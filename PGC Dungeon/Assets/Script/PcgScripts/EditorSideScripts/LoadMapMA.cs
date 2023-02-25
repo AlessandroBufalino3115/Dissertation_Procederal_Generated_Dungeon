@@ -10,7 +10,15 @@ using UnityEngine;
 
 public class LoadMapMA : MonoBehaviour
 {
+
+    public GameObject debris;
+
+
+    [HideInInspector]
     public PCGManager PcgManager;
+
+    [HideInInspector]
+    public List<List<Tile>> rooms = new List<List<Tile>>(); 
 
     public void InspectorAwake()
     {
@@ -19,7 +27,6 @@ public class LoadMapMA : MonoBehaviour
 
     public Tile[][] LoadDataCall(string fileName) 
     {
-
         if (string.IsNullOrEmpty(fileName))
         {
             EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");

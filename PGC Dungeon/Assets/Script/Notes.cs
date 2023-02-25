@@ -101,6 +101,9 @@
  *  diamondSquare  ---   done    just fix the algo apart from than done         
  *  
  *  
+ *  Poissant is working fine... the issue is that when it gets loaded and the get rooms does it thing it overwrites the walls
+ *  should be an easy fix
+ *  
  *  this might have issue with the chunk and how we are actually going to generate everythin
  *  loader -- the player loads the map, this map should have its corridor set as corridors and room as room
  *  the loader is used to populate the envi.

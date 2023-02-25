@@ -49,8 +49,6 @@ public class LoadMapEditor : Editor
         #endregion
 
 
-
-
         GeneralUtil.SpacesUILayout(4);
 
         fileName = EditorGUILayout.TextField("Save file name: ", fileName);
@@ -73,10 +71,28 @@ public class LoadMapEditor : Editor
 
                 mainScript.PcgManager.gridArray2D = map;
 
+                mainScript.rooms.Clear();
+
+                mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArray2D,true);
+                Debug.Log(mainScript.rooms.Count);
                 mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
             }
 
         }
+
+
+        if (GUILayout.Button(new GUIContent() { text = "test poissant" }))
+        {
+            var poissant = AlgosUtils.GeneratePossiantPoints(mainScript.PcgManager.gridArray2D[0].Length, mainScript.PcgManager.gridArray2D.Length, 4);
+            var acceptedPointed = AlgosUtils.RunPoissantCheckOnCurrentTileMap(poissant, mainScript.PcgManager.gridArray2D, 0.2f);
+
+            for (int i = 0; i < acceptedPointed.Count; i++)
+            {
+                Instantiate(mainScript.debris, new Vector3(acceptedPointed[i].x,0, acceptedPointed[i].y), Quaternion.identity);
+            }
+
+        }
+
 
 
         GeneralUtil.SpacesUILayout(4);

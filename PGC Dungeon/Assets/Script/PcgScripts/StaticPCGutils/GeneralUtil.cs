@@ -196,7 +196,8 @@ public static class GeneralUtil
                         break;
                     case Tile.TileType.FLOORROOM:
 
-                        gridArr[y][x].color = Color.grey;
+                       // gridArr[y][x].color = new Color(0.5f, 0.5f, 0.5f,1f);
+                        gridArr[y][x].color = Color.blue;
                         break;
                     case Tile.TileType.WALL:
 
