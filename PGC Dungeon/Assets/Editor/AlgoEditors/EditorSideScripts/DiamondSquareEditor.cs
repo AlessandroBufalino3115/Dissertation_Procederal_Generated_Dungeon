@@ -79,27 +79,15 @@ public class DiamondSquareEditor : Editor
 
                     if (GUILayout.Button("Generate DiamondSqaure Randomisation"))// gen something
                     {
-                        var centerPoint = new Vector2Int(mainScript.pcgManager.gridArray2D[0].Length / 2, mainScript.pcgManager.gridArray2D.Length / 2);
                         AlgosUtils.RestartArr(mainScript.pcgManager.gridArray2D);
-                        //AlgosUtils.DiamondSquare( heightDSA, -heightDSA ,roughnessDSA , mainScript.pcgManager.gridArray2D);
 
-
-                        var sphereRoom = AlgosUtils.DrawCircle(mainScript.pcgManager.gridArray2D, centerPoint, 6, draw: true);
-                        int size = mainScript.pcgManager.gridArray2D.Length   *     mainScript.pcgManager.gridArray2D[0].Length;
-
-                        AlgosUtils.DiffLimAggregation(mainScript.pcgManager.gridArray2D, (int)(size * 0.25f), 300);
-
-                        mainScript.rooms.Add(sphereRoom);
-
-                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D,-heightDSA, heightDSA);
+                        AlgosUtils.DiamondSquareTest(Random.value, mainScript.pcgManager.gridArray2D);
 
                         mainScript.allowedForward = true;
-
 
                         AlgosUtils.SetUpTileCorridorTypesUI(mainScript.pcgManager.gridArray2D, corridorThickness);
 
                         mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
-
                     }
                 }
                 break;

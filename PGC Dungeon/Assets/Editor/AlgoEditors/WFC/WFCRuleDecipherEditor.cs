@@ -13,13 +13,13 @@ public class WFCRuleDecipherEditor : Editor
 
     private const int MAX_TEXTURE_SIZE = 64;
 
+
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-
         GeneralUtil.SpacesUILayout(4);
-
 
         WFCRuleDecipher ruleDec = (WFCRuleDecipher)target;
 
@@ -54,12 +54,10 @@ public class WFCRuleDecipherEditor : Editor
         {
             var namesList = new List<string>();
 
-
             var fileName = "Assets/Resources/" + ruleDec.tileSetFileName;
 
             var info = new DirectoryInfo(fileName);
             var fileInfo = info.GetFiles();
-
 
             var currIdx = 0;
 
@@ -83,12 +81,11 @@ public class WFCRuleDecipherEditor : Editor
             {
                 ruleDec.tileSet[i] = Resources.Load(namesList[i]) as GameObject;
             }
-
         }
+
         GeneralUtil.SpacesUILayout(1);
         //EditorGUILayout.PropertyField(serializedObject.FindProperty("tileSet"));
         GeneralUtil.SpacesUILayout(3);
-
 
         ruleDec.useText = EditorGUILayout.Toggle(new GUIContent() { text = "use texture" }, ruleDec.useText);
         GeneralUtil.SpacesUILayout(2);
@@ -139,17 +136,115 @@ public class WFCRuleDecipherEditor : Editor
                     }
                 }
             }
-            
 
-            //if (ruleDec.colToIntList.Count > 0) 
-            //{
-            //    EditorGUILayout.PropertyField(serializedObject.FindProperty("colToIntList"));
-            //}
+
+
+            if (GUILayout.Button("Run Texture algo"))
+            {
+                Dictionary<Color, int> colToIntDict = new Dictionary<Color, int>();
+
+                for (int i = 0; i < ruleDec.colToIntList.Count; i++)
+                {
+                    colToIntDict.Add(ruleDec.colToIntList[i].pixelColor, ruleDec.colToIntList[i].indexTileSet);
+                }
+
+
+
+                //check neighbour here and populate the thing
+                //first you add everything 
+                for (int x = 0; x < ruleDec.texture.width; x++)
+                {
+                    for (int y = 0; y < ruleDec.texture.height; y++)
+                    {
+                        var color = ruleDec.texture.GetPixel(x, y);    // color current pixel
+
+                        if (color.a != 1)
+                        {
+                            continue;
+                        }
+
+
+                        var index = colToIntDict[color];   //index rapresenting
+
+
+                        bool toAdd = true;
+
+                        for (int i = 0; i < ruleDec.ruleSet.Count; i++)
+                        {
+                           if ( ruleDec.ruleSet[i].assetIdx == index) 
+                           {
+                                toAdd = false;
+                                break;
+                           }
+                        }
+
+                        if (toAdd) 
+                        {
+                            ruleDec.ruleSet.Add(new WFCTileRule() { assetIdx = index, mainAsset = ruleDec.tileSet[index]});
+                        }
+
+
+
+                        for (int i = 0; i < ruleDec.ruleSet.Count; i++)   
+                        {
+                            if (ruleDec.ruleSet[i].assetIdx == index) 
+                            {
+                                if (x + 1 < ruleDec.texture.width) 
+                                {
+                                    var colorSide = ruleDec.texture.GetPixel(x + 1, y);
+
+                                    if (colorSide.a == 1)
+                                    {
+                                        if (!ruleDec.ruleSet[i].allowedObjRight.Contains(colToIntDict[ruleDec.texture.GetPixel(x + 1, y)]))
+                                            ruleDec.ruleSet[i].allowedObjRight.Add(index);
+                                    }
+                                  
+                                }
+
+                                if (x - 1 >= 0)
+                                {
+                                    var colorSide = ruleDec.texture.GetPixel(x-1,y );
+
+                                    if (colorSide.a == 1)
+                                    {
+                                        if (!ruleDec.ruleSet[i].allowedObjLeft.Contains(colToIntDict[ruleDec.texture.GetPixel(x - 1, y)]))
+                                            ruleDec.ruleSet[i].allowedObjLeft.Add(index);
+                                    }
+
+                                }
+
+                                if (y + 1 < ruleDec.texture.height)
+                                {
+                                    var colorSide = ruleDec.texture.GetPixel(x, y + 1);
+
+                                    if (colorSide.a == 1) 
+                                    {
+                                        if (!ruleDec.ruleSet[i].allowedObjAbove.Contains(colToIntDict[ruleDec.texture.GetPixel(x, y + 1)]))
+                                            ruleDec.ruleSet[i].allowedObjAbove.Add(index);
+                                    }
+                                }
+
+                                if (y - 1 >= 0)
+                                {
+                                    var colorSide = ruleDec.texture.GetPixel(x, y - 1);
+
+                                    if (colorSide.a == 1)
+                                    {
+                                        if (!ruleDec.ruleSet[i].allowedObjBelow.Contains(colToIntDict[ruleDec.texture.GetPixel(x, y - 1)]))
+                                            ruleDec.ruleSet[i].allowedObjBelow.Add(index);
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         else 
         {
-            //ruleDec.ruleSetFileName = EditorGUILayout.TextField(new GUIContent() { text = "RulesSet Scriptable Object File Name: " }, ruleDec.ruleSetFileName);
-
+            ruleDec.ruleSetFileName = EditorGUILayout.TextField("Rule Set File Name: ", ruleDec.ruleSetFileName);
             if (GUILayout.Button("Load Rule Set"))
             {
                 IDictionary<int, string> dictNameIdx = new Dictionary<int, string>();
@@ -158,7 +253,6 @@ public class WFCRuleDecipherEditor : Editor
 
                 var info = new DirectoryInfo(fileName);
                 var fileInfo = info.GetFiles();
-
 
                 var currIdx = 0;
 
@@ -219,7 +313,6 @@ public class WFCRuleDecipherEditor : Editor
                         }
                         else if (node.nodeGuid == edge.BaseNodeGuid)
                         {
-
                             outputNode = node;
                         }
                     }

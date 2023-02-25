@@ -2063,11 +2063,114 @@ public static class AlgosUtils
     //not working
     #region DiamondSquare algo
 
+
+
+
+
+
+    public static bool DiamondSquareTest(float roughness, Tile[][] gridArr)
+    {
+        var size = gridArr[0].Length;
+
+        // get the size
+        var mapSize = gridArr.Length;
+
+        // start the grid
+        float[,] heightMap = new float[mapSize, mapSize];
+
+
+        //need to check for 2n + 1
+        if (gridArr.Length != gridArr[0].Length || gridArr[0].Length % 2 == 0)
+        {
+            return false;
+        }
+
+        //set the 4 random corners
+        heightMap[0, 0] = Random.value;   // top left
+        heightMap[mapSize - 1, mapSize - 1] = Random.value;    // bot right
+        heightMap[0, mapSize - 1] = Random.value; // top right
+        heightMap[mapSize - 1, 0] = Random.value; // bot left
+
+        var chunkSize = mapSize - 1;  //size of square in current iter of algo
+
+
+        int halfSize = size - 1;
+        float roughnessFactor = roughness;
+
+        while (halfSize >= 1)
+        {
+            // Diamond step
+            for (int y = halfSize; y < size; y += halfSize * 2)
+            {
+                for (int x = halfSize; x < size; x += halfSize * 2)
+                {
+                    float average = heightMap[y - halfSize, x - halfSize] +
+                                    heightMap[y - halfSize, x + halfSize] +
+                                    heightMap[y + halfSize, x - halfSize] +
+                                    heightMap[y + halfSize, x + halfSize];
+
+                    heightMap[y, x] = average / 4f + Random.value * roughnessFactor;
+                }
+            }
+
+            // Square step
+            for (int y = 0; y < size; y += halfSize)
+            {
+                for (int x = (y + halfSize) % halfSize; x < size; x += halfSize)
+                {
+                    float average = 0f;
+                    int count = 0;
+
+                    if (x >= halfSize)
+                    {
+                        average += heightMap[y, x - halfSize];
+                        count++;
+                    }
+                    if (x + halfSize < size)
+                    {
+                        average += heightMap[y, x + halfSize];
+                        count++;
+                    }
+                    if (y >= halfSize)
+                    {
+                        average += heightMap[y - halfSize, x];
+                        count++;
+                    }
+                    if (y + halfSize < size)
+                    {
+                        average += heightMap[y + halfSize, x];
+                        count++;
+                    }
+
+                    heightMap[y, x] = average / count + Random.value * roughnessFactor;
+                }
+            }
+
+            halfSize /= 2;
+            roughnessFactor *= roughness;
+        }
+
+
+
+        for (int y = 0; y < gridArr.Length; y++)
+        {
+            for (int x = 0; x < gridArr[0].Length; x++)
+            {
+                gridArr[y][x].tileWeight = heightMap[y, x];
+            }
+        }
+
+
+
+        return true;
+    }
+
+
+
+
+
     public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] gridArr)
     {
-
-        int timerStart = GeneralUtil.PerfTimer(true);
-
         // get the size
         var mapSize = gridArr.Length;
 
@@ -2120,9 +2223,6 @@ public static class AlgosUtils
             }
         }
 
-
-
-
         for (int y = 0; y < gridArr.Length; y++)
         {
             for (int x = 0; x < gridArr[0].Length; x++)
@@ -2131,10 +2231,7 @@ public static class AlgosUtils
             }
         }
 
-
-        var end = GeneralUtil.PerfTimer(false, timerStart);
         return true;
-
     }
 
 
@@ -2714,9 +2811,6 @@ public class Tile
 
 }
 
-
-
-
 #region triangulation classes
 
 public class Triangle
@@ -2762,7 +2856,6 @@ public class Edge
 
 }
 
-
 #endregion
 
 public class AStar_Node
@@ -2803,6 +2896,5 @@ public class DjNode
     public Tile gridRefTile = null;
     public Vector2Int coord = Vector2Int.zero;
 }
-
 
 #endregion

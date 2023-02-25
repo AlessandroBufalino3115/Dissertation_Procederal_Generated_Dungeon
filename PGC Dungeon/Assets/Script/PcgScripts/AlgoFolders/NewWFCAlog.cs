@@ -48,14 +48,11 @@ public class NewWFCAlog : MonoBehaviour
             {
                 arrayOfWFCTiles[y][x] = new WFCTile(rulesInst.tileSet.Count());
                 arrayOfWFCTiles[y][x].coord = new Vector2Int(x, y);
-
             }
         }
 
-
         if (outskirtsCheck)
             SetOutSkirts();
-        
 
         var ranStart = GeneralUtil.RanVector2Int(xSize, ySize);
         arrayOfWFCTiles[ranStart.y][ranStart.x].solved = true;// choosen idx should be the indx of the item choosen

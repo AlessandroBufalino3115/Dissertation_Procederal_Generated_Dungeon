@@ -224,9 +224,6 @@ public static class GeneralUtil
         }
     }
 
-
-
-
     public static  void SaveMap(Tile[][] grid,string saveFileName)
     {
         BinaryFormatter formatter = new BinaryFormatter();
@@ -291,6 +288,7 @@ public static class GeneralUtil
             pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(gridArr);
         }
     }
+
     public static bool CalculateRoomsEditorSection(PCGManager pcgManager, int minSize, out List<List<Tile>> rooms, out int setMinSize) 
     {
         setMinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
@@ -330,7 +328,6 @@ public static class GeneralUtil
 
 
     }
-
 
     public static void GenerateMeshEditorSection(PCGManager pcgManager,  string inSaveMapFileName,  out string saveMapFileName) 
     {

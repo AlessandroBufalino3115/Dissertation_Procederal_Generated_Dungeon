@@ -100,9 +100,8 @@
  *  perlin worm   -- prob to scrap
  *  diamondSquare  ---   done    just fix the algo apart from than done         
  *  
+ *  POISSANT IS DONE
  *  
- *  Poissant is working fine... the issue is that when it gets loaded and the get rooms does it thing it overwrites the walls
- *  should be an easy fix
  *  
  *  this might have issue with the chunk and how we are actually going to generate everythin
  *  loader -- the player loads the map, this map should have its corridor set as corridors and room as room
@@ -112,16 +111,18 @@
  *  its going to ahve a button asking for    small stuff like pebbles
  *                                           bigger stuff like pillars
  *                                           
- *  button telling to generate that stuff in the selected rooms
+ *  button telling to generate that stuff in the selected rooms   //
  *  
  *  need to do the dynamic chunk rendering stuff
  *   
  *  maybe add the randombetween  100% can be a function
  * 
- * poissant might need to wait 
  * 
  * the thing that takes priority right now is the wfc and the diamon
- * delte the refresh plane button if its the same as the refresh main algo comp buitton
+ * delEte the refresh plane button if its the same as the refresh main algo comp buitton
+ * 
+ * i reallly need to ge tthe WFC in 3d there is no other way    - no i dont 
+ * 
  * 
  * https://www.pixilart.com/draw/64x64-6452daa78a#
  * 
