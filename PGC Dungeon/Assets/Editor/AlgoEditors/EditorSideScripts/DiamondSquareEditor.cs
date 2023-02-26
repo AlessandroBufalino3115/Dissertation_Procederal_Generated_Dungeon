@@ -40,6 +40,8 @@ public class DiamondSquareEditor : Editor
     int heightDSA = 4;
     int roughnessDSA = 4;
 
+    float weightClamp = 0.5f;
+
 
     public override void OnInspectorGUI()
     {
@@ -72,22 +74,55 @@ public class DiamondSquareEditor : Editor
         {
             case GeneralUtil.UISTATE.MAIN_ALGO:
                 {
+                   // EditorGUILayout.HelpBox("bhbhhbhbhbybh", MessageType.Warning);
+
+                    if (mainScript.pcgManager.gridArray2D.Length != mainScript.pcgManager.gridArray2D[0].Length || (mainScript.pcgManager.gridArray2D[0].Length-1) % 2 != 0  || (mainScript.pcgManager.gridArray2D.Length -1) % 2 != 0)
+                    {
+                        EditorGUILayout.HelpBox("bhbhhbhbhbybh", MessageType.Warning);
+                    }
+                    
+
                     mainScript.allowedBack = false;
 
-                    heightDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "Creates a circular room in a random position on the canvas. The code will try to fit it, if nothing spawns try again or lower the size" }, heightDSA, 4, 16);
-                    roughnessDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "roughness", tooltip = "Creates a circular room in a random position on the canvas. The code will try to fit it, if nothing spawns try again or lower the size" }, roughnessDSA, 1, 8);
+                    heightDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, heightDSA, 4, 16);
+                    roughnessDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "roughness", tooltip = "" }, roughnessDSA, 1, 16);
+                    weightClamp = EditorGUILayout.Slider(new GUIContent() { text = "threashold", tooltip = "" }, weightClamp, 0.2f, 0.8f);
+
+                    //ask for the range and then for now just ca it to make it work
+
 
                     if (GUILayout.Button("Generate DiamondSqaure Randomisation"))// gen something
                     {
                         AlgosUtils.RestartArr(mainScript.pcgManager.gridArray2D);
 
-                        AlgosUtils.DiamondSquareTest(Random.value, mainScript.pcgManager.gridArray2D);
+                        if (AlgosUtils.DiamondSquare(heightDSA, -heightDSA, roughnessDSA, mainScript.pcgManager.gridArray2D)) 
+                        {
+                            float minWeight = Mathf.Lerp(-heightDSA, heightDSA, weightClamp);
 
-                        mainScript.allowedForward = true;
+                            for (int y = 0; y < mainScript.pcgManager.gridArray2D.Length; y++)
+                            {
+                                for (int x = 0; x < mainScript.pcgManager.gridArray2D[0].Length; x++)
+                                {
+                                    if (mainScript.pcgManager.gridArray2D[y][x].tileWeight > minWeight) 
+                                    {
+                                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 1;
+                                    }
+                                    else 
+                                    {
+                                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 0;
+                                    }
+                                }
+                            }
 
-                        AlgosUtils.SetUpTileCorridorTypesUI(mainScript.pcgManager.gridArray2D, corridorThickness);
+                            mainScript.allowedForward = true;
 
-                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArray2D, 0, 1, true);
+                            mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D);
+                        }
+                        else 
+                        {
+                            Debug.Log("The given dimesions where not good");
+                        }
+
                     }
                 }
                 break;

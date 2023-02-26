@@ -119,7 +119,6 @@ public class WFCRuleDecipherEditor : Editor
                         }
 
                         bool present = false;
-                        Debug.Log(color);
                         for (int i = 0; i < ruleDec.colToIntList.Count; i++)
                         {
                             if (ruleDec.colToIntList[i].pixelColor == color) 
