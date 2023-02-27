@@ -2060,11 +2060,10 @@ public static class AlgosUtils
 
     #endregion
 
-    //not working
     #region DiamondSquare algo
 
 
-    public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] gridArr)
+    public static void DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] gridArr)
     {
         // get the size
         var mapSize = gridArr.Length;
@@ -2073,13 +2072,7 @@ public static class AlgosUtils
         float[,] grid2D = new float[mapSize, mapSize];
 
         //need to check for 2n + 1
-        if (gridArr.Length != gridArr[0].Length || gridArr[0].Length % 2 == 0)
-        {
-            return false;
-        }
-        else
-        {
-
+      
             //set the 4 random corners
             grid2D[0, 0] = Random.Range(minHeight, maxHeight);   // top left
             grid2D[mapSize - 1, mapSize - 1] = Random.Range(minHeight, maxHeight);    // bot right
@@ -2112,12 +2105,9 @@ public static class AlgosUtils
                                   grid2D[y, (x - halfChunk + mapSize) % mapSize]) / 4 + Random.Range(-roughness, roughness);
                     }
                 }
-
                 chunkSize = chunkSize / 2;
                 roughness = roughness / 2;
-
             }
-        }
 
         for (int y = 0; y < gridArr.Length; y++)
         {
@@ -2126,8 +2116,6 @@ public static class AlgosUtils
                 gridArr[y][x].tileWeight = grid2D[y, x];
             }
         }
-
-        return true;
     }
 
 

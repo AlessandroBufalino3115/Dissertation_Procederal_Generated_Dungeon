@@ -7,24 +7,16 @@ public class DiamondSquareMA : MonoBehaviour,IUndoInteraction
     [HideInInspector]
     public PCGManager pcgManager;
 
-
-
-
-
-
     //general
 
     [HideInInspector]
     public bool pathType = false;
-
-
 
     [HideInInspector]
     public int neighboursNeeded = 3;
 
     [HideInInspector]
     public int typeOfTri;
-
 
     [HideInInspector]
     public int minSize = 40;
@@ -44,10 +36,8 @@ public class DiamondSquareMA : MonoBehaviour,IUndoInteraction
 
 
 
-
     [HideInInspector]
     public GeneralUtil.PathFindingType pathFindingType;
-
 
     [HideInInspector]
     public GeneralUtil.UISTATE currUiState = GeneralUtil.UISTATE.MAIN_ALGO;

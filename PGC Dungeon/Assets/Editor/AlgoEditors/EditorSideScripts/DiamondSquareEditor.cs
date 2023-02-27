@@ -42,6 +42,8 @@ public class DiamondSquareEditor : Editor
 
     float weightClamp = 0.5f;
 
+    int power = 6;
+
 
     public override void OnInspectorGUI()
     {
@@ -74,55 +76,49 @@ public class DiamondSquareEditor : Editor
         {
             case GeneralUtil.UISTATE.MAIN_ALGO:
                 {
-                   // EditorGUILayout.HelpBox("bhbhhbhbhbybh", MessageType.Warning);
-
-                    if (mainScript.pcgManager.gridArray2D.Length != mainScript.pcgManager.gridArray2D[0].Length || (mainScript.pcgManager.gridArray2D[0].Length-1) % 2 != 0  || (mainScript.pcgManager.gridArray2D.Length -1) % 2 != 0)
-                    {
-                        EditorGUILayout.HelpBox("bhbhhbhbhbybh", MessageType.Warning);
-                    }
-                    
+                   
+                    EditorGUILayout.HelpBox("To run this algorithm a specific size of a map is needed, use the ", MessageType.Warning);
+                   
+                    power = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, power, 6, 10);
+                    GUILayout.TextArea($"The current size of the new plane is will be {Mathf.Pow(2,power) + 1} by {Mathf.Pow(2, power) + 1}");
 
                     mainScript.allowedBack = false;
-
+                    GeneralUtil.SpacesUILayout(1);
                     heightDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, heightDSA, 4, 16);
-                    roughnessDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "roughness", tooltip = "" }, roughnessDSA, 1, 16);
-                    weightClamp = EditorGUILayout.Slider(new GUIContent() { text = "threashold", tooltip = "" }, weightClamp, 0.2f, 0.8f);
-
-                    //ask for the range and then for now just ca it to make it work
-
+                    roughnessDSA = (int)EditorGUILayout.Slider(new GUIContent() { text = "Roughness", tooltip = "" }, roughnessDSA, 1, 16);
+                    weightClamp = EditorGUILayout.Slider(new GUIContent() { text = "Threashold", tooltip = "" }, weightClamp, 0.2f, 0.8f);
 
                     if (GUILayout.Button("Generate DiamondSqaure Randomisation"))// gen something
                     {
                         AlgosUtils.RestartArr(mainScript.pcgManager.gridArray2D);
 
-                        if (AlgosUtils.DiamondSquare(heightDSA, -heightDSA, roughnessDSA, mainScript.pcgManager.gridArray2D)) 
-                        {
-                            float minWeight = Mathf.Lerp(-heightDSA, heightDSA, weightClamp);
+                        mainScript.pcgManager.height = (int)Mathf.Pow(2, power) + 1;
+                        mainScript.pcgManager.width = (int)Mathf.Pow(2, power) + 1;
 
-                            for (int y = 0; y < mainScript.pcgManager.gridArray2D.Length; y++)
+                        mainScript.pcgManager.CreatePlane();
+
+                        AlgosUtils.DiamondSquare(heightDSA, -heightDSA, roughnessDSA, mainScript.pcgManager.gridArray2D);
+
+                        float minWeight = Mathf.Lerp(-heightDSA, heightDSA, weightClamp);
+
+                        for (int y = 0; y < mainScript.pcgManager.gridArray2D.Length; y++)
+                        {
+                            for (int x = 0; x < mainScript.pcgManager.gridArray2D[0].Length; x++)
                             {
-                                for (int x = 0; x < mainScript.pcgManager.gridArray2D[0].Length; x++)
+                                if (mainScript.pcgManager.gridArray2D[y][x].tileWeight > minWeight)
                                 {
-                                    if (mainScript.pcgManager.gridArray2D[y][x].tileWeight > minWeight) 
-                                    {
-                                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 1;
-                                    }
-                                    else 
-                                    {
-                                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 0;
-                                    }
+                                    mainScript.pcgManager.gridArray2D[y][x].tileWeight = 1;
+                                }
+                                else
+                                {
+                                    mainScript.pcgManager.gridArray2D[y][x].tileWeight = 0;
                                 }
                             }
-
-                            mainScript.allowedForward = true;
-
-                            mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D);
-                        }
-                        else 
-                        {
-                            Debug.Log("The given dimesions where not good");
                         }
 
+                        mainScript.allowedForward = true;
+
+                        mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D);
                     }
                 }
                 break;
