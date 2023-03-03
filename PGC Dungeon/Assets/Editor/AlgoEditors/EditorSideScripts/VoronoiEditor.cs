@@ -16,7 +16,7 @@ public class VoronoiEditor : Editor
     bool voronoiCalculation = false;
 
 
-    int selGridGenType = 0;
+    //int selGridGenType = 0;
     int selGridPathGenType = 0;
     int selGridConnectionType = 0;
 
@@ -38,7 +38,7 @@ public class VoronoiEditor : Editor
 
 
     string saveMapFileName = "";
-    bool blockGeneration = false;
+    //bool blockGeneration = false;
 
 
     public override void OnInspectorGUI()

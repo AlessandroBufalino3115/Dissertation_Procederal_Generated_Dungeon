@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,9 +11,12 @@ public class PerlinWormsEditor : Editor
 
     bool showRules = false;
 
+    int length = 40;
+    float turnMulti = 0.5f;
+
+    
    
-   
-    int thicknessWorm = 2;
+    //int thicknessWorm = 2;
 
 
 
@@ -45,54 +49,47 @@ public class PerlinWormsEditor : Editor
 
         #region Main algo region
 
-        mainScript.OffsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.OffsetX, 0, 10000);
-        mainScript.OffsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.OffsetY, 0, 10000);
+        length = (int)EditorGUILayout.Slider(new GUIContent() { text = "length", tooltip = "" }, length, 0, 500);
+        turnMulti = EditorGUILayout.Slider(new GUIContent() { text = "turn Multiplier", tooltip = "" }, turnMulti, 0.2f, 0.8f);
+
+        mainScript.offsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.offsetX, 0, 10000);
+        mainScript.offsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.offsetY, 0, 10000);
 
 
-        mainScript.Scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.Scale, 3f, 35f);
-        mainScript.Octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.Octaves, 1, 8);
+        mainScript.scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.scale, 3f, 35f);
+        mainScript.octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.octaves, 1, 8);
 
-        mainScript.Persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "" }, mainScript.Persistance, 0.1f, 0.9f);
-        mainScript.Lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "" }, mainScript.Lacunarity, 0.5f, 10f);
-
-        mainScript.MinThreshold = EditorGUILayout.Slider(new GUIContent() { text = "Min Threshold", tooltip = "" }, mainScript.MinThreshold, 0.1f, 0.9f);
-        mainScript.MaxThreshold = EditorGUILayout.Slider(new GUIContent() { text = "Max Threshold", tooltip = "" }, mainScript.MaxThreshold, 0.1f, 0.9f);
-
-        thicknessWorm = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness Worm", tooltip = "" }, thicknessWorm, 2, 4);
+        mainScript.persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "" }, mainScript.persistance, 0.1f, 0.9f);
+        mainScript.lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "" }, mainScript.lacunarity, 0.5f, 10f);
 
 
-        if (GUILayout.Button("Run worm Gen"))
+        if (GUILayout.Button("Add one Worm"))
         {
-            mainScript.PcgManager.gridArray2D = AlgosUtils.PerlinWorms(mainScript.PcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.MaxThreshold, mainScript.MinThreshold);
+            var worm = AlgosUtils.PerlinWorms(mainScript.pcgManager.gridArray2D, mainScript.scale, mainScript.octaves, mainScript.persistance, mainScript.lacunarity, mainScript.offsetX, mainScript.offsetY, length, turnMulti );
 
+            mainScript.wormsTiles.UnionWith(worm);
 
-            AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
-
-            for (int i = 0; i < thicknessWorm - 1; i++)
+            for (int y = 0; y < mainScript.pcgManager.gridArray2D.Length; y++)
             {
-                for (int y = 0; y < mainScript.PcgManager.gridArray2D.Length; y++)
+                for (int x = 0; x < mainScript.pcgManager.gridArray2D[0].Length; x++)
                 {
-                    for (int x = 0; x < mainScript.PcgManager.gridArray2D[0].Length; x++)
+                    if (mainScript.wormsTiles.Contains(mainScript.pcgManager.gridArray2D[y][x])) 
                     {
-                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
-                        {
-                            mainScript.PcgManager.gridArray2D[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
-                        }
-                        if (mainScript.PcgManager.gridArray2D[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
-                        {
-                        }
+                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 1;
+                    }
+                    else 
+                    {
+                        mainScript.pcgManager.gridArray2D[y][x].tileWeight = 0;
                     }
                 }
-
-                AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArray2D);
             }
 
+            mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D);
+        }
 
-            AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArray2D);
-
-            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArray2D, 0, 1, true);
-
-            //started = true;
+        if (GUILayout.Button("Restart"))
+        {
+            mainScript.pcgManager.Restart();
         }
 
         #endregion

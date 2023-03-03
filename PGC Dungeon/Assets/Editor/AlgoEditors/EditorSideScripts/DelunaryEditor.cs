@@ -15,8 +15,8 @@ public class DelunaryEditor : Editor
     int selStartRoomGenType = 0;
     GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "" }, new GUIContent() { text = "square room", tooltip = "" }, new GUIContent() { text = "random WAll", tooltip = "" } };
 
-    int selGridGenType = 0;
-    bool blockGeneration = false;
+    //int selGridGenType = 0;
+    //bool blockGeneration = false;
     string saveMapFileName = "";
 
     int radius;

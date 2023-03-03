@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using Color = UnityEngine.Color;
 using Newtonsoft.Json.Linq;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public static class AlgosUtils
 {
@@ -644,25 +645,6 @@ public static class AlgosUtils
 
     #endregion
 
-
-    #region BFS  -- to do
-
-    public static void BFSPathFinding()
-    {
-
-    }
-
-    #endregion
-
-    #region DFS  -- to do
-
-    public static void DFSPathFinding()
-    {
-
-    }
-
-    #endregion
-
     #endregion
 
     #region Random Walk
@@ -854,7 +836,7 @@ public static class AlgosUtils
 
     #region PerlinNoise
 
-    public static Tile[][] PerlinNoise2D(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
+    public static void PerlinNoise2D(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
         float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
 
@@ -904,7 +886,6 @@ public static class AlgosUtils
             for (int x = 0; x < _gridArray2D[0].Length; x++)
             {
                 _gridArray2D[y][x].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
-
                 if (threashold != 0)
                 {
                     if (threashold < _gridArray2D[y][x].tileWeight)
@@ -914,10 +895,9 @@ public static class AlgosUtils
                 }
             }
         }
-
-        return _gridArray2D;
     }
 
+    //to delete
     public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, bool threshBool)
     {
         var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale, octaves, persistance, lacu, offsetX, offsetY);
@@ -943,6 +923,7 @@ public static class AlgosUtils
                     colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
             }
         }
+
         texture.SetPixels(colourMap);
         texture.Apply();
 
@@ -1003,87 +984,65 @@ public static class AlgosUtils
         return noiseMap;
     }
 
-    public static Tile[][] PerlinWorms(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, float minThreshold)
+    public static Tile WorldPosToTile(Vector2 point, Tile[][] _gridArray2D)
     {
-        int height = _gridArray2D.Length;
-        int width = _gridArray2D[0].Length;
-        var gridArray2DToReturn = new Tile[height][];
+        float pointX = point.x;
+        float pointY = point.y;
 
-        for (int y = 0; y < height; y++)
+        float tileSize = 1;
+        int tileX = Mathf.FloorToInt(pointX / tileSize);
+        int tileY = Mathf.FloorToInt(pointY / tileSize);
+
+        if (tileX < 0 || tileY < 0 || tileX >= _gridArray2D[0].Length || tileY >= _gridArray2D.Length) 
         {
-            gridArray2DToReturn[y] = new Tile[width];
-
-            for (int x = 0; x < width; x++)
-            {
-                gridArray2DToReturn[y][x] = new Tile();
-                gridArray2DToReturn[y][x].position = new Vector2Int(x, y);
-                gridArray2DToReturn[y][x].tileType = Tile.TileType.VOID;
-            }
+            return null;
         }
 
-        _gridArray2D = PerlinNoise2D(_gridArray2D, scale, octaves, persistance, lacu, offsetX, offsetY, threshold);
-
-        var rooms = GetAllRooms(_gridArray2D);
-
-        _gridArray2D = PerlinNoise2D(_gridArray2D, scale, octaves, persistance, lacu, offsetX, offsetY);
-
-        foreach (var roomTiles in rooms)
-        {
-            var currentPos = roomTiles[Random.Range(0, roomTiles.Count)].position;
-
-            bool foundSmaller = true;
-
-            int[,] childPosArry = new int[0, 0];
-            int[] savedNextNode = new int[2];
-
-            childPosArry = GeneralUtil.childPosArry8Side;
-
-            gridArray2DToReturn[currentPos.y][currentPos.x].tileWeight = 1;
-
-            while (foundSmaller)
-            {
-
-                float savedWeight = _gridArray2D[currentPos.y][currentPos.x].tileWeight;
-                foundSmaller = false;
-
-                for (int i = 0; i < childPosArry.Length / 2; i++)
-                {
-                    int x_buff = childPosArry[i, 0];
-                    int y_buff = childPosArry[i, 1];
-
-                    int[] node_position = { currentPos.x + x_buff, currentPos.y + y_buff };
-
-
-                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= _gridArray2D[0].Length || node_position[1] >= _gridArray2D.Length)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if (savedWeight > _gridArray2D[node_position[1]][node_position[0]].tileWeight)   // the weight is smaller
-                        {
-                            foundSmaller = true;
-                            savedNextNode = node_position;
-                            savedWeight = _gridArray2D[node_position[1]][node_position[0]].tileWeight;
-                            gridArray2DToReturn[node_position[1]][node_position[0]].tileWeight = 1;
-                        }
-                    }
-                }
-                if (_gridArray2D[savedNextNode[1]][savedNextNode[0]].tileWeight <= minThreshold)
-                {
-                    foundSmaller = false;
-                }
-                else
-                {
-                    gridArray2DToReturn[savedNextNode[1]][savedNextNode[0]].tileType = Tile.TileType.FLOORCORRIDOR;
-                    currentPos = new Vector2Int(savedNextNode[0], savedNextNode[1]);
-                }
-
-            }
-        }
-
-        return gridArray2DToReturn;
+        return _gridArray2D[tileY][tileX];
     }
+
+    public static Vector2 MoveVector(Vector2 vector, float direction, float turnMulti)
+    {
+        float dx = Mathf.Cos(direction * 2 * Mathf.PI) * turnMulti;
+        float dy = Mathf.Sin(direction * 2 * Mathf.PI) * turnMulti;
+
+        Vector2 result = new Vector2(vector.x + dx, vector.y + dy);
+        return result;
+    }
+
+    public static HashSet<Tile> PerlinWorms(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int maxWormLength,float turnMulti) 
+    {
+        var wormTiles = new HashSet<Tile>();
+
+        PerlinNoise2D(_gridArray2D, scale, octaves, persistance, lacu, offsetX, offsetY);
+
+        var currPos = new Vector2(Random.Range(0, _gridArray2D[0].Length - 1),Random.Range(0, _gridArray2D.Length - 1));
+
+        Tile lastTileAdded = WorldPosToTile(currPos, _gridArray2D);
+
+        for (int i = 0; i < maxWormLength; i++)
+        {
+            currPos = MoveVector(currPos, _gridArray2D[lastTileAdded.position.y][lastTileAdded.position.x].tileWeight,turnMulti);
+
+            var newTile = WorldPosToTile(currPos, _gridArray2D);
+
+            if (newTile != null) 
+            {
+                if (!wormTiles.Contains(newTile))
+                {
+                    wormTiles.Add(newTile);
+                    lastTileAdded = newTile;
+                }
+            }
+            else 
+            {
+                break;
+            }
+        }
+
+        return wormTiles;
+    }
+
 
     #endregion
 
@@ -1387,7 +1346,7 @@ public static class AlgosUtils
         }
     }
 
-    public static List<Vector2Int> NewFloodFill(Tile[][] gridArr, Vector2Int start, bool checkForRoomOnly)
+    public static List<Vector2Int> FloodFill(Tile[][] gridArr, Vector2Int start, bool checkForRoomOnly)
     {
         int height = gridArr.Length;
         int width = gridArr[0].Length;
@@ -1530,7 +1489,7 @@ public static class AlgosUtils
 
             var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
 
-            var room = NewFloodFill(gridArray2D, ranCoord, checkRoomOnly);
+            var room = FloodFill(gridArray2D, ranCoord, checkRoomOnly);
 
             for (int i = openCoords.Count(); i-- > 0;) //for every open coord 
             {
@@ -1576,8 +1535,11 @@ public static class AlgosUtils
     /// </summary>
     /// <param name="gridArr"></param>
     /// <param name="ranValue"></param>
-    public static void SpawnRandomPointsCA(Tile[][] gridArr, float ranValue)
+    public static List<Tile> SpawnRandomPointsCA(Tile[][] gridArr, float ranValue)
     {
+
+        List<Tile> points = new List<Tile>();
+
         for (int y = 0; y < gridArr.Length; y++)
         {
             for (int x = 0; x < gridArr[0].Length; x++)
@@ -1589,9 +1551,13 @@ public static class AlgosUtils
                 else
                 {
                     gridArr[y][x].tileWeight = 1;
+                    points.Add(gridArr[y][x]);
                 }
             }
         }
+
+
+        return points;
     }
 
     public static void RunCaIteration2D(Tile[][] gridArray2D, int neighboursNeeded)

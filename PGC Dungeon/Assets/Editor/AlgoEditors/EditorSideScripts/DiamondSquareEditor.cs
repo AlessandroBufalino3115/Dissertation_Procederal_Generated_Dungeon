@@ -19,7 +19,7 @@ public class DiamondSquareEditor : Editor
 
     int selGridConnectionType = 0;
     int selGridPathGenType = 0;
-    int selGridGenType = 0;
+    //int selGridGenType = 0;
 
     int randomAddCorr = 0;
 
@@ -34,7 +34,7 @@ public class DiamondSquareEditor : Editor
     int width = 10;
     int height = 10;
 
-    bool blockGeneration = false;
+   // bool blockGeneration = false;
     string saveMapFileName = "";
 
     int heightDSA = 4;

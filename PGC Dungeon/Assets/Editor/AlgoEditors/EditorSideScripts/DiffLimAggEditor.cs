@@ -95,7 +95,7 @@ public class DiffLimAggEditor : Editor
 
             GeneralUtil.SpacesUILayout(2);
 
-            corridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "thickness of corrs", tooltip = "" }, corridorThickness, 3, 6);
+            corridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "thickness of corrs", tooltip = "" }, corridorThickness, 1, 5);
 
             GeneralUtil.SpacesUILayout(2);
 
@@ -195,7 +195,6 @@ public class DiffLimAggEditor : Editor
         }
         else 
         {
-            
             if (GUILayout.Button("Restart"))// gen something
             {
                 mainScript.pcgManager.Restart();
@@ -204,7 +203,6 @@ public class DiffLimAggEditor : Editor
             GeneralUtil.SpacesUILayout(2);
 
             GeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
-
         }
         
     }

@@ -45,14 +45,12 @@ The loader should be a component by it self
  *  button telling to generate that stuff in the selected rooms   //
  *  
  *   
- *  maybe add the randombetween  100% can be a function
+ *  add the randombetween  100% can be a function
  * 
  * 
  * delete the refresh plane button if its the same as the refresh main algo comp buitton
  * 
  * might have issues with the mesh gen when it too big
- * 
- * MAJOR ISSUE WITH THE A PATHFINDIGN FIX IS ON THE SIM AT   -- done
  * 
  * https://www.pixilart.com/draw/64x64-6452daa78a#
  * 

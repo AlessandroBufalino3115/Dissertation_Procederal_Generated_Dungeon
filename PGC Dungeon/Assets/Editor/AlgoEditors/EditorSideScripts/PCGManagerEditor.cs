@@ -32,11 +32,7 @@ public class PCGManagerEditor : Editor
             "Before starting, you can load the tiles that will be used for the generation by creating a new rule and loading that rule\n\n" +
             "Then choose the starting main algorithm which will shape your dungeon");
 
-
-
-
         GeneralUtil.SpacesUILayout(4);
-
 
         if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
         {
@@ -79,8 +75,6 @@ public class PCGManagerEditor : Editor
                 }
             }
         }
-
-
 
 
 

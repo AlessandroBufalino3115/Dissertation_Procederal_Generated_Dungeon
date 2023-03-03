@@ -361,7 +361,7 @@ public class PerlinNoiseEditor : Editor
 
                     if (GUILayout.Button("Generate Noise"))
                     {
-                        mainScript.pcgManager.gridArray2D = AlgosUtils.PerlinNoise2D(mainScript.pcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.Threshold);
+                        AlgosUtils.PerlinNoise2D(mainScript.pcgManager.gridArray2D, mainScript.Scale, mainScript.Octaves, mainScript.Persistance, mainScript.Lacunarity, mainScript.OffsetX, mainScript.OffsetY, mainScript.Threshold);
 
                         mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArray2D, true);
 
