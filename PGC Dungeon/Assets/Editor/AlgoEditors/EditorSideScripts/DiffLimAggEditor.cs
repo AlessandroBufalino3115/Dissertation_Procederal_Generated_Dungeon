@@ -176,6 +176,7 @@ public class DiffLimAggEditor : Editor
 
                     EditorGUILayout.HelpBox("There was an issue with the size asked to generate the rooms please choose another size", MessageType.Error);
                     mainScript.pcgManager.Restart();
+                    mainScript.generatedBool = false;
                 }
                 else 
                 {

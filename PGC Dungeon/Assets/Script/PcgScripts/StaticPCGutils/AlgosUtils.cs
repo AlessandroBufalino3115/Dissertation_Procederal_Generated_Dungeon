@@ -278,7 +278,7 @@ public static class AlgosUtils
 
     #region A*
 
-    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2DNorm(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
+    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2D(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
     {
         bool checkForUse = useWeights == true && arrWeights != null ? true : false;
 
@@ -370,44 +370,52 @@ public static class AlgosUtils
 
                 foreach (var child in children)
                 {
-                    foreach (var closedListItem in closedList)
+
+                    bool alreadyThere = false;
+
+                    for (int i = 0; i < closedList.Count; i++)
                     {
-                        if (child.refToBasicTile.position.x == closedListItem.refToBasicTile.position.x && child.refToBasicTile.position.y == closedListItem.refToBasicTile.position.y)
+                        if (child.refToBasicTile.position.x == closedList[i].refToBasicTile.position.x && child.refToBasicTile.position.y == closedList[i].refToBasicTile.position.y)
                         {
-                            continue;
+                            alreadyThere = true;
+                            break;
                         }
                     }
 
-
-                    child.g = currNode.g + 0.5f;
-
-                    if (euclideanDis)
-                        child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
-                    else
-                        child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
-
-                    if (checkForUse)
+                    if (alreadyThere == false)
                     {
-                        child.f = child.g + child.h + arrWeights[(int)child.refToBasicTile.tileType];   //added value here
-                        child.parent = currNode;
-                    }
-                    else
-                    {
-                        child.f = child.g + child.h;   //added value here
-                        child.parent = currNode;
-                    }
+                        child.g = currNode.g + 0.5f;
 
+                        if (euclideanDis)
+                            child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
+                        else
+                            child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
 
-                    foreach (var openListItem in openList)
-                    {
-                        if (child.refToBasicTile.position.x == openListItem.refToBasicTile.position.x && child.refToBasicTile.position.y == openListItem.refToBasicTile.position.y && child.g > openListItem.g)// 
+                        if (checkForUse)
                         {
-                            continue;
+                            child.f = child.g + child.h + arrWeights[(int)child.refToBasicTile.tileType];   //added value here
+                            child.parent = currNode;
                         }
+                        else
+                        {
+                            child.f = child.g + child.h;   //added value here
+                            child.parent = currNode;
+                        }
+
+                        bool alreadyThereAgain = false;
+
+                        foreach (var openListItem in openList)
+                        {
+                            if (child.refToBasicTile.position.x == openListItem.refToBasicTile.position.x && child.refToBasicTile.position.y == openListItem.refToBasicTile.position.y && child.g > openListItem.g)// 
+                            {
+                                alreadyThereAgain = true;
+                                break;
+                            }
+                        }
+
+                        if (alreadyThereAgain == false)
+                            openList.Add(child);
                     }
-
-                    openList.Add(child);
-
                 }
             }
         }
@@ -465,7 +473,7 @@ public static class AlgosUtils
 
         var firstBezierPoint = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
 
-        var pathB = A_StarPathfinding2DNorm(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
+        var pathB = A_StarPathfinding2D(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
 
         SetUpCorridorWithPath(pathB.Item1);
 
@@ -504,14 +512,14 @@ public static class AlgosUtils
                 currCord.y = gridArray2D.Length - 1;
             }
 
-            pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
+            pathB = A_StarPathfinding2D(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
 
             prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
             SetUpCorridorWithPath(pathB.Item1);
         }
 
-        pathB = A_StarPathfinding2DNorm(gridArray2D, prevCoord, endPos, !pathing);
+        pathB = A_StarPathfinding2D(gridArray2D, prevCoord, endPos, !pathing);
 
         SetUpCorridorWithPath(pathB.Item1);
     }

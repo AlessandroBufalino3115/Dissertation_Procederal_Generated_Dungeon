@@ -90,8 +90,12 @@ public class PCGManager : MonoBehaviour
     [Header("THIS IS WHERE THE PLAYER GOES IN CASE OF TILESET GEN")]
     public List<GameObject> player = new List<GameObject>();
 
+    [Range(1,3)]
+    public int loadingRange = 1;
+
     [HideInInspector]
     public List<Chunk> chunks;
+    //public List<Chunk> chunks;
 
     [HideInInspector]
     public bool loadSectionOpen = false;
@@ -129,6 +133,7 @@ public class PCGManager : MonoBehaviour
             CheckChunkRender();
         }
     }
+
 
 
     #region undo Button
@@ -393,6 +398,7 @@ public class PCGManager : MonoBehaviour
         foreach (var player in player)
         {
             int collidedIndex = -1;
+            
             for (int i = 0; i < chunks.Count; i++)
             {
                 if (AABBCol(player.transform.position, chunks[i]))
@@ -408,35 +414,23 @@ public class PCGManager : MonoBehaviour
             }
             else
             {
-                indexesToDraw.Add(collidedIndex);
+                int botCornerLeft = collidedIndex - CLength * loadingRange + loadingRange;
+                int botCornerRight = collidedIndex - CLength * loadingRange - loadingRange;
 
-                if (collidedIndex - 1 > 0)
-                    indexesToDraw.Add(collidedIndex - 1);  //left
+                int chunksToDrawLength = (botCornerLeft - botCornerRight) + 1;
 
-                if (collidedIndex + 1 < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + 1);  //right
+                for (int i = 0; i < chunksToDrawLength; i++)
+                {
+                    for (int j = 0; j < chunksToDrawLength; j++)
+                    {
+                        int newIndex = botCornerRight + j + (i * CLength);
 
-
-                if (collidedIndex + CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength);  //up 
-
-                if (collidedIndex - CLength > 0)
-                    indexesToDraw.Add(collidedIndex - CLength);  //down
-
-                if (collidedIndex + CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength);
-                if (collidedIndex - CLength < chunks.Count)
-                    indexesToDraw.Add(collidedIndex - CLength);
-
-
-                if (collidedIndex - CLength + 1 > 0)
-                    indexesToDraw.Add(collidedIndex - CLength + 1);
-                if (collidedIndex + CLength - 1 > 0)
-                    indexesToDraw.Add(collidedIndex + CLength - 1);
-                if (collidedIndex + CLength + 1 < chunks.Count)
-                    indexesToDraw.Add(collidedIndex + CLength + 1);
-                if (collidedIndex - CLength - 1 > 0)
-                    indexesToDraw.Add(collidedIndex - CLength - 1);
+                        if (newIndex < 0 || newIndex >= chunks.Count)
+                            continue;
+                        else
+                            indexesToDraw.Add(botCornerRight + j + (i * CLength));
+                    }
+                }
             }
         }
 

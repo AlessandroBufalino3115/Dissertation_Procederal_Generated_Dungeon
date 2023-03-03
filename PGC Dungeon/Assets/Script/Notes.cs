@@ -12,49 +12,11 @@
  *  
  *  Debug.Log($"<color=green></color>");      success
  * 
- *  at thestart you cant have the timer
  * 
  * 
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
- *      vvvvvv HIGH PRIORITY vvvvvv
- *          
- *          create rooms from corridors
- *          
- *          wieghts WFC
- * 
- *         issues with the chunk   --- fixed i think
- *                 
- *                 
- *                 
- *      vvvvvv MID PRIORITY vvvvvv
- *      
- *         Fix the graph thing placement
- *         
- *         Similar to the particle effect have a random between two integers thing
- *         
- *      
- *      vvvvvv LOW PRIORITY vvvvvv
- *  
- *          A flood fill algo that fails should mean that a boundary is reached, to look into to redo the wall checker  
- *   
- *          k-group/mean to find regions? but what could regions be needed for? different tileset spawn
- *   
- *          look into different textures for the marching cubes    
- *   
- *          Add gizmos to the scene to show each room detail IDK    
- *          
- *          check on empty strings when loading stuff can be an easy function relatin back to the pcgManager
- *   
- *   
- *   
- *   
- *   ALGOS ISSUE:
- * 
- *   GRAPH GRAMMAR  -- mid priority    -- new feature lock
- *   OTHER PATHFINDINGS   -- high priority       Might drop BFS and Do DFS only
- *   PERLIN WORMS  --  to check    -- mid priority
  *   
  *   
  *   
@@ -65,28 +27,23 @@
  *  random Walk -- done
  *  CA   -- done
  *  ran room gen --- should be done
- *  Lsystem   -- need to add the room gen from corr
+ *  Lsystem   --  finish macro system for room generation
  *  delu   -- to check but should be done
- *  wfc  ---             done
+ *  wfc  ---             done   -- add weithged system
  *  perlin noise  --  done
- *  perlin worm   -- prob to scrap
+ *  perlin worm   -- to prob scrap
  *  diamondSquare  ---   done    
- *  other -- done
+ *  diff limm agg -- done
  *  
- *  POISSANT IS DONE
+ *  WEIGHT ON POISSANT NEEDS TO BE DONE   ---  HEIGHT ISSUE ON POISSANT    --- ON GENERATION THE OBJECTS NEED TO BE PLACED INSIDE THE RESPECTIVE CHUNKS
  *  
- *  
- *  this might have issue with the chunk and how we are actually going to generate everythin
- *  loader -- the player loads the map, this map should have its corridor set as corridors and room as room
- *  the loader is used to populate the envi.
+
+The loader should be a component by it self
+
  *  if i have all of the rooms i can show them in a list format of sorts and have them saved in a class this class holst the room, the middle where the gizmos is going to spawn and a select thign so 
- *  
- *  its going to have a button asking for    small stuff like pebbles
- *                                           bigger stuff like pillars
  *                                           
  *  button telling to generate that stuff in the selected rooms   //
  *  
- *  need to do the dynamic chunk rendering stuff
  *   
  *  maybe add the randombetween  100% can be a function
  * 
@@ -94,6 +51,8 @@
  * delete the refresh plane button if its the same as the refresh main algo comp buitton
  * 
  * might have issues with the mesh gen when it too big
+ * 
+ * MAJOR ISSUE WITH THE A PATHFINDIGN FIX IS ON THE SIM AT   -- done
  * 
  * https://www.pixilart.com/draw/64x64-6452daa78a#
  * 

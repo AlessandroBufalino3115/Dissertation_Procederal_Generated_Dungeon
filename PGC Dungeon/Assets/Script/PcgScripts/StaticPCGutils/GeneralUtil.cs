@@ -224,7 +224,7 @@ public static class GeneralUtil
         }
     }
 
-    public static  void SaveMap(Tile[][] grid,string saveFileName)
+    public static void SaveMap(Tile[][] grid,string saveFileName)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         MemoryStream stream = new MemoryStream();

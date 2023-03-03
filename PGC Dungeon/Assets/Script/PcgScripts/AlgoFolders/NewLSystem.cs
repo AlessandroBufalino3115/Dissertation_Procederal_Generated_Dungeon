@@ -314,7 +314,7 @@ public class NewLSystem : MonoBehaviour
             if (i != points.Count - 1)
             {
                 Debug.Log($"{points[i]}    +    {points[i + 1]}");
-                var path = AlgosUtils.A_StarPathfinding2DNorm(pcgManager.gridArray2D, new Vector2Int(points[i].x, points[i].z), new Vector2Int(points[i + 1].x, points[i + 1].z), modePath);
+                var path = AlgosUtils.A_StarPathfinding2D(pcgManager.gridArray2D, new Vector2Int(points[i].x, points[i].z), new Vector2Int(points[i + 1].x, points[i + 1].z), modePath);
 
                 foreach (var tile in path.Item1)
                 {
