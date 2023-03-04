@@ -16,8 +16,6 @@ namespace DungeonForge
         bool typeOfVoronoi = false;
         bool voronoiCalculation = false;
 
-
-        //int selGridGenType = 0;
         int selGridPathGenType = 0;
         int selGridConnectionType = 0;
 
@@ -29,7 +27,6 @@ namespace DungeonForge
         int width = 10;
         int height = 10;
         int radius = 10;
-
 
         bool useWeights = false;
         bool DjAvoidWalls = false;
@@ -78,7 +75,6 @@ namespace DungeonForge
 
                         vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of voronoi divisions", tooltip = "" }, vorPoints, 5, 40);
                         voronoiCalculation = EditorGUILayout.Toggle(new GUIContent() { text = voronoiCalculation == true ? "euclidian" : "manhattan", tooltip = "" }, voronoiCalculation);
-
 
 
                         if (!typeOfVoronoi)

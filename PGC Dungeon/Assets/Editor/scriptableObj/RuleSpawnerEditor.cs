@@ -4,115 +4,106 @@ using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
-public class RuleSpawnerEditor : Editor
+
+
+namespace DungeonForge
 {
-
-   
-
-    //https://hugecalf-studios.github.io/unity-lessons/lessons/editor/menuitem/
-    [MenuItem("PCG Algorithms/Spawn WFC Rule", priority = 24)]
-    private static void SpawnWFCRule() 
+    public class RuleSpawnerEditor : Editor
     {
-        var asset = CreateInstance<GraphViewDataCont>();
-
-        CheckResourceFolder();
-        CheckMainAlgoFolder();
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/WFC_Rule_Sets"))
+        //https://hugecalf-studios.github.io/unity-lessons/lessons/editor/menuitem/
+        [MenuItem("PCG Algorithms/Spawn WFC Rule", priority = 24)]
+        private static void SpawnWFCRule()
         {
-            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "WFC_Rule_Sets");
-            AssetDatabase.Refresh();
+            var asset = CreateInstance<GraphViewDataCont>();
+
+            CheckResourceFolder();
+            CheckMainAlgoFolder();
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/WFC_Rule_Sets"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "WFC_Rule_Sets");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/WFC_Rule_Sets/NewWFCRuleSet.asset");
+            AssetDatabase.SaveAssets();
         }
 
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/WFC_Rule_Sets/NewWFCRuleSet.asset");
-        AssetDatabase.SaveAssets();
-    }
-
-
-
-    [MenuItem("PCG Algorithms/Spawn L-System Rule", priority = 25)]
-    private static void SpawnLSystemRule()
-    {
-        var asset = CreateInstance<LSystemRuleObj>();
-
-
-        CheckResourceFolder();
-        CheckMainAlgoFolder();
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
+        [MenuItem("PCG Algorithms/Spawn L-System Rule", priority = 25)]
+        private static void SpawnLSystemRule()
         {
-            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
-            AssetDatabase.Refresh();
+            var asset = CreateInstance<LSystemRuleObj>();
+
+
+            CheckResourceFolder();
+            CheckMainAlgoFolder();
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/NewLSystemRuleSet.asset");
+            AssetDatabase.SaveAssets();
         }
 
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/NewLSystemRuleSet.asset");
-        AssetDatabase.SaveAssets();
-    }
 
-
-
-
-    [MenuItem("PCG Algorithms/Spawn Weight Rule", priority = 26)]
-    private static void SpawnWeightRule()
-    {
-        var asset = CreateInstance<WeightRuleSet>();
-
-
-        CheckResourceFolder();
-        CheckMainAlgoFolder();
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
+        [MenuItem("PCG Algorithms/Spawn Weight Rule", priority = 26)]
+        private static void SpawnWeightRule()
         {
-            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
-            AssetDatabase.Refresh();
+            var asset = CreateInstance<WeightRuleSet>();
+
+
+            CheckResourceFolder();
+            CheckMainAlgoFolder();
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Weight_Pathfinding_RuleSet");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
+            AssetDatabase.SaveAssets();
         }
 
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Weight_Pathfinding_RuleSet/NewWeightRuleSet.asset");
-        AssetDatabase.SaveAssets();
-    }
 
-
-
-
-    [MenuItem("PCG Algorithms/Spawn TileSet Rule", priority = 27)]
-    private static void SpawnTileSetRule()
-    {
-        var asset = CreateInstance<TilesRuleSet>();
-
-        CheckResourceFolder();
-        CheckMainAlgoFolder();
-
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+        [MenuItem("PCG Algorithms/Spawn TileSet Rule", priority = 27)]
+        private static void SpawnTileSetRule()
         {
-            AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
-            AssetDatabase.Refresh();
+            var asset = CreateInstance<TilesRuleSet>();
+
+            CheckResourceFolder();
+            CheckMainAlgoFolder();
+
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "Tile_Sets_Ruleset");
+                AssetDatabase.Refresh();
+            }
+
+            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
+            AssetDatabase.SaveAssets();
         }
 
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/Tile_Sets_Ruleset/NewTileSetRuleSet.asset");
-        AssetDatabase.SaveAssets();
-    }
 
-
-    //Resources_Algorithms
-
-
-
-    private static void CheckResourceFolder() 
-    {
-        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+        private static void CheckResourceFolder()
         {
-            AssetDatabase.CreateFolder("Assets", "Resources");
-            AssetDatabase.Refresh();
+            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Resources");
+                AssetDatabase.Refresh();
+            }
+        }
+
+        private static void CheckMainAlgoFolder()
+        {
+            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+            {
+                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+                AssetDatabase.Refresh();
+            }
         }
     }
-
-    private static void CheckMainAlgoFolder()
-    {
-        if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
-        {
-            AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
-            AssetDatabase.Refresh();
-        }
-    }
-
 }

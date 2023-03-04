@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEditor;
 
@@ -71,7 +70,6 @@ namespace DungeonForge
                 AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/{ruleDec.fileName}.asset");
                 AssetDatabase.SaveAssets();
             }
-
 
             if (GUILayout.Button("Load Rule Set"))
             {
