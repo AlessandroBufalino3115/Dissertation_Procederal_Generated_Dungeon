@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class DiffLimAggMA : MonoBehaviour
+
+namespace DungeonForge
 {
-
-    [HideInInspector]
-    public PCGManager pcgManager;
-
-    [HideInInspector]
-    public bool generatedBool;
-    [HideInInspector]
-    public bool allowedBack;
-
-
-    
-    public void InspectorAwake()
+    public class DiffLimAggMA : MonoBehaviour
     {
-        pcgManager = this.transform.GetComponent<PCGManager>();
+
+        [HideInInspector]
+        public PCGManager pcgManager;
+
+        [HideInInspector]
+        public bool generatedBool;
+        [HideInInspector]
+        public bool allowedBack;
+
+        public void InspectorAwake()
+        {
+            pcgManager = this.transform.GetComponent<PCGManager>();
+        }
+
     }
-
-
 }

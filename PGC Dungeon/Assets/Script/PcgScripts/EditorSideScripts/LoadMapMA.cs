@@ -1,65 +1,64 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditor;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
-public class LoadMapMA : MonoBehaviour
+
+namespace DungeonForge
 {
-
-    public GameObject debris;
-
-
-    [HideInInspector]
-    public PCGManager PcgManager;
-
-    [HideInInspector]
-    public List<List<Tile>> rooms = new List<List<Tile>>(); 
-
-    public void InspectorAwake()
+    public class LoadMapMA : MonoBehaviour
     {
-        PcgManager = this.transform.GetComponent<PCGManager>();
-    }
 
-    public Tile[][] LoadDataCall(string fileName) 
-    {
-        if (string.IsNullOrEmpty(fileName))
+        public GameObject debris;
+
+
+        [HideInInspector]
+        public PCGManager PcgManager;
+
+        [HideInInspector]
+        public List<List<Tile>> rooms = new List<List<Tile>>();
+
+        public void InspectorAwake()
         {
-            EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
-            return null;
+            PcgManager = this.transform.GetComponent<PCGManager>();
         }
-        
-        string filePath = Application.dataPath + "/Resources/Resources_Algorithms/Saved_Gen_Data/" + fileName;
 
-        if (File.Exists(filePath))
+        public Tile[,] LoadDataCall(string fileName)
         {
-            byte[] data = File.ReadAllBytes(filePath);
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream(data);
-            SerializableTile[][] serializableMap = (SerializableTile[][])formatter.Deserialize(stream);
-
-            Tile[][] map = new Tile[serializableMap.Length][];
-            for (int i = 0; i < serializableMap.Length; i++)
+            if (string.IsNullOrEmpty(fileName))
             {
-                map[i] = new Tile[serializableMap[i].Length];
-                for (int j = 0; j < serializableMap[i].Length; j++)
-                {
-                    map[i][j] = new Tile(serializableMap[i][j].position, serializableMap[i][j].tileWeight, serializableMap[i][j].cost, serializableMap[i][j].tileType);
-                }
+                EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
+                return null;
             }
 
-            return map;
+            string filePath = Application.dataPath + "/Resources/Resources_Algorithms/Saved_Gen_Data/" + fileName;
+
+            if (File.Exists(filePath))
+            {
+                byte[] data = File.ReadAllBytes(filePath);
+                BinaryFormatter formatter = new BinaryFormatter();
+                MemoryStream stream = new MemoryStream(data);
+                SerializableTile[,] serializableMap = (SerializableTile[,])formatter.Deserialize(stream);
+
+                Tile[,] map = new Tile[serializableMap.GetLength(0), serializableMap.GetLength(1)];
+                for (int i = 0; i < serializableMap.GetLength(1); i++)
+                {
+                    for (int j = 0; j < serializableMap.GetLength(0); j++)
+                    {
+                        map[j, i] = new Tile(serializableMap[j, i].position, serializableMap[j, i].tileWeight, serializableMap[j, i].cost, serializableMap[j, i].tileType);
+                    }
+                }
+
+                return map;
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
+            }
+            return null;
         }
-        else 
-        {
-            EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
-        }
-        return null;
+
+
     }
-
-
 }

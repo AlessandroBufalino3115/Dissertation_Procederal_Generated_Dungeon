@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IUndoInteraction 
+namespace DungeonForge
 {
-    public void DeleteLastSavedRoom();
+    public interface IUndoInteraction
+    {
+        public void DeleteLastSavedRoom();
+    }
 }

@@ -23,16 +23,16 @@
  *   
  *  ALGOS NOTES:
  *  
- *  voronoi -- done 
+ *  voronoi --   issue with vor
  *  random Walk -- done
  *  CA   -- done
- *  ran room gen --- should be done
+ *  ran room gen --- done 
  *  Lsystem   --  finish macro system for room generation
- *  delu   -- to check but should be done
- *  wfc  ---             done   -- add weithged system
- *  perlin noise  --  done
- *  perlin worm   -- to prob scrap
- *  diamondSquare  ---   done    
+ *  delu   --  done
+ *  wfc  ---     done          -- add weithged system
+ *  perlin noise  -- done
+ *  perlin worm   --  done
+ *  diamondSquare  ---     done
  *  diff limm agg -- done
  *  
  *  WEIGHT ON POISSANT NEEDS TO BE DONE   ---  HEIGHT ISSUE ON POISSANT    --- ON GENERATION THE OBJECTS NEED TO BE PLACED INSIDE THE RESPECTIVE CHUNKS
@@ -44,8 +44,6 @@ The loader should be a component by it self
  *                                           
  *  button telling to generate that stuff in the selected rooms   //
  *  
- *   
- *  add the randombetween  100% can be a function
  * 
  * 
  * delete the refresh plane button if its the same as the refresh main algo comp buitton
@@ -55,4 +53,7 @@ The loader should be a component by it self
  * https://www.pixilart.com/draw/64x64-6452daa78a#
  * 
  * redo the order of the pcgmanager scirpt
+ * 
+ * 
+ * fix the issue with some buttons  this happens on the ran room room room gen button
  */

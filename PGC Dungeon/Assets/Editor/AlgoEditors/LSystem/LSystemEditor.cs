@@ -1,102 +1,100 @@
 
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.VersionControl;
 
-[CustomEditor(typeof(NewLSystem))]
-
-public class LSystemEditor : Editor
+namespace DungeonForge
 {
-    bool showRules = false;
+    [CustomEditor(typeof(NewLSystem))]
 
-
-    public override void OnInspectorGUI()
+    public class LSystemEditor : Editor
     {
-        base.OnInspectorGUI();
+        bool showRules = false;
 
-        NewLSystem ruleDec = (NewLSystem)target;
-
-
-        #region explanation
-
-
-        GeneralUtil.SpacesUILayout(4);
-
-        showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
-
-        if (showRules)
+        public override void OnInspectorGUI()
         {
-            GUILayout.TextArea("You have choosen l system");
+            base.OnInspectorGUI();
 
-        }
-
-        if (!Selection.activeTransform)
-        {
-            showRules = false;
-        }
-
-        EditorGUILayout.EndFoldoutHeaderGroup();
+            NewLSystem ruleDec = (NewLSystem)target;
 
 
-
-        GeneralUtil.SpacesUILayout(4);
-
-
-        #endregion
+            #region explanation
 
 
+            DFGeneralUtil.SpacesUILayout(4);
 
+            showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
 
-
-        if (GUILayout.Button("New rule Set"))
-        {
-            var asset = CreateInstance<LSystemRuleObj>();
-
-            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            if (showRules)
             {
-                AssetDatabase.CreateFolder("Assets", "Resources");
-                AssetDatabase.Refresh();
+                GUILayout.TextArea("You have choosen l system");
+
             }
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+            if (!Selection.activeTransform)
             {
-                AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
-                AssetDatabase.Refresh();
+                showRules = false;
+            }
+
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+
+
+            DFGeneralUtil.SpacesUILayout(4);
+
+
+            #endregion
+
+
+            if (GUILayout.Button("New rule Set"))
+            {
+                var asset = CreateInstance<LSystemRuleObj>();
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+                {
+                    AssetDatabase.CreateFolder("Assets", "Resources");
+                    AssetDatabase.Refresh();
+                }
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Resources", "Resources_Algorithms");
+                    AssetDatabase.Refresh();
+                }
+
+
+                if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
+                {
+                    AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
+                    AssetDatabase.Refresh();
+                }
+
+                AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/{ruleDec.fileName}.asset");
+                AssetDatabase.SaveAssets();
             }
 
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources/Resources_Algorithms/L_system_Rule_Sets"))
+            if (GUILayout.Button("Load Rule Set"))
             {
-                AssetDatabase.CreateFolder("Assets/Resources/Resources_Algorithms", "L_system_Rule_Sets");
-                AssetDatabase.Refresh();
+                var ruleSet = Resources.Load<LSystemRuleObj>("Resources_Algorithms/L-systemRuleSets/" + ruleDec.fileName);
+
+                ruleDec.A_dist = ruleSet.A_Length;
+                ruleDec.B_dist = ruleSet.B_Length;
+                ruleDec.C_dist = ruleSet.C_Length;
+
+                ruleDec.A_RuleSet = ruleSet.A_RuleSet;
+                ruleDec.B_RuleSet = ruleSet.B_RuleSet;
+                ruleDec.C_RuleSet = ruleSet.C_RuleSet;
+                ruleDec.N_RuleSet = ruleSet.Nsign_RuleSet;
+                ruleDec.P_RuleSet = ruleSet.Psign_RuleSet;
+                ruleDec.S_RuleSet = ruleSet.S_RuleSet;
+                ruleDec.L_RuleSet = ruleSet.L_RuleSet;
             }
 
-            AssetDatabase.CreateAsset(asset, $"Assets/Resources/Resources_Algorithms/L_system_Rule_Sets/{ruleDec.fileName}.asset");
-            AssetDatabase.SaveAssets();
-        }
-
-
-        if (GUILayout.Button("Load Rule Set"))
-        {
-            var ruleSet = Resources.Load<LSystemRuleObj>("Resources_Algorithms/L-systemRuleSets/" + ruleDec.fileName);
-
-            ruleDec.A_dist = ruleSet.A_Length;
-            ruleDec.B_dist = ruleSet.B_Length;
-            ruleDec.C_dist = ruleSet.C_Length;
-
-            ruleDec.A_RuleSet = ruleSet.A_RuleSet;
-            ruleDec.B_RuleSet = ruleSet.B_RuleSet;
-            ruleDec.C_RuleSet = ruleSet.C_RuleSet;
-            ruleDec.N_RuleSet = ruleSet.Nsign_RuleSet;
-            ruleDec.P_RuleSet = ruleSet.Psign_RuleSet;
-            ruleDec.S_RuleSet = ruleSet.S_RuleSet;
-            ruleDec.L_RuleSet = ruleSet.L_RuleSet;
-        }
-
-        if (GUILayout.Button("Run Iteration"))
-        {
-            ruleDec.RunIteration();
+            if (GUILayout.Button("Run Iteration"))
+            {
+                ruleDec.RunIteration();
+            }
         }
     }
-}
 
+}

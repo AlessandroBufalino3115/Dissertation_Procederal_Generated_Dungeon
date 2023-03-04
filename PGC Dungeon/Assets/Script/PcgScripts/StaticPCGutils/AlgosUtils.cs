@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using Newtonsoft.Json.Linq;
-using UnityEngine.UIElements;
-using Unity.VisualScripting;
 
-public static class AlgosUtils
+
+namespace DungeonForge
+{
+    public static class DFAlgoBank
 {
 
     #region marching Cubes Rule
 
     //http://paulbourke.net/geometry/polygonise/
-
+    /// <summary>
+    /// ruleSet used by the marhcing cubes algorithm
+    /// </summary>
     public static int[,] triTable = new int[256, 16]
 {{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -279,24 +280,24 @@ public static class AlgosUtils
 
     #region A*
 
-    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2D(Tile[][] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
+    public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2D(Tile[,] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
     {
         bool checkForUse = useWeights == true && arrWeights != null ? true : false;
 
         List<AStar_Node> openList = new List<AStar_Node>();
         List<AStar_Node> closedList = new List<AStar_Node>();
 
-        AStar_Node start_node = new AStar_Node(tileArray2D[start.y][start.x]);
+        AStar_Node start_node = new AStar_Node(tileArray2D[start.x,start.y]);
         start_node.parent = null;
 
-        AStar_Node end_node = new AStar_Node(tileArray2D[end.y][end.x]);
+        AStar_Node end_node = new AStar_Node(tileArray2D[end.x,end.y]);
 
         int[,] childPosArry = new int[0, 0];
 
         if (diagonalTiles)
-            childPosArry = GeneralUtil.childPosArry8Side;
+            childPosArry = DFGeneralUtil.childPosArry8Side;
         else
-            childPosArry = GeneralUtil.childPosArry4Side;
+            childPosArry = DFGeneralUtil.childPosArry4Side;
 
         openList.Add(start_node);
 
@@ -357,14 +358,14 @@ public static class AlgosUtils
                     int[] node_position = { currNode.refToBasicTile.position.x + x_buff, currNode.refToBasicTile.position.y + y_buff };
 
 
-                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= tileArray2D[0].Length || node_position[1] >= tileArray2D.Length)
+                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= tileArray2D.GetLength(0) || node_position[1] >= tileArray2D.GetLength(1))
                     {
                         continue;
                     }
                     else
                     {
                         //here an if statment also saying that walkable 
-                        AStar_Node new_node = new AStar_Node(tileArray2D[node_position[1]][node_position[0]]);
+                        AStar_Node new_node = new AStar_Node(tileArray2D[node_position[0],node_position[1]]);
                         children.Add(new_node);
                     }
                 }
@@ -388,9 +389,9 @@ public static class AlgosUtils
                         child.g = currNode.g + 0.5f;
 
                         if (euclideanDis)
-                            child.h = GeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
+                            child.h = DFGeneralUtil.EuclideanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
                         else
-                            child.h = GeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
+                            child.h = DFGeneralUtil.ManhattanDistance2D(new Vector2(end_node.refToBasicTile.position.x, end_node.refToBasicTile.position.y), new Vector2(child.refToBasicTile.position.x, child.refToBasicTile.position.y));
 
                         if (checkForUse)
                         {
@@ -460,7 +461,7 @@ public static class AlgosUtils
         return Tuple.Create(point2, point3);
     }
 
-    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, Tile[][] gridArray2D, bool pathing = false)
+    public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, Tile[,] gridArr, bool pathing = false)
     {
         var startPos = new Vector2Int(tileA.x, tileA.y);
         var endPos = new Vector2Int(tileB.x, tileB.y);
@@ -474,7 +475,7 @@ public static class AlgosUtils
 
         var firstBezierPoint = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
 
-        var pathB = A_StarPathfinding2D(gridArray2D, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
+        var pathB = A_StarPathfinding2D(gridArr, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
 
         SetUpCorridorWithPath(pathB.Item1);
 
@@ -491,16 +492,16 @@ public static class AlgosUtils
                 continue;
             }
 
-            else if (currCord.x < 0 || currCord.z < 0 || currCord.x >= gridArray2D[0].Length || currCord.z >= gridArray2D.Length)
+            else if (currCord.x < 0 || currCord.z < 0 || currCord.x >= gridArr.GetLength(0) || currCord.z >= gridArr.GetLength(1))
             { continue; }
 
             if ((int)MathF.Round(currCord.x) < 0)
             {
                 currCord.x = 0;
             }
-            if ((int)MathF.Round(currCord.x) >= gridArray2D[0].Length)
+            if ((int)MathF.Round(currCord.x) >= gridArr.GetLength(0))
             {
-                currCord.x = gridArray2D[0].Length - 1;
+                currCord.x = gridArr.GetLength(0) - 1;
             }
 
 
@@ -508,19 +509,19 @@ public static class AlgosUtils
             {
                 currCord.y = 0;
             }
-            if ((int)MathF.Round(currCord.y) >= gridArray2D.Length)
+            if ((int)MathF.Round(currCord.y) >= gridArr.GetLength(1))
             {
-                currCord.y = gridArray2D.Length - 1;
+                currCord.y = gridArr.GetLength(1) - 1;
             }
 
-            pathB = A_StarPathfinding2D(gridArray2D, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
+            pathB = A_StarPathfinding2D(gridArr, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
 
             prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
             SetUpCorridorWithPath(pathB.Item1);
         }
 
-        pathB = A_StarPathfinding2D(gridArray2D, prevCoord, endPos, !pathing);
+        pathB = A_StarPathfinding2D(gridArr, prevCoord, endPos, !pathing);
 
         SetUpCorridorWithPath(pathB.Item1);
     }
@@ -529,35 +530,34 @@ public static class AlgosUtils
 
     #region Dijstra
 
-    public static List<Tile> DijstraPathfinding(Tile[][] gridArr2d, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false)
+    public static List<Tile> DijstraPathfinding(Tile[,] gridArr, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false)
     {
         int[,] childPosArry = new int[0, 0];
 
-        childPosArry = GeneralUtil.childPosArry4Side;
+        childPosArry = DFGeneralUtil.childPosArry4Side;
 
         List<DjNode> openListDjNodes = new List<DjNode>();
-        DjNode[][] DjNodesArr = new DjNode[gridArr2d.Length][];
+        DjNode[,] DjNodesArr = new DjNode[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-        for (int y = 0; y < gridArr2d.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            DjNodesArr[y] = new DjNode[gridArr2d[0].Length];
-            for (int x = 0; x < gridArr2d[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 if (avoidWalls)
                 {
-                    if (gridArr2d[y][x].tileType != Tile.TileType.WALLCORRIDOR)
+                    if (gridArr[x,y].tileType != Tile.TileType.WALLCORRIDOR)
                     {
-                        var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
+                        var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr[x,y], parentDJnode = null };
 
-                        DjNodesArr[y][x] = newRef;
+                        DjNodesArr[x, y] = newRef;
                         openListDjNodes.Add(newRef);
                     }
                 }
                 else
                 {
-                    var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr2d[y][x], parentDJnode = null };
+                    var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr[x,y], parentDJnode = null };
 
-                    DjNodesArr[y][x] = newRef;
+                    DjNodesArr[x,y] = newRef;
                     openListDjNodes.Add(newRef);
                 }
             }
@@ -588,7 +588,7 @@ public static class AlgosUtils
 
                 int[] node_position = { currNode.coord.x + x_buff, currNode.coord.y + y_buff };
 
-                if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr2d[0].Length || node_position[1] >= gridArr2d.Length)
+                if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr.GetLength(0) || node_position[1] >= gridArr.GetLength(1))
                 {
                     continue;
                 }
@@ -596,14 +596,14 @@ public static class AlgosUtils
                 {
                     if (avoidWalls)
                     {
-                        if (gridArr2d[node_position[1]][node_position[0]].tileType != Tile.TileType.WALLCORRIDOR)
+                        if (gridArr[node_position[0],node_position[1]].tileType != Tile.TileType.WALLCORRIDOR)
                         {
                             float newDist = currNode.distance + 1;
 
-                            if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance)
+                            if (newDist < DjNodesArr[node_position[0],node_position[1]].distance)
                             {
-                                DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
-                                DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+                                DjNodesArr[node_position[0],node_position[1]].distance = newDist;
+                                DjNodesArr[node_position[0],node_position[1]].parentDJnode = currNode;
 
                             }
                         }
@@ -612,10 +612,10 @@ public static class AlgosUtils
                     {
                         float newDist = currNode.distance + 1;
 
-                        if (newDist < DjNodesArr[node_position[1]][node_position[0]].distance)
+                        if (newDist < DjNodesArr[node_position[0],node_position[1]].distance)
                         {
-                            DjNodesArr[node_position[1]][node_position[0]].distance = newDist;
-                            DjNodesArr[node_position[1]][node_position[0]].parentDJnode = currNode;
+                            DjNodesArr[node_position[0],node_position[1]].distance = newDist;
+                            DjNodesArr[node_position[0],node_position[1]].parentDJnode = currNode;
                         }
                     }
 
@@ -649,27 +649,25 @@ public static class AlgosUtils
 
     #region Random Walk
 
-    public static Tile[][] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
+    public static Tile[,] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
     {
         int iterationsLeft = iterations;
 
-        Tile[][] _gridarray2D = new Tile[maxY][];
+        Tile[,] _gridarray2D = new Tile[maxX,maxY];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new Tile[maxX];
-
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new Tile();
-                _gridarray2D[y][x].position = new Vector2Int(x, y);
+                _gridarray2D[x,y] = new Tile();
+                _gridarray2D[x,y].position = new Vector2Int(x, y);
             }
         }
 
         Vector2Int currentHead = new Vector2Int(maxX / 2, maxY / 2);
 
         if (randomStart)
-            currentHead = GeneralUtil.RanVector2Int(_gridarray2D[0].Length, _gridarray2D.Length);
+            currentHead = DFGeneralUtil.RanVector2Int(_gridarray2D.GetLength(0), _gridarray2D.GetLength(1));
 
         while (iterationsLeft > 0)
         {
@@ -679,7 +677,7 @@ public static class AlgosUtils
             {
                 case 0:    //for
 
-                    if (currentHead.y + 1 >= _gridarray2D.Length)
+                    if (currentHead.y + 1 >= _gridarray2D.GetLength(1))
                     { }
                     else
                     {
@@ -707,7 +705,7 @@ public static class AlgosUtils
                     break;
 
                 case 3:   //rigth
-                    if (currentHead.x + 1 >= _gridarray2D[0].Length)
+                    if (currentHead.x + 1 >= _gridarray2D.GetLength(0))
                     { }
                     else
                     {
@@ -722,15 +720,15 @@ public static class AlgosUtils
 
             if (alreadyPassed)
             {
-                if (_gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight != 1)
+                if (_gridarray2D[(int)currentHead.x,(int)currentHead.y].tileWeight != 1)
                 {
-                    _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+                    _gridarray2D[(int)currentHead.x,(int)currentHead.y].tileWeight = 1;
                     iterationsLeft--;
                 }
             }
             else
             {
-                _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+                _gridarray2D[(int)currentHead.x, (int)currentHead.y].tileWeight = 1;
                 iterationsLeft--;
             }
         }
@@ -739,7 +737,7 @@ public static class AlgosUtils
 
     }
 
-    public static Tile[][] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
+    public static Tile[,] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
     {
 
         int maxY = boundsRoom.zMax - boundsRoom.zMin;
@@ -751,16 +749,14 @@ public static class AlgosUtils
         int iterationsLeft = iterations;
 
 
-        Tile[][] _gridarray2D = new Tile[maxY][];
+        Tile[,] gridArr = new Tile[maxX,maxY];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new Tile[maxX];
-
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new Tile();
-                _gridarray2D[y][x].position = new Vector2Int(x, y);
+                gridArr[x,y] = new Tile();
+                gridArr[x,y].position = new Vector2Int(x, y);
             }
         }
 
@@ -777,7 +773,7 @@ public static class AlgosUtils
             {
                 case 0:    //for
 
-                    if (currentHead.y + 1 >= _gridarray2D.Length)
+                    if (currentHead.y + 1 >= gridArr.GetLength(1))
                     { }
                     else
                     {
@@ -805,7 +801,7 @@ public static class AlgosUtils
                     break;
 
                 case 3:   //rigth
-                    if (currentHead.x + 1 >= _gridarray2D[0].Length)
+                    if (currentHead.x + 1 >= gridArr.GetLength(0))
                     { }
                     else
                     {
@@ -818,27 +814,22 @@ public static class AlgosUtils
             }
 
 
-            _gridarray2D[(int)currentHead.y][(int)currentHead.x].tileWeight = 1;
+            gridArr[(int)currentHead.x,(int)currentHead.y].tileWeight = 1;
             iterationsLeft--;
-
         }
 
+        RunCaIteration2D(gridArr, 4);
 
-
-        RunCaIteration2D(_gridarray2D, 4);
-
-
-        return _gridarray2D;
-
+        return gridArr;
     }
 
     #endregion
 
     #region PerlinNoise
 
-    public static void PerlinNoise2D(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
+    public static void PerlinNoise2D(Tile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
     {
-        float[,] noiseMap = new float[_gridArray2D[0].Length, _gridArray2D.Length];
+        float[,] noiseMap = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
         if (scale <= 0)
         {
@@ -848,9 +839,9 @@ public static class AlgosUtils
         float maxN = float.MinValue;
         float minN = float.MaxValue;
 
-        for (int y = 0; y < _gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < _gridArray2D[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
 
                 float amplitude = 1;
@@ -881,17 +872,17 @@ public static class AlgosUtils
             }
         }
 
-        for (int y = 0; y < _gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < _gridArray2D[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                _gridArray2D[y][x].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
+                gridArr[x,y].tileWeight = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
                 if (threashold != 0)
                 {
-                    if (threashold < _gridArray2D[y][x].tileWeight)
-                        _gridArray2D[y][x].tileWeight = 1;
+                    if (threashold < gridArr[x,y].tileWeight)
+                        gridArr[x,y].tileWeight = 1;
                     else
-                        _gridArray2D[y][x].tileWeight = 0;
+                        gridArr[x,y].tileWeight = 0;
                 }
             }
         }
@@ -984,7 +975,7 @@ public static class AlgosUtils
         return noiseMap;
     }
 
-    public static Tile WorldPosToTile(Vector2 point, Tile[][] _gridArray2D)
+    public static Tile WorldPosToTile(Vector2 point, Tile[,] gridArr)
     {
         float pointX = point.x;
         float pointY = point.y;
@@ -993,12 +984,12 @@ public static class AlgosUtils
         int tileX = Mathf.FloorToInt(pointX / tileSize);
         int tileY = Mathf.FloorToInt(pointY / tileSize);
 
-        if (tileX < 0 || tileY < 0 || tileX >= _gridArray2D[0].Length || tileY >= _gridArray2D.Length) 
+        if (tileX < 0 || tileY < 0 || tileX >= gridArr.GetLength(0) || tileY >= gridArr.GetLength(1)) 
         {
             return null;
         }
 
-        return _gridArray2D[tileY][tileX];
+        return gridArr[tileX,tileY];
     }
 
     public static Vector2 MoveVector(Vector2 vector, float direction, float turnMulti)
@@ -1010,21 +1001,21 @@ public static class AlgosUtils
         return result;
     }
 
-    public static HashSet<Tile> PerlinWorms(Tile[][] _gridArray2D, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int maxWormLength,float turnMulti) 
+    public static HashSet<Tile> PerlinWorms(Tile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int maxWormLength,float turnMulti) 
     {
         var wormTiles = new HashSet<Tile>();
 
-        PerlinNoise2D(_gridArray2D, scale, octaves, persistance, lacu, offsetX, offsetY);
+        PerlinNoise2D(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-        var currPos = new Vector2(Random.Range(0, _gridArray2D[0].Length - 1),Random.Range(0, _gridArray2D.Length - 1));
+        var currPos = new Vector2(Random.Range(0, gridArr.GetLength(0) - 1),Random.Range(0, gridArr.GetLength(1) - 1));
 
-        Tile lastTileAdded = WorldPosToTile(currPos, _gridArray2D);
+        Tile lastTileAdded = WorldPosToTile(currPos, gridArr);
 
         for (int i = 0; i < maxWormLength; i++)
         {
-            currPos = MoveVector(currPos, _gridArray2D[lastTileAdded.position.y][lastTileAdded.position.x].tileWeight,turnMulti);
+            currPos = MoveVector(currPos, gridArr[lastTileAdded.position.x,lastTileAdded.position.y].tileWeight,turnMulti);
 
-            var newTile = WorldPosToTile(currPos, _gridArray2D);
+            var newTile = WorldPosToTile(currPos, gridArr);
 
             if (newTile != null) 
             {
@@ -1232,7 +1223,7 @@ public static class AlgosUtils
 
     public static List<BoundsInt> BSPAlgo(BoundsInt toSplit, int minHeight, int minWidth)
     {
-        var startTimer = GeneralUtil.PerfTimer(true);
+        var startTimer = DFGeneralUtil.PerfTimer(true);
 
         List<BoundsInt> roomList = new List<BoundsInt>();
         Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
@@ -1278,7 +1269,7 @@ public static class AlgosUtils
             }
         }
 
-        var endTimer = GeneralUtil.PerfTimer(false, startTimer);
+        var endTimer = DFGeneralUtil.PerfTimer(false, startTimer);
         return roomList;
     }
 
@@ -1335,21 +1326,21 @@ public static class AlgosUtils
 
     #region Flood Fill
 
-    public static void ResetVisited(Tile[][] gridArray2D)
+    public static void ResetVisited(Tile[,] gridArr)
     {
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                gridArray2D[y][x].visited = false;
+                gridArr[x,y].visited = false;
             }
         }
     }
 
-    public static List<Vector2Int> FloodFill(Tile[][] gridArr, Vector2Int start, bool checkForRoomOnly)
+    public static List<Vector2Int> FloodFill(Tile[,] gridArr, Vector2Int start, bool checkForRoomOnly, Tile.TileType typeToCheck)
     {
-        int height = gridArr.Length;
-        int width = gridArr[0].Length;
+        int height = gridArr.GetLength(1)-1;
+        int width = gridArr.GetLength(0)-1;
 
         List<Vector2Int> room = new List<Vector2Int>();
         room.Add(start);
@@ -1363,17 +1354,17 @@ public static class AlgosUtils
             {
                 if (checkForRoomOnly)
                 {
-                    if (gridArr[y][x - 1].tileType == Tile.TileType.FLOORROOM && gridArr[y][x - 1].visited == false)
+                    if (gridArr[x - 1,y].tileType == typeToCheck && gridArr[x - 1,y].visited == false)
                     {
-                        gridArr[y][x - 1].visited = true;
+                        gridArr[x - 1, y].visited = true;
                         room.Add(new Vector2Int(x - 1, y));
                     }
                 }
                 else
                 {
-                    if (gridArr[y][x - 1].tileWeight > 0.5f && gridArr[y][x - 1].visited == false)
+                    if (gridArr[x - 1, y].tileWeight > 0.5f && gridArr[x - 1, y].visited == false)
                     {
-                        gridArr[y][x - 1].visited = true;
+                        gridArr[x - 1, y].visited = true;
                         room.Add(new Vector2Int(x - 1, y));
                     }
                 }
@@ -1383,17 +1374,17 @@ public static class AlgosUtils
             {
                 if (checkForRoomOnly)
                 {
-                    if (gridArr[y - 1][x].tileType == Tile.TileType.FLOORROOM && gridArr[y - 1][x].visited == false)
+                    if (gridArr[x,y - 1].tileType == typeToCheck && gridArr[x, y - 1].visited == false)
                     {
-                        gridArr[y - 1][x].visited = true;
+                        gridArr[x, y - 1].visited = true;
                         room.Add(new Vector2Int(x, y - 1));
                     }
                 }
                 else
                 {
-                    if (gridArr[y - 1][x].tileWeight > 0.5f && gridArr[y - 1][x].visited == false)
+                    if (gridArr[x, y - 1].tileWeight > 0.5f && gridArr[x, y - 1].visited == false)
                     {
-                        gridArr[y - 1][x].visited = true;
+                        gridArr[x, y - 1].visited = true;
                         room.Add(new Vector2Int(x, y - 1));
                     }
                 }
@@ -1401,19 +1392,20 @@ public static class AlgosUtils
 
             if (x + 1 < width)
             {
+
                 if (checkForRoomOnly)
                 {
-                    if (gridArr[y][x + 1].tileType == Tile.TileType.FLOORROOM && gridArr[y][x + 1].visited == false)
+                    if (gridArr[x + 1, y].tileType == typeToCheck && gridArr[x + 1, y].visited == false)
                     {
-                        gridArr[y][x + 1].visited = true;
+                        gridArr[x + 1, y].visited = true;
                         room.Add(new Vector2Int(x + 1, y));
                     }
                 }
                 else
                 {
-                    if (gridArr[y][x + 1].tileWeight > 0.5f && gridArr[y][x + 1].visited == false)
+                    if (gridArr[x + 1, y].tileWeight > 0.5f && gridArr[x + 1, y].visited == false)
                     {
-                        gridArr[y][x + 1].visited = true;
+                        gridArr[x + 1, y].visited = true;
                         room.Add(new Vector2Int(x + 1, y));
                     }
                 }
@@ -1423,17 +1415,17 @@ public static class AlgosUtils
             {
                 if (checkForRoomOnly)
                 {
-                    if (gridArr[y + 1][x].tileType == Tile.TileType.FLOORROOM && gridArr[y + 1][x].visited == false)
+                    if (gridArr[x, y + 1].tileType == typeToCheck && gridArr[x, y + 1].visited == false)
                     {
-                        gridArr[y + 1][x].visited = true;
+                        gridArr[x, y + 1].visited = true;
                         room.Add(new Vector2Int(x, y + 1));
                     }
                 }
                 else
                 {
-                    if (gridArr[y + 1][x].tileWeight > 0.5f && gridArr[y + 1][x].visited == false)
+                    if (gridArr[x,y + 1].tileWeight > 0.5f && gridArr[x, y + 1].visited == false)
                     {
-                        gridArr[y + 1][x].visited = true;
+                        gridArr[x, y + 1].visited = true;
                         room.Add(new Vector2Int(x, y + 1));
                     }
                 }
@@ -1446,50 +1438,52 @@ public static class AlgosUtils
     /// <summary>
     /// recongnises all of the rooms, give true to set the colours
     /// </summary>
-    /// <param name="gridArray2D"></param>
+    /// <param name="gridArr"></param>
     /// <param name="colorDebug"></param>
     /// <returns>returns a list of a lists of basic tiles = to one room</returns>
-    public static List<List<Tile>> GetAllRooms(Tile[][] gridArray2D, bool checkRoomOnly = false)
+    public static List<List<Tile>> GetAllRooms(Tile[,] gridArr, bool checkRoomOnly = false, Tile.TileType typeToCheck = Tile.TileType.FLOORROOM)
     {
+
+        //need to add the type to the floodFill too
+
         var rooms = new List<List<Tile>>();
 
-        ResetVisited(gridArray2D);  //sest everything back to false ready for flood
+        ResetVisited(gridArr);  //sest everything back to false ready for flood
 
         List<Vector2Int> openCoords = new List<Vector2Int>();  // this has all the tile coords of the tiles that are considered roomable
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 if (checkRoomOnly)
                 {
-                    if (gridArray2D[y][x].tileType == Tile.TileType.FLOORROOM)
+                    if (gridArr[x,y].tileType == typeToCheck)
                         openCoords.Add(new Vector2Int(x, y));
                 }
                 else
                 {
-                    if (gridArray2D[y][x].tileWeight > 0.5f)
+                    if (gridArr[x, y].tileWeight > 0.5f)
                         openCoords.Add(new Vector2Int(x, y));
                 }
             }
         }
-        
-        int iter = 0;
+        //int iter = 0;
 
         while (openCoords.Count > 2)   // until there is stuff in the open coords  then
         {
 
-            if (iter >= 1000)
-            {
-                Debug.Log($"<color=red>Reached max number of rooms there might be an issue</color>");
-                break;
-            }
+            //if (iter >= 1000)
+            //{
+            //    Debug.Log($"<color=red>Reached max number of rooms there might be an issue</color>");
+            //    break;
+            //}
 
-            iter++;
+            //iter++;
 
             var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
 
-            var room = FloodFill(gridArray2D, ranCoord, checkRoomOnly);
+            var room = FloodFill(gridArr, ranCoord, checkRoomOnly,typeToCheck);
 
             for (int i = openCoords.Count(); i-- > 0;) //for every open coord 
             {
@@ -1505,16 +1499,16 @@ public static class AlgosUtils
 
             List<Tile> roomBasicTile = new List<Tile>();
 
-            for (int y = 0; y < gridArray2D.Length; y++)
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
-                for (int x = 0; x < gridArray2D[0].Length; x++)
+                for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
                     foreach (var coord in room)
                     {
                         if (new Vector2Int(x, y) == coord)
                         {
-                            gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
-                            roomBasicTile.Add(gridArray2D[y][x]);
+                            gridArr[x,y].tileType = Tile.TileType.FLOORROOM;
+                            roomBasicTile.Add(gridArr[x,y]);
                         }
                     }
                 }
@@ -1522,7 +1516,7 @@ public static class AlgosUtils
 
             rooms.Add(roomBasicTile);
         }
-
+        Debug.Log(rooms.Count);
         return rooms;
     }
 
@@ -1535,23 +1529,23 @@ public static class AlgosUtils
     /// </summary>
     /// <param name="gridArr"></param>
     /// <param name="ranValue"></param>
-    public static List<Tile> SpawnRandomPointsCA(Tile[][] gridArr, float ranValue)
+    public static List<Tile> SpawnRandomPointsCA(Tile[,] gridArr, float ranValue)
     {
 
         List<Tile> points = new List<Tile>();
 
-        for (int y = 0; y < gridArr.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArr[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 if (Random.value > ranValue)
                 {
-                    gridArr[y][x].tileWeight = 0;
+                    gridArr[x,y].tileWeight = 0;
                 }
                 else
                 {
-                    gridArr[y][x].tileWeight = 1;
-                    points.Add(gridArr[y][x]);
+                    gridArr[x,y].tileWeight = 1;
+                    points.Add(gridArr[x,y]);
                 }
             }
         }
@@ -1560,24 +1554,22 @@ public static class AlgosUtils
         return points;
     }
 
-    public static void RunCaIteration2D(Tile[][] gridArray2D, int neighboursNeeded)
+    public static void RunCaIteration2D(Tile[,] gridArr, int neighboursNeeded)
     {
 
-        float[][] copyArrayStorage = new float[gridArray2D.Length][];
+        float[,] copyArrayStorage = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            copyArrayStorage[y] = new float[gridArray2D[y].Length];
-
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                copyArrayStorage[y][x] = gridArray2D[y][x].tileWeight;
+                copyArrayStorage[x,y] = gridArr[x,y].tileWeight;
             }
         }
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 int neighbours = 0;
 
@@ -1586,7 +1578,7 @@ public static class AlgosUtils
                     for (int row_offset = -1; row_offset < 2; row_offset++)
                     {
 
-                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length - 1)
+                        if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArr.GetLength(1) - 1 || x + row_offset >= gridArr.GetLength(0) - 1)
                         {
 
                         }
@@ -1597,7 +1589,7 @@ public static class AlgosUtils
                         else
                         {
                             // this was !
-                            if (copyArrayStorage[y + col_offset][x + row_offset] == 1)
+                            if (copyArrayStorage[x + row_offset,y + col_offset] == 1)
                             {
                                 neighbours++;
                             }
@@ -1607,43 +1599,40 @@ public static class AlgosUtils
 
                 if (neighbours >= neighboursNeeded)
                 {   //empty is = false therefore weight is there
-                    gridArray2D[y][x].tileWeight = 1;
+                    gridArr[x,y].tileWeight = 1;
                 }
                 else
                 {   //true
-                    gridArray2D[y][x].tileWeight = 0;
+                    gridArr[x,y].tileWeight = 0;
                 }
             }
         }
     }
 
-    public static void CleanUp2dCA(Tile[][] gridArray2D, int neighboursNeeded)
+    public static void CleanUp2dCA(Tile[,] gridArr, int neighboursNeeded)
     {
-        float[][] copyArrayStorage = new float[gridArray2D.Length][];
+        float[,] copyArrayStorage = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            copyArrayStorage[y] = new float[gridArray2D[y].Length];
-
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                copyArrayStorage[y][x] = gridArray2D[y][x].tileWeight;
+                copyArrayStorage[x,y] = gridArr[x,y].tileWeight;
             }
         }
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 int neighbours = 0;
-                if (copyArrayStorage[y][x] == 1)
+                if (copyArrayStorage[x,y] == 1)
                 {
                     for (int col_offset = -1; col_offset < 2; col_offset++)
                     {
                         for (int row_offset = -1; row_offset < 2; row_offset++)
                         {
-
-                            if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArray2D.Length - 1 || x + row_offset >= gridArray2D[y].Length - 1)
+                            if (y + col_offset < 0 || x + row_offset < 0 || y + col_offset >= gridArr.GetLength(1) - 1 || x + row_offset >= gridArr.GetLength(0) - 1)
                             {
 
                             }
@@ -1653,8 +1642,7 @@ public static class AlgosUtils
                             }
                             else
                             {
-                                // this was !
-                                if (copyArrayStorage[y + col_offset][x + row_offset] == 1)
+                                if (copyArrayStorage[x + row_offset,y + col_offset] == 1)
                                 {
                                     neighbours++;
                                 }
@@ -1664,11 +1652,11 @@ public static class AlgosUtils
 
                     if (neighbours >= neighboursNeeded)
                     {   //empty is = false therefore weight is there
-                        gridArray2D[y][x].tileWeight = 1;
+                        gridArr[x,y].tileWeight = 1;
                     }
                     else
                     {   //true
-                        gridArray2D[y][x].tileWeight = 0;
+                        gridArr[x,y].tileWeight = 0;
                     }
                 }
 
@@ -1680,7 +1668,7 @@ public static class AlgosUtils
 
     #region Room Gen 
 
-    public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[][] gridArr, bool test = false)
+    public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[,] gridArr, bool test = false)
     {
         var room = new List<Tile>();
 
@@ -1688,10 +1676,10 @@ public static class AlgosUtils
         int halfHeight = height / 2;
 
 
-        if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr[0].Length)
+        if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr.GetLength(0))
             return null;
 
-        if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.Length)
+        if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.GetLength(1))
             return null;
 
 
@@ -1699,15 +1687,15 @@ public static class AlgosUtils
         {
             for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfWidth; x++)
             {
-                if (gridArr[y][x].tileType != Tile.TileType.VOID)
+                if (gridArr[x,y].tileType != Tile.TileType.VOID)
                 {
                     return null;
                 }
                 if (!test)
                 {
-                    gridArr[y][x].tileType = Tile.TileType.FLOORROOM;
-                    gridArr[y][x].tileWeight = 0.75f;
-                    room.Add(gridArr[y][x]);
+                    gridArr[x,y].tileType = Tile.TileType.FLOORROOM;
+                    gridArr[x,y].tileWeight = 0.75f;
+                    room.Add(gridArr[x,y]);
                 }
             }
         }
@@ -1723,7 +1711,7 @@ public static class AlgosUtils
     /// <param name="r"></param>
     /// <param name="tileType"></param>
     /// <returns></returns>
-    public static List<Tile> DrawCircle(Tile[][] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
+    public static List<Tile> DrawCircle(Tile[,] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
     {
         var room = new List<Tile>();
 
@@ -1734,16 +1722,16 @@ public static class AlgosUtils
                 bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
                 if (isInCircle)
                 {
-                    if (gridArr[y][x].tileType != Tile.TileType.VOID)
+                    if (gridArr[x,y].tileType != Tile.TileType.VOID)
                     {
                         return null;
                     }
 
                     if (draw)
                     {
-                        gridArr[y][x].tileType = tileType;
-                        gridArr[y][x].tileWeight = 0.75f;
-                        room.Add(gridArr[y][x]);
+                        gridArr[x,y].tileType = tileType;
+                        gridArr[x,y].tileWeight = 0.75f;
+                        room.Add(gridArr[x,y]);
                     }
                 }
             }
@@ -1752,21 +1740,19 @@ public static class AlgosUtils
         return room;
     }
 
-    public static Tile[][] CompartimentalisedCA(BoundsInt boundsRoom)
+    public static Tile[,] CompartimentalisedCA(BoundsInt boundsRoom)
     {
         int maxY = boundsRoom.zMax - boundsRoom.zMin;
         int maxX = boundsRoom.xMax - boundsRoom.xMin;
 
-        Tile[][] _gridarray2D = new Tile[maxY][];
+        Tile[,] _gridarray2D = new Tile[maxX,maxY];
 
         for (int y = 0; y < maxY; y++)
         {
-            _gridarray2D[y] = new Tile[maxX];
-
             for (int x = 0; x < maxX; x++)
             {
-                _gridarray2D[y][x] = new Tile();
-                _gridarray2D[y][x].position = new Vector2Int(x, y);
+                _gridarray2D[x,y] = new Tile();
+                _gridarray2D[x,y].position = new Vector2Int(x, y);
             }
         }
 
@@ -1782,13 +1768,13 @@ public static class AlgosUtils
 
     #region Diffusion-Limited Aggregation
 
-    public static void DiffLimAggregation(Tile[][] gridArr, int moversAmount, int actionTurns)
+    public static void DiffLimAggregation(Tile[,] gridArr, int moversAmount, int actionTurns)
     {
 
         //movers
         //actionTurns
-        int height = gridArr.Length;
-        int length = gridArr[0].Length;
+        int height = gridArr.GetLength(1);
+        int length = gridArr.GetLength(0);
 
         // you are going to spawn a set number of walkers
         // each walker every loop is going to move to a new pos where there is no other walker if therre is skip turn
@@ -1804,7 +1790,7 @@ public static class AlgosUtils
         {
             for (int x = 0; x < length; x++)
             {
-                if (gridArr[y][x].tileType != Tile.TileType.FLOORROOM)
+                if (gridArr[x,y].tileType != Tile.TileType.FLOORROOM)
                     holdArray.Add(new Vector2Int(x, y));
             }
         }
@@ -1829,7 +1815,7 @@ public static class AlgosUtils
                 {
                     case 1:  //go right
                         {
-                            if (moversList[j].x + 1 < gridArr[0].Length)
+                            if (moversList[j].x + 1 < gridArr.GetLength(0))
                             {
                                 if (!moversList.Contains(new Vector2Int(moversList[j].x + 1, moversList[j].y)))
                                 {
@@ -1865,7 +1851,7 @@ public static class AlgosUtils
 
                     case 4:   //go up
                         {
-                            if (moversList[j].y + 1 < gridArr.Length)
+                            if (moversList[j].y + 1 < gridArr.GetLength(1))
                             {
                                 if (!moversList.Contains(new Vector2Int(moversList[j].x, moversList[j].y + 1)))
                                 {
@@ -1881,8 +1867,8 @@ public static class AlgosUtils
 
                 if (CheckAround(gridArr, moversList[j]))
                 {
-                    gridArr[moversList[j].y][moversList[j].x].tileWeight = 0.75f;
-                    gridArr[moversList[j].y][moversList[j].x].tileType = Tile.TileType.FLOORCORRIDOR;
+                    gridArr[moversList[j].x,moversList[j].y].tileWeight = 0.75f;
+                    gridArr[moversList[j].x,moversList[j].y].tileType = Tile.TileType.FLOORCORRIDOR;
                     moversList.RemoveAt(j);
                 }
             }
@@ -1895,29 +1881,29 @@ public static class AlgosUtils
     /// <param name="gridArr"></param>
     /// <param name="currPos"></param>
     /// <returns></returns>
-    private static bool CheckAround(Tile[][] gridArr, Vector2Int currPos)
+    private static bool CheckAround(Tile[,] gridArr, Vector2Int currPos)
     {
-        if (currPos.x + 1 < gridArr[0].Length)
+        if (currPos.x + 1 < gridArr.GetLength(0))
         {
-            if (gridArr[currPos.y][currPos.x + 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y][currPos.x + 1].tileType == Tile.TileType.FLOORCORRIDOR)
+            if (gridArr[currPos.x+1,currPos.y].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x + 1, currPos.y].tileType == Tile.TileType.FLOORCORRIDOR)
                 return true;
         }
 
-        if (currPos.y + 1 < gridArr.Length)
+        if (currPos.y + 1 < gridArr.GetLength(1))
         {
-            if (gridArr[currPos.y + 1][currPos.x].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y + 1][currPos.x].tileType == Tile.TileType.FLOORCORRIDOR)
+            if (gridArr[currPos.x,currPos.y+1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y + 1].tileType == Tile.TileType.FLOORCORRIDOR)
                 return true;
         }
 
         if (currPos.y - 1 >= 0)
         {
-            if (gridArr[currPos.y - 1][currPos.x].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y - 1][currPos.x].tileType == Tile.TileType.FLOORCORRIDOR)
+            if (gridArr[currPos.x,currPos.y-1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y-1].tileType == Tile.TileType.FLOORCORRIDOR)
                 return true;
         }
 
         if (currPos.x - 1 >= 0)
         {
-            if (gridArr[currPos.y][currPos.x - 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.y][currPos.x - 1].tileType == Tile.TileType.FLOORCORRIDOR)
+            if (gridArr[currPos.x-1,currPos.y].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x - 1, currPos.y].tileType == Tile.TileType.FLOORCORRIDOR)
                 return true;
         }
 
@@ -2003,7 +1989,7 @@ public static class AlgosUtils
         return true;
     }
 
-    public static List<Vector2> RunPoissantCheckOnCurrentTileMap(List<Vector2> poissantPositions, Tile[][] gridArr,float perc)
+    public static List<Vector2> RunPoissantCheckOnCurrentTileMap(List<Vector2> poissantPositions, Tile[,] gridArr,float perc)
     {
         var acceptedPoissantList = new List<Vector2>();
 
@@ -2017,12 +2003,12 @@ public static class AlgosUtils
             int tileX = Mathf.FloorToInt(pointX / tileWidth);
             int tileY = Mathf.FloorToInt(pointY / tileHeight);
 
-            if (tileX > gridArr[0].Length - 1)
+            if (tileX > gridArr.GetLength(0) - 1)
                 continue;
-            if (tileY > gridArr.Length - 1)
+            if (tileY > gridArr.GetLength(1) - 1)
                 continue;
 
-            if (gridArr[tileY][tileX].tileType == Tile.TileType.FLOORROOM)
+            if (gridArr[tileX,tileY].tileType == Tile.TileType.FLOORROOM)
             {
                 if (Random.value > perc)
                     acceptedPoissantList.Add(poissantPositions[i]);
@@ -2036,11 +2022,10 @@ public static class AlgosUtils
 
     #region DiamondSquare algo
 
-
-    public static void DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[][] gridArr)
+    public static void DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[,] gridArr)
     {
         // get the size
-        var mapSize = gridArr.Length;
+        var mapSize = gridArr.GetLength(1);
 
         // start the grid
         float[,] grid2D = new float[mapSize, mapSize];
@@ -2083,33 +2068,33 @@ public static class AlgosUtils
                 roughness = roughness / 2;
             }
 
-        for (int y = 0; y < gridArr.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArr[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                gridArr[y][x].tileWeight = grid2D[y, x];
+                gridArr[x,y].tileWeight = grid2D[y, x];
             }
         }
     }
-
 
     #endregion
 
     #region Voronoi
 
-    public static Tile[][] Voronoi2D(Tile[][] gridArray2D, int numOfPoints, bool calcType)
+    public static void Voronoi2D(Tile[,] gridArr, int numOfPoints, bool calcType)
     {
         var pointsArr = new List<Vector2>();
 
-        int totalSize = gridArray2D.Length * gridArray2D[0].Length;
+        int totalSize = gridArr.GetLength(1) * gridArr.GetLength(0);
 
         for (int i = 0; i < numOfPoints; i++)
         {
             int ran = Random.Range(0, totalSize);
 
-            var wantedCoor = new Vector2(ran / gridArray2D[0].Length, ran % gridArray2D[0].Length);
-            wantedCoor = new Vector2Int(gridArray2D[(int)wantedCoor.x][(int)wantedCoor.y].position.x, gridArray2D[(int)wantedCoor.x][(int)wantedCoor.y].position.y);
+            var wantedCoor = new Vector2(ran % gridArr.GetLength(0),ran / gridArr.GetLength(0));
 
+            wantedCoor = new Vector2Int(gridArr[(int)wantedCoor.x,(int)wantedCoor.y].position.x, gridArr[(int)wantedCoor.x,(int)wantedCoor.y].position.y);
+          
             if (pointsArr.Contains(wantedCoor))
             {
                 i--;
@@ -2120,10 +2105,9 @@ public static class AlgosUtils
             }
         }
 
-
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[y].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
                 int closestIndex = 0;
                 float closestDistance = -1;
@@ -2133,18 +2117,18 @@ public static class AlgosUtils
                     if (closestDistance < 0)
                     {
                         if (calcType)
-                            closestDistance = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                            closestDistance = DFGeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArr[x,y].position.x, gridArr[x,y].position.y));
                         else
-                            closestDistance = GeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                            closestDistance = DFGeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArr[x,y].position.x, gridArr[x,y].position.y));
                     }
                     else
                     {
                         float newDist;
 
                         if (calcType)
-                            newDist = GeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                            newDist = DFGeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArr[x,y].position.x, gridArr[x,y].position.y));
                         else
-                            newDist = GeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArray2D[y][x].position.x, gridArray2D[y][x].position.y));
+                            newDist = DFGeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArr[x,y].position.x, gridArr[x,y].position.y));
 
                         if (closestDistance > newDist)
                         {
@@ -2154,23 +2138,23 @@ public static class AlgosUtils
                     }
                 }
 
-                gridArray2D[y][x].idx = closestIndex;
+                gridArr[x,y].idx = closestIndex;
             }
         }
 
-        return GetBoundariesVoronoi(gridArray2D);
+        GetBoundariesVoronoi(gridArr);
     }
 
 
-    private static Tile[][] GetBoundariesVoronoi(Tile[][] gridArr2d)
+    private static void GetBoundariesVoronoi(Tile[,] gridArr)
     {
-        var childPosArry = GeneralUtil.childPosArry4Side;
+        var childPosArry = DFGeneralUtil.childPosArry4Side;
 
-        for (int y = 0; y < gridArr2d.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArr2d[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                int wantedIdx = gridArr2d[y][x].idx;
+                int wantedIdx = gridArr[x,y].idx;
 
                 bool sameIdx = true;
 
@@ -2181,14 +2165,13 @@ public static class AlgosUtils
 
                     int[] node_position = { x + x_buff, y + y_buff };
 
-
-                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr2d[0].Length || node_position[1] >= gridArr2d.Length)
+                    if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr.GetLength(0) || node_position[1] >= gridArr.GetLength(1))
                     {
                         continue;
                     }
                     else
                     {
-                        if (gridArr2d[node_position[1]][node_position[0]].idx == wantedIdx)
+                        if (gridArr[node_position[0],node_position[1]].idx == wantedIdx)
                         {
 
                         }
@@ -2200,20 +2183,18 @@ public static class AlgosUtils
                     }
                 }
 
-
                 if (sameIdx)
                 {
-                    gridArr2d[y][x].tileWeight = 1;
+                    gridArr[x,y].tileWeight = 1;
                 }
                 else
                 {
-                    gridArr2d[y][x].tileWeight = 0;
+                    gridArr[x,y].tileWeight = 0;
                 }
 
             }
         }
 
-        return gridArr2d;
     }
 
     #endregion
@@ -2221,9 +2202,9 @@ public static class AlgosUtils
     #region Marching Cubes Generation
 
 
-    public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(Tile[][] gridArray2D, int roomHeight = 7)
+    public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(Tile[,] gridArr, int roomHeight = 7)
     {
-        var marchingCubesArr = new MarchingCubeClass[gridArray2D[0].Length, gridArray2D.Length, roomHeight];
+        var marchingCubesArr = new MarchingCubeClass[gridArr.GetLength(0), gridArr.GetLength(1), roomHeight];
 
         for (int z = 0; z < marchingCubesArr.GetLength(2); z++)  // this is the heihgt of the room
         {
@@ -2233,28 +2214,25 @@ public static class AlgosUtils
                 {
                     if (z == 0 || z == marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                     {
-                        if (gridArray2D[y][x].tileType == Tile.TileType.WALL || gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR)
+                        if (gridArr[x,y].tileType == Tile.TileType.WALL || gridArr[x,y].tileType == Tile.TileType.WALLCORRIDOR)
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.95f);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x,y].position.x, z, gridArr[x,y].position.y), gridArr[x,y].tileWeight != 0 ? 1 : 0, 0.95f);
                         }
                         else
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), gridArray2D[y][x].tileWeight != 0 ? 1 : 0, 0.05f);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x,y].position.x, z, gridArr[x,y].position.y), gridArr[x,y].tileWeight != 0 ? 1 : 0, 0.05f);
                         }
-
                     }
                     else // this is justt he wall
                     {
-
-                        if (gridArray2D[y][x].tileType == Tile.TileType.WALL || gridArray2D[y][x].tileType == Tile.TileType.WALLCORRIDOR) // draw everything but the floor
+                        if (gridArr[x,y].tileType == Tile.TileType.WALL || gridArr[x,y].tileType == Tile.TileType.WALLCORRIDOR) // draw everything but the floor
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 1, 1);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x,y].position.x, z, gridArr[x,y].position.y), 1, 1);
                         }
                         else // set the floor to 0 
                         {
-                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArray2D[y][x].position.x, z, gridArray2D[y][x].position.y), 0, 1);
+                            marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x,y].position.x, z, gridArr[x,y].position.y), 0, 1);
                         }
-
                     }
                 }
             }
@@ -2366,21 +2344,21 @@ public static class AlgosUtils
         }
     }
 
-    public static void SetUpTileCorridorTypesUI(Tile[][] gridArr, int width)
+    public static void SetUpTileCorridorTypesUI(Tile[,] gridArr, int width)
     {
         SetUpTileTypesCorridor(gridArr);
 
         for (int i = 0; i < width - 1; i++)
         {
-            for (int y = 0; y < gridArr.Length; y++)
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
-                for (int x = 0; x < gridArr[0].Length; x++)
+                for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
-                    if (gridArr[y][x].tileType == Tile.TileType.WALLCORRIDOR)
+                    if (gridArr[x,y].tileType == Tile.TileType.WALLCORRIDOR)
                     {
-                        gridArr[y][x].tileType = Tile.TileType.FLOORCORRIDOR;
+                        gridArr[x,y].tileType = Tile.TileType.FLOORCORRIDOR;
                     }
-                    if (gridArr[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
+                    if (gridArr[x,y].tileType == Tile.TileType.FLOORCORRIDOR)
                     {
                     }
                 }
@@ -2430,19 +2408,19 @@ public static class AlgosUtils
     /// <summary>
     /// call this to set up the tile type, for wall and floor, algo that recognises walls. this recognise
     /// </summary>
-    /// <param name="gridArray2D"></param>
+    /// <param name="gridArr"></param>
     /// <param name="diagonalTiles">diag tile depends if it uses the 8 or 4 child arr</param>
-    public static void SetUpTileTypesFloorWall(Tile[][] gridArray2D)
+    public static void SetUpTileTypesFloorWall(Tile[,] gridArr)
     {
         int[,] childPosArry = new int[0, 0];
 
-        childPosArry = GeneralUtil.childPosArry4Side;
+        childPosArry = DFGeneralUtil.childPosArry4Side;
 
-        for (int y = 0; y < gridArray2D.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < gridArray2D[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                if (gridArray2D[y][x].tileWeight != 0)
+                if (gridArr[x,y].tileWeight != 0)
                 {
                     bool wall = false;
 
@@ -2453,15 +2431,14 @@ public static class AlgosUtils
 
                         int[] node_position = { x + x_buff, y + y_buff };
 
-
-                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArray2D[0].Length || node_position[1] >= gridArray2D.Length)
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= gridArr.GetLength(0) || node_position[1] >= gridArr.GetLength(1))
                         {
                             wall = true;
                             break;
                         }
                         else
                         {
-                            if (gridArray2D[node_position[1]][node_position[0]].tileWeight == 0)
+                            if (gridArr[node_position[0],node_position[1]].tileWeight == 0)
                             {
                                 wall = true;
                                 break;
@@ -2469,41 +2446,36 @@ public static class AlgosUtils
                         }
                     }
 
-
                     if (wall)
                     {
-                        gridArray2D[y][x].tileType = Tile.TileType.WALL;
-                        gridArray2D[y][x].tileWeight = 1;
+                        gridArr[x,y].tileType = Tile.TileType.WALL;
+                        gridArr[x,y].tileWeight = 1;
                     }
                     else
                     {
-                        //this was the reason why the corr fucked up
-                        //gridArray2D[y][x].tileType = Tile.TileType.FLOORROOM;
-                        gridArray2D[y][x].tileWeight = 0.5f;
+                        gridArr[x,y].tileWeight = 0.5f;
                     }
                 }
             }
         }
 
-        var copyArr = new Tile[gridArray2D.Length][];
+        var copyArr = new Tile[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-        for (int y = 0; y < copyArr.Length; y++)
+        for (int y = 0; y < copyArr.GetLength(1); y++)
         {
-            copyArr[y] = new Tile[gridArray2D[0].Length];
-
-            for (int x = 0; x < copyArr[y].Length; x++)
+            for (int x = 0; x < copyArr.GetLength(0); x++)
             {
-                copyArr[y][x] = new Tile();
-                copyArr[y][x].tileType = gridArray2D[y][x].tileType;
-                copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
+                copyArr[x,y] = new Tile();
+                copyArr[x,y].tileType = gridArr[x,y].tileType;
+                copyArr[x,y].tileWeight = gridArr[x,y].tileWeight;
             }
         }
 
-        for (int y = 0; y < copyArr.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            for (int x = 0; x < copyArr[0].Length; x++)
+            for (int x = 0; x < copyArr.GetLength(0); x++)
             {
-                if (copyArr[y][x].tileWeight == 0)
+                if (copyArr[x,y].tileWeight == 0)
                 {
                     int neigh = 0;
 
@@ -2514,52 +2486,49 @@ public static class AlgosUtils
 
                         int[] node_position = { x + x_buff, y + y_buff };
 
-                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr[0].Length || node_position[1] >= copyArr.Length)
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr.GetLength(0) || node_position[1] >= copyArr.GetLength(1))
                         {
                             continue;
                         }
-                        else if (copyArr[node_position[1]][node_position[0]].tileType != Tile.TileType.VOID)
+                        else if (copyArr[node_position[0],node_position[1]].tileType != Tile.TileType.VOID)
                         {
                             neigh++;
                         }
                     }
 
-
                     if (neigh >= 2)
                     {
-                        gridArray2D[y][x].tileWeight = 1;
-                        gridArray2D[y][x].tileType = Tile.TileType.WALL;
+                        gridArr[x,y].tileWeight = 1;
+                        gridArr[x,y].tileType = Tile.TileType.WALL;
                     }
                 }
             }
         }
     }
 
-    public static void SetUpTileTypesCorridor(Tile[][] gridArray2D)
+    public static void SetUpTileTypesCorridor(Tile[,] gridArr)
     {
         int[,] childPosArry = new int[0, 0];
 
-        childPosArry = GeneralUtil.childPosArry4Side;
+        childPosArry = DFGeneralUtil.childPosArry4Side;
 
-        var copyArr = new Tile[gridArray2D.Length][];
+        var copyArr = new Tile[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-        for (int y = 0; y < copyArr.Length; y++)
+        for (int y = 0; y < copyArr.GetLength(1); y++)
         {
-            copyArr[y] = new Tile[gridArray2D[0].Length];
-
-            for (int x = 0; x < copyArr[y].Length; x++)
+            for (int x = 0; x < copyArr.GetLength(0); x++)
             {
-                copyArr[y][x] = new Tile();
-                copyArr[y][x].tileType = gridArray2D[y][x].tileType;
-                copyArr[y][x].tileWeight = gridArray2D[y][x].tileWeight;
+                copyArr[x,y] = new Tile();
+                copyArr[x,y].tileType = gridArr[x,y].tileType;
+                copyArr[x,y].tileWeight = gridArr[x,y].tileWeight;
             }
         }
 
-        for (int y = 0; y < copyArr.Length; y++)
+        for (int y = 0; y < copyArr.GetLength(1); y++)
         {
-            for (int x = 0; x < copyArr[0].Length; x++)
+            for (int x = 0; x < copyArr.GetLength(0); x++)
             {
-                if (copyArr[y][x].tileType == Tile.TileType.FLOORCORRIDOR)
+                if (copyArr[x,y].tileType == Tile.TileType.FLOORCORRIDOR)
                 {
 
                     for (int i = 0; i < childPosArry.Length / 2; i++)
@@ -2569,14 +2538,14 @@ public static class AlgosUtils
 
                         int[] node_position = { x + x_buff, y + y_buff };
 
-                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr[0].Length || node_position[1] >= copyArr.Length)
+                        if (node_position[0] < 0 || node_position[1] < 0 || node_position[0] >= copyArr.GetLength(0) || node_position[1] >= copyArr.GetLength(1))
                         {
                             continue;
                         }
-                        else if (copyArr[node_position[1]][node_position[0]].tileType == Tile.TileType.VOID)
+                        else if (copyArr[node_position[0],node_position[1]].tileType == Tile.TileType.VOID)
                         {
-                            gridArray2D[node_position[1]][node_position[0]].tileType = Tile.TileType.WALLCORRIDOR;
-                            gridArray2D[node_position[1]][node_position[0]].tileWeight = 1;
+                            gridArr[node_position[0],node_position[1]].tileType = Tile.TileType.WALLCORRIDOR;
+                            gridArr[node_position[0],node_position[1]].tileWeight = 1;
                         }
                     }
                 }
@@ -2584,24 +2553,18 @@ public static class AlgosUtils
         }
     }
 
-
-    public static Tile[][] RestartArr(Tile[][] gridArr)
+    public static void RestartArr(Tile[,] gridArr)
     {
-
-        for (int y = 0; y < gridArr.Length; y++)
+        for (int y = 0; y < gridArr.GetLength(1); y++)
         {
-            gridArr[y] = new Tile[gridArr[0].Length];
-
-            for (int x = 0; x < gridArr[0].Length; x++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                gridArr[y][x] = new Tile();
-                gridArr[y][x].position = new Vector2Int(x, y);
-                gridArr[y][x].tileType = Tile.TileType.VOID;
-                gridArr[y][x].color = Color.white;
+                gridArr[x,y] = new Tile();
+                gridArr[x,y].position = new Vector2Int(x, y);
+                gridArr[x,y].tileType = Tile.TileType.VOID;
+                gridArr[x,y].color = Color.white;
             }
         }
-
-        return gridArr;
     }
 
     public static void SetUpCorridorWithPath(List<Tile> path, float customWeight = 0.75f)
@@ -2756,3 +2719,4 @@ public class DjNode
 }
 
 #endregion
+}

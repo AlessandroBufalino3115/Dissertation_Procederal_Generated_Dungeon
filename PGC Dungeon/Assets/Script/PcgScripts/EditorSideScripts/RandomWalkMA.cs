@@ -1,76 +1,80 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RandomWalkMA : MonoBehaviour,IUndoInteraction
+
+namespace DungeonForge
 {
-
-    [HideInInspector]
-    public PCGManager pcgManager;
-   
-
-    //specific to main algo
-    [HideInInspector]
-    public int iterations;
-
-    [HideInInspector]
-    public bool startFromMiddle = false;
-
-    [HideInInspector]
-    public bool alreadyPassed;
-
-
-
-
-    //general
-
-    [HideInInspector]
-    public bool pathType = false;
-
-
-
-    [HideInInspector]
-    public int neighboursNeeded = 3;
-
-    [HideInInspector]
-    public int typeOfTri;
-
-
-    [HideInInspector]
-    public int minSize =40;
-
-    [HideInInspector]
-    public List<List<Tile>> rooms = new List<List<Tile>>();
-
-    [HideInInspector]
-    public List<Edge> edges = new List<Edge>();
-
-    [HideInInspector]
-    public  bool allowedBack;
-    [HideInInspector]
-    public bool allowedForward;
-    [HideInInspector]
-    public int currStateIndex = 0;
-
-
-
-
-    [HideInInspector]
-    public GeneralUtil.PathFindingType pathFindingType;
-
-
-    [HideInInspector]
-    public GeneralUtil.UISTATE currUiState = GeneralUtil.UISTATE.MAIN_ALGO;
-
-    public void DeleteLastSavedRoom() 
+    public class RandomWalkMA : MonoBehaviour, IUndoInteraction
     {
-        if (currUiState == GeneralUtil.UISTATE.EXTRA_ROOM_GEN)
-            rooms.RemoveAt(rooms.Count - 1);
-    } 
-    
-    public void InspectorAwake() 
-    {
-        pcgManager = this.transform.GetComponent<PCGManager>();
-        pcgManager.UndoInteraction = this;
+
+        [HideInInspector]
+        public PCGManager pcgManager;
+
+
+        //specific to main algo
+        [HideInInspector]
+        public int iterations;
+
+        [HideInInspector]
+        public bool startFromMiddle = false;
+
+        [HideInInspector]
+        public bool alreadyPassed;
+
+
+
+
+        //general
+
+        [HideInInspector]
+        public bool pathType = false;
+
+
+
+        [HideInInspector]
+        public int neighboursNeeded = 3;
+
+        [HideInInspector]
+        public int typeOfTri;
+
+
+        [HideInInspector]
+        public int minSize = 40;
+
+        [HideInInspector]
+        public List<List<Tile>> rooms = new List<List<Tile>>();
+
+        [HideInInspector]
+        public List<Edge> edges = new List<Edge>();
+
+        [HideInInspector]
+        public bool allowedBack;
+        [HideInInspector]
+        public bool allowedForward;
+        [HideInInspector]
+        public int currStateIndex = 0;
+
+
+
+
+        [HideInInspector]
+        public DFGeneralUtil.PathFindingType pathFindingType;
+
+
+        [HideInInspector]
+        public DFGeneralUtil.UI_STATE currUiState = DFGeneralUtil.UI_STATE.MAIN_ALGO;
+
+        public void DeleteLastSavedRoom()
+        {
+            if (currUiState == DFGeneralUtil.UI_STATE.EXTRA_ROOM_GEN)
+                rooms.RemoveAt(rooms.Count - 1);
+        }
+
+        public void InspectorAwake()
+        {
+            pcgManager = this.transform.GetComponent<PCGManager>();
+            pcgManager.UndoInteraction = this;
+        }
+
     }
-
 }
