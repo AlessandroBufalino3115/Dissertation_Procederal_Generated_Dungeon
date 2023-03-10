@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
+using static UnityEngine.ParticleSystem;
 
 
 namespace DungeonForge
@@ -280,7 +281,7 @@ namespace DungeonForge
 
         #region A*
 
-        public static Tuple<List<Tile>, List<Tile>> A_StarPathfinding2D(Tile[,] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
+        public static Tuple<List<DFTile>, List<DFTile>> A_StarPathfinding2D(DFTile[,] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
         {
             bool checkForUse = useWeights == true && arrWeights != null ? true : false;
 
@@ -289,6 +290,8 @@ namespace DungeonForge
 
             AStar_Node start_node = new AStar_Node(tileArray2D[start.x, start.y]);
             start_node.parent = null;
+
+            Debug.Log(end);
 
             AStar_Node end_node = new AStar_Node(tileArray2D[end.x, end.y]);
 
@@ -331,20 +334,20 @@ namespace DungeonForge
                         current = current.parent;
                     }
 
-                    var pathOfBasicTiles = new List<Tile>();
+                    var pathOfBasicTiles = new List<DFTile>();
 
                     foreach (var tile in path)
                     {
                         pathOfBasicTiles.Add(tile.refToBasicTile);
                     }
 
-                    var allVisiteBasicTiles = new List<Tile>();
+                    var allVisiteBasicTiles = new List<DFTile>();
                     foreach (var tile in openList)
                     {
                         allVisiteBasicTiles.Add(tile.refToBasicTile);
                     }
 
-                    return new Tuple<List<Tile>, List<Tile>>(pathOfBasicTiles, allVisiteBasicTiles);
+                    return new Tuple<List<DFTile>, List<DFTile>>(pathOfBasicTiles, allVisiteBasicTiles);
                 }
                 else
                 {
@@ -461,7 +464,7 @@ namespace DungeonForge
             return Tuple.Create(point2, point3);
         }
 
-        public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, Tile[,] gridArr, bool pathing = false)
+        public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, DFTile[,] gridArr, bool pathing = false)
         {
             var startPos = new Vector2Int(tileA.x, tileA.y);
             var endPos = new Vector2Int(tileB.x, tileB.y);
@@ -505,13 +508,13 @@ namespace DungeonForge
                 }
 
 
-                if ((int)MathF.Round(currCord.y) < 0)
+                if ((int)MathF.Round(currCord.z) < 0)
                 {
-                    currCord.y = 0;
+                    currCord.z = 0;
                 }
-                if ((int)MathF.Round(currCord.y) >= gridArr.GetLength(1))
+                if ((int)MathF.Round(currCord.z) >= gridArr.GetLength(1))
                 {
-                    currCord.y = gridArr.GetLength(1) - 1;
+                    currCord.z = gridArr.GetLength(1) - 1;
                 }
 
                 pathB = A_StarPathfinding2D(gridArr, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
@@ -530,7 +533,7 @@ namespace DungeonForge
 
         #region Dijstra
 
-        public static List<Tile> DijstraPathfinding(Tile[,] gridArr, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false)
+        public static List<DFTile> DijstraPathfinding(DFTile[,] gridArr, Vector2Int startPoint, Vector2Int endPoint, bool avoidWalls = false)
         {
             int[,] childPosArry = new int[0, 0];
 
@@ -545,7 +548,7 @@ namespace DungeonForge
                 {
                     if (avoidWalls)
                     {
-                        if (gridArr[x, y].tileType != Tile.TileType.WALLCORRIDOR)
+                        if (gridArr[x, y].tileType != DFTile.TileType.WALLCORRIDOR)
                         {
                             var newRef = new DjNode() { coord = new Vector2Int(x, y), distance = startPoint == new Vector2Int(x, y) ? 0 : 9999999, gridRefTile = gridArr[x, y], parentDJnode = null };
 
@@ -596,7 +599,7 @@ namespace DungeonForge
                     {
                         if (avoidWalls)
                         {
-                            if (gridArr[node_position[0], node_position[1]].tileType != Tile.TileType.WALLCORRIDOR)
+                            if (gridArr[node_position[0], node_position[1]].tileType != DFTile.TileType.WALLCORRIDOR)
                             {
                                 float newDist = currNode.distance + 1;
 
@@ -631,7 +634,7 @@ namespace DungeonForge
 
             }
 
-            var solutioPath = new List<Tile>();
+            var solutioPath = new List<DFTile>();
 
             while (lastNode.parentDJnode != null)
             {
@@ -649,25 +652,23 @@ namespace DungeonForge
 
         #region Random Walk
 
-        public static Tile[,] RandomWalk2DCol(int iterations, bool alreadyPassed, int maxX, int maxY, float maxIterMultiplier = 1.4f, bool randomStart = true)
+
+        /// <summary>
+        /// Random walker
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="iterations">The number of steps the walker takes</param>
+        /// <param name="alreadyPassed">If it were to retrace it self should that reatraced step count?</param>
+        /// <param name="maxIterMultiplier">it is possible for the walker to get stuck so to safely exit the while loop a maximum of (iterations * maxIterMultiplier) are allowed</param>
+        /// <param name="randomStart">True for a random starting point, false for starting in the middle</param>
+        public static void RandomWalk(DFTile[,] gridArr, int iterations, bool alreadyPassed, float maxIterMultiplier = 1.4f, bool randomStart = true)
         {
             int iterationsLeft = iterations;
 
-            Tile[,] _gridarray2D = new Tile[maxX, maxY];
-
-            for (int y = 0; y < maxY; y++)
-            {
-                for (int x = 0; x < maxX; x++)
-                {
-                    _gridarray2D[x, y] = new Tile();
-                    _gridarray2D[x, y].position = new Vector2Int(x, y);
-                }
-            }
-
-            Vector2Int currentHead = new Vector2Int(maxX / 2, maxY / 2);
+            Vector2Int currentHead = new Vector2Int(gridArr.GetLength(0) / 2, gridArr.GetLength(1) / 2);
 
             if (randomStart)
-                currentHead = DFGeneralUtil.RanVector2Int(_gridarray2D.GetLength(0), _gridarray2D.GetLength(1));
+                currentHead = new Vector2Int(Random.Range(0, gridArr.GetLength(0)), Random.Range(0, gridArr.GetLength(1)));
 
             while (iterationsLeft > 0)
             {
@@ -677,7 +678,7 @@ namespace DungeonForge
                 {
                     case 0:    //for
 
-                        if (currentHead.y + 1 >= _gridarray2D.GetLength(1))
+                        if (currentHead.y + 1 >= gridArr.GetLength(1))
                         { }
                         else
                         {
@@ -705,7 +706,7 @@ namespace DungeonForge
                         break;
 
                     case 3:   //rigth
-                        if (currentHead.x + 1 >= _gridarray2D.GetLength(0))
+                        if (currentHead.x + 1 >= gridArr.GetLength(0))
                         { }
                         else
                         {
@@ -720,24 +721,21 @@ namespace DungeonForge
 
                 if (alreadyPassed)
                 {
-                    if (_gridarray2D[(int)currentHead.x, (int)currentHead.y].tileWeight != 1)
+                    if (gridArr[(int)currentHead.x, (int)currentHead.y].tileWeight != 1)
                     {
-                        _gridarray2D[(int)currentHead.x, (int)currentHead.y].tileWeight = 1;
+                        gridArr[(int)currentHead.x, (int)currentHead.y].tileWeight = 1;
                         iterationsLeft--;
                     }
                 }
                 else
                 {
-                    _gridarray2D[(int)currentHead.x, (int)currentHead.y].tileWeight = 1;
+                    gridArr[(int)currentHead.x, (int)currentHead.y].tileWeight = 1;
                     iterationsLeft--;
                 }
             }
-
-            return _gridarray2D;
-
         }
 
-        public static Tile[,] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
+        public static DFTile[,] CompartimentalisedRandomWalk(BoundsInt boundsRoom)
         {
 
             int maxY = boundsRoom.zMax - boundsRoom.zMin;
@@ -749,13 +747,13 @@ namespace DungeonForge
             int iterationsLeft = iterations;
 
 
-            Tile[,] gridArr = new Tile[maxX, maxY];
+            DFTile[,] gridArr = new DFTile[maxX, maxY];
 
             for (int y = 0; y < maxY; y++)
             {
                 for (int x = 0; x < maxX; x++)
                 {
-                    gridArr[x, y] = new Tile();
+                    gridArr[x, y] = new DFTile();
                     gridArr[x, y].position = new Vector2Int(x, y);
                 }
             }
@@ -827,7 +825,18 @@ namespace DungeonForge
 
         #region PerlinNoise
 
-        public static void PerlinNoise2D(Tile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
+        /// <summary>
+        /// Generate Perlin noise map, from 0 to 1
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        /// <param name="threashold">If this value is bigger than 0 than anything belowe will have a set weight of 0 and anything above will have a set weight of 1</param>
+        public static void PerlinNoise(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threashold = 0)
         {
             float[,] noiseMap = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
@@ -888,111 +897,135 @@ namespace DungeonForge
             }
         }
 
-        //to delete
-        public static void DrawNoiseMap(Renderer meshRenderer, int widthX, int lengthY, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float threshold, bool threshBool)
+
+        #region Manipulation of perlin noise
+
+        /// <summary>
+        /// apply smooth steps functions to the weightings of the perlin noise
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        public static void PerlinNoiseSmoothStep(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY) 
         {
-            var noiseMap = PerlinNoise2DPlane(widthX, lengthY, scale, octaves, persistance, lacu, offsetX, offsetY);
+            PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            int width = noiseMap.GetLength(0);
-            int height = noiseMap.GetLength(1);
-
-            Texture2D texture = new Texture2D(width, height);
-
-            Color[] colourMap = new Color[width * height];
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
-                    if (threshBool)
+                    gridArr[x, y].tileWeight = Mathf.SmoothStep(0, 1, gridArr[x, y].tileWeight);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// apply easing out functions to the weightings of the perlin noise, lots of highs and a quick fall
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        /// <param name="formulaType">Number from 1 to 4, 1 = quadratic easing  ---  2 = cubic easing  ---  3 = quartic easing  ---  4 = exponential easing </param>
+        public static void PerlinNoiseEasingOut(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int formulaType)
+        {
+            PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
+
+            for (int x = 0; x < gridArr.GetLength(0); x++)
+            {
+                for (int y = 0; y < gridArr.GetLength(1); y++)
+                {
+                    switch (formulaType)
                     {
-                        if (threshold > noiseMap[x, y])
-                            colourMap[y * width + x] = Color.white;
-                        else
-                            colourMap[y * width + x] = Color.black;
+                        case 1:
+                            gridArr[x, y].tileWeight = QuadraticEasingOut(gridArr[x, y].tileWeight);
+                            break;
+                        case 2:
+                            gridArr[x, y].tileWeight = CubicEasingOut(gridArr[x, y].tileWeight);
+                            break;
+                        case 3:
+                            gridArr[x, y].tileWeight = QuarticEasingOut(gridArr[x, y].tileWeight);
+                            break;
+                        case 4:
+                            gridArr[x, y].tileWeight = ExponentialEasingOut(gridArr[x, y].tileWeight);
+                            break;
+
+                        default:
+                            break;
                     }
-                    else
-                        colourMap[y * width + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]);
                 }
             }
-
-            texture.SetPixels(colourMap);
-            texture.Apply();
-
-            meshRenderer.sharedMaterial.mainTexture = texture;
-            meshRenderer.transform.localScale = new Vector3(width, 1, height);
         }
 
-        public static float[,] PerlinNoise2DPlane(int mapWidth, int mapHeight, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY)
+        public static float QuadraticEasingOut(float t) => 1f - Mathf.Pow(1f - t, 2f);
+
+        public static float CubicEasingOut(float t) => 1f - Mathf.Pow(1f - t, 3f);
+
+        public static float QuarticEasingOut(float t) => 1f - Mathf.Pow(1f - t, 4f);
+
+        public static float ExponentialEasingOut(float t) => 1f - Mathf.Pow(2f, -10f * t);
+
+
+        /// <summary>
+        /// Noise weight Squared,  Flat-ish lands but with occasionally high peaks
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        public static void PerlinNoiseSmoothStart(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY)
         {
-            float[,] noiseMap = new float[mapWidth, mapHeight];
+            PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            if (scale <= 0)
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                scale = 0.0001f;
-            }
-
-            float maxN = float.MinValue;
-            float minN = float.MaxValue;
-
-            for (int y = 0; y < mapHeight; y++)
-            {
-                for (int x = 0; x < mapWidth; x++)
+                for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
-
-                    float amplitude = 1;
-                    float freq = 1;
-                    float noiseHeight = 0;
-
-                    for (int i = 0; i < octaves; i++)
-                    {
-                        float sampleX = x / scale * freq + offsetX;
-                        float sampleY = y / scale * freq + offsetY;
-
-                        float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
-
-                        noiseHeight += perlinValue * amplitude;
-
-                        amplitude *= persistance;
-
-                        freq *= lacu;
-
-                    }
-
-                    if (noiseHeight > maxN) { maxN = noiseHeight; }
-                    else if (noiseHeight < minN) { minN = noiseHeight; }
-
-                    noiseMap[x, y] = noiseHeight;
+                    gridArr[x, y].tileWeight = MathF.Pow(gridArr[x, y].tileWeight, 2);
                 }
             }
-            for (int y = 0; y < mapHeight; y++)
-            {
-                for (int x = 0; x < mapWidth; x++)
-                {
-                    noiseMap[x, y] = Mathf.InverseLerp(minN, maxN, noiseMap[x, y]);
-                }
-            }
-
-            return noiseMap;
         }
 
-        public static Tile WorldPosToTile(Vector2 point, Tile[,] gridArr)
+        /// <summary>
+        /// Good For creating Channels
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        /// <param name="absoluteValue"></param>
+        public static void PerlinNoiseAbsoluteValue(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, float absoluteValue)
         {
-            float pointX = point.x;
-            float pointY = point.y;
+            PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            float tileSize = 1;
-            int tileX = Mathf.FloorToInt(pointX / tileSize);
-            int tileY = Mathf.FloorToInt(pointY / tileSize);
-
-            if (tileX < 0 || tileY < 0 || tileX >= gridArr.GetLength(0) || tileY >= gridArr.GetLength(1))
+            for (int x = 0; x < gridArr.GetLength(0); x++)
             {
-                return null;
+                for (int y = 0; y < gridArr.GetLength(1); y++)
+                {
+                    if (gridArr[x, y].tileWeight < absoluteValue)
+                        gridArr[x, y].tileWeight = 1 - gridArr[x, y].tileWeight;
+                }
             }
-
-            return gridArr[tileX, tileY];
         }
 
-        public static Vector2 MoveVector(Vector2 vector, float direction, float turnMulti)
+        #endregion
+
+
+        private static Vector2 MoveVector(Vector2 vector, float direction, float turnMulti)
         {
             float dx = Mathf.Cos(direction * 2 * Mathf.PI) * turnMulti;
             float dy = Mathf.Sin(direction * 2 * Mathf.PI) * turnMulti;
@@ -1001,21 +1034,34 @@ namespace DungeonForge
             return result;
         }
 
-        public static HashSet<Tile> PerlinWorms(Tile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int maxWormLength, float turnMulti)
+        /// <summary>
+        /// Perlin worms create a smooth and flowing pattern using the weight generated from a normal perlin noise map
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="scale"></param>
+        /// <param name="octaves"></param>
+        /// <param name="persistance"></param>
+        /// <param name="lacu"></param>
+        /// <param name="offsetX"></param>
+        /// <param name="offsetY"></param>
+        /// <param name="maxWormLength">The maximum length a worm can be</param>
+        /// <param name="turnMultiplier">a higher turning value will make the turns more sharp</param>
+        /// <returns></returns>
+        public static HashSet<DFTile> PerlinWorms(DFTile[,] gridArr, float scale, int octaves, float persistance, float lacu, int offsetX, int offsetY, int maxWormLength, float turnMultiplier)
         {
-            var wormTiles = new HashSet<Tile>();
+            var wormTiles = new HashSet<DFTile>();
 
-            PerlinNoise2D(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
+            PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
             var currPos = new Vector2(Random.Range(0, gridArr.GetLength(0) - 1), Random.Range(0, gridArr.GetLength(1) - 1));
 
-            Tile lastTileAdded = WorldPosToTile(currPos, gridArr);
+            DFTile lastTileAdded = DFGeneralUtil.WorldPosToTile(currPos, gridArr);
 
             for (int i = 0; i < maxWormLength; i++)
             {
-                currPos = MoveVector(currPos, gridArr[lastTileAdded.position.x, lastTileAdded.position.y].tileWeight, turnMulti);
+                currPos = MoveVector(currPos, gridArr[lastTileAdded.position.x, lastTileAdded.position.y].tileWeight, turnMultiplier);
 
-                var newTile = WorldPosToTile(currPos, gridArr);
+                var newTile = DFGeneralUtil.WorldPosToTile(currPos, gridArr);
 
                 if (newTile != null)
                 {
@@ -1039,13 +1085,25 @@ namespace DungeonForge
 
         #region Triangulation
 
+
+        /// <summary>
+        /// Call this function if the triangle data is not avaialable, this will run the delunay triangulation function for you
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
         public static List<Edge> PrimAlgoNoDelu(List<Vector2> points)
         {
-            var triangulation = DelunayTriangulation2D(points);
+            var triangulation = DelaunayTriangulation(points);
 
             return PrimAlgo(points, triangulation.Item1);
         }
 
+        /// <summary>
+        /// Run the prims algorithm to find the minimum spanning tree
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="triangulation"></param>
+        /// <returns></returns>
         public static List<Edge> PrimAlgo(List<Vector2> points, List<Triangle> triangulation)
         {
             List<Edge> primsAlgo = new List<Edge>();
@@ -1061,7 +1119,7 @@ namespace DungeonForge
             {
                 HashSet<Edge> edgesWithPoint = new HashSet<Edge>();
 
-                foreach (var trig in triangulation)    // we get all the edges
+                foreach (var trig in triangulation)
                 {
                     foreach (var edge in trig.edges)
                     {
@@ -1085,7 +1143,6 @@ namespace DungeonForge
 
                 var edgesWithPointSort = edgesWithPoint.OrderBy(c => c.length).ToArray();   // we sort all the edges by the smallest to biggest
 
-
                 visitedVertices.Add(edgesWithPointSort[0].edge[0]);
                 visitedVertices.Add(edgesWithPointSort[0].edge[1]);
                 primsAlgo.Add(edgesWithPointSort[0]);
@@ -1094,8 +1151,20 @@ namespace DungeonForge
             return primsAlgo;
         }
 
-        public static Tuple<List<Triangle>, List<Edge>> DelunayTriangulation2D(List<Vector2> points)
+
+        /// <summary>
+        /// Deluna
+        /// </summary>
+        /// <param name="points">points in 2D space to triangulate</param>
+        /// <returns>Returns a touple containing   item1 = Triangles list   ---  item2 = All edges list</returns>
+        public static Tuple<List<Triangle>, List<Edge>> DelaunayTriangulation(List<Vector2> points)
         {
+            if (points.Count< 3) 
+            {
+                Debug.Log($"The given points in the list for triangulation are not enough");
+                return null;
+            }
+
             var triangulation = new List<Triangle>();
 
             Vector2 superTriangleA = new Vector2(10000, 10000);
@@ -1190,13 +1259,19 @@ namespace DungeonForge
             return new Tuple<List<Triangle>, List<Edge>>(triangulation, edges);
         }
 
+        /// <summary>
+        /// checks if two edges are the same
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
         public static bool LineIsEqual(Edge A, Edge B)
         {
             if ((A.edge[0] == B.edge[0] && A.edge[1] == B.edge[1]) || (A.edge[0] == B.edge[1] && A.edge[1] == B.edge[0])) { return true; }
             else { return false; }
         }
 
-        public static bool IsPointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
+        private static bool IsPointInCircumcircle(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
         {
             float ax_ = A[0] - D[0];
             float ay_ = A[1] - D[1];
@@ -1223,7 +1298,6 @@ namespace DungeonForge
 
         public static List<BoundsInt> BSPAlgo(BoundsInt toSplit, int minHeight, int minWidth)
         {
-            var startTimer = DFGeneralUtil.PerfTimer(true);
 
             List<BoundsInt> roomList = new List<BoundsInt>();
             Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
@@ -1269,7 +1343,6 @@ namespace DungeonForge
                 }
             }
 
-            var endTimer = DFGeneralUtil.PerfTimer(false, startTimer);
             return roomList;
         }
 
@@ -1326,7 +1399,7 @@ namespace DungeonForge
 
         #region Flood Fill
 
-        public static void ResetVisited(Tile[,] gridArr)
+        private static void ResetVisited(DFTile[,] gridArr)
         {
             for (int y = 0; y < gridArr.GetLength(1); y++)
             {
@@ -1337,10 +1410,11 @@ namespace DungeonForge
             }
         }
 
-        public static List<Vector2Int> FloodFill(Tile[,] gridArr, Vector2Int start, bool checkForRoomOnly, Tile.TileType typeToCheck)
+
+        public static List<Vector2Int> FloodFill(DFTile[,] gridArr, Vector2Int start, bool checkForRoomOnly, DFTile.TileType typeToCheck, float minCheckWeight)
         {
-            int height = gridArr.GetLength(1) - 1;
-            int width = gridArr.GetLength(0) - 1;
+            int height = gridArr.GetLength(1);
+            int width = gridArr.GetLength(0);
 
             List<Vector2Int> room = new List<Vector2Int>();
             room.Add(start);
@@ -1362,7 +1436,7 @@ namespace DungeonForge
                     }
                     else
                     {
-                        if (gridArr[x - 1, y].tileWeight > 0.5f && gridArr[x - 1, y].visited == false)
+                        if (gridArr[x - 1, y].tileWeight > minCheckWeight && gridArr[x - 1, y].visited == false)
                         {
                             gridArr[x - 1, y].visited = true;
                             room.Add(new Vector2Int(x - 1, y));
@@ -1382,7 +1456,7 @@ namespace DungeonForge
                     }
                     else
                     {
-                        if (gridArr[x, y - 1].tileWeight > 0.5f && gridArr[x, y - 1].visited == false)
+                        if (gridArr[x, y - 1].tileWeight > minCheckWeight && gridArr[x, y - 1].visited == false)
                         {
                             gridArr[x, y - 1].visited = true;
                             room.Add(new Vector2Int(x, y - 1));
@@ -1403,7 +1477,7 @@ namespace DungeonForge
                     }
                     else
                     {
-                        if (gridArr[x + 1, y].tileWeight > 0.5f && gridArr[x + 1, y].visited == false)
+                        if (gridArr[x + 1, y].tileWeight > minCheckWeight && gridArr[x + 1, y].visited == false)
                         {
                             gridArr[x + 1, y].visited = true;
                             room.Add(new Vector2Int(x + 1, y));
@@ -1423,7 +1497,7 @@ namespace DungeonForge
                     }
                     else
                     {
-                        if (gridArr[x, y + 1].tileWeight > 0.5f && gridArr[x, y + 1].visited == false)
+                        if (gridArr[x, y + 1].tileWeight > minCheckWeight && gridArr[x, y + 1].visited == false)
                         {
                             gridArr[x, y + 1].visited = true;
                             room.Add(new Vector2Int(x, y + 1));
@@ -1435,18 +1509,18 @@ namespace DungeonForge
             return room;
         }
 
+
         /// <summary>
-        /// recongnises all of the rooms, give true to set the colours
+        /// Used to get all the rooms that are in the given grid
         /// </summary>
         /// <param name="gridArr"></param>
-        /// <param name="colorDebug"></param>
-        /// <returns>returns a list of a lists of basic tiles = to one room</returns>
-        public static List<List<Tile>> GetAllRooms(Tile[,] gridArr, bool checkRoomOnly = false, Tile.TileType typeToCheck = Tile.TileType.FLOORROOM)
+        /// <param name="checkTypeOnly"> If true this function will use the type given to check for the rooms, if false it will use the weight of the tile</param>
+        /// <param name="typeToCheck">the types of tiles to group</param>
+        /// <param name="minCheckWeight">The minimum weight to be recognised as part of a room</param>
+        /// <returns>Returns a list of a lists of Tiles that equal to a room</returns>
+        public static List<List<DFTile>> GetAllRooms(DFTile[,] gridArr, bool checkTypeOnly = false, DFTile.TileType typeToCheck = DFTile.TileType.FLOORROOM, float minCheckWeight = 0.5f)
         {
-
-            //need to add the type to the floodFill too
-
-            var rooms = new List<List<Tile>>();
+            var rooms = new List<List<DFTile>>();
 
             ResetVisited(gridArr);  //sest everything back to false ready for flood
 
@@ -1456,34 +1530,24 @@ namespace DungeonForge
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
-                    if (checkRoomOnly)
+                    if (checkTypeOnly)
                     {
                         if (gridArr[x, y].tileType == typeToCheck)
                             openCoords.Add(new Vector2Int(x, y));
                     }
                     else
                     {
-                        if (gridArr[x, y].tileWeight > 0.5f)
+                        if (gridArr[x, y].tileWeight > minCheckWeight)
                             openCoords.Add(new Vector2Int(x, y));
                     }
                 }
             }
-            //int iter = 0;
 
             while (openCoords.Count > 2)   // until there is stuff in the open coords  then
             {
-
-                //if (iter >= 1000)
-                //{
-                //    Debug.Log($"<color=red>Reached max number of rooms there might be an issue</color>");
-                //    break;
-                //}
-
-                //iter++;
-
                 var ranCoord = openCoords[Random.Range(0, openCoords.Count - 1)];   //get a random from the list of possible positionss
 
-                var room = FloodFill(gridArr, ranCoord, checkRoomOnly, typeToCheck);
+                var room = FloodFill(gridArr, ranCoord, checkTypeOnly, typeToCheck,minCheckWeight);
 
                 for (int i = openCoords.Count(); i-- > 0;) //for every open coord 
                 {
@@ -1497,7 +1561,7 @@ namespace DungeonForge
                     }
                 }
 
-                List<Tile> roomBasicTile = new List<Tile>();
+                List<DFTile> roomBasicTile = new List<DFTile>();
 
                 for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
@@ -1507,16 +1571,15 @@ namespace DungeonForge
                         {
                             if (new Vector2Int(x, y) == coord)
                             {
-                                gridArr[x, y].tileType = Tile.TileType.FLOORROOM;
+                                gridArr[x, y].tileType = DFTile.TileType.FLOORROOM;
                                 roomBasicTile.Add(gridArr[x, y]);
                             }
                         }
                     }
                 }
-
                 rooms.Add(roomBasicTile);
             }
-            Debug.Log(rooms.Count);
+
             return rooms;
         }
 
@@ -1525,36 +1588,41 @@ namespace DungeonForge
         #region Cellular Automata
 
         /// <summary>
-        /// mainly used for CA given a % fill up with wieght 1
+        /// Fills the grid randomly with points
         /// </summary>
         /// <param name="gridArr"></param>
-        /// <param name="ranValue"></param>
-        public static List<Tile> SpawnRandomPointsCA(Tile[,] gridArr, float ranValue)
+        /// <param name="percentageOfSpawn">Each points percenatge of being populated</param>
+        /// <param name="weight">The weight set of the populated tile</param>
+        /// <returns></returns>
+        public static List<DFTile> SpawnRandomPointsOnTheGrid(DFTile[,] gridArr, float percentageOfSpawn,float weight = 1)
         {
-
-            List<Tile> points = new List<Tile>();
+            List<DFTile> points = new List<DFTile>();
 
             for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
-                    if (Random.value > ranValue)
+                    if (Random.value > percentageOfSpawn)
                     {
                         gridArr[x, y].tileWeight = 0;
                     }
                     else
                     {
-                        gridArr[x, y].tileWeight = 1;
+                        gridArr[x, y].tileWeight = weight;
                         points.Add(gridArr[x, y]);
                     }
                 }
             }
 
-
             return points;
         }
 
-        public static void RunCaIteration2D(Tile[,] gridArr, int neighboursNeeded)
+        /// <summary>
+        /// Cellular Automata iteration
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="neighboursNeeded">The Number of alive neighbour a cell needs to be alive</param>
+        public static void RunCaIteration2D(DFTile[,] gridArr, int neighboursNeeded)
         {
 
             float[,] copyArrayStorage = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
@@ -1609,7 +1677,12 @@ namespace DungeonForge
             }
         }
 
-        public static void CleanUp2dCA(Tile[,] gridArr, int neighboursNeeded)
+        /// <summary>
+        /// Cellular Automata iteration without the new spawning of points, used for smooting out other algorithms generations
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="neighboursNeeded">The Number of alive neighbour a cell needs to be alive</param>
+        public static void CleanUp2dCA(DFTile[,] gridArr, int neighboursNeeded)
         {
             float[,] copyArrayStorage = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
@@ -1668,13 +1741,23 @@ namespace DungeonForge
 
         #region Room Gen 
 
-        public static List<Tile> SpawnRoom(int width, int height, Vector2Int centerPoint, Tile[,] gridArr, bool test = false)
+        /// <summary>
+        /// Return null if the shape is not a valid or it hit something else, If the shape is valid it will return a list of tiles in that shape
+        /// </summary>
+        /// <param name="width">Widht of the shape</param>
+        /// <param name="height">Height of the shape</param>
+        /// <param name="centerPoint">The center point</param>
+        /// <param name="gridArr">The grid to draw the circle on</param>
+        /// <param name="actuallyDraw">False to make no changes to the grid, true to apply changes</param>
+        /// <param name="tileType">The type of tile to make the tiles in the radius</param>
+        /// <param name="setWeight">The weight to set the tiles in the circle</param>
+        /// <returns></returns>
+        public static List<DFTile> SpawnRoom(int width, int height, Vector2Int centerPoint, DFTile[,] gridArr,  bool actuallyDraw = false, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, float setWeight = 0.75f)
         {
-            var room = new List<Tile>();
+            var room = new List<DFTile>();
 
             int halfWidth = width / 2;
             int halfHeight = height / 2;
-
 
             if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr.GetLength(0))
                 return null;
@@ -1682,19 +1765,18 @@ namespace DungeonForge
             if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.GetLength(1))
                 return null;
 
-
             for (int y = centerPoint.y - halfHeight; y < centerPoint.y + halfHeight; y++)
             {
                 for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfWidth; x++)
                 {
-                    if (gridArr[x, y].tileType != Tile.TileType.VOID)
+                    if (gridArr[x, y].tileType != DFTile.TileType.VOID)
                     {
                         return null;
                     }
-                    if (!test)
+                    if (!actuallyDraw)
                     {
-                        gridArr[x, y].tileType = Tile.TileType.FLOORROOM;
-                        gridArr[x, y].tileWeight = 0.75f;
+                        gridArr[x, y].tileType = tileType;
+                        gridArr[x, y].tileWeight = setWeight;
                         room.Add(gridArr[x, y]);
                     }
                 }
@@ -1704,33 +1786,35 @@ namespace DungeonForge
         }
 
         /// <summary>
-        /// returns true if nothing was touched
+        /// Return null if the circle is not a valid or it hit something else, If the circle is valid it will return a list of tiles in that circle
         /// </summary>
-        /// <param name="gridArr"></param>
-        /// <param name="center"></param>
-        /// <param name="r"></param>
-        /// <param name="tileType"></param>
+        /// <param name="gridArr">The grid to draw the circle on</param>
+        /// <param name="center">Center of the circle</param>
+        /// <param name="radius">The radius</param>
+        /// <param name="tileType">The type of tile to make the tiles in the radius</param>
+        /// <param name="setWeight">The weight to set the tiles in the circle</param>
+        /// <param name="actuallyDraw">False to make no changes to the grid, true to apply changes</param>
         /// <returns></returns>
-        public static List<Tile> DrawCircle(Tile[,] gridArr, Vector2Int center, int r, Tile.TileType tileType = Tile.TileType.FLOORROOM, bool draw = false)
+        public static List<DFTile> DrawCircle(DFTile[,] gridArr, Vector2Int center, int radius, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, bool actuallyDraw = false, float setWeight = 0.75f)
         {
-            var room = new List<Tile>();
+            var room = new List<DFTile>();
 
-            for (int y = center.y - r; y <= center.y + r; y++)
+            for (int y = center.y - radius; y <= center.y + radius; y++)
             {
-                for (int x = center.x - r; x <= center.x + r; x++)
+                for (int x = center.x - radius; x <= center.x + radius; x++)
                 {
-                    bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < r * r;
+                    bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < radius * radius;
                     if (isInCircle)
                     {
-                        if (gridArr[x, y].tileType != Tile.TileType.VOID)
+                        if (gridArr[x, y].tileType != DFTile.TileType.VOID)
                         {
                             return null;
                         }
 
-                        if (draw)
+                        if (actuallyDraw)
                         {
                             gridArr[x, y].tileType = tileType;
-                            gridArr[x, y].tileWeight = 0.75f;
+                            gridArr[x, y].tileWeight = setWeight;
                             room.Add(gridArr[x, y]);
                         }
                     }
@@ -1740,23 +1824,24 @@ namespace DungeonForge
             return room;
         }
 
-        public static Tile[,] CompartimentalisedCA(BoundsInt boundsRoom)
+        //to do
+        public static DFTile[,] CompartimentalisedCA(BoundsInt boundsRoom)
         {
             int maxY = boundsRoom.zMax - boundsRoom.zMin;
             int maxX = boundsRoom.xMax - boundsRoom.xMin;
 
-            Tile[,] _gridarray2D = new Tile[maxX, maxY];
+            DFTile[,] _gridarray2D = new DFTile[maxX, maxY];
 
             for (int y = 0; y < maxY; y++)
             {
                 for (int x = 0; x < maxX; x++)
                 {
-                    _gridarray2D[x, y] = new Tile();
+                    _gridarray2D[x, y] = new DFTile();
                     _gridarray2D[x, y].position = new Vector2Int(x, y);
                 }
             }
 
-            SpawnRandomPointsCA(_gridarray2D, 0.55f);
+            SpawnRandomPointsOnTheGrid(_gridarray2D, 0.55f);
             RunCaIteration2D(_gridarray2D, 4);
             RunCaIteration2D(_gridarray2D, 4);
             CleanUp2dCA(_gridarray2D, 4);
@@ -1768,142 +1853,98 @@ namespace DungeonForge
 
         #region Diffusion-Limited Aggregation
 
-        public static void DiffLimAggregation(Tile[,] gridArr, int moversAmount, int actionTurns)
+        /// <summary>
+        /// Diffusion-Limited Aggregation function
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="moversAmount">Amoutn of particles</param>
+        /// <param name="stickingProbability">The chance of those particles sticking to eachother</param>
+        /// <returns></returns>
+        public static bool DiffLimAggregation(DFTile[,] gridArr, int moversAmount, float stickingProbability)
         {
-
-            //movers
-            //actionTurns
-            int height = gridArr.GetLength(1);
-            int length = gridArr.GetLength(0);
-
-            // you are going to spawn a set number of walkers
-            // each walker every loop is going to move to a new pos where there is no other walker if therre is skip turn
-            // if in the new pos there is a static obj then be static and stop moving
-
-            //after a set number of calls delete all the other objs
-
-
-            List<Vector2Int> moversList = new List<Vector2Int>();
-            List<Vector2Int> holdArray = new List<Vector2Int>();
-
-            for (int y = 0; y < height; y++)
+            if (stickingProbability <= 0 || stickingProbability > 1) 
             {
-                for (int x = 0; x < length; x++)
-                {
-                    if (gridArr[x, y].tileType != Tile.TileType.FLOORROOM)
-                        holdArray.Add(new Vector2Int(x, y));
-                }
+                Debug.Log($"The given probabiliy of sticking for DDiffusion-Limited Aggregation is not accepted and should be between 0 and 1 or 1");
+                return false;
             }
+
+            int height = gridArr.GetLength(1)-1;
+            int length = gridArr.GetLength(0)-1;
 
             for (int i = 0; i < moversAmount; i++)
             {
-                int ranVecIndex = Random.Range(0, holdArray.Count - 1);
+                Vector2Int position = new Vector2Int(Random.Range(0, length), Random.Range(0, height));
 
-                moversList.Add(new Vector2Int(holdArray[ranVecIndex].x, holdArray[ranVecIndex].y));
-
-                holdArray.RemoveAt(ranVecIndex);
-            }
-
-
-            for (int i = 0; i < actionTurns; i++)
-            {
-                for (int j = moversList.Count; j-- > 0;)
+                while (position.x > 0 && position.x < length - 1 && position.y > 0 && position.y < height - 1)
                 {
-                    int ranDir = Random.Range(1, 5);
+                    // Move the particle in a random direction
 
-                    switch (ranDir)
+                    if (CheckAround(gridArr, position))
                     {
-                        case 1:  //go right
-                            {
-                                if (moversList[j].x + 1 < gridArr.GetLength(0))
-                                {
-                                    if (!moversList.Contains(new Vector2Int(moversList[j].x + 1, moversList[j].y)))
-                                    {
-                                        moversList[j] = new Vector2Int(moversList[j].x + 1, moversList[j].y);
-                                    }
-                                }
-                            }
-                            break;
+                        if (Random.Range(0f, 1f) < stickingProbability)
+                        {
+                            gridArr[position.x, position.y].tileWeight = 0.75f;
+                            gridArr[position.x, position.y].tileType = DFTile.TileType.FLOORCORRIDOR;
+                        }
+                        break;
+                    }
 
-                        case 2: //go left
-                            {
-                                if (moversList[j].x - 1 >= 0)
-                                {
-                                    if (!moversList.Contains(new Vector2Int(moversList[j].x - 1, moversList[j].y)))
-                                    {
-                                        moversList[j] = new Vector2Int(moversList[j].x - 1, moversList[j].y);
-                                    }
-                                }
-                            }
+                    Vector2 direction;
+                    switch (Random.Range(0, 4))
+                    {
+                        case 0:
+                            direction = Vector2.left;
                             break;
-
-                        case 3:  //go down
-                            {
-                                if (moversList[j].y - 1 >= 0)
-                                {
-                                    if (!moversList.Contains(new Vector2Int(moversList[j].x, moversList[j].y - 1)))
-                                    {
-                                        moversList[j] = new Vector2Int(moversList[j].x, moversList[j].y - 1);
-                                    }
-                                }
-                            }
+                        case 1:
+                            direction = Vector2.right;
                             break;
-
-                        case 4:   //go up
-                            {
-                                if (moversList[j].y + 1 < gridArr.GetLength(1))
-                                {
-                                    if (!moversList.Contains(new Vector2Int(moversList[j].x, moversList[j].y + 1)))
-                                    {
-                                        moversList[j] = new Vector2Int(moversList[j].x, moversList[j].y + 1);
-                                    }
-                                }
-                            }
+                        case 2:
+                            direction = Vector2.up;
                             break;
-
+                        case 3:
+                            direction = Vector2.down;
+                            break;
                         default:
+                            direction = Vector2.zero;
                             break;
                     }
 
-                    if (CheckAround(gridArr, moversList[j]))
-                    {
-                        gridArr[moversList[j].x, moversList[j].y].tileWeight = 0.75f;
-                        gridArr[moversList[j].x, moversList[j].y].tileType = Tile.TileType.FLOORCORRIDOR;
-                        moversList.RemoveAt(j);
-                    }
+                    position += Vector2Int.RoundToInt(direction);
                 }
             }
+
+            return true;
         }
 
         /// <summary>
-        /// return true if something next to it is what we want
+        /// Used for Diffusion Limited Aggregation Algorithm, check for nearby cells to stop and settles
         /// </summary>
         /// <param name="gridArr"></param>
         /// <param name="currPos"></param>
         /// <returns></returns>
-        private static bool CheckAround(Tile[,] gridArr, Vector2Int currPos)
+        private static bool CheckAround(DFTile[,] gridArr, Vector2Int currPos)
         {
             if (currPos.x + 1 < gridArr.GetLength(0))
             {
-                if (gridArr[currPos.x + 1, currPos.y].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x + 1, currPos.y].tileType == Tile.TileType.FLOORCORRIDOR)
+                if (gridArr[currPos.x + 1, currPos.y].tileType == DFTile.TileType.FLOORROOM || gridArr[currPos.x + 1, currPos.y].tileType == DFTile.TileType.FLOORCORRIDOR)
                     return true;
             }
 
             if (currPos.y + 1 < gridArr.GetLength(1))
             {
-                if (gridArr[currPos.x, currPos.y + 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y + 1].tileType == Tile.TileType.FLOORCORRIDOR)
+                if (gridArr[currPos.x, currPos.y + 1].tileType == DFTile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y + 1].tileType == DFTile.TileType.FLOORCORRIDOR)
                     return true;
             }
 
             if (currPos.y - 1 >= 0)
             {
-                if (gridArr[currPos.x, currPos.y - 1].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y - 1].tileType == Tile.TileType.FLOORCORRIDOR)
+                if (gridArr[currPos.x, currPos.y - 1].tileType == DFTile.TileType.FLOORROOM || gridArr[currPos.x, currPos.y - 1].tileType == DFTile.TileType.FLOORCORRIDOR)
                     return true;
             }
 
             if (currPos.x - 1 >= 0)
             {
-                if (gridArr[currPos.x - 1, currPos.y].tileType == Tile.TileType.FLOORROOM || gridArr[currPos.x - 1, currPos.y].tileType == Tile.TileType.FLOORCORRIDOR)
+                if (gridArr[currPos.x - 1, currPos.y].tileType == DFTile.TileType.FLOORROOM || gridArr[currPos.x - 1, currPos.y].tileType == DFTile.TileType.FLOORCORRIDOR)
                     return true;
             }
 
@@ -1989,7 +2030,7 @@ namespace DungeonForge
             return true;
         }
 
-        public static List<Vector2> RunPoissantCheckOnCurrentTileMap(List<Vector2> poissantPositions, Tile[,] gridArr, float perc)
+        public static List<Vector2> RunPoissantCheckOnCurrentTileMap(List<Vector2> poissantPositions, DFTile[,] gridArr, float perc)
         {
             var acceptedPoissantList = new List<Vector2>();
 
@@ -2008,7 +2049,7 @@ namespace DungeonForge
                 if (tileY > gridArr.GetLength(1) - 1)
                     continue;
 
-                if (gridArr[tileX, tileY].tileType == Tile.TileType.FLOORROOM)
+                if (gridArr[tileX, tileY].tileType == DFTile.TileType.FLOORROOM)
                 {
                     if (Random.value > perc)
                         acceptedPoissantList.Add(poissantPositions[i]);
@@ -2022,15 +2063,25 @@ namespace DungeonForge
 
         #region DiamondSquare algo
 
-        public static void DiamondSquare(int maxHeight, int minHeight, float roughness, Tile[,] gridArr)
+        public static bool DiamondSquare(int maxHeight, int minHeight, float roughness, DFTile[,] gridArr)
         {
+            if (gridArr.GetLength(0) != gridArr.GetLength(1))
+            {
+                Debug.Log($"The diamond square algorithm only accepts grid that are square shaped, therefore both height and width need to be equal");
+                return false;
+            }
+
+            if (gridArr.GetLength(1) % 2 == 0) 
+            {
+                Debug.Log($"The diamond square algorithm only accepts width and height which satisfies the 2n+1 formula");
+                return false;
+            }
+
             // get the size
             var mapSize = gridArr.GetLength(1);
 
             // start the grid
             float[,] grid2D = new float[mapSize, mapSize];
-
-            //need to check for 2n + 1
 
             //set the 4 random corners
             grid2D[0, 0] = Random.Range(minHeight, maxHeight);   // top left
@@ -2038,7 +2089,7 @@ namespace DungeonForge
             grid2D[0, mapSize - 1] = Random.Range(minHeight, maxHeight); // top right
             grid2D[mapSize - 1, 0] = Random.Range(minHeight, maxHeight); // bot left
 
-            var chunkSize = mapSize - 1;  //size of square in current iter of algo
+            var chunkSize = mapSize - 1; 
 
             while (chunkSize > 1)
             {
@@ -2075,14 +2126,30 @@ namespace DungeonForge
                     gridArr[x, y].tileWeight = grid2D[y, x];
                 }
             }
+
+            return true;
         }
 
         #endregion
 
         #region Voronoi
 
-        public static void Voronoi2D(Tile[,] gridArr, int numOfPoints, bool calcType)
+        /// <summary>
+        /// Given a grid performs the voronoi fracture algorithm. Sets the index variable in the DFTile class to the specific fracture index
+        /// </summary>
+        /// <param name="gridArr"></param>
+        /// <param name="numOfPoints">number of voronoi fractures</param>
+        /// <param name="DistanceCalculationType">True for Euclidean Distance, False for Manhattan Distance</param>
+        public static void Voronoi2D(DFTile[,] gridArr, int numOfPoints, bool DistanceCalculationType)
         {
+            List<Color> colors = new List<Color>();
+            for (int i = 0; i < numOfPoints; i++)
+            {
+                Color newColor = new Color(Random.value, Random.value, Random.value);
+                colors.Add(newColor);
+            }
+
+
             var pointsArr = new List<Vector2>();
 
             int totalSize = gridArr.GetLength(1) * gridArr.GetLength(0);
@@ -2116,7 +2183,7 @@ namespace DungeonForge
                     {
                         if (closestDistance < 0)
                         {
-                            if (calcType)
+                            if (DistanceCalculationType)
                                 closestDistance = DFGeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArr[x, y].position.x, gridArr[x, y].position.y));
                             else
                                 closestDistance = DFGeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArr[x, y].position.x, gridArr[x, y].position.y));
@@ -2125,7 +2192,7 @@ namespace DungeonForge
                         {
                             float newDist;
 
-                            if (calcType)
+                            if (DistanceCalculationType)
                                 newDist = DFGeneralUtil.EuclideanDistance2D(pointsArr[i], new Vector2(gridArr[x, y].position.x, gridArr[x, y].position.y));
                             else
                                 newDist = DFGeneralUtil.ManhattanDistance2D(pointsArr[i], new Vector2(gridArr[x, y].position.x, gridArr[x, y].position.y));
@@ -2139,14 +2206,18 @@ namespace DungeonForge
                     }
 
                     gridArr[x, y].idx = closestIndex;
+                    gridArr[x, y].color = colors[closestIndex];
                 }
             }
 
             GetBoundariesVoronoi(gridArr);
         }
 
-
-        private static void GetBoundariesVoronoi(Tile[,] gridArr)
+        /// <summary>
+        /// Looks for the boundaries between the voronoi cells and resets the neighbouring tiles to creates boundries and walls. This is based on the index variable in the DFTile class
+        /// </summary>
+        /// <param name="gridArr"></param>
+        private static void GetBoundariesVoronoi(DFTile[,] gridArr)
         {
             var childPosArry = DFGeneralUtil.childPosArry4Side;
 
@@ -2189,12 +2260,10 @@ namespace DungeonForge
                     }
                     else
                     {
-                        gridArr[x, y].tileWeight = 0;
+                        DFGeneralUtil.ResetTile(gridArr[x, y]);
                     }
-
                 }
             }
-
         }
 
         #endregion
@@ -2202,7 +2271,7 @@ namespace DungeonForge
         #region Marching Cubes Generation
 
 
-        public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(Tile[,] gridArr, int roomHeight = 7)
+        public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(DFTile[,] gridArr, int roomHeight = 7)
         {
             var marchingCubesArr = new MarchingCubeClass[gridArr.GetLength(0), gridArr.GetLength(1), roomHeight];
 
@@ -2214,7 +2283,7 @@ namespace DungeonForge
                     {
                         if (z == 0 || z == marchingCubesArr.GetLength(2) - 1) //we draw everything as this is the ceiling and the floor
                         {
-                            if (gridArr[x, y].tileType == Tile.TileType.WALL || gridArr[x, y].tileType == Tile.TileType.WALLCORRIDOR)
+                            if (gridArr[x, y].tileType == DFTile.TileType.WALL || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                             {
                                 marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x, y].position.x, z, gridArr[x, y].position.y), gridArr[x, y].tileWeight != 0 ? 1 : 0, 0.95f);
                             }
@@ -2225,7 +2294,7 @@ namespace DungeonForge
                         }
                         else // this is justt he wall
                         {
-                            if (gridArr[x, y].tileType == Tile.TileType.WALL || gridArr[x, y].tileType == Tile.TileType.WALLCORRIDOR) // draw everything but the floor
+                            if (gridArr[x, y].tileType == DFTile.TileType.WALL || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR) // draw everything but the floor
                             {
                                 marchingCubesArr[x, y, z] = new MarchingCubeClass(new Vector3Int(gridArr[x, y].position.x, z, gridArr[x, y].position.y), 1, 1);
                             }
@@ -2331,6 +2400,11 @@ namespace DungeonForge
 
         #region Type and Utility section
 
+        /// <summary>
+        /// Given a list it shuffles the elements
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ts"></param>
         public static void ShuffleList<T>(this IList<T> ts)
         {
             var count = ts.Count;
@@ -2344,7 +2418,7 @@ namespace DungeonForge
             }
         }
 
-        public static void SetUpTileCorridorTypesUI(Tile[,] gridArr, int width)
+        public static void SetUpTileCorridorTypesUI(DFTile[,] gridArr, int width)
         {
             SetUpTileTypesCorridor(gridArr);
 
@@ -2354,11 +2428,11 @@ namespace DungeonForge
                 {
                     for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
-                        if (gridArr[x, y].tileType == Tile.TileType.WALLCORRIDOR)
+                        if (gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                         {
-                            gridArr[x, y].tileType = Tile.TileType.FLOORCORRIDOR;
+                            gridArr[x, y].tileType = DFTile.TileType.FLOORCORRIDOR;
                         }
-                        if (gridArr[x, y].tileType == Tile.TileType.FLOORCORRIDOR)
+                        if (gridArr[x, y].tileType == DFTile.TileType.FLOORCORRIDOR)
                         {
                         }
                     }
@@ -2370,47 +2444,13 @@ namespace DungeonForge
             SetUpTileTypesFloorWall(gridArr);
         }
 
-        /// <summary>
-        /// given a set of points finds the mid points of those points
-        /// </summary>
-        /// <param name="listOfPoints"></param>
-        /// <returns></returns>
-        public static Vector2 FindMiddlePoint(List<Vector2> listOfPoints)
-        {
-            var midPoint = new Vector2(0, 0);
-
-            foreach (var point in listOfPoints)
-            {
-                midPoint.x += point.x;
-                midPoint.y += point.y;
-            }
-
-            midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
-
-            return midPoint;
-        }
-
-        public static Vector2 FindMiddlePoint(List<Tile> listOfPoints)
-        {
-            var midPoint = new Vector2(0, 0);
-
-            foreach (var point in listOfPoints)
-            {
-                midPoint.x += point.position.x;
-                midPoint.y += point.position.y;
-            }
-
-            midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
-
-            return midPoint;
-        }
-
+       
         /// <summary>
         /// call this to set up the tile type, for wall and floor, algo that recognises walls. this recognise
         /// </summary>
         /// <param name="gridArr"></param>
         /// <param name="diagonalTiles">diag tile depends if it uses the 8 or 4 child arr</param>
-        public static void SetUpTileTypesFloorWall(Tile[,] gridArr)
+        public static void SetUpTileTypesFloorWall(DFTile[,] gridArr)
         {
             int[,] childPosArry = new int[0, 0];
 
@@ -2448,7 +2488,7 @@ namespace DungeonForge
 
                         if (wall)
                         {
-                            gridArr[x, y].tileType = Tile.TileType.WALL;
+                            gridArr[x, y].tileType = DFTile.TileType.WALL;
                             gridArr[x, y].tileWeight = 1;
                         }
                         else
@@ -2459,13 +2499,13 @@ namespace DungeonForge
                 }
             }
 
-            var copyArr = new Tile[gridArr.GetLength(0), gridArr.GetLength(1)];
+            var copyArr = new DFTile[gridArr.GetLength(0), gridArr.GetLength(1)];
 
             for (int y = 0; y < copyArr.GetLength(1); y++)
             {
                 for (int x = 0; x < copyArr.GetLength(0); x++)
                 {
-                    copyArr[x, y] = new Tile();
+                    copyArr[x, y] = new DFTile();
                     copyArr[x, y].tileType = gridArr[x, y].tileType;
                     copyArr[x, y].tileWeight = gridArr[x, y].tileWeight;
                 }
@@ -2490,7 +2530,7 @@ namespace DungeonForge
                             {
                                 continue;
                             }
-                            else if (copyArr[node_position[0], node_position[1]].tileType != Tile.TileType.VOID)
+                            else if (copyArr[node_position[0], node_position[1]].tileType != DFTile.TileType.VOID)
                             {
                                 neigh++;
                             }
@@ -2499,26 +2539,26 @@ namespace DungeonForge
                         if (neigh >= 2)
                         {
                             gridArr[x, y].tileWeight = 1;
-                            gridArr[x, y].tileType = Tile.TileType.WALL;
+                            gridArr[x, y].tileType = DFTile.TileType.WALL;
                         }
                     }
                 }
             }
         }
 
-        public static void SetUpTileTypesCorridor(Tile[,] gridArr)
+        public static void SetUpTileTypesCorridor(DFTile[,] gridArr)
         {
             int[,] childPosArry = new int[0, 0];
 
             childPosArry = DFGeneralUtil.childPosArry4Side;
 
-            var copyArr = new Tile[gridArr.GetLength(0), gridArr.GetLength(1)];
+            var copyArr = new DFTile[gridArr.GetLength(0), gridArr.GetLength(1)];
 
             for (int y = 0; y < copyArr.GetLength(1); y++)
             {
                 for (int x = 0; x < copyArr.GetLength(0); x++)
                 {
-                    copyArr[x, y] = new Tile();
+                    copyArr[x, y] = new DFTile();
                     copyArr[x, y].tileType = gridArr[x, y].tileType;
                     copyArr[x, y].tileWeight = gridArr[x, y].tileWeight;
                 }
@@ -2528,7 +2568,7 @@ namespace DungeonForge
             {
                 for (int x = 0; x < copyArr.GetLength(0); x++)
                 {
-                    if (copyArr[x, y].tileType == Tile.TileType.FLOORCORRIDOR)
+                    if (copyArr[x, y].tileType == DFTile.TileType.FLOORCORRIDOR)
                     {
 
                         for (int i = 0; i < childPosArry.Length / 2; i++)
@@ -2542,9 +2582,9 @@ namespace DungeonForge
                             {
                                 continue;
                             }
-                            else if (copyArr[node_position[0], node_position[1]].tileType == Tile.TileType.VOID)
+                            else if (copyArr[node_position[0], node_position[1]].tileType == DFTile.TileType.VOID)
                             {
-                                gridArr[node_position[0], node_position[1]].tileType = Tile.TileType.WALLCORRIDOR;
+                                gridArr[node_position[0], node_position[1]].tileType = DFTile.TileType.WALLCORRIDOR;
                                 gridArr[node_position[0], node_position[1]].tileWeight = 1;
                             }
                         }
@@ -2553,26 +2593,12 @@ namespace DungeonForge
             }
         }
 
-        public static void RestartArr(Tile[,] gridArr)
-        {
-            for (int y = 0; y < gridArr.GetLength(1); y++)
-            {
-                for (int x = 0; x < gridArr.GetLength(0); x++)
-                {
-                    gridArr[x, y] = new Tile();
-                    gridArr[x, y].position = new Vector2Int(x, y);
-                    gridArr[x, y].tileType = Tile.TileType.VOID;
-                    gridArr[x, y].color = Color.white;
-                }
-            }
-        }
-
-        public static void SetUpCorridorWithPath(List<Tile> path, float customWeight = 0.75f)
+        public static void SetUpCorridorWithPath(List<DFTile> path, float customWeight = 0.75f)
         {
             foreach (var tile in path)
             {
-                if (tile.tileType != Tile.TileType.FLOORROOM)
-                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
+                if (tile.tileType != DFTile.TileType.FLOORROOM)
+                    tile.tileType = DFTile.TileType.FLOORCORRIDOR;
 
                 tile.tileWeight = customWeight;
             }
@@ -2585,11 +2611,10 @@ namespace DungeonForge
     #region classes
 
     /// <summary>
-    /// This is the basic tile call 
+    /// This is the basic tile to inherit from 
     /// </summary>
-    public class Tile
+    public class DFTile
     {
-
         public Color32 color;
         public Vector2Int position = Vector2Int.zero;
         public float tileWeight;
@@ -2610,19 +2635,19 @@ namespace DungeonForge
 
         public TileType tileType = 0;
 
-        public Tile() { }
-        public Tile(Tile toCopy)
+        public DFTile() { }
+        public DFTile(DFTile toCopy)
         {
-            this.color = toCopy.color;
-            this.tileType = toCopy.tileType;
-            this.position = toCopy.position;
-            this.cost = toCopy.cost;
-            this.idx = toCopy.idx;
-            this.visited = toCopy.visited;
-            this.tileWeight = toCopy.tileWeight;
+            color = toCopy.color;
+            tileType = toCopy.tileType;
+            position = toCopy.position;
+            cost = toCopy.cost;
+            idx = toCopy.idx;
+            visited = toCopy.visited;
+            tileWeight = toCopy.tileWeight;
         }
 
-        public Tile(SerialiableVector2Int position, float tileWeight, float cost, int tileType)
+        public DFTile(SerialiableVector2Int position, float tileWeight, float cost, int tileType)
         {
             this.tileType = (TileType)tileType;
             this.position = new Vector2Int(position.x, position.y);
@@ -2682,14 +2707,14 @@ namespace DungeonForge
     public class AStar_Node
     {
 
-        public Tile refToBasicTile;
+        public DFTile refToBasicTile;
         public AStar_Node parent;
 
         public float g = 0;
         public float f = 0;
         public float h = 0;
 
-        public AStar_Node(Tile basicTile)
+        public AStar_Node(DFTile basicTile)
         {
             refToBasicTile = basicTile;
         }
@@ -2714,7 +2739,7 @@ namespace DungeonForge
     {
         public float distance = 99999;
         public DjNode parentDJnode = null;
-        public Tile gridRefTile = null;
+        public DFTile gridRefTile = null;
         public Vector2Int coord = Vector2Int.zero;
     }
 

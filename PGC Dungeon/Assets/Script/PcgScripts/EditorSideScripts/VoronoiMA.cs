@@ -22,7 +22,7 @@ namespace DungeonForge
         public int currStateIndex = 0;
 
         [HideInInspector]
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
 
         [HideInInspector]

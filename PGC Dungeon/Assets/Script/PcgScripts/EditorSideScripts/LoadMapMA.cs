@@ -17,14 +17,14 @@ namespace DungeonForge
         public PCGManager PcgManager;
 
         [HideInInspector]
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
         public void InspectorAwake()
         {
             PcgManager = this.transform.GetComponent<PCGManager>();
         }
 
-        public Tile[,] LoadDataCall(string fileName)
+        public DFTile[,] LoadDataCall(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -41,12 +41,12 @@ namespace DungeonForge
                 MemoryStream stream = new MemoryStream(data);
                 SerializableTile[,] serializableMap = (SerializableTile[,])formatter.Deserialize(stream);
 
-                Tile[,] map = new Tile[serializableMap.GetLength(0), serializableMap.GetLength(1)];
+                DFTile[,] map = new DFTile[serializableMap.GetLength(0), serializableMap.GetLength(1)];
                 for (int i = 0; i < serializableMap.GetLength(1); i++)
                 {
                     for (int j = 0; j < serializableMap.GetLength(0); j++)
                     {
-                        map[j, i] = new Tile(serializableMap[j, i].position, serializableMap[j, i].tileWeight, serializableMap[j, i].cost, serializableMap[j, i].tileType);
+                        map[j, i] = new DFTile(serializableMap[j, i].position, serializableMap[j, i].tileWeight, serializableMap[j, i].cost, serializableMap[j, i].tileType);
                     }
                 }
 

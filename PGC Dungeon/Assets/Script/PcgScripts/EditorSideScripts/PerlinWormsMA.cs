@@ -12,7 +12,7 @@ namespace DungeonForge
         public PCGManager pcgManager;
 
         [HideInInspector]
-        public HashSet<Tile> wormsTiles = new HashSet<Tile>();
+        public HashSet<DFTile> wormsTiles = new HashSet<DFTile>();
 
         // main algo specific
         [HideInInspector]
@@ -34,7 +34,7 @@ namespace DungeonForge
         public float lacunarity;
 
         [HideInInspector]
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
         [HideInInspector]
         public bool allowedBack;

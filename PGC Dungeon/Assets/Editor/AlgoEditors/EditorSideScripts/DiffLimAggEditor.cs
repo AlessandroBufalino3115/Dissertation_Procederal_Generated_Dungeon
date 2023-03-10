@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-
 
 namespace DungeonForge
 {
@@ -16,9 +14,9 @@ namespace DungeonForge
         int corridorThickness;
 
         int selStartRoomGenType = 0;
-        GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "" }, new GUIContent() { text = "square room", tooltip = "" }, new GUIContent() { text = "random WAll", tooltip = "" } };
+        GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "Create a circular room in the middle of the canvas" }, new GUIContent() { text = "Square room", tooltip = "Create a square room in the middle of the canvas" }, new GUIContent() { text = "Random room", tooltip = "Given the maximum height and length a randomly created room will be generated" } };
 
-        int cycles;
+        float percentageOfStick;
 
         float percOfSpawn;
 
@@ -90,9 +88,9 @@ namespace DungeonForge
                 }
 
                 DFGeneralUtil.SpacesUILayout(2);
-                cycles = (int)EditorGUILayout.Slider(new GUIContent() { text = "cycles", tooltip = "" }, cycles, 40, 350);
+                percentageOfStick = EditorGUILayout.Slider(new GUIContent() { text = "cycles", tooltip = "" }, percentageOfStick, 0.05f, 1f);
 
-                percOfSpawn = EditorGUILayout.Slider(new GUIContent() { text = "perc of spawn", tooltip = "" }, percOfSpawn, 0.15f, 0.35f);
+                percOfSpawn = EditorGUILayout.Slider(new GUIContent() { text = "perc of spawn", tooltip = "" }, percOfSpawn, 0.15f, 0.7f);
 
                 DFGeneralUtil.SpacesUILayout(2);
 
@@ -103,7 +101,7 @@ namespace DungeonForge
                 if (GUILayout.Button("Generate Diff lim agg Randomisation"))// gen something
                 {
                     var centerPoint = new Vector2Int(mainScript.pcgManager.gridArr.GetLength(0) / 2, mainScript.pcgManager.gridArr.GetLength(1) / 2);
-                    DFAlgoBank.RestartArr(mainScript.pcgManager.gridArr);
+                    DFGeneralUtil.RestartGrid(mainScript.pcgManager.gridArr);
 
                     bool allowedToContinue = false;
 
@@ -115,7 +113,7 @@ namespace DungeonForge
 
                                 if (sphereRoom != null)
                                 {
-                                    DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere, draw: true);
+                                    DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere, actuallyDraw: true);
                                     mainScript.generatedBool = true;
                                     allowedToContinue = true;
                                 }
@@ -170,7 +168,6 @@ namespace DungeonForge
                     }
                     if (!allowedToContinue)
                     {
-
                         EditorGUILayout.HelpBox("There was an issue with the size asked to generate the rooms please choose another size", MessageType.Error);
                         mainScript.pcgManager.Restart();
                         mainScript.generatedBool = false;
@@ -179,12 +176,11 @@ namespace DungeonForge
                     {
                         int size = mainScript.pcgManager.gridArr.GetLength(1) * mainScript.pcgManager.gridArr.GetLength(0);
 
-                        DFAlgoBank.DiffLimAggregation(mainScript.pcgManager.gridArr, (int)(size * 0.25f), 300);
+                        DFAlgoBank.DiffLimAggregation(mainScript.pcgManager.gridArr, (int)(size * percOfSpawn), percentageOfStick);
 
                         DFAlgoBank.SetUpTileCorridorTypesUI(mainScript.pcgManager.gridArr, corridorThickness);
 
                         mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
-
                     }
                 }
             }
@@ -193,6 +189,7 @@ namespace DungeonForge
                 if (GUILayout.Button("Restart"))// gen something
                 {
                     mainScript.pcgManager.Restart();
+                    mainScript.generatedBool = false;
                 }
 
                 DFGeneralUtil.SpacesUILayout(2);

@@ -13,81 +13,164 @@ namespace DungeonForge
         public static int[,] childPosArry4Side = { { 0, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 } };
         public static int[,] childPosArry8Side = { { 0, -1 }, { 1, -1 }, { -1, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 }, { -1, 1 } };
 
-        /// <summary>
-        /// from 0 
-        /// </summary>
-        /// <param name="maxX"></param>
-        /// <param name="maxY"></param>
-        /// <returns></returns>
-        public static Vector2Int RanVector2Int(int maxX, int maxY)
-        {
-            int ranX = Random.Range(0, maxX);
-            int ranY = Random.Range(0, maxY);
 
-            return new Vector2Int(ranX, ranY);
-        }
+        public static float EuclideanDistance2D(Vector2 pointA, Vector2 pointB) => Vector2.Distance(pointA, pointB);
 
+        public static float ManhattanDistance2D(Vector2 pointA, Vector2 pointB) => Mathf.Abs(pointA.x - pointB.x) + Mathf.Abs(pointA.y - pointB.y);
+
+        public static float ManhattanDistance3D(Vector3 pointA, Vector3 pointB) => Mathf.Abs(pointA.x - pointB.x) + Mathf.Abs(pointA.y - pointB.y) + Mathf.Abs(pointA.z - pointB.z);
+
+        public static float EuclideanDistance3D(Vector3 pointA, Vector3 pointB) => Vector3.Distance(pointA, pointB);
 
         /// <summary>
-        /// from 0 
+        /// Given a 2D position, find the corresponding Tile
         /// </summary>
-        /// <param name="maxX"></param>
-        /// <param name="maxY"></param>
+        /// <param name="point"></param>
+        /// <param name="gridArr"></param>
         /// <returns></returns>
-        public static Vector3Int RanVector3Int(int maxX, int maxY, int maxZ)
+        public static DFTile WorldPosToTile(Vector2 point, DFTile[,] gridArr)
         {
-            int ranX = Random.Range(0, maxX);
-            int ranY = Random.Range(0, maxY);
-            int ranZ = Random.Range(0, maxZ);
+            float pointX = point.x;
+            float pointY = point.y;
 
+            float tileSize = 1;
+            int tileX = Mathf.FloorToInt(pointX / tileSize);
+            int tileY = Mathf.FloorToInt(pointY / tileSize);
 
-            return new Vector3Int(ranX, ranY, ranZ);
-        }
-
-        public static Vector2 RanVector2Float(float maxX, float maxY)
-        {
-            float ranX = Random.Range(0f, maxX);
-            float ranY = Random.Range(0f, maxY);
-
-            return new Vector2(ranX, ranY);
-        }
-
-        public static int PerfTimer(bool start, int startTimer = 0)
-        {
-            if (start)
+            if (tileX < 0 || tileY < 0 || tileX >= gridArr.GetLength(0) || tileY >= gridArr.GetLength(1))
             {
-                return Environment.TickCount & Int32.MaxValue;
+                return null;
             }
-            else
+
+            return gridArr[tileX, tileY];
+        }
+
+        /// <summary>
+        /// Return a random item from the list given
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static int ReturnRandomFromList<T>(List<T> list)
+        {
+            return list.Count == 1 ? 0 : Random.Range(0, list.Count);
+        }
+
+        /// <summary>
+        /// given a 2d Grid sets the colour of each index to the one of the respective type
+        /// </summary>
+        /// <param name="gridArr"></param>
+        public static void SetUpColorBasedOnType(DFTile[,] gridArr)
+        {
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
-                int timerEnd = Environment.TickCount & Int32.MaxValue;
+                for (int x = 0; x < gridArr.GetLength(0); x++)
+                {
+                    switch (gridArr[x, y].tileType)
+                    {
+                        case DFTile.TileType.VOID:
+                            gridArr[x, y].color = Color.white;
+                            break;
+                        case DFTile.TileType.FLOORROOM:
 
-                Debug.Log($"<color=yellow>Performance: This operation took {timerEnd - startTimer} ticks</color>");
+                            gridArr[x, y].color = Color.blue;
+                            break;
+                        case DFTile.TileType.WALL:
 
-                return timerEnd - startTimer;
+                            gridArr[x, y].color = Color.black;
+                            break;
+                        case DFTile.TileType.WALLCORRIDOR:
+
+                            gridArr[x, y].color = Color.green;
+                            break;
+                        case DFTile.TileType.ROOF:
+                            gridArr[x, y].color = Color.gray;
+                            break;
+                        case DFTile.TileType.FLOORCORRIDOR:
+
+                            gridArr[x, y].color = Color.yellow;
+                            break;
+                        case DFTile.TileType.AVOID:
+
+                            gridArr[x, y].color = Color.red;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
-        public static float EuclideanDistance2D(Vector2 point1, Vector2 point2)
+        /// <summary>
+        /// given a set of points finds the mid points of those points
+        /// </summary>
+        /// <param name="listOfPoints"></param>
+        /// <returns></returns>
+        public static Vector2 FindMiddlePoint(List<Vector2> listOfPoints)
         {
-            return MathF.Sqrt(MathF.Pow((point1.x - point2.x), 2) + MathF.Pow((point1.y - point2.y), 2));
-        }
+            var midPoint = new Vector2(0, 0);
 
-        public static float ManhattanDistance2D(Vector2 point1, Vector2 point2)
-        {
-            return Mathf.Abs((point1.x - point2.x)) + Mathf.Abs((point1.y - point2.y));
-        }
-
-        public static void SpacesUILayout(int spaceNum)
-        {
-            for (int i = 0; i < spaceNum; i++)
+            foreach (var point in listOfPoints)
             {
-                EditorGUILayout.Space();
+                midPoint.x += point.x;
+                midPoint.y += point.y;
+            }
+
+            midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
+
+            return midPoint;
+        }
+
+        /// <summary>
+        /// given a set of Tiles finds the mid points of those points
+        /// </summary>
+        /// <param name="listOfPoints"></param>
+        /// <returns></returns>
+        public static Vector2 FindMiddlePoint(List<DFTile> listOfPoints)
+        {
+            var midPoint = new Vector2(0, 0);
+
+            foreach (var point in listOfPoints)
+            {
+                midPoint.x += point.position.x;
+                midPoint.y += point.position.y;
+            }
+
+            midPoint = new Vector2(midPoint.x / listOfPoints.Count, midPoint.y / listOfPoints.Count);
+
+            return midPoint;
+        }
+
+        /// <summary>
+        /// Given a grid it resets all the elements
+        /// </summary>
+        /// <param name="gridArr"></param>
+        public static void RestartGrid(DFTile[,] gridArr)
+        {
+            for (int y = 0; y < gridArr.GetLength(1); y++)
+            {
+                for (int x = 0; x < gridArr.GetLength(0); x++)
+                {
+                    gridArr[x, y] = new DFTile();
+                    gridArr[x, y].position = new Vector2Int(x, y);
+                    gridArr[x, y].tileType = DFTile.TileType.VOID;
+                    gridArr[x, y].color = Color.white;
+                }
             }
         }
 
+        /// <summary>
+        /// resets the colour,type and weight of a tile
+        /// </summary>
+        /// <param name="tile"></param>
+        public static void ResetTile(DFTile tile) 
+        {
+            tile.tileType = DFTile.TileType.VOID;
+            tile.color = Color.white;
+            tile.tileWeight = 0;
+        }
 
-
+        #region Texture Return Colour Region
         /// <summary>
         /// Sets the colour of the pixel that is saved in the class instance
         /// </summary>
@@ -95,7 +178,7 @@ namespace DungeonForge
         /// <param name="height"></param>
         /// <param name="gridArr"></param>
         /// <returns></returns>
-        public static Texture2D SetUpTextSelfCol(Tile[,] gridArr)
+        public static Texture2D SetUpTextSelfCol(DFTile[,] gridArr)
         {
             Texture2D texture = new Texture2D(gridArr.GetLength(0), gridArr.GetLength(1));
 
@@ -118,7 +201,7 @@ namespace DungeonForge
         /// <param name="gridArr"></param>
         /// <param name="black"></param>
         /// <returns></returns>
-        public static Texture2D SetUpTextBiColAnchor(Tile[,] gridArr, bool black = false)
+        public static Texture2D SetUpTextBiColAnchor(DFTile[,] gridArr, bool black = false)
         {
             Texture2D texture = new Texture2D(gridArr.GetLength(0), gridArr.GetLength(1));
 
@@ -153,7 +236,7 @@ namespace DungeonForge
         /// <param name="height"></param>
         /// <param name="gridArr"></param>
         /// <returns></returns>
-        public static Texture2D SetUpTextBiColShade(Tile[,] gridArr, float minWeight, float maxWeight, bool inverse = false)
+        public static Texture2D SetUpTextBiColShade(DFTile[,] gridArr, float minWeight, float maxWeight, bool inverse = false)
         {
             Texture2D texture = new Texture2D(gridArr.GetLength(0), gridArr.GetLength(1));
 
@@ -178,53 +261,89 @@ namespace DungeonForge
             return texture;
         }
 
-        public static int ReturnRandomFromList<T>(List<T> list)
-        {
-            return list.Count == 1 ? 0 : Random.Range(0, list.Count);
-        }
+        #endregion
 
-        public static void SetUpColorBasedOnType(Tile[,] gridArr)
+        #region Editor
+
+        public static void SpacesUILayout(int spaceNum)
         {
-            for (int y = 0; y < gridArr.Length; y++)
+            for (int i = 0; i < spaceNum; i++)
             {
-                for (int x = 0; x < gridArr.GetLength(0); x++)
-                {
-                    switch (gridArr[x, y].tileType)
-                    {
-                        case Tile.TileType.VOID:
-                            gridArr[x, y].color = Color.white;
-                            break;
-                        case Tile.TileType.FLOORROOM:
-
-                            // gridArr[x,y].color = new Color(0.5f, 0.5f, 0.5f,1f);
-                            gridArr[x, y].color = Color.blue;
-                            break;
-                        case Tile.TileType.WALL:
-
-                            gridArr[x, y].color = Color.black;
-                            break;
-                        case Tile.TileType.WALLCORRIDOR:
-
-                            gridArr[x, y].color = Color.green;
-                            break;
-                        case Tile.TileType.ROOF:
-                            break;
-                        case Tile.TileType.FLOORCORRIDOR:
-
-                            gridArr[x, y].color = Color.yellow;
-                            break;
-                        case Tile.TileType.AVOID:
-
-                            gridArr[x, y].color = Color.red;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                EditorGUILayout.Space();
             }
         }
 
-        public static void SaveMap(Tile[,] grid, string saveFileName)
+        public static void CellularAutomataEditorSection(PCGManager pcgManager, int neighbours, out int setNeighbours)
+        {
+            DFTile[,] gridArr = pcgManager.gridArr;
+
+            setNeighbours = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, neighbours, 3, 5);
+
+            if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
+            {
+                pcgManager.CreateBackUpGrid();
+
+                DFAlgoBank.CleanUp2dCA(gridArr, neighbours);
+
+                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(gridArr);
+            }
+            if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
+            {
+                pcgManager.CreateBackUpGrid();
+
+                DFAlgoBank.RunCaIteration2D(gridArr, neighbours);
+                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(gridArr);
+            }
+        }
+
+        public static bool CalculateRoomsEditorSection(PCGManager pcgManager, int minSize, out List<List<DFTile>> rooms, out int setMinSize)
+        {
+            setMinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
+
+            if (GUILayout.Button("Generate rooms"))
+            {
+                rooms = DFAlgoBank.GetAllRooms(pcgManager.gridArr);
+
+                pcgManager.CreateBackUpGrid();
+
+                if (setMinSize > 0)
+                {
+                    for (int i = rooms.Count; i-- > 0;)
+                    {
+                        if (rooms[i].Count <= setMinSize)
+                        {
+                            foreach (var tile in rooms[i])
+                            {
+                                tile.tileWeight = 0;
+                                tile.tileType = DFTile.TileType.VOID;
+                            }
+
+                            rooms.RemoveAt(i);
+                        }
+                    }
+                }
+                //mainScript.allowedForward = true;
+                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(pcgManager.gridArr, 0, 1, true);
+
+
+                return true;
+            }
+
+            rooms = null;
+            return false;
+
+        }
+
+        public static void GenerateMeshEditorSection(PCGManager pcgManager, string inSaveMapFileName, out string saveMapFileName)
+        {
+            saveMapFileName = EditorGUILayout.TextField("Save file name: ", inSaveMapFileName);
+            if (GUILayout.Button("save"))
+            {
+                SaveMap(pcgManager.gridArr, inSaveMapFileName);
+            }
+        }
+
+        public static void SaveMap(DFTile[,] grid, string saveFileName)
         {
             BinaryFormatter formatter = new BinaryFormatter();
             MemoryStream stream = new MemoryStream();
@@ -263,78 +382,6 @@ namespace DungeonForge
         }
 
 
-        #region Editor
-
-        public static void CellularAutomataEditorSection(PCGManager pcgManager, int neighbours, out int setNeighbours)
-        {
-            Tile[,] gridArr = pcgManager.gridArr;
-
-            setNeighbours = (int)EditorGUILayout.Slider(new GUIContent() { text = "Neighbours Needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" }, neighbours, 3, 5);
-
-            if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
-            {
-                pcgManager.CreateBackUpGrid();
-
-                DFAlgoBank.CleanUp2dCA(gridArr, neighbours);
-
-                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(gridArr);
-            }
-            if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
-            {
-                pcgManager.CreateBackUpGrid();
-
-                DFAlgoBank.RunCaIteration2D(gridArr, neighbours);
-                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(gridArr);
-            }
-        }
-
-        public static bool CalculateRoomsEditorSection(PCGManager pcgManager, int minSize, out List<List<Tile>> rooms, out int setMinSize)
-        {
-            setMinSize = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum size of room to delete", tooltip = "Any room with a lower number of tiles will be deleted" }, minSize, 0, 200);
-
-            if (GUILayout.Button("Generate rooms"))
-            {
-                rooms = DFAlgoBank.GetAllRooms(pcgManager.gridArr);
-
-                pcgManager.CreateBackUpGrid();
-
-                if (setMinSize > 0)
-                {
-                    for (int i = rooms.Count; i-- > 0;)
-                    {
-                        if (rooms[i].Count <= setMinSize)
-                        {
-                            foreach (var tile in rooms[i])
-                            {
-                                tile.tileWeight = 0;
-                                tile.tileType = Tile.TileType.VOID;
-                            }
-
-                            rooms.RemoveAt(i);
-                        }
-                    }
-                }
-                //mainScript.allowedForward = true;
-                pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(pcgManager.gridArr, 0, 1, true);
-
-
-                return true;
-            }
-
-            rooms = null;
-            return false;
-
-        }
-
-        public static void GenerateMeshEditorSection(PCGManager pcgManager, string inSaveMapFileName, out string saveMapFileName)
-        {
-            saveMapFileName = EditorGUILayout.TextField("Save file name: ", inSaveMapFileName);
-            if (GUILayout.Button("save"))
-            {
-                SaveMap(pcgManager.gridArr, inSaveMapFileName);
-            }
-        }
-
         public enum UI_STATE
         {
             MAIN_ALGO,
@@ -352,6 +399,7 @@ namespace DungeonForge
             BFS,
             DFS
         }
+
 
         public static GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualar path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have many corridors" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridor connections" } };
 

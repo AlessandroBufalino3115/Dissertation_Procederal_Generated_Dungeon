@@ -10,25 +10,18 @@ namespace DungeonForge
 {
     public class PCGManager : MonoBehaviour
     {
-        public Dictionary<Tile.TileType, float> tileTypeToCostDict = new Dictionary<Tile.TileType, float>();
+        public Dictionary<DFTile.TileType, float> tileTypeToCostDict = new Dictionary<DFTile.TileType, float>();
 
-        [Tooltip("Test material given to draw the mesh generated variant of the outcome")]
-        public Material mat;
+        public DFTile[,] gridArr = new DFTile[0, 0];
 
-        public Tile[,] gridArr = new Tile[0, 0];
-
-        //public BasicTile[][] prevGridArray2D = new BasicTile[1][];
-
-        public List<Tile[,]> prevGridArray2D = new List<Tile[,]>();
+        public List<DFTile[,]> prevGridArray2D = new List<DFTile[,]>();
         private int maxBackUps = 3;
-
 
         private GameObject plane;
         public GameObject Plane
         {
             get { return plane; }
         }
-
 
         private IUndoInteraction undoInteraction;
         public IUndoInteraction UndoInteraction
@@ -38,7 +31,7 @@ namespace DungeonForge
 
 
 
-
+        [Header("Dungeon Generation Settings")]
         [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
         [Range(100, 1000)]
         public int width = 125;
@@ -65,42 +58,37 @@ namespace DungeonForge
             PERLIN_WORM = 8,
             DIAMOND_SQUARE = 9,
             DIFF_LIM_AGGR = 10,
-            MANUAL_EDITOR = 11
+            GENERATE_DUNGEON = 11
         }
 
 
-        [Space(30)]
+        [Space(10)]
         [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
-        public MainAlgo mainAlgo;
+        public MainAlgo mainAlgorithm;
 
-        [Space(30)]
-        [Tooltip("Name of file of the Rule that contains the tiles")]
-        public string TileSetRuleFileName = "";
-
-
+        [Space(40)]
+        [Header("The loaded gameobjects for the Generation will show here")]
+        
+        [SerializeField]
         public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
+
+       
+        [SerializeField]
         public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
+
+        
+        [SerializeField]
         public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
 
 
-        [Space(30)]
-        [Tooltip("Name of file of the Rule that contains the tiles")]
-        public string WeightRuleFileName = "";
-        public float[] tileCosts = new float[0];
-
-
-        [Header("THIS IS WHERE THE PLAYER GOES IN CASE OF TILESET GEN")]
-        public List<GameObject> player = new List<GameObject>();
+        [Space(40)]
+        [Header("This is where entities go for the chunk system")]
+        public List<Transform> player = new List<Transform>();
 
         [Range(1, 3)]
         public int loadingRange = 1;
 
-        [HideInInspector]
-        public List<Chunk> chunks;
-        //public List<Chunk> chunks;
-
-        [HideInInspector]
-        public bool loadSectionOpen = false;
+      
 
         private int chunkWidth = 10;
         public int ChunkWidth
@@ -122,11 +110,28 @@ namespace DungeonForge
         [HideInInspector]
         public int CHeight;
 
+        [HideInInspector]
+        public string WeightRuleFileName = "";
+
+        [HideInInspector]
+        public float[] tileCosts = new float[0];
+
+        [HideInInspector]
+        public List<Chunk> chunks;
+
+        [HideInInspector]
+        public bool loadSectionOpen = false;
+
         private int currMainAlgoIDX = 11;
         public int CurrMainAlgoIDX
         {
             get { return currMainAlgoIDX; }
         }
+
+        [HideInInspector]
+        public string TileSetRuleFileName = "";
+
+
 
         private void Update()
         {
@@ -136,17 +141,23 @@ namespace DungeonForge
             }
         }
 
+        public void TestFunc()
+        {
+            DFGeneralUtil.SetUpColorBasedOnType(gridArr);
+
+            plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextSelfCol(gridArr);
+        }
 
 
         #region undo Button
         public void CreateBackUpGrid()
         {
-            var prevGridArray2Dstack = new Tile[gridArr.GetLength(0), gridArr.GetLength(1)];
+            var prevGridArray2Dstack = new DFTile[gridArr.GetLength(0), gridArr.GetLength(1)];
             for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
-                    prevGridArray2Dstack[x, y] = new Tile(gridArr[x, y]);
+                    prevGridArray2Dstack[x, y] = new DFTile(gridArr[x, y]);
                 }
             }
             prevGridArray2D.Add(prevGridArray2Dstack);
@@ -162,13 +173,13 @@ namespace DungeonForge
 
             var prevGridArray2DList = prevGridArray2D[prevGridArray2D.Count - 1];
 
-            gridArr = new Tile[prevGridArray2DList.GetLength(0), prevGridArray2DList.GetLength(1)];
+            gridArr = new DFTile[prevGridArray2DList.GetLength(0), prevGridArray2DList.GetLength(1)];
 
             for (int y = 0; y < prevGridArray2DList.GetLength(1); y++)
             {
                 for (int x = 0; x < prevGridArray2DList.GetLength(0); x++)
                 {
-                    gridArr[x, y] = new Tile(prevGridArray2DList[x, y]);
+                    gridArr[x, y] = new DFTile(prevGridArray2DList[x, y]);
                 }
             }
 
@@ -201,14 +212,14 @@ namespace DungeonForge
 
             plane.transform.localScale = new Vector3(width / 4, 1, height / 4);
 
-            gridArr = new Tile[width, height];
+            gridArr = new DFTile[width, height];
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    gridArr[x, y] = new Tile();
+                    gridArr[x, y] = new DFTile();
                     gridArr[x, y].position = new Vector2Int(x, y);
-                    gridArr[x, y].tileType = Tile.TileType.VOID;
+                    gridArr[x, y].tileType = DFTile.TileType.VOID;
                 }
             }
         }
@@ -225,10 +236,10 @@ namespace DungeonForge
         {
             DelPrevAlgo();
             CreatePlane();
-            currMainAlgoIDX = (int)mainAlgo;
+            currMainAlgoIDX = (int)mainAlgorithm;
             undoInteraction = null;
 
-            switch (mainAlgo)
+            switch (mainAlgorithm)
             {
                 case MainAlgo.VORONI:
                     {
@@ -298,7 +309,7 @@ namespace DungeonForge
                         comp.InspectorAwake();
                     }
                     break;
-                case MainAlgo.MANUAL_EDITOR:
+                case MainAlgo.GENERATE_DUNGEON:
                     {
                         var comp = this.transform.AddComponent<LoadMapMA>();
                         comp.InspectorAwake();
@@ -369,21 +380,13 @@ namespace DungeonForge
 
         public void Restart()
         {
-
-            DFAlgoBank.RestartArr(gridArr);
+            DFGeneralUtil.RestartGrid(gridArr);
             Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(gridArr);
 
             prevGridArray2D.Clear();
         }
 
         #endregion
-
-        public void TestFunc()
-        {
-            DFGeneralUtil.SetUpColorBasedOnType(gridArr);
-
-            plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextSelfCol(gridArr);
-        }
 
 
         #region Generation area
@@ -468,9 +471,6 @@ namespace DungeonForge
             newPart.transform.position = this.transform.position;
             newPart.transform.rotation = this.transform.rotation;
             newPart.transform.localScale = this.transform.localScale;
-
-            var renderer = newPart.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = mat;
 
             var filter = newPart.AddComponent<MeshFilter>();
             filter.mesh = mesh;
@@ -597,7 +597,7 @@ namespace DungeonForge
                     {
                         if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                         {
-                            if (gridArr[x, y].tileType != Tile.TileType.VOID)
+                            if (gridArr[x, y].tileType != DFTile.TileType.VOID)
                             {
                                 var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[RatioBasedChoice(FloorTiles)].Tile : FloorTiles[0].Tile, this.transform);
                                 this.transform.GetChild(0);
@@ -609,7 +609,7 @@ namespace DungeonForge
                             }
                         }
 
-                        if (gridArr[x, y].tileType == Tile.TileType.WALL)
+                        if (gridArr[x, y].tileType == DFTile.TileType.WALL)
                         {
                             var checkVector = new Vector2Int(x, y);
 
@@ -629,7 +629,7 @@ namespace DungeonForge
                             }
                             else
                             {
-                                if (gridArr[checkVector.x, checkVector.y].tileType == Tile.TileType.VOID)
+                                if (gridArr[checkVector.x, checkVector.y].tileType == DFTile.TileType.VOID)
                                 {
                                     var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -657,7 +657,7 @@ namespace DungeonForge
                             }
                             else
                             {
-                                if (gridArr[checkVector.x, checkVector.y].tileType == Tile.TileType.VOID)
+                                if (gridArr[checkVector.x, checkVector.y].tileType == DFTile.TileType.VOID)
                                 {
                                     var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -687,7 +687,7 @@ namespace DungeonForge
                             }
                             else
                             {
-                                if (gridArr[checkVector.x, checkVector.y].tileType == Tile.TileType.VOID)
+                                if (gridArr[checkVector.x, checkVector.y].tileType == DFTile.TileType.VOID)
                                 {
                                     var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -717,7 +717,7 @@ namespace DungeonForge
                             }
                             else
                             {
-                                if (gridArr[checkVector.x, checkVector.y].tileType == Tile.TileType.VOID)
+                                if (gridArr[checkVector.x, checkVector.y].tileType == DFTile.TileType.VOID)
                                 {
                                     var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -754,7 +754,7 @@ namespace DungeonForge
                     {
                         if (z == 0) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                         {
-                            if (gridArr[x, y].tileType != Tile.TileType.VOID)
+                            if (gridArr[x, y].tileType != DFTile.TileType.VOID)
                             {
                                 var objRef = Instantiate(FloorTiles.Count > 1 ? FloorTiles[RatioBasedChoice(FloorTiles)].Tile : FloorTiles[0].Tile, this.transform);
                                 this.transform.GetChild(0);
@@ -767,7 +767,7 @@ namespace DungeonForge
                         }
                         else if (z == RoomHeight - 1)
                         {
-                            if (gridArr[x, y].tileType != Tile.TileType.VOID)
+                            if (gridArr[x, y].tileType != DFTile.TileType.VOID)
                             {
                                 var objRef = Instantiate(CeilingTiles.Count > 1 ? FloorTiles[RatioBasedChoice(CeilingTiles)].Tile : CeilingTiles[0].Tile, this.transform);
                                 this.transform.GetChild(0);
@@ -780,7 +780,7 @@ namespace DungeonForge
                         }
                         else
                         {
-                            if (gridArr[x, y].tileType == Tile.TileType.WALL)
+                            if (gridArr[x, y].tileType == DFTile.TileType.WALL)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -796,36 +796,39 @@ namespace DungeonForge
         }
 
         #endregion
+
+        #region classes
+
+        public class TilesRuleSetPCG
+        {
+            public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
+            public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
+            public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
+        }
+
+        [Serializable]
+        public class TileRuleSetPCG
+        {
+            public int occurance = 1;
+            public GameObject Tile;
+        }
+
+        [Serializable]
+        public class Chunk
+        {
+            public Vector2Int topRight = Vector2Int.zero;
+            public Vector2Int bottomLeft = Vector2Int.zero;
+
+            public int width;
+            public int height;
+
+            public int index = 0;
+            public GameObject mainParent = null;
+            public List<GameObject> listOfObjInChunk = new List<GameObject>();
+        }
+
+        #endregion
     }
 
 
-    [Serializable]
-    public class Chunk
-    {
-        public Vector2Int topRight = Vector2Int.zero;
-        public Vector2Int bottomLeft = Vector2Int.zero;
-
-        public int width;
-        public int height;
-
-        public int index = 0;
-        public GameObject mainParent = null;
-        public List<GameObject> listOfObjInChunk = new List<GameObject>();
-
-    }
-
-    [Serializable]
-    public class TilesRuleSetPCG
-    {
-        public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
-        public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
-        public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
-    }
-
-    [Serializable]
-    public class TileRuleSetPCG
-    {
-        public GameObject Tile;
-        public int occurance = 1;
-    }
 }

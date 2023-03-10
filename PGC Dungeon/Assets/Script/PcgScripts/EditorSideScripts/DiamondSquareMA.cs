@@ -25,7 +25,7 @@ namespace DungeonForge
         public int minSize = 40;
 
         [HideInInspector]
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
         [HideInInspector]
         public List<Edge> edges = new List<Edge>();

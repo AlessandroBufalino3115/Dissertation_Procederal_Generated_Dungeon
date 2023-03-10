@@ -114,7 +114,7 @@ namespace DungeonForge
                                         if (sphereRoom != null)
                                         {
                                             mainScript.pcgManager.CreateBackUpGrid();
-                                            sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, radius, draw: true);
+                                            sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, radius, actuallyDraw: true);
 
                                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -209,7 +209,7 @@ namespace DungeonForge
 
                                 if (sphereRoom != null)
                                 {
-                                    sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, 2, draw: true);
+                                    sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, 2, actuallyDraw: true);
 
                                     mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -220,15 +220,15 @@ namespace DungeonForge
 
                             mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.pcgManager.gridArr);
                             var centerPoints = new List<Vector2>();
-                            var roomDict = new Dictionary<Vector2, List<Tile>>();
+                            var roomDict = new Dictionary<Vector2, List<DFTile>>();
                             foreach (var room in mainScript.rooms)
                             {
-                                roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                             }
 
 
-                            var edges = DFAlgoBank.DelunayTriangulation2D(centerPoints).Item2;
+                            var edges = DFAlgoBank.DelaunayTriangulation(centerPoints).Item2;
 
                             foreach (var edge in edges)
                             {

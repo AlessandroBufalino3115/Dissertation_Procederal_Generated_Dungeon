@@ -115,7 +115,7 @@ namespace DungeonForge
 
                                     mainScript.rooms.Clear();
 
-                                    DFAlgoBank.RestartArr(mainScript.PcgManager.gridArr);
+                                    DFGeneralUtil.RestartGrid(mainScript.PcgManager.gridArr);
 
                                     mainScript.BPSRoomGen(mainScript.PcgManager.gridArr);
                                     mainScript.SetUpWeights(mainScript.PcgManager.gridArr);
@@ -165,7 +165,7 @@ namespace DungeonForge
                                     mainScript.roomList.Clear();
                                     mainScript.rooms.Clear();
 
-                                    DFAlgoBank.RestartArr(mainScript.PcgManager.gridArr);
+                                    DFGeneralUtil.RestartGrid(mainScript.PcgManager.gridArr);
 
                                     mainScript.RandomRoomGen(mainScript.PcgManager.gridArr);
                                     mainScript.SetUpWeights(mainScript.PcgManager.gridArr);
@@ -206,7 +206,7 @@ namespace DungeonForge
                                     mainScript.roomList.Clear();
                                     mainScript.rooms.Clear();
 
-                                    DFAlgoBank.RestartArr(mainScript.PcgManager.gridArr);
+                                    DFGeneralUtil.RestartGrid(mainScript.PcgManager.gridArr);
 
                                     var currentHeadRoomGenerator = new Vector2Int((int)mainScript.PcgManager.gridArr.GetLength(0) / 2, (int)mainScript.PcgManager.gridArr.GetLength(1) / 2);
 
@@ -305,8 +305,8 @@ namespace DungeonForge
 
                                             foreach (var tile in path)
                                             {
-                                                if (tile.tileType != Tile.TileType.FLOORROOM)
-                                                    tile.tileType = Tile.TileType.FLOORCORRIDOR;
+                                                if (tile.tileType != DFTile.TileType.FLOORROOM)
+                                                    tile.tileType = DFTile.TileType.FLOORCORRIDOR;
 
                                                 tile.tileWeight = 0.75f;
                                             }
@@ -363,7 +363,7 @@ namespace DungeonForge
                         else
                         {
                             mainScript.allowedBack = true;
-                            List<List<Tile>> rooms;
+                            List<List<DFTile>> rooms;
                             if (DFGeneralUtil.CalculateRoomsEditorSection(mainScript.PcgManager, minSize, out rooms, out minSize))
                             {
                                 mainScript.allowedForward = true;
@@ -405,7 +405,7 @@ namespace DungeonForge
                                     if (room != null)
                                     {
                                         mainScript.PcgManager.CreateBackUpGrid();
-                                        room = DFAlgoBank.DrawCircle(mainScript.PcgManager.gridArr, randomPoint, radius, draw: true);
+                                        room = DFAlgoBank.DrawCircle(mainScript.PcgManager.gridArr, randomPoint, radius, actuallyDraw: true);
 
                                         mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
 
@@ -676,11 +676,11 @@ namespace DungeonForge
 
                                     mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.PcgManager.gridArr);
                                     var centerPoints = new List<Vector2>();
-                                    var roomDict = new Dictionary<Vector2, List<Tile>>();
+                                    var roomDict = new Dictionary<Vector2, List<DFTile>>();
                                     foreach (var room in mainScript.rooms)
                                     {
-                                        roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                        centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                        roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                        centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                     }
 
                                     switch (selGridConnectionType)
@@ -729,7 +729,7 @@ namespace DungeonForge
                                             break;
 
                                         case 1:
-                                            mainScript.edges = DFAlgoBank.DelunayTriangulation2D(centerPoints).Item2;
+                                            mainScript.edges = DFAlgoBank.DelaunayTriangulation(centerPoints).Item2;
                                             break;
 
                                         case 2://ran
@@ -737,11 +737,11 @@ namespace DungeonForge
                                                 DFAlgoBank.ShuffleList(mainScript.rooms);
 
                                                 centerPoints = new List<Vector2>();
-                                                roomDict = new Dictionary<Vector2, List<Tile>>();
+                                                roomDict = new Dictionary<Vector2, List<DFTile>>();
                                                 foreach (var room in mainScript.rooms)
                                                 {
-                                                    roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                                    centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                                    roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                                    centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                                 }
 
                                                 for (int i = 0; i < centerPoints.Count; i++)
@@ -824,7 +824,7 @@ namespace DungeonForge
 
                                         var randomTileInRoom = room[DFGeneralUtil.ReturnRandomFromList(room)];
 
-                                        Tile randomTileOutsideOfRoom;
+                                        DFTile randomTileOutsideOfRoom;
 
                                         while (true)
                                         {

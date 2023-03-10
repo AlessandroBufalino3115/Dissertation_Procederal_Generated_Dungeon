@@ -36,6 +36,8 @@ namespace DungeonForge
 
         string saveMapFileName = "";
 
+        //in the voronoi we need random connections
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -44,12 +46,11 @@ namespace DungeonForge
 
             #region explanation
 
-            showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+            showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Descirption");
 
             if (showRules)
-            {
-                GUILayout.TextArea("You have choosen Voronoi");
-
+            {  //Calculates the distance between points in a space and uses it to partition the space into regions based on the closest point. It achieves efficient spatial analysis
+                GUILayout.TextArea("You have choosen Voronoi algorithm as a starting algorithm.\nCalculates the distance between points in a space and uses it to partition the space into regions based on the closest point. It achieves efficient spatial analysis\n\nFor more information visit the Wiki!!");
             }
 
             if (!Selection.activeTransform)
@@ -69,16 +70,16 @@ namespace DungeonForge
             {
                 case DFGeneralUtil.UI_STATE.MAIN_ALGO:
                     {
-                        typeOfVoronoi = EditorGUILayout.Toggle(new GUIContent() { text = typeOfVoronoi == true ? "Room to room is selected" : "random deletion room is selected", tooltip = "" }, typeOfVoronoi);
+                        typeOfVoronoi = EditorGUILayout.Toggle(new GUIContent() { text = typeOfVoronoi == true ? "Room to Room is selected" : "Random deletion room is selected", tooltip = typeOfVoronoi == true ? $"Will create {vorPoints} number of rooms and connect the rooms with small to no corridors" : $"Random deletion room is selected, will generate {vorPoints} rooms and then randomly delete them untill only {minNumOfRooms} are left" }, typeOfVoronoi);
 
                         DFGeneralUtil.SpacesUILayout(1);
 
-                        vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of voronoi divisions", tooltip = "" }, vorPoints, 5, 40);
-                        voronoiCalculation = EditorGUILayout.Toggle(new GUIContent() { text = voronoiCalculation == true ? "euclidian" : "manhattan", tooltip = "" }, voronoiCalculation);
+                        vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "Number of voronoi divisions", tooltip = "" }, vorPoints, 8, 40);
+                        voronoiCalculation = EditorGUILayout.Toggle(new GUIContent() { text = voronoiCalculation == true ? "Euclidian distance calculation selected" : "Manhattan distance calculation selected", tooltip = "" }, voronoiCalculation);
 
 
                         if (!typeOfVoronoi)
-                            minNumOfRooms = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of rooms", tooltip = "" }, minNumOfRooms, 2, vorPoints - 1);
+                            minNumOfRooms = (int)EditorGUILayout.Slider(new GUIContent() { text = "Number of rooms", tooltip = "" }, minNumOfRooms, 2, vorPoints - 2);
 
 
                         if (GUILayout.Button(new GUIContent() { text = "Generate Voronoi Fracture", tooltip = "" }))// gen something
@@ -100,17 +101,22 @@ namespace DungeonForge
                                     for (int i = 0; i < mainScript.rooms[ranIndex].Count; i++)
                                     {
                                         mainScript.rooms[ranIndex][i].tileWeight = 0;
-                                        mainScript.rooms[ranIndex][i].tileType = Tile.TileType.VOID;
+                                        mainScript.rooms[ranIndex][i].tileType = DFTile.TileType.VOID;
+                                        mainScript.rooms[ranIndex][i].color = Color.white;
                                     }
 
                                     mainScript.rooms.RemoveAt(ranIndex);
                                 }
 
                                 mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.pcgManager.gridArr);
+
                             }
 
                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
+                         
                         }
+
+
                         if (mainScript.rooms.Count > 1)
                         {
                             mainScript.allowedForward = true;
@@ -146,7 +152,7 @@ namespace DungeonForge
                             mainScript.allowedForward = true;
                             mainScript.allowedBack = false;
 
-                            radius = (int)EditorGUILayout.Slider(new GUIContent() { text = "Radius of the arena", tooltip = "Creates a circular room in a random position on the canvas. The code will try to fit it, if nothing spawns try again or lower the size" }, radius, 10, 40);
+                            radius = (int)EditorGUILayout.Slider(new GUIContent() { text = "Radius of the arena", tooltip = "Creates a circular room in a random position on the canvas.\nThe code will try to fit it, if nothing spawns try again or lower the size" }, radius, 10, 40);
 
                             if (GUILayout.Button(new GUIContent() { text = "Spawn one Arena" }))
                             {
@@ -159,7 +165,7 @@ namespace DungeonForge
                                     if (room != null)
                                     {
                                         mainScript.pcgManager.CreateBackUpGrid();
-                                        room = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, radius, draw: true);
+                                        room = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, radius, actuallyDraw: true);
 
                                         mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -227,6 +233,9 @@ namespace DungeonForge
                             selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, DFGeneralUtil.selStringsConnectionType, 1);
                             GUILayout.EndVertical();
 
+                            randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
+                            DFGeneralUtil.SpacesUILayout(2);
+
                             if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                             {
                                 mainScript.allowedForward = true;
@@ -234,11 +243,11 @@ namespace DungeonForge
                                 mainScript.pcgManager.CreateBackUpGrid();
                                 mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.pcgManager.gridArr);
                                 var centerPoints = new List<Vector2>();
-                                var roomDict = new Dictionary<Vector2, List<Tile>>();
+                                var roomDict = new Dictionary<Vector2, List<DFTile>>();
                                 foreach (var room in mainScript.rooms)
                                 {
-                                    roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                    centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                    roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                    centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                 }
 
                                 switch (selGridConnectionType)
@@ -277,7 +286,6 @@ namespace DungeonForge
                                                     }
                                                 }
 
-
                                                 if (toAdd)
                                                 {
                                                     mainScript.edges.Add(newEdge);
@@ -287,7 +295,7 @@ namespace DungeonForge
                                         break;
 
                                     case 1:
-                                        mainScript.edges = DFAlgoBank.DelunayTriangulation2D(centerPoints).Item2;
+                                        mainScript.edges = DFAlgoBank.DelaunayTriangulation(centerPoints).Item2;
                                         break;
 
                                     case 2://ran
@@ -295,11 +303,11 @@ namespace DungeonForge
                                         DFAlgoBank.ShuffleList(mainScript.rooms);
 
                                         centerPoints = new List<Vector2>();
-                                        roomDict = new Dictionary<Vector2, List<Tile>>();
+                                        roomDict = new Dictionary<Vector2, List<DFTile>>();
                                         foreach (var room in mainScript.rooms)
                                         {
-                                            roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                            centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                            roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                            centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                         }
 
                                         for (int i = 0; i < centerPoints.Count; i++)
@@ -334,7 +342,7 @@ namespace DungeonForge
                                 {
                                     var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                     var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
-                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), 5, mainScript.pcgManager.gridArr, !mainScript.pathType);
                                 }
 
 
@@ -559,11 +567,11 @@ namespace DungeonForge
 
                                     mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.pcgManager.gridArr);
                                     var centerPoints = new List<Vector2>();
-                                    var roomDict = new Dictionary<Vector2, List<Tile>>();
+                                    var roomDict = new Dictionary<Vector2, List<DFTile>>();
                                     foreach (var room in mainScript.rooms)
                                     {
-                                        roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                        centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                        roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                        centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                     }
 
                                     switch (selGridConnectionType)
@@ -612,7 +620,7 @@ namespace DungeonForge
                                             break;
 
                                         case 1:
-                                            mainScript.edges = DFAlgoBank.DelunayTriangulation2D(centerPoints).Item2;
+                                            mainScript.edges = DFAlgoBank.DelaunayTriangulation(centerPoints).Item2;
                                             break;
 
                                         case 2://ran
@@ -620,11 +628,11 @@ namespace DungeonForge
                                                 DFAlgoBank.ShuffleList(mainScript.rooms);
 
                                                 centerPoints = new List<Vector2>();
-                                                roomDict = new Dictionary<Vector2, List<Tile>>();
+                                                roomDict = new Dictionary<Vector2, List<DFTile>>();
                                                 foreach (var room in mainScript.rooms)
                                                 {
-                                                    roomDict.Add(DFAlgoBank.FindMiddlePoint(room), room);
-                                                    centerPoints.Add(DFAlgoBank.FindMiddlePoint(room));
+                                                    roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
+                                                    centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
                                                 }
 
                                                 for (int i = 0; i < centerPoints.Count; i++)
@@ -706,7 +714,7 @@ namespace DungeonForge
 
                                         var randomTileInRoom = room[DFGeneralUtil.ReturnRandomFromList(room)];
 
-                                        Tile randomTileOutsideOfRoom;
+                                        DFTile randomTileOutsideOfRoom;
 
                                         while (true)
                                         {

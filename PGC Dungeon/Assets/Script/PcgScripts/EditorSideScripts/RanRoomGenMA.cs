@@ -95,7 +95,7 @@ namespace DungeonForge
         }
 
 
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
         public List<Edge> edges = new List<Edge>();
 
 
@@ -149,14 +149,14 @@ namespace DungeonForge
         /// from the remaining rooms set up the weights
         /// </summary>
         /// <param name="gridArr"></param>
-        public void SetUpWeights(Tile[,] gridArr)
+        public void SetUpWeights(DFTile[,] gridArr)
         {
             foreach (var room in roomList)
             {
                 for (int i = 0; i < room.tileCoords.Count; i++)
                 {
                     gridArr[room.tileCoords[i].x, room.tileCoords[i].y].tileWeight = 1;
-                    gridArr[room.tileCoords[i].x, room.tileCoords[i].y].tileType = Tile.TileType.FLOORROOM;
+                    gridArr[room.tileCoords[i].x, room.tileCoords[i].y].tileType = DFTile.TileType.FLOORROOM;
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace DungeonForge
 
         #region Random Room Gen
 
-        public void RandomRoomGen(Tile[,] gridArr)
+        public void RandomRoomGen(DFTile[,] gridArr)
         {
             int tries = numOfRoom * 4;
 
@@ -298,7 +298,7 @@ namespace DungeonForge
 
         #region BPS
 
-        public void BPSRoomGen(Tile[,] gridArr, bool solve = true)
+        public void BPSRoomGen(DFTile[,] gridArr, bool solve = true)
         {
             BoundsInt map = new BoundsInt();
 
@@ -455,7 +455,7 @@ namespace DungeonForge
 
             foreach (var room in roomsListBPSAlgo)
             {
-                var gridArrRoom = new Tile[0, 0];
+                var gridArrRoom = new DFTile[0, 0];
 
                 if (usingCA)
                 {

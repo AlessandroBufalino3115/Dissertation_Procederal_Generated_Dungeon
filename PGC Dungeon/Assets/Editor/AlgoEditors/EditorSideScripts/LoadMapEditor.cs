@@ -116,9 +116,9 @@ namespace DungeonForge
                         {
                             for (int x = 0; x < mainScript.PcgManager.gridArr.GetLength(0); x++)
                             {
-                                if (mainScript.PcgManager.gridArr[x, y].tileType == Tile.TileType.WALLCORRIDOR)
+                                if (mainScript.PcgManager.gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                                 {
-                                    mainScript.PcgManager.gridArr[x, y].tileType = Tile.TileType.FLOORCORRIDOR;
+                                    mainScript.PcgManager.gridArr[x, y].tileType = DFTile.TileType.FLOORCORRIDOR;
                                 }
                             }
                         }

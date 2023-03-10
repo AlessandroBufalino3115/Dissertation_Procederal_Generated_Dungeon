@@ -12,7 +12,7 @@
  *  
  *  Debug.Log($"<color=green></color>");      success
  * 
- * 
+ * chebyshev distance to look into
  * 
  * 
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
@@ -23,7 +23,7 @@
  *   
  *  ALGOS NOTES:
  *  
- *  voronoi --   issue with vor
+ *  voronoi --   done
  *  random Walk -- done
  *  CA   -- done
  *  ran room gen --- done 

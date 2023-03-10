@@ -53,7 +53,7 @@ namespace DungeonForge
             if (outskirtsCheck)
                 SetOutSkirts();
 
-            var ranStart = DFGeneralUtil.RanVector2Int(xSize, ySize);
+            var ranStart = new Vector2Int(Random.Range(0, xSize), Random.Range(0, ySize));
             arrayOfWFCTiles[ranStart.x, ranStart.y].solved = true;// choosen idx should be the indx of the item choosen
 
             int ranNum = Random.Range(0, arrayOfWFCTiles[ranStart.x, ranStart.y].AllowedObjectsIDXs.Count);

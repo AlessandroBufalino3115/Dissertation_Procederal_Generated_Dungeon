@@ -14,7 +14,7 @@ namespace DungeonForge
         public bool readyToGen = false;
 
         [HideInInspector]
-        public List<List<Tile>> rooms = new List<List<Tile>>();
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
 
         public enum UI_STATE

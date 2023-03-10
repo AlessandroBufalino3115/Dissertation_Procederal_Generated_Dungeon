@@ -1,4 +1,7 @@
+using NUnit.Framework;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -11,7 +14,10 @@ namespace DungeonForge
     [CustomEditor(typeof(PCGManager))]
     public class PCGManagerEditor : Editor
     {
+        SerializedProperty tileCostSerialized;
 
+        //SerializedProperty wallListGameObj;
+        //SerializedProperty wallListOccurance;
 
         [MenuItem("PCG Algorithms/Main Generator", priority = 1)]
         static void SpawnObject()
@@ -22,26 +28,33 @@ namespace DungeonForge
         }
 
 
+        public void OnEnable()
+        {
+            tileCostSerialized = serializedObject.FindProperty("tileCosts");
+
+            //wallListGameObj = serializedObject.FindProperty("WallsTilesGameobject");
+            //wallListOccurance = serializedObject.FindProperty("WallsTilesOccurance");
+        }
+
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
-
-            PCGManager mainScript = (PCGManager)target;
+            GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
+                "Before starting, you can load the tiles that will be used for the generation by creating a new rule and loading that rule\n\n" +
+                "Then choose the starting main algorithm which will shape your dungeon");
 
 
             DFGeneralUtil.SpacesUILayout(4);
 
+            base.OnInspectorGUI();
 
-            GUILayout.TextArea("Welcome to the PCG tool, Use the sliders to set the canvas from which the dungeon will rise from\n\n" +
-                "Before starting, you can load the tiles that will be used for the generation by creating a new rule and loading that rule\n\n" +
-                "Then choose the starting main algorithm which will shape your dungeon");
+            PCGManager mainScript = (PCGManager)target;
 
             DFGeneralUtil.SpacesUILayout(4);
 
             if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
             {
 
-                if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.MANUAL_EDITOR)
+                if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
                 {
                 }
                 else
@@ -60,11 +73,11 @@ namespace DungeonForge
                 }
             }
 
-            if (mainScript.Plane != null || mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.MANUAL_EDITOR)
+            if (mainScript.Plane != null || mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
             {
-                if (GUILayout.Button(new GUIContent() { text = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh Main Algorithm Component" : "Load New Algorithm Component", tooltip = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgo ? "Refresh the algorithm component" : "Load the choosen algorithm component to start to use it" }))
+                if (GUILayout.Button(new GUIContent() { text = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgorithm ? "Refresh Main Algorithm Component" : "Load New Algorithm Component", tooltip = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgorithm ? "Refresh the algorithm component" : "Load the choosen algorithm component to start to use it" }))
                 {
-                    if (mainScript.mainAlgo == PCGManager.MainAlgo.WFC || mainScript.mainAlgo == PCGManager.MainAlgo.MANUAL_EDITOR)
+                    if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
                     {
                         if (mainScript.Plane != null)
                         {
@@ -81,9 +94,7 @@ namespace DungeonForge
             }
 
 
-
             DFGeneralUtil.SpacesUILayout(2);
-
 
             mainScript.loadSectionOpen = EditorGUILayout.BeginFoldoutHeaderGroup(mainScript.loadSectionOpen, "Loading Assets Section");
 
@@ -92,6 +103,10 @@ namespace DungeonForge
 
                 DFGeneralUtil.SpacesUILayout(4);
 
+                GUIContent tileSetRuleLabel = new GUIContent("Tile Set Scriptable File Name", "This is where the name of the scriptable object containing the tilesets objects should go with their occurance, to be used when using tile Generation");
+                mainScript.TileSetRuleFileName = EditorGUILayout.TextField(tileSetRuleLabel,mainScript.TileSetRuleFileName);
+
+                DFGeneralUtil.SpacesUILayout(1);
 
                 if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use" }))
                 {
@@ -120,7 +135,6 @@ namespace DungeonForge
 
                 }
 
-
                 if (GUILayout.Button(new GUIContent() { text = "Load tileSet rule", tooltip = "Remember to give the filename" }))
                 {
 
@@ -129,7 +143,6 @@ namespace DungeonForge
                         EditorUtility.DisplayDialog("Error", "The tileSet rule file name is invalid", "OK");
                         return;
                     }
-
 
                     var tileRules = Resources.Load<TilesRuleSet>("Resources_Algorithms/Tile_Sets_Ruleset/" + mainScript.TileSetRuleFileName);
 
@@ -144,31 +157,43 @@ namespace DungeonForge
                         mainScript.FloorTiles.Clear();
                         mainScript.CeilingTiles.Clear();
 
+                        //mainScript.WallsTilesGameobject.Clear();
+                        //mainScript.FloorTilesGameobject.Clear();
+                        //mainScript.CeilingTilesGameObject.Clear();
+
+                        //mainScript.WallsTilesOccurance.Clear();
+                        //mainScript.FloorTilesOccurance.Clear();
+                        //mainScript.CeilingTilesOccurance.Clear();
+
                         foreach (var item in tileRules.WallsTiles)
                         {
-                            mainScript.WallsTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.WallsTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            //mainScript.WallsTilesOccurance.Add(item.occurance);
+                            //mainScript.WallsTilesGameobject.Add(item.Tile);
                         }
 
                         foreach (var item in tileRules.FloorTiles)
                         {
-                            mainScript.FloorTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.FloorTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            //mainScript.FloorTilesOccurance.Add(item.occurance);
+                            //mainScript.FloorTilesGameobject.Add(item.Tile);
                         }
-
 
                         foreach (var item in tileRules.CeilingTiles)
                         {
-                            mainScript.CeilingTiles.Add(new TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.CeilingTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            //    mainScript.CeilingTilesOccurance.Add(item.occurance);
+                            //    mainScript.CeilingTilesGameObject.Add(item.Tile);
                         }
-
                     }
-
-
                 }
 
 
                 DFGeneralUtil.SpacesUILayout(4);
 
-
+                GUIContent weightRuleLabel = new GUIContent("Pathing Weight Rule Scriptable File Name", "This is where the name of the scriptable object containing the paths weight should go to be loaded and used when creating corridors");
+                mainScript.WeightRuleFileName = EditorGUILayout.TextField(weightRuleLabel,mainScript.WeightRuleFileName);
+                DFGeneralUtil.SpacesUILayout(1);
                 if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
                 {
 
@@ -196,7 +221,6 @@ namespace DungeonForge
                     AssetDatabase.SaveAssets();
 
                 }
-
 
                 if (GUILayout.Button(new GUIContent() { text = "Load Weight RuleSet", tooltip = "Remember to give the filename" }))
                 {
@@ -226,7 +250,6 @@ namespace DungeonForge
                     }
 
                 }
-
             }
 
             if (!Selection.activeTransform)
@@ -237,9 +260,29 @@ namespace DungeonForge
             EditorGUILayout.EndFoldoutHeaderGroup();
 
 
+            if (mainScript.loadSectionOpen) 
+            {
+                serializedObject.Update();
+
+                
+
+                //for (int i = 0; i < wallListGameObj.arraySize; i++)
+                //{
+                //    EditorGUILayout.PropertyField(wallListGameObj.GetArrayElementAtIndex(i));
+                //    EditorGUILayout.PropertyField(wallListOccurance.GetArrayElementAtIndex(i));
+                //}
+
+
+
+
+                DFGeneralUtil.SpacesUILayout(1);
+
+                EditorGUILayout.PropertyField(tileCostSerialized, true);
+
+                serializedObject.ApplyModifiedProperties();
+            }
+
             DFGeneralUtil.SpacesUILayout(4);
-
-
 
             EditorGUI.BeginDisabledGroup(mainScript.prevGridArray2D.Count == 0 ? true : false);
 
@@ -261,6 +304,8 @@ namespace DungeonForge
             }
         }
     }
+
+
 
 
     /*
