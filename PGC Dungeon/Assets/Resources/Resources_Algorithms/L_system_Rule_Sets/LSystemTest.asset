@@ -10,18 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2bf85c4b068650541b5af6163c0c7636, type: 3}
-  m_Name: newnewRuleType
+  m_Name: LSystemTest
   m_EditorClassIdentifier: 
   A_Length: 10
   B_Length: 20
   C_Length: 30
   A_RuleSet:
-  - SA+A+CLBSB---AL
+  - SA+A+CLBSB---AKL
   - SA--C+CLBSB--AL
-  B_RuleSet:
   - SC+A--CL
+  B_RuleSet:
+  - SC+A--C+YB+B+BL
   C_RuleSet: []
   S_RuleSet: []
   L_RuleSet: []
-  Psign_RuleSet: []
-  Nsign_RuleSet: []
+  positiveSignRuleSet: []
+  negativeSignRuleSet: []
+  roomGenerationMacros:
+  - character: 75
+    widthORRadius: 5
+    height: 5
+    roomType: 1
+  - character: 89
+    widthORRadius: 7
+    height: 5
+    roomType: 0

@@ -164,7 +164,7 @@ namespace DungeonForge
 {7, 6, 10, 7, 10, 8, 8, 10, 9, -1, -1, -1, -1, -1, -1, -1},
 {6, 8, 4, 11, 8, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {3, 6, 11, 3, 0, 6, 0, 4, 6, -1, -1, -1, -1, -1, -1, -1},
-{8, 6, 11, 8, 4, 6, 9, 0, 1, -1, -1, -1, -1, -1, -1, -1},   //
+{8, 6, 11, 8, 4, 6, 9, 0, 1, -1, -1, -1, -1, -1, -1, -1},  
 {9, 4, 6, 9, 6, 3, 9, 3, 1, 11, 3, 6, -1, -1, -1, -1},
 {6, 8, 4, 6, 11, 8, 2, 10, 1, -1, -1, -1, -1, -1, -1, -1},
 {1, 2, 10, 3, 0, 11, 0, 6, 11, 0, 4, 6, -1, -1, -1, -1},
@@ -290,8 +290,6 @@ namespace DungeonForge
 
             AStar_Node start_node = new AStar_Node(tileArray2D[start.x, start.y]);
             start_node.parent = null;
-
-            Debug.Log(end);
 
             AStar_Node end_node = new AStar_Node(tileArray2D[end.x, end.y]);
 
@@ -1161,7 +1159,7 @@ namespace DungeonForge
         {
             if (points.Count< 3) 
             {
-                Debug.Log($"The given points in the list for triangulation are not enough");
+                Debug.Log($"The given points in the list for triangulation are not enough, need to have at least 3 points and i was given {points.Count}");
                 return null;
             }
 
@@ -1752,28 +1750,32 @@ namespace DungeonForge
         /// <param name="tileType">The type of tile to make the tiles in the radius</param>
         /// <param name="setWeight">The weight to set the tiles in the circle</param>
         /// <returns></returns>
-        public static List<DFTile> SpawnRoom(int width, int height, Vector2Int centerPoint, DFTile[,] gridArr,  bool actuallyDraw = false, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, float setWeight = 0.75f)
+        public static List<DFTile> CreateSquareRoom(int width, int height, Vector2Int centerPoint, DFTile[,] gridArr,  bool actuallyDraw = false, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, float setWeight = 0.75f, bool checkForFitting = false)
         {
             var room = new List<DFTile>();
 
             int halfWidth = width / 2;
             int halfHeight = height / 2;
 
-            if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr.GetLength(0))
+            if (centerPoint.x - halfWidth < 0 || centerPoint.x + halfWidth >= gridArr.GetLength(0)  && checkForFitting)
                 return null;
 
-            if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.GetLength(1))
+            if (centerPoint.y - halfHeight < 0 || centerPoint.y + halfHeight >= gridArr.GetLength(1)  && checkForFitting)
                 return null;
 
             for (int y = centerPoint.y - halfHeight; y < centerPoint.y + halfHeight; y++)
             {
                 for (int x = centerPoint.x - halfWidth; x < centerPoint.x + halfWidth; x++)
                 {
-                    if (gridArr[x, y].tileType != DFTile.TileType.VOID)
+                    if (x < 0 || y < 0 || y >= gridArr.GetLength(1) || x >= gridArr.GetLength(0))
+                    { continue; }
+
+                    if (gridArr[x, y].tileType != DFTile.TileType.VOID  && checkForFitting)
                     {
                         return null;
                     }
-                    if (!actuallyDraw)
+
+                    if (actuallyDraw)
                     {
                         gridArr[x, y].tileType = tileType;
                         gridArr[x, y].tileWeight = setWeight;
@@ -1795,7 +1797,7 @@ namespace DungeonForge
         /// <param name="setWeight">The weight to set the tiles in the circle</param>
         /// <param name="actuallyDraw">False to make no changes to the grid, true to apply changes</param>
         /// <returns></returns>
-        public static List<DFTile> DrawCircle(DFTile[,] gridArr, Vector2Int center, int radius, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, bool actuallyDraw = false, float setWeight = 0.75f)
+        public static List<DFTile> CreateCircleRoom(DFTile[,] gridArr, Vector2Int center, int radius, DFTile.TileType tileType = DFTile.TileType.FLOORROOM, bool actuallyDraw = false, float setWeight = 0.75f, bool checkForFitting = false)
         {
             var room = new List<DFTile>();
 
@@ -1806,7 +1808,10 @@ namespace DungeonForge
                     bool isInCircle = (x - center.x) * (x - center.x) + (y - center.y) * (y - center.y) < radius * radius;
                     if (isInCircle)
                     {
-                        if (gridArr[x, y].tileType != DFTile.TileType.VOID)
+                        if (x < 0 || y <0 || y>= gridArr.GetLength(1) || x >= gridArr.GetLength(0))
+                        { continue; }
+
+                        if (gridArr[x, y].tileType != DFTile.TileType.VOID && checkForFitting)
                         {
                             return null;
                         }
@@ -1824,7 +1829,11 @@ namespace DungeonForge
             return room;
         }
 
-        //to do
+        /// <summary>
+        /// to change
+        /// </summary>
+        /// <param name="boundsRoom"></param>
+        /// <returns></returns>
         public static DFTile[,] CompartimentalisedCA(BoundsInt boundsRoom)
         {
             int maxY = boundsRoom.zMax - boundsRoom.zMin;

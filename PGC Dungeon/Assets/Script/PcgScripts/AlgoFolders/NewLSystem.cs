@@ -1,12 +1,11 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace DungeonForge
 {
-    public class NewLSystem : MonoBehaviour
+    public class LSystem : MonoBehaviour
     {
         //https://www.gamedeveloper.com/design/kastle-dungeon-generation-using-l-systems
 
@@ -14,24 +13,25 @@ namespace DungeonForge
         private Vector3Int head;
 
         private string endingWord;
-
-        private bool run;
-
         private int currDirection = 0;
 
-
-
+        [HideInInspector]
+        public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
         [Space(30)]
+        [Header("This is the starting word")]
         public string axium;
+        [Header("How many times should the algorithms run")]
         public int iterations = 2;
 
 
         [Space(30)]
+        [Header("Name of the file containing the rulesets")]
         public string fileName = "";
 
 
         [Space(30)]
+        [Header("----- RULES -----")]
         public int A_dist = 0;
         public int B_dist = 0;
         public int C_dist = 0;
@@ -46,10 +46,21 @@ namespace DungeonForge
         public List<string> P_RuleSet = new List<string>();
         public List<string> N_RuleSet = new List<string>();
 
+        public List<LSystemMacrosBuildings> roomMacros = new List<LSystemMacrosBuildings>();
 
+        [Space(30)]
+        [Header("Corridor Width")]
+        [Range(2,5)]
+        public int corridorWidth = 3;
+        [Space(10)]
+        [Header("Should the paths be allowed to be diagonal or not?")]
+        public bool diagonalPaths;
+        [Space(20)]
+        [HideInInspector]
+        public bool generated = false;
 
-        public bool modePath;
-
+        [HideInInspector]
+        public bool loaded = false;
 
 
         private PCGManager pcgManager;
@@ -62,9 +73,8 @@ namespace DungeonForge
         public void InspectorAwake()
         {
             head = Vector3Int.zero;
-            pcgManager = this.transform.GetComponent<PCGManager>();
+            pcgManager = transform.GetComponent<PCGManager>();
         }
-
 
         private string RunLSystem(string axium)
         {
@@ -190,11 +200,15 @@ namespace DungeonForge
         {
             head = new Vector3Int(pcgManager.width / 2, 0, pcgManager.height / 2);
 
+            pcgManager.Restart();
+
             points.Clear();
             currDirection = 0;
             endingWord = RunLSystem(axium);
             ProcessSentence();
             SetUpCorridors();
+            DrawMap();
+            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(pcgManager.gridArr,0,1,true);
         }
 
         private void ProcessSentence()
@@ -203,6 +217,7 @@ namespace DungeonForge
 
             for (int i = 0; i < endingWord.Length; i++)
             {
+                bool found = true;
 
                 switch (endingWord[i])
                 {
@@ -263,10 +278,68 @@ namespace DungeonForge
                         break;
 
                     default:
+                        found = false;
                         break;
                 }
 
+                if (!found) 
+                {
+                    for (int j = 0; j < roomMacros.Count; j++)
+                    {
+                        if (roomMacros[j].character == endingWord[i]) 
+                        {
+                            switch (roomMacros[j].roomType)
+                            {
+                                case LSystemMacrosBuildings.TYPE_OF_ROOM.CIRCLE_ROOM:
+                                    {
+                                      var room = DFAlgoBank.CreateCircleRoom(pcgManager.gridArr, new Vector2Int(head.x, head.z), roomMacros[j].widthORRadius, actuallyDraw: true);
 
+                                      rooms.Add(room);
+                                    }
+                                    break;
+
+                                case LSystemMacrosBuildings.TYPE_OF_ROOM.RECTANGLE_ROOM:
+                                    {
+                                        var room  = DFAlgoBank.CreateSquareRoom(roomMacros[j].widthORRadius, roomMacros[j].height, new Vector2Int(head.x, head.z), pcgManager.gridArr, true);
+
+                                        rooms.Add(room);
+                                    }
+                                    break;
+
+                                case LSystemMacrosBuildings.TYPE_OF_ROOM.RANDOM_ROOM:
+                                    {
+                                        var roomBounds = new BoundsInt() { xMin = head.x - roomMacros[j].widthORRadius / 2, xMax = head.x + roomMacros[j].widthORRadius / 2, zMin = head.y - roomMacros[j].height / 2, zMax = head.y + roomMacros[j].height / 2 };
+                                       
+                                        var room = DFAlgoBank.CompartimentalisedCA(roomBounds);
+
+                                        for (int y = 0; y < room.GetLength(1); y++)
+                                        {
+                                            for (int x = 0; x < room.GetLength(0); x++)
+                                            {
+
+                                                if (x< 0 || y<0 || x >= room.GetLength(0) || y >= room.GetLength(1)) { continue; }
+
+                                                if (room[x, y].tileWeight == 1)
+                                                {
+                                                    pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 1;
+                                                }
+                                                else
+                                                {
+                                                    pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -301,22 +374,41 @@ namespace DungeonForge
 
         private void SetUpCorridors()
         {
-
             for (int i = 0; i < points.Count; i++)
             {
                 if (i != points.Count - 1)
                 {
-                    Debug.Log($"{points[i]}    +    {points[i + 1]}");
-                    var path = DFAlgoBank.A_StarPathfinding2D(pcgManager.gridArr, new Vector2Int(points[i].x, points[i].z), new Vector2Int(points[i + 1].x, points[i + 1].z), modePath);
+                    var path = DFAlgoBank.A_StarPathfinding2D(pcgManager.gridArr, new Vector2Int(points[i].x, points[i].z), new Vector2Int(points[i + 1].x, points[i + 1].z), diagonalPaths);
 
                     foreach (var tile in path.Item1)
                     {
                         tile.tileWeight = 1;
+                        tile.tileType = DFTile.TileType.FLOORCORRIDOR;
                     }
                 }
             }
+        }
 
-            pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(pcgManager.gridArr, true);
+        private void DrawMap() 
+        {
+            DFAlgoBank.SetUpTileCorridorTypesUI(pcgManager.gridArr, corridorWidth);
+        }
+
+        [Serializable]
+        public class LSystemMacrosBuildings
+        {
+            public char character;
+
+            public int widthORRadius;
+            public int height;
+
+            public enum TYPE_OF_ROOM
+            {
+                CIRCLE_ROOM,
+                RECTANGLE_ROOM,
+                RANDOM_ROOM
+            }
+            public TYPE_OF_ROOM roomType;
 
         }
     }

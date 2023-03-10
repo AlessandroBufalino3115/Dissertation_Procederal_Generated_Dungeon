@@ -14,13 +14,25 @@ namespace DungeonForge
         bool showRules = false;
 
         int selStartRoomGenType = 0;
-        GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "" }, new GUIContent() { text = "square room", tooltip = "" }, new GUIContent() { text = "random WAll", tooltip = "" } };
+        GUIContent[] selStringStartRoomGenType = { new GUIContent() { text = "Circle room", tooltip = "" }, new GUIContent() { text = "square room", tooltip = "" }, new GUIContent() { text = "Random Room Gen", tooltip = "" } };
+
+        int selOtherRoomGenType = 0;
+        GUIContent[] selStringOtherRoomGenType = 
+            { new GUIContent() { text = "None", tooltip = "" }, 
+            new GUIContent() { text = "Circle", tooltip = "" }, 
+            new GUIContent() { text = "Square Room", tooltip = "" }, 
+            new GUIContent() { text = "Random Room Gen", tooltip = "" }, 
+            new GUIContent() { text = "Mix of rooms", tooltip = "" } };
+
+        int widthFrom=5;
+        int widthTo=10;
+
+        int heightFrom=5;
+        int heightTo=10;
 
         //int selGridGenType = 0;
         //bool blockGeneration = false;
         string saveMapFileName = "";
-
-        int radius;
 
         int width;
         int height;
@@ -62,10 +74,8 @@ namespace DungeonForge
             switch (mainScript.state)
             {
                 case DelunaryMA.UI_STATE.STAGE_1:
-                    {
-
+                    { 
                         EditorGUI.BeginDisabledGroup(mainScript.rooms.Count >= 1);
-
 
                         GUILayout.BeginVertical("Box");
                         selStartRoomGenType = GUILayout.SelectionGrid(selStartRoomGenType, selStringStartRoomGenType, 1);
@@ -75,7 +85,7 @@ namespace DungeonForge
                         {
                             case 0:  //sphere
 
-                                radius = (int)EditorGUILayout.Slider(new GUIContent() { text = "radius of sphere", tooltip = "" }, radius, 10, 50);
+                                width = (int)EditorGUILayout.Slider(new GUIContent() { text = "radius of sphere", tooltip = "" }, width, 10, 50);
 
                                 break;
 
@@ -97,7 +107,6 @@ namespace DungeonForge
 
                             default:
                                 break;
-
                         }
 
 
@@ -109,12 +118,12 @@ namespace DungeonForge
                             {
                                 case 0:  //sphere
                                     {
-                                        var sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, radius + 2);
+                                        var sphereRoom = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, centerPoint, width + 2);
 
                                         if (sphereRoom != null)
                                         {
                                             mainScript.pcgManager.CreateBackUpGrid();
-                                            sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, radius, actuallyDraw: true);
+                                            sphereRoom = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, centerPoint, width, actuallyDraw: true);
 
                                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -126,12 +135,12 @@ namespace DungeonForge
 
                                 case 1: // room
                                     {
-                                        var squareRoom = DFAlgoBank.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArr, true);
+                                        var squareRoom = DFAlgoBank.CreateSquareRoom(width, height, centerPoint, mainScript.pcgManager.gridArr, false);
 
                                         if (squareRoom != null)
                                         {
                                             mainScript.pcgManager.CreateBackUpGrid();
-                                            squareRoom = DFAlgoBank.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArr);
+                                            squareRoom = DFAlgoBank.CreateSquareRoom(width, height, centerPoint, mainScript.pcgManager.gridArr,true);
 
                                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -143,11 +152,10 @@ namespace DungeonForge
 
                                 case 2: // random walk
                                     {
-                                        var squareRoom = DFAlgoBank.SpawnRoom(width, height, centerPoint, mainScript.pcgManager.gridArr, true);
+                                        var squareRoom = DFAlgoBank.CreateSquareRoom(width, height, centerPoint, mainScript.pcgManager.gridArr, false);
 
                                         if (squareRoom != null)
                                         {
-
                                             var roomBounds = new BoundsInt() { xMin = centerPoint.x - width / 2, xMax = centerPoint.x + width / 2, zMin = centerPoint.y - height / 2, zMax = centerPoint.y + height / 2 };
 
                                             var room = DFAlgoBank.CompartimentalisedCA(roomBounds);
@@ -192,10 +200,95 @@ namespace DungeonForge
 
                 case DelunaryMA.UI_STATE.STAGE_2:
                     {
+                        EditorGUI.BeginDisabledGroup(mainScript.generatedCorridors == true);
+
                         numbersOfVertices = (int)EditorGUILayout.Slider(new GUIContent() { text = "number of intersections", tooltip = "" }, numbersOfVertices, 5, 50);
                         ondulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Ondulation", tooltip = "" }, ondulation, 5, 40);
 
                         corridorWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "corridor thickness", tooltip = "" }, corridorWidth, 3, 6);
+
+                        DFGeneralUtil.SpacesUILayout(2);
+
+                        GUILayout.BeginVertical("Box");
+                        selOtherRoomGenType = GUILayout.SelectionGrid(selOtherRoomGenType, selStringOtherRoomGenType, 1);
+                        GUILayout.EndVertical();
+
+                        switch (selOtherRoomGenType)
+                        {
+                            case 0:  //none
+
+
+                                break;
+
+                            case 1: // circle
+
+                                widthFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum radius of the rooms", tooltip = "" }, widthFrom, 5, 50);
+                                widthTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum radius of the rooms", tooltip = "" }, widthTo, 10, 55);
+
+                                if (widthFrom > widthTo)
+                                    widthTo = widthFrom + 1;
+
+                                break;
+
+                            case 2: // square
+
+                                widthFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width of the rooms", tooltip = "" }, widthFrom, 5, 50);
+                                widthTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width of the rooms", tooltip = "" }, widthTo, 10, 55);
+
+
+                                heightFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width of the rooms", tooltip = "" }, heightFrom, 5, 50);
+                                heightTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width of the rooms", tooltip = "" }, heightTo, 10, 55);
+
+                                if (widthFrom > widthTo)
+                                    widthTo = widthFrom + 1;
+
+                                if (heightFrom > heightTo)
+                                    heightTo = heightFrom + 1;
+
+                                break;
+
+                            case 3:  //random room gen
+
+                                widthFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width of the rooms", tooltip = "" }, widthFrom, 5, 50);
+                                widthTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width of the rooms", tooltip = "" }, widthTo, 10, 55);
+
+
+                                heightFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width of the rooms", tooltip = "" }, heightFrom, 5, 50);
+                                heightTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width of the rooms", tooltip = "" }, heightTo, 10, 55);
+
+                                if (widthFrom > widthTo)
+                                    widthTo = widthFrom + 1;
+
+                                if (heightFrom > heightTo)
+                                    heightTo = heightFrom + 1;
+
+                                break;
+
+                            case 4:  //mix
+
+                                widthFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width/diameter of the rooms", tooltip = "" }, widthFrom, 5, 50);
+                                widthTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width/diameter of the rooms", tooltip = "" }, widthTo, 10, 55);
+
+
+                                heightFrom = (int)EditorGUILayout.Slider(new GUIContent() { text = "Minimum width of the rooms", tooltip = "" }, heightFrom, 5, 50);
+                                heightTo = (int)EditorGUILayout.Slider(new GUIContent() { text = "Maximum width of the rooms", tooltip = "" }, heightTo, 10, 55);
+
+                                if (widthFrom > widthTo)
+                                    widthTo = widthFrom + 1;
+
+                                if (heightFrom > heightTo)
+                                    heightTo = heightFrom + 1;
+
+
+                                break;
+
+                            default:
+                                break;
+                        }
+
+
+                        DFGeneralUtil.SpacesUILayout(2);
+
 
                         if (GUILayout.Button(new GUIContent() { text = "gen the branches", tooltip = "" }))
                         {
@@ -204,21 +297,142 @@ namespace DungeonForge
                             mainScript.pcgManager.CreateBackUpGrid();
                             for (int i = 0; i < numbersOfVertices; i++)
                             {
-                                var randomPoint = new Vector2Int(Random.Range(radius + 1, mainScript.pcgManager.gridArr.GetLength(0) - 2 - 1), Random.Range(2 + 1, mainScript.pcgManager.gridArr.GetLength(1) - 2 - 1));
-                                var sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, 2);
+                                int startXMin = 0;
+                                int startYMin = 0;
 
-                                if (sphereRoom != null)
+                                int confirmedWidth = Random.Range(widthFrom, widthTo);
+                                int confirmedHeight = Random.Range(heightFrom, heightTo);
+
+                                int startXMax = mainScript.pcgManager.gridArr.GetLength(0) - confirmedWidth;
+                                int startYMax = mainScript.pcgManager.gridArr.GetLength(1) - confirmedHeight;
+
+                                int startX = Random.Range(startXMin, startXMax + 1);
+                                int startY = Random.Range(startYMin, startYMax + 1);
+
+                                var randomPoint = new Vector2Int(startX, startY);
+                               
+
+                                switch (selOtherRoomGenType)
                                 {
-                                    sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, 2, actuallyDraw: true);
+                                    case 0:  //none
 
-                                    mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
+                                        var sphereRoom = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, 2);
 
-                                    mainScript.rooms.Add(sphereRoom);
+                                        if (sphereRoom != null)
+                                        {
+                                            sphereRoom = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, 2, actuallyDraw: true);
+
+                                            mainScript.rooms.Add(sphereRoom);
+                                        }
+
+                                        break;
+
+                                    case 1: // circle
+                                        {
+                                            var room = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, confirmedWidth, actuallyDraw: true);
+
+                                            if (room == null)
+                                                Debug.Log($"There is an issue");
+                                            else
+                                                mainScript.rooms.Add(room);
+                                        }
+                                        break;
+
+                                    case 2: // square
+                                        {
+                                            var room = DFAlgoBank.CreateSquareRoom(confirmedWidth,confirmedHeight,randomPoint,mainScript.pcgManager.gridArr,true);
+                                            Debug.Log($"{room.Count}");
+                                            if (room == null)
+                                                Debug.Log($"There is an issue");
+                                            else
+                                                mainScript.rooms.Add(room);
+                                        }
+                                        break;
+
+                                    case 3:  //random room gen
+                                        {
+                                            var roomBounds = new BoundsInt() { xMin = randomPoint.x - confirmedWidth / 2, xMax = randomPoint.x + confirmedWidth / 2, zMin = randomPoint.y - confirmedHeight / 2, zMax = randomPoint.y + confirmedHeight / 2 };
+
+                                            var room = DFAlgoBank.CompartimentalisedCA(roomBounds);
+
+                                            for (int y = 0; y < room.GetLength(1); y++)
+                                            {
+                                                for (int x = 0; x < room.GetLength(0); x++)
+                                                {
+                                                    if (room[x, y].tileWeight == 1)
+                                                    {
+                                                        mainScript.pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        mainScript.pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 0;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+
+                                    case 4:  //mix
+                                        {
+
+                                            var ranNum = Random.value;
+
+                                            if (ranNum <0.33f)
+                                            {
+                                                var room = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, confirmedWidth, actuallyDraw: true);
+
+                                                if (room == null)
+                                                    Debug.Log($"There is an issue");
+                                                else
+                                                    mainScript.rooms.Add(room);
+                                            }
+                                            else if (ranNum >= 0.33f   &&   ranNum <= 0.66f) 
+                                            {
+                                                var room = DFAlgoBank.CreateSquareRoom(confirmedWidth, confirmedHeight, randomPoint, mainScript.pcgManager.gridArr, true);
+
+                                                if (room == null)
+                                                    Debug.Log($"There is an issue");
+                                                else
+                                                    mainScript.rooms.Add(room);
+                                            }
+                                            else 
+                                            {
+                                                var roomBounds = new BoundsInt() { xMin = randomPoint.x - confirmedWidth / 2, xMax = randomPoint.x + confirmedWidth / 2, zMin = randomPoint.y - confirmedHeight / 2, zMax = randomPoint.y + confirmedHeight / 2 };
+
+                                                var room = DFAlgoBank.CompartimentalisedCA(roomBounds);
+
+                                                for (int y = 0; y < room.GetLength(1); y++)
+                                                {
+                                                    for (int x = 0; x < room.GetLength(0); x++)
+                                                    {
+                                                        if (room[x, y].tileWeight == 1)
+                                                        {
+                                                            mainScript.pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            mainScript.pcgManager.gridArr[x + roomBounds.xMin, y + roomBounds.zMin].tileWeight = 0;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                          
+                                        }
+                                        break;
+
+                                    default:
+                                        break;
                                 }
+
                             }
 
 
+                            mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
+
                             mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.pcgManager.gridArr);
+
+                            Debug.Log(mainScript.rooms.Count);
+
                             var centerPoints = new List<Vector2>();
                             var roomDict = new Dictionary<Vector2, List<DFTile>>();
                             foreach (var room in mainScript.rooms)
@@ -243,6 +457,8 @@ namespace DungeonForge
                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
                         }
 
+
+                        EditorGUI.EndDisabledGroup();
 
                         if (mainScript.generatedCorridors)
                             mainScript.allowedForward = true;

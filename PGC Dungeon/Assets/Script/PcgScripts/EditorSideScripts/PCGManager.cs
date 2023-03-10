@@ -267,7 +267,7 @@ namespace DungeonForge
                     break;
                 case MainAlgo.L_SYSTEM:
                     {
-                        var comp = this.transform.AddComponent<NewLSystem>();
+                        var comp = this.transform.AddComponent<LSystem>();
                         comp.InspectorAwake();
                     }
                     break;
@@ -342,7 +342,7 @@ namespace DungeonForge
                     DestroyImmediate(this.transform.GetComponent<CellularAutomataMA>());
                     break;
                 case 4:
-                    DestroyImmediate(this.transform.GetComponent<NewLSystem>());
+                    DestroyImmediate(this.transform.GetComponent<LSystem>());
                     break;
                 case 5:
                     DestroyImmediate(this.transform.GetComponent<DelunaryMA>());

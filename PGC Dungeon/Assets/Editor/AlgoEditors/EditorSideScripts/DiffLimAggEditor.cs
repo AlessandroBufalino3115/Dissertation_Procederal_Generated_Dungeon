@@ -109,11 +109,11 @@ namespace DungeonForge
                     {
                         case 0:  //sphere
                             {
-                                var sphereRoom = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere + 2);
+                                var sphereRoom = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere + 2);
 
                                 if (sphereRoom != null)
                                 {
-                                    DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere, actuallyDraw: true);
+                                    DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, centerPoint, sizeOfRoomSphere, actuallyDraw: true);
                                     mainScript.generatedBool = true;
                                     allowedToContinue = true;
                                 }
@@ -122,11 +122,11 @@ namespace DungeonForge
 
                         case 1: // room
                             {
-                                var squareRoom = DFAlgoBank.SpawnRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr);
+                                var squareRoom = DFAlgoBank.CreateSquareRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr);
 
                                 if (squareRoom != null)
                                 {
-                                    DFAlgoBank.SpawnRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr);
+                                    DFAlgoBank.CreateSquareRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr);
                                     mainScript.generatedBool = true;
                                     allowedToContinue = true;
                                 }
@@ -135,7 +135,7 @@ namespace DungeonForge
 
                         case 2: // random walk
                             {
-                                var squareRoom = DFAlgoBank.SpawnRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr, true);
+                                var squareRoom = DFAlgoBank.CreateSquareRoom(sizeOfRoomSphereWidth, sizeOfRoomSphereHeight, centerPoint, mainScript.pcgManager.gridArr, true);
 
                                 if (squareRoom != null)
                                 {

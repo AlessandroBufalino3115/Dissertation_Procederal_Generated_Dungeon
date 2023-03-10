@@ -28,7 +28,7 @@
  *  CA   -- done
  *  ran room gen --- done 
  *  Lsystem   --  finish macro system for room generation
- *  delu   --  done
+ *  delu   --  done  
  *  wfc  ---     done          -- add weithged system
  *  perlin noise  -- done
  *  perlin worm   --  done
@@ -44,7 +44,7 @@ The loader should be a component by it self
  *                                           
  *  button telling to generate that stuff in the selected rooms   //
  *  
- * 
+ * standaridse the create random room guicontent thing
  * 
  * delete the refresh plane button if its the same as the refresh main algo comp buitton
  * 

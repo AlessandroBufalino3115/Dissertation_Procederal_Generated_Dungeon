@@ -401,12 +401,12 @@ namespace DungeonForge
                             {
                                 var randomPoint = new Vector2Int(Random.Range(0 + radius + 3, mainScript.pcgManager.gridArr.GetLength(0) - radius - 3), Random.Range(0 + radius + 3, mainScript.pcgManager.gridArr.GetLength(1) - radius - 3));
 
-                                var room = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, radius + 2);
+                                var room = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, radius + 2);
 
                                 if (room != null)
                                 {
                                     mainScript.pcgManager.CreateBackUpGrid();
-                                    room = DFAlgoBank.DrawCircle(mainScript.pcgManager.gridArr, randomPoint, radius, actuallyDraw: true);
+                                    room = DFAlgoBank.CreateCircleRoom(mainScript.pcgManager.gridArr, randomPoint, radius, actuallyDraw: true);
 
                                     mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
@@ -438,12 +438,12 @@ namespace DungeonForge
                             {
                                 var randomPoint = new Vector2Int(Random.Range(0 + radius + 3, mainScript.pcgManager.gridArr.GetLength(0) - radius - 3), Random.Range(0 + radius + 3, mainScript.pcgManager.gridArr.GetLength(1) - radius - 3));
 
-                                var squareRoom = DFAlgoBank.SpawnRoom(width, height, randomPoint, mainScript.pcgManager.gridArr, true);
+                                var squareRoom = DFAlgoBank.CreateSquareRoom(width, height, randomPoint, mainScript.pcgManager.gridArr, true);
 
                                 if (squareRoom != null)
                                 {
                                     mainScript.pcgManager.CreateBackUpGrid();
-                                    squareRoom = DFAlgoBank.SpawnRoom(width, height, randomPoint, mainScript.pcgManager.gridArr);
+                                    squareRoom = DFAlgoBank.CreateSquareRoom(width, height, randomPoint, mainScript.pcgManager.gridArr);
 
                                     mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.pcgManager.gridArr, 0, 1, true);
 
