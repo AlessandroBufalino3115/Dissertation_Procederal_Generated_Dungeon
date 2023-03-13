@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
+
     [CustomEditor(typeof(LoadMapMA))]
     public class LoadMapEditor : Editor
     {

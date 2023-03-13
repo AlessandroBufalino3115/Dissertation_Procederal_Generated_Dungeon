@@ -1,10 +1,13 @@
-using UnityEngine;
-using UnityEditor;
 
-namespace DungeonForge
+
+namespace DungeonForge.Editor
 {
-    [CustomEditor(typeof(LSystem))]
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
 
+
+    [CustomEditor(typeof(LSystem))]
     public class LSystemEditor : Editor
     {
         bool showRules = false;

@@ -1,9 +1,11 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using System;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
+
     [Serializable]
     public class LSystemRuleObj : ScriptableObject
     {

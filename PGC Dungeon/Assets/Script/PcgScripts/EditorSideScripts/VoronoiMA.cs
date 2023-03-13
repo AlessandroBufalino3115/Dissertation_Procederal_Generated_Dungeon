@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+    using DungeonForge.Utils;
+
     public class VoronoiMA : MonoBehaviour, IUndoInteraction
     {
         [HideInInspector]

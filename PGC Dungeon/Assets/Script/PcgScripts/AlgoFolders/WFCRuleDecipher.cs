@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
     public class WFCRuleDecipher : MonoBehaviour
     {

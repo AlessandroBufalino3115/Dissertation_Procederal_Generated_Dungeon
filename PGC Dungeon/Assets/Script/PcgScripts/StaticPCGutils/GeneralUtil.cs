@@ -8,6 +8,9 @@ using Random = UnityEngine.Random;
 
 namespace DungeonForge
 {
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
+
     public static class DFGeneralUtil
     {
         public static int[,] childPosArry4Side = { { 0, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 } };

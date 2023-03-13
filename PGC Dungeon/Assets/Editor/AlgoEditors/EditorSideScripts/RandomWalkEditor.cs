@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using System.Collections.Generic;
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
 
     [CustomEditor(typeof(RandomWalkMA))]
     public class RandomWalkEditor : Editor

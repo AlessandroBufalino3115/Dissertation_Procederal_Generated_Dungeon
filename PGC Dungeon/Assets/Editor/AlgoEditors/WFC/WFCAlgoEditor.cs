@@ -1,12 +1,11 @@
-using log4net.Util;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
+
     [CustomEditor(typeof(NewWFCAlog))]
     public class WFCAlgoEditor : Editor
     {

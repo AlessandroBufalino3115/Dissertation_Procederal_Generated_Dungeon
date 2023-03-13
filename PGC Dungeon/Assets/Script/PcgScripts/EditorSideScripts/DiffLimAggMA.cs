@@ -4,8 +4,9 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+
     public class DiffLimAggMA : MonoBehaviour
     {
 

@@ -1,16 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.VersionControl;
-using UnityEngine;
 
-
-
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
+
+
     public class RuleSpawnerEditor : Editor
     {
-        //https://hugecalf-studios.github.io/unity-lessons/lessons/editor/menuitem/
+
+        [MenuItem("PCG Algorithms/Main Generator", priority = 1)]
+        static void SpawnMainGenerator()
+        {
+            var objToSpawn = new GameObject("PCG element");
+            objToSpawn.AddComponent<PCGManager>();
+        }
+
+
         [MenuItem("PCG Algorithms/Spawn WFC Rule", priority = 24)]
         private static void SpawnWFCRule()
         {

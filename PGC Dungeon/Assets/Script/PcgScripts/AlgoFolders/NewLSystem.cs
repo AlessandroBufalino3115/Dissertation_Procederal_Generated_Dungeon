@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+    using DungeonForge.Utils;
+
     public class LSystem : MonoBehaviour
     {
         //https://www.gamedeveloper.com/design/kastle-dungeon-generation-using-l-systems

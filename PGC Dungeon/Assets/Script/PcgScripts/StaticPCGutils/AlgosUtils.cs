@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Random = UnityEngine.Random;
-using static UnityEngine.ParticleSystem;
 
 
-namespace DungeonForge
+namespace DungeonForge.Utils
 {
     public static class DFAlgoBank
     {

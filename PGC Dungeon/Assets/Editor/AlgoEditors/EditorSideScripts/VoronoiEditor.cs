@@ -1,10 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 
-namespace DungeonForge
+
+namespace DungeonForge.Editor
 {
+    using System.Collections.Generic;
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
 
     [CustomEditor(typeof(VoronoiMA))]
     public class VoronoiEditor : Editor

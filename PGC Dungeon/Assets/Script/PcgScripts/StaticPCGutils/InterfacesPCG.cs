@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-namespace DungeonForge
+namespace DungeonForge.Utils
 {
     public interface IUndoInteraction
     {

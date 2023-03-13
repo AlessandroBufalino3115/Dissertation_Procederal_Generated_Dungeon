@@ -1,15 +1,11 @@
-using NUnit.Framework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.VersionControl;
-using UnityEngine;
 
 
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
 
     [CustomEditor(typeof(PCGManager))]
     public class PCGManagerEditor : Editor
@@ -18,14 +14,6 @@ namespace DungeonForge
 
         //SerializedProperty wallListGameObj;
         //SerializedProperty wallListOccurance;
-
-        [MenuItem("PCG Algorithms/Main Generator", priority = 1)]
-        static void SpawnObject()
-        {
-            var objToSpawn = new GameObject("Cool GameObject made from Code");
-            objToSpawn.transform.name = "PCG element";
-            objToSpawn.AddComponent<PCGManager>();
-        }
 
 
         public void OnEnable()

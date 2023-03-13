@@ -1,12 +1,12 @@
 
-
-using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
-using System.IO;
-
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using System.Collections.Generic;
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.AlgoScript;
+    using System.IO;
+
     [CustomEditor(typeof(WFCRuleDecipher))]
     public class WFCRuleDecipherEditor : Editor
     {

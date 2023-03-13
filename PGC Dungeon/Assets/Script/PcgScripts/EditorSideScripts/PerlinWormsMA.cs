@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+    using DungeonForge.Utils;
+
     public class PerlinWormsMA : MonoBehaviour, IUndoInteraction
     {
         [HideInInspector]

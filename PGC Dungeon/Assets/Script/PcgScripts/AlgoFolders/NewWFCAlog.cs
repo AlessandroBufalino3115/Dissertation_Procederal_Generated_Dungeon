@@ -3,8 +3,10 @@ using System.Linq;
 using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+    using DungeonForge.Utils;
+
     public class NewWFCAlog : MonoBehaviour
     {
 

@@ -4,8 +4,11 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+
+    using DungeonForge.Utils;
+
     public class CellularAutomataMA : MonoBehaviour, IUndoInteraction
     {
         [HideInInspector]

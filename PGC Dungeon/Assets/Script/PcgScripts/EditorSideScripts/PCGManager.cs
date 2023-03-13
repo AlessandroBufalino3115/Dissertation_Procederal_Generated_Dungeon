@@ -6,8 +6,10 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-namespace DungeonForge
+namespace DungeonForge.AlgoScript
 {
+    using DungeonForge.Utils;
+
     public class PCGManager : MonoBehaviour
     {
         public Dictionary<DFTile.TileType, float> tileTypeToCostDict = new Dictionary<DFTile.TileType, float>();
@@ -141,6 +143,10 @@ namespace DungeonForge
             }
         }
 
+        
+
+
+
         public void TestFunc()
         {
             DFGeneralUtil.SetUpColorBasedOnType(gridArr);
@@ -200,6 +206,7 @@ namespace DungeonForge
         #endregion
 
 
+        
         #region algo Managment
         public void CreatePlane()
         {

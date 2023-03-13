@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
 
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using System.Collections.Generic;
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
+
     [CustomEditor(typeof(PerlinWormsMA))]
     public class PerlinWormsEditor : Editor
     {

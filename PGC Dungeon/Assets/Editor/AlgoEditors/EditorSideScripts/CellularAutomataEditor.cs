@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using UnityEditor;
-using UnityEngine;
-
-
-namespace DungeonForge
+namespace DungeonForge.Editor
 {
+    using System.Collections.Generic;
+    using UnityEditor;
+    using UnityEngine;
+    using DungeonForge.Utils;
+    using DungeonForge.AlgoScript;
+
+
     [CustomEditor(typeof(CellularAutomataMA))]
     public class CellularAutomataEditor : Editor
     {
