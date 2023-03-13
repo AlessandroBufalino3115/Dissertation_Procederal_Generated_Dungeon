@@ -13,7 +13,6 @@ namespace DungeonForge
         public static int[,] childPosArry4Side = { { 0, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 } };
         public static int[,] childPosArry8Side = { { 0, -1 }, { 1, -1 }, { -1, -1 }, { -1, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 }, { -1, 1 } };
 
-
         public static float EuclideanDistance2D(Vector2 pointA, Vector2 pointB) => Vector2.Distance(pointA, pointB);
 
         public static float ManhattanDistance2D(Vector2 pointA, Vector2 pointB) => Mathf.Abs(pointA.x - pointB.x) + Mathf.Abs(pointA.y - pointB.y);
@@ -334,13 +333,16 @@ namespace DungeonForge
 
         }
 
-        public static void GenerateMeshEditorSection(PCGManager pcgManager, string inSaveMapFileName, out string saveMapFileName)
+        public static void SaveGridDataToGenerate(PCGManager pcgManager, string inSaveMapFileName, out string saveMapFileName)
         {
             saveMapFileName = EditorGUILayout.TextField("Save file name: ", inSaveMapFileName);
             if (GUILayout.Button("save"))
             {
                 SaveMap(pcgManager.gridArr, inSaveMapFileName);
             }
+            SpacesUILayout(2);
+
+            GUILayout.Label("Once saved you can access this data later on.\nTo Generate your dungeon switch to the Generate component (in the main algo selection) and give this file name");
         }
 
         public static void SaveMap(DFTile[,] grid, string saveFileName)

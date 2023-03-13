@@ -124,7 +124,7 @@ namespace DungeonForge
 
                  DFGeneralUtil.SpacesUILayout(2);
 
-                 DFGeneralUtil.GenerateMeshEditorSection(ruleDec.PcgManager, saveMapFileName, out saveMapFileName);
+                 DFGeneralUtil.SaveGridDataToGenerate(ruleDec.PcgManager, saveMapFileName, out saveMapFileName);
             }
         }
     }

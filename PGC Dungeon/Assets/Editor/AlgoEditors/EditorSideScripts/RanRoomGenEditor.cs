@@ -863,7 +863,7 @@ namespace DungeonForge
                 case RanRoomGenMA.UI_STATE.GENERATE:
                     {
 
-                        DFGeneralUtil.GenerateMeshEditorSection(mainScript.PcgManager, saveMapFileName, out saveMapFileName);
+                        DFGeneralUtil.SaveGridDataToGenerate(mainScript.PcgManager, saveMapFileName, out saveMapFileName);
                     }
                     break;
                 default:

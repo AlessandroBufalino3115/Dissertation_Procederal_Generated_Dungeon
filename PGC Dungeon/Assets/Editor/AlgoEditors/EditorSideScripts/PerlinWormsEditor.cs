@@ -640,7 +640,7 @@ namespace DungeonForge
                     break;
                 case PerlinWormsMA.UI_STATE.GENERATE:
 
-                    DFGeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                    DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
                     break;
                 default:
                     break;

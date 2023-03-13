@@ -603,7 +603,7 @@ namespace DungeonForge
                     mainScript.allowedBack = false;
                     mainScript.allowedForward = false;
 
-                    DFGeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                    DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
 
 
 

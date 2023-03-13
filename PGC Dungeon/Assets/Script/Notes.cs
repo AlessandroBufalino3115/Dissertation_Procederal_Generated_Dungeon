@@ -27,7 +27,7 @@
  *  random Walk -- done
  *  CA   -- done
  *  ran room gen --- done 
- *  Lsystem   --  finish macro system for room generation
+ *  Lsystem   --  done
  *  delu   --  done  
  *  wfc  ---     done          -- add weithged system
  *  perlin noise  -- done
@@ -40,7 +40,7 @@
 
 The loader should be a component by it self
 
- *  if i have all of the rooms i can show them in a list format of sorts and have them saved in a class this class holst the room, the middle where the gizmos is going to spawn and a select thign so 
+ *  if i have all of the rooms i can show them in a list format of sorts and have them saved in a class this class holst the room, the middle where the gizmos is going to spawn and a select thign so  maybe
  *                                           
  *  button telling to generate that stuff in the selected rooms   //
  *  
@@ -52,8 +52,9 @@ The loader should be a component by it self
  * 
  * https://www.pixilart.com/draw/64x64-6452daa78a#
  * 
- * redo the order of the pcgmanager scirpt
+ * redo the order of the pcgmanager scirpt   --  half done
  * 
+ * make the package -- issue with the unityEgnine
  * 
  * fix the issue with some buttons  this happens on the ran room room room gen button
  */

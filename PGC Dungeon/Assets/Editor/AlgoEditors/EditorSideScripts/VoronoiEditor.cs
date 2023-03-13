@@ -755,7 +755,7 @@ namespace DungeonForge
                     {
                         mainScript.allowedBack = false;
 
-                        DFGeneralUtil.GenerateMeshEditorSection(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                        DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
                         break;
                     }
 
