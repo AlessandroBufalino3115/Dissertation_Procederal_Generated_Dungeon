@@ -24,8 +24,6 @@ namespace DungeonForge.AlgoScript
         public bool alreadyPassed;
 
 
-
-
         //general
 
         [HideInInspector]

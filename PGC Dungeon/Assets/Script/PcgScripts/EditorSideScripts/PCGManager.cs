@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -32,20 +31,18 @@ namespace DungeonForge.AlgoScript
         }
 
 
-
         [Header("Dungeon Generation Settings")]
         [Tooltip("How wide the drawing canvas where the algorithms will take place will be")]
-        [Range(100, 1000)]
+        [Range(50, 1000)]
         public int width = 125;
 
         [Tooltip("How tall the drawing canvas where the algorithms will take place will be")]
-        [Range(100, 1000)]
+        [Range(50, 1000)]
         public int height = 125;
 
         [Tooltip("How tall the dungeon will be.")]
         [Range(3f, 8f)]
         public int RoomHeight = 4;
-
 
         public enum MainAlgo
         {
@@ -62,7 +59,6 @@ namespace DungeonForge.AlgoScript
             DIFF_LIM_AGGR = 10,
             GENERATE_DUNGEON = 11
         }
-
 
         [Space(10)]
         [Tooltip("The main algorithm to start with, this depends on the type of dungeons prefered")]
@@ -134,7 +130,6 @@ namespace DungeonForge.AlgoScript
         public string TileSetRuleFileName = "";
 
 
-
         private void Update()
         {
             if (chunks.Count > 0)
@@ -143,10 +138,7 @@ namespace DungeonForge.AlgoScript
             }
         }
 
-        
-
-
-
+     
         public void TestFunc()
         {
             DFGeneralUtil.SetUpColorBasedOnType(gridArr);
@@ -206,7 +198,6 @@ namespace DungeonForge.AlgoScript
         #endregion
 
 
-        
         #region algo Managment
         public void CreatePlane()
         {
@@ -250,75 +241,75 @@ namespace DungeonForge.AlgoScript
             {
                 case MainAlgo.VORONI:
                     {
-                        var comp = this.transform.AddComponent<VoronoiMA>();
+                        var comp = gameObject.AddComponent<VoronoiMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.RANDOM_WALK:
                     {
-                        var comp = this.transform.AddComponent<RandomWalkMA>();
+                        var comp = gameObject.AddComponent<RandomWalkMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.ROOM_GEN:
                     {
-                        var comp = this.transform.AddComponent<RanRoomGenMA>();
+                        var comp = gameObject.AddComponent<RanRoomGenMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.CELLULAR_AUTOMATA:
                     {
-                        var comp = this.transform.AddComponent<CellularAutomataMA>();
+                        var comp = gameObject.AddComponent<CellularAutomataMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.L_SYSTEM:
                     {
-                        var comp = this.transform.AddComponent<LSystem>();
+                        var comp = gameObject.AddComponent<LSystem>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.DELUNARY:
                     {
-                        var comp = this.transform.AddComponent<DelunaryMA>();
+                        var comp = gameObject.AddComponent<DelunaryMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.WFC:
                     {
-                        this.transform.AddComponent<WFCRuleDecipher>();
+                        gameObject.AddComponent<WFCRuleDecipher>();
 
-                        var comp = this.transform.AddComponent<NewWFCAlog>();
+                        var comp = gameObject.AddComponent<NewWFCAlog>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.PERLIN_NOISE:
                     {
-                        var comp = this.transform.AddComponent<PerlinNoiseMA>();
+                        var comp = gameObject.AddComponent<PerlinNoiseMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.PERLIN_WORM:
                     {
-                        var comp = this.transform.AddComponent<PerlinWormsMA>();
+                        var comp = gameObject.AddComponent<PerlinWormsMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.DIAMOND_SQUARE:
                     {
-                        var comp = this.transform.AddComponent<DiamondSquareMA>();
+                        var comp = gameObject.AddComponent<DiamondSquareMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.DIFF_LIM_AGGR:
                     {
-                        var comp = this.transform.AddComponent<DiffLimAggMA>();
+                        var comp = gameObject.AddComponent<DiffLimAggMA>();
                         comp.InspectorAwake();
                     }
                     break;
                 case MainAlgo.GENERATE_DUNGEON:
                     {
-                        var comp = this.transform.AddComponent<LoadMapMA>();
+                        var comp = gameObject.AddComponent<LoadMapMA>();
                         comp.InspectorAwake();
                     }
                     break;
@@ -335,47 +326,47 @@ namespace DungeonForge.AlgoScript
             switch (currMainAlgoIDX)
             {
                 case 0:
-                    DestroyImmediate(this.transform.GetComponent<VoronoiMA>());
+                    DestroyImmediate(gameObject.GetComponent<VoronoiMA>());
                     break;
                 case 1:
 
-                    DestroyImmediate(this.transform.GetComponent<RandomWalkMA>());
+                    DestroyImmediate(gameObject.GetComponent<RandomWalkMA>());
 
                     break;
                 case 2:
-                    DestroyImmediate(this.transform.GetComponent<RanRoomGenMA>());
+                    DestroyImmediate(gameObject.GetComponent<RanRoomGenMA>());
                     break;
                 case 3:
-                    DestroyImmediate(this.transform.GetComponent<CellularAutomataMA>());
+                    DestroyImmediate(gameObject.GetComponent<CellularAutomataMA>());
                     break;
                 case 4:
-                    DestroyImmediate(this.transform.GetComponent<LSystem>());
+                    DestroyImmediate(gameObject.GetComponent<LSystem>());
                     break;
                 case 5:
-                    DestroyImmediate(this.transform.GetComponent<DelunaryMA>());
+                    DestroyImmediate(gameObject.GetComponent<DelunaryMA>());
                     break;
                 case 6:
-                    DestroyImmediate(this.transform.GetComponent<NewWFCAlog>());
-                    DestroyImmediate(this.transform.GetComponent<WFCRuleDecipher>());
+                    DestroyImmediate(gameObject.GetComponent<NewWFCAlog>());
+                    DestroyImmediate(gameObject.GetComponent<WFCRuleDecipher>());
 
                     foreach (Transform child in transform)
                         DestroyImmediate(child.gameObject);
 
                     break;
                 case 7:
-                    DestroyImmediate(this.transform.GetComponent<PerlinNoiseMA>());
+                    DestroyImmediate(gameObject.GetComponent<PerlinNoiseMA>());
                     break;
                 case 8:
-                    DestroyImmediate(this.transform.GetComponent<PerlinWormsMA>());
+                    DestroyImmediate(gameObject.GetComponent<PerlinWormsMA>());
                     break;
                 case 9:
-                    DestroyImmediate(this.transform.GetComponent<DiamondSquareMA>());
+                    DestroyImmediate(gameObject.GetComponent<DiamondSquareMA>());
                     break;
                 case 10:
-                    DestroyImmediate(this.transform.GetComponent<DiffLimAggMA>());
+                    DestroyImmediate(gameObject.GetComponent<DiffLimAggMA>());
                     break;
                 case 11:
-                    DestroyImmediate(this.transform.GetComponent<LoadMapMA>());
+                    DestroyImmediate(gameObject.GetComponent<LoadMapMA>());
                     break;
 
                 default:
@@ -803,6 +794,7 @@ namespace DungeonForge.AlgoScript
         }
 
         #endregion
+
 
         #region classes
 

@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace DungeonForge.AlgoScript
 {
-    using DungeonForge.Utils;
 
     public class NewWFCAlog : MonoBehaviour
     {
