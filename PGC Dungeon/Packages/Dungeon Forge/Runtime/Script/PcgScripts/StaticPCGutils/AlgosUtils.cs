@@ -2278,7 +2278,6 @@ namespace DungeonForge.Utils
 
         #region Marching Cubes Generation
 
-
         public static MarchingCubeClass[,,] ExtrapolateMarchingCubes(DFTile[,] gridArr, int roomHeight = 7)
         {
             var marchingCubesArr = new MarchingCubeClass[gridArr.GetLength(0), gridArr.GetLength(1), roomHeight];
@@ -2320,7 +2319,6 @@ namespace DungeonForge.Utils
 
         public static Mesh MarchingCubesAlgo(MarchingCubeClass[,,] positionVertex, bool inverse = false)
         {
-
             Mesh mesh = new Mesh();
 
             mesh.Clear();
@@ -2384,8 +2382,6 @@ namespace DungeonForge.Utils
                 }
             }
 
-
-
             if (inverse)
             {
                 triangles.Reverse();
@@ -2394,7 +2390,6 @@ namespace DungeonForge.Utils
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertecies.ToArray();
             mesh.triangles = triangles.ToArray();
-
 
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();

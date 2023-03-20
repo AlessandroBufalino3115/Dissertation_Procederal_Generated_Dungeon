@@ -473,6 +473,8 @@ namespace DungeonForge.AlgoScript
             var filter = newPart.AddComponent<MeshFilter>();
             filter.mesh = mesh;
 
+            var meshRenderer = newPart.AddComponent<MeshRenderer>();
+
             var collider = newPart.AddComponent<MeshCollider>();
             collider.convex = false;
         }
@@ -577,7 +579,6 @@ namespace DungeonForge.AlgoScript
 
         public void DrawTileMapDirectionalWalls()
         {
-            int iter = 0;
             ChunkCreate(chunkWidth, chunkHeight);
 
             if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
@@ -602,17 +603,14 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
                                 objRef.isStatic = true;
                                 objRef.transform.position = new Vector3(x, z, y);
-                                iter++;
                             }
                         }
 
                         if (gridArr[x, y].tileType == DFTile.TileType.WALL  || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                         {
-                            var checkVector = new Vector2Int(x, y);
+                            var checkVector = new Vector2Int(x + 1, y);// right check
 
-                            checkVector = new Vector2Int(x + 1, y);// right check
-
-                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(1) || checkVector.y >= gridArr.GetLength(0))
+                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(0) || checkVector.y >= gridArr.GetLength(1))
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -620,7 +618,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.Rotate(0, 90, 0);
                                 objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                iter++;
                             }
                             else
                             {
@@ -632,7 +629,6 @@ namespace DungeonForge.AlgoScript
                                     objRef.transform.Rotate(0, 90, 0);
                                     objRef.isStatic = true;
                                     objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                    iter++;
                                 }
                             }
 
@@ -640,7 +636,7 @@ namespace DungeonForge.AlgoScript
 
                             checkVector = new Vector2Int(x - 1, y);// left check
 
-                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(1) || checkVector.y >= gridArr.GetLength(0))
+                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(0) || checkVector.y >= gridArr.GetLength(1))
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -648,7 +644,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.Rotate(0, 270, 0);
                                 objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                iter++;
                             }
                             else
                             {
@@ -660,17 +655,13 @@ namespace DungeonForge.AlgoScript
                                     objRef.transform.Rotate(0, 270, 0);
                                     objRef.isStatic = true;
                                     objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                    iter++;
-
                                 }
                             }
 
 
-
-
                             checkVector = new Vector2Int(x, y + 1);// above check
 
-                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(1) || checkVector.y >= gridArr.GetLength(0))
+                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(0) || checkVector.y >= gridArr.GetLength(1))
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -678,7 +669,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
                                 objRef.transform.Rotate(0, 0, 0);
-                                iter++;
                             }
                             else
                             {
@@ -690,17 +680,12 @@ namespace DungeonForge.AlgoScript
                                     objRef.transform.Rotate(0, 0, 0);
                                     objRef.isStatic = true;
                                     objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                    iter++;
                                 }
                             }
 
-
-
-
-
                             checkVector = new Vector2Int(x, y - 1);// down check
 
-                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(1) || checkVector.y >= gridArr.GetLength(0))
+                            if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(0) || checkVector.y >= gridArr.GetLength(1))
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 
@@ -708,7 +693,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.Rotate(0, 180, 0);
                                 objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                iter++;
                             }
                             else
                             {
@@ -720,8 +704,6 @@ namespace DungeonForge.AlgoScript
                                     objRef.transform.Rotate(0, 180, 0);
                                     objRef.isStatic = true;
                                     objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-
-                                    iter++;
                                 }
                             }
                         }
@@ -732,7 +714,6 @@ namespace DungeonForge.AlgoScript
 
         public void DrawTileMapBlockType()
         {
-            int iter = 0;
             ChunkCreate(chunkWidth, chunkHeight);
 
             if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
@@ -757,7 +738,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
                                 objRef.isStatic = true;
                                 objRef.transform.position = new Vector3(x, z, y);
-                                iter++;
                             }
                         }
                         else if (z == RoomHeight - 1)
@@ -770,7 +750,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
                                 objRef.isStatic = true;
                                 objRef.transform.position = new Vector3(x, z, y);
-                                iter++;
                             }
                         }
                         else
@@ -782,7 +761,6 @@ namespace DungeonForge.AlgoScript
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.isStatic = true;
                                 objRef.transform.parent = this.transform.GetChild(gridArr[x, y].idx + 1);
-                                iter++;
                             }
                         }
                     }
