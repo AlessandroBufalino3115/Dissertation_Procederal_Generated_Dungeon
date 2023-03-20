@@ -51,7 +51,7 @@ namespace DungeonForge.Editor
             #endregion
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             fileName = EditorGUILayout.TextField("Save file name: ", fileName);
 
@@ -73,13 +73,12 @@ namespace DungeonForge.Editor
 
                     mainScript.PcgManager.gridArr = map;
 
-                    mainScript.rooms.Clear();
+                    //mainScript.rooms.Clear();
 
-                    mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.PcgManager.gridArr, true);
-                    Debug.Log(mainScript.rooms.Count);
+                    //mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.PcgManager.gridArr, true);
+                    //Debug.Log(mainScript.rooms.Count);
                     mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
                 }
-
             }
 
 
@@ -95,7 +94,7 @@ namespace DungeonForge.Editor
             }
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
 
             EditorGUI.BeginDisabledGroup(succesfullLoading == false);
@@ -105,7 +104,7 @@ namespace DungeonForge.Editor
             selGridGenType = GUILayout.SelectionGrid(selGridGenType, selStringsGenType, 1);
             GUILayout.EndVertical();
 
-            DFGeneralUtil.SpacesUILayout(2);
+            DFEditorUtil.SpacesUILayout(2);
 
             if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
             {
@@ -143,7 +142,7 @@ namespace DungeonForge.Editor
             if (selGridGenType == 1)
             {
                 blockGeneration = EditorGUILayout.Toggle(new GUIContent() { text = blockGeneration == true ? "Block gen selected" : "Wall directional gen selected", tooltip = "" }, blockGeneration);
-                DFGeneralUtil.SpacesUILayout(1);
+                DFEditorUtil.SpacesUILayout(1);
                 mainScript.PcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk size", tooltip = "" }, mainScript.PcgManager.ChunkHeight, 10, 30);
                 mainScript.PcgManager.ChunkWidth = mainScript.PcgManager.ChunkHeight;
             }

@@ -68,7 +68,7 @@ namespace DungeonForge.Editor
             #endregion
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             switch (mainScript.state)
             {
@@ -206,7 +206,7 @@ namespace DungeonForge.Editor
 
                         corridorWidth = (int)EditorGUILayout.Slider(new GUIContent() { text = "corridor thickness", tooltip = "" }, corridorWidth, 3, 6);
 
-                        DFGeneralUtil.SpacesUILayout(2);
+                        DFEditorUtil.SpacesUILayout(2);
 
                         GUILayout.BeginVertical("Box");
                         selOtherRoomGenType = GUILayout.SelectionGrid(selOtherRoomGenType, selStringOtherRoomGenType, 1);
@@ -286,7 +286,7 @@ namespace DungeonForge.Editor
                         }
 
 
-                        DFGeneralUtil.SpacesUILayout(2);
+                        DFEditorUtil.SpacesUILayout(2);
 
 
                         if (GUILayout.Button(new GUIContent() { text = "gen the branches", tooltip = "" }))
@@ -472,7 +472,7 @@ namespace DungeonForge.Editor
 
                     mainScript.allowedBack = true;
 
-                    DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                    DFEditorUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
 
                     break;
 
@@ -483,7 +483,7 @@ namespace DungeonForge.Editor
 
             if (mainScript.state != DelunaryMA.UI_STATE.GENERATION)
             {
-                DFGeneralUtil.SpacesUILayout(4);
+                DFEditorUtil.SpacesUILayout(4);
 
                 EditorGUI.BeginDisabledGroup(mainScript.allowedBack == false);
 

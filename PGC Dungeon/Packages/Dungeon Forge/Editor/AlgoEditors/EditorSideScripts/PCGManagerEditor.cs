@@ -6,6 +6,7 @@ namespace DungeonForge.Editor
     using UnityEditor;
     using UnityEngine;
     using DungeonForge.AlgoScript;
+    using DungeonForge.Utils;
 
     [CustomEditor(typeof(PCGManager))]
     public class PCGManagerEditor : Editor
@@ -31,13 +32,13 @@ namespace DungeonForge.Editor
                 "Then choose the starting main algorithm which will shape your dungeon");
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             base.OnInspectorGUI();
 
             PCGManager mainScript = (PCGManager)target;
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
             {
@@ -82,19 +83,19 @@ namespace DungeonForge.Editor
             }
 
 
-            DFGeneralUtil.SpacesUILayout(2);
+            DFEditorUtil.SpacesUILayout(2);
 
             mainScript.loadSectionOpen = EditorGUILayout.BeginFoldoutHeaderGroup(mainScript.loadSectionOpen, "Loading Assets Section");
 
             if (mainScript.loadSectionOpen)
             {
 
-                DFGeneralUtil.SpacesUILayout(4);
+                DFEditorUtil.SpacesUILayout(4);
 
                 GUIContent tileSetRuleLabel = new GUIContent("Tile Set Scriptable File Name", "This is where the name of the scriptable object containing the tilesets objects should go with their occurance, to be used when using tile Generation");
                 mainScript.TileSetRuleFileName = EditorGUILayout.TextField(tileSetRuleLabel,mainScript.TileSetRuleFileName);
 
-                DFGeneralUtil.SpacesUILayout(1);
+                DFEditorUtil.SpacesUILayout(1);
 
                 if (GUILayout.Button(new GUIContent() { text = "New tileSet rule", tooltip = "create a new scriptable object for the rules of the tiles that you want to use" }))
                 {
@@ -177,11 +178,11 @@ namespace DungeonForge.Editor
                 }
 
 
-                DFGeneralUtil.SpacesUILayout(4);
+                DFEditorUtil.SpacesUILayout(4);
 
                 GUIContent weightRuleLabel = new GUIContent("Pathing Weight Rule Scriptable File Name", "This is where the name of the scriptable object containing the paths weight should go to be loaded and used when creating corridors");
                 mainScript.WeightRuleFileName = EditorGUILayout.TextField(weightRuleLabel,mainScript.WeightRuleFileName);
-                DFGeneralUtil.SpacesUILayout(1);
+                DFEditorUtil.SpacesUILayout(1);
                 if (GUILayout.Button(new GUIContent() { text = "New Weight RuleSet", tooltip = "create a new weightRule Set" }))
                 {
 
@@ -263,14 +264,14 @@ namespace DungeonForge.Editor
 
 
 
-                DFGeneralUtil.SpacesUILayout(1);
+                DFEditorUtil.SpacesUILayout(1);
 
                 EditorGUILayout.PropertyField(tileCostSerialized, true);
 
                 serializedObject.ApplyModifiedProperties();
             }
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             EditorGUI.BeginDisabledGroup(mainScript.prevGridArray2D.Count == 0 ? true : false);
 

@@ -1,5 +1,6 @@
 namespace DungeonForge.Editor
 {
+    using DungeonForge.Utils;
     using UnityEditor;
     using UnityEngine;
     using DungeonForge.AlgoScript;
@@ -16,7 +17,7 @@ namespace DungeonForge.Editor
 
             NewWFCAlog mainScript = (NewWFCAlog)target;
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             #region explanation
 
@@ -35,7 +36,7 @@ namespace DungeonForge.Editor
             EditorGUILayout.EndFoldoutHeaderGroup();
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
 
             #endregion

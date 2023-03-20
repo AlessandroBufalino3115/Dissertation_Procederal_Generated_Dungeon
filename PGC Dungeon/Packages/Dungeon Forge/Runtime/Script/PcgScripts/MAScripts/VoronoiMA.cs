@@ -13,7 +13,7 @@ namespace DungeonForge.AlgoScript
         public PCGManager pcgManager;
 
         [HideInInspector]
-        public DFGeneralUtil.UI_STATE currUiState = DFGeneralUtil.UI_STATE.MAIN_ALGO;
+        public DFEditorUtil.UI_STATE currUiState = DFEditorUtil.UI_STATE.MAIN_ALGO;
 
         [HideInInspector]
         public bool allowedBack = false;
@@ -28,7 +28,7 @@ namespace DungeonForge.AlgoScript
 
 
         [HideInInspector]
-        public DFGeneralUtil.PathFindingType pathFindingType;
+        public DFEditorUtil.PathFindingType pathFindingType;
         [HideInInspector]
         public bool pathType = false;
 
@@ -37,7 +37,7 @@ namespace DungeonForge.AlgoScript
 
         public void DeleteLastSavedRoom()
         {
-            if (currUiState == DFGeneralUtil.UI_STATE.EXTRA_ROOM_GEN)
+            if (currUiState == DFEditorUtil.UI_STATE.EXTRA_ROOM_GEN)
                 rooms.RemoveAt(rooms.Count - 1);
         }
 

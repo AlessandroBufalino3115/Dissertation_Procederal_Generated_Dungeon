@@ -51,7 +51,7 @@ namespace DungeonForge.Editor
 
             #endregion
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
 
             if (!mainScript.generatedBool)
@@ -87,16 +87,16 @@ namespace DungeonForge.Editor
 
                 }
 
-                DFGeneralUtil.SpacesUILayout(2);
+                DFEditorUtil.SpacesUILayout(2);
                 percentageOfStick = EditorGUILayout.Slider(new GUIContent() { text = "cycles", tooltip = "" }, percentageOfStick, 0.05f, 1f);
 
                 percOfSpawn = EditorGUILayout.Slider(new GUIContent() { text = "perc of spawn", tooltip = "" }, percOfSpawn, 0.15f, 0.7f);
 
-                DFGeneralUtil.SpacesUILayout(2);
+                DFEditorUtil.SpacesUILayout(2);
 
                 corridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "thickness of corrs", tooltip = "" }, corridorThickness, 1, 5);
 
-                DFGeneralUtil.SpacesUILayout(2);
+                DFEditorUtil.SpacesUILayout(2);
 
                 if (GUILayout.Button("Generate Diff lim agg Randomisation"))// gen something
                 {
@@ -192,9 +192,9 @@ namespace DungeonForge.Editor
                     mainScript.generatedBool = false;
                 }
 
-                DFGeneralUtil.SpacesUILayout(2);
+                DFEditorUtil.SpacesUILayout(2);
 
-                DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                DFEditorUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
             }
         }
     }

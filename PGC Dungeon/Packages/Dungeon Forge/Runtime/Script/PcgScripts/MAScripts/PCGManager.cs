@@ -519,7 +519,6 @@ namespace DungeonForge.AlgoScript
             chunks = new List<Chunk>();
             while (true)
             {
-
                 if (TRhead.x + 1 >= maxWidth)  // needs to go in the new line
                 {
                     if (TRhead.y + 1 >= maxHeight)  // this checks if we are dont with the algo
@@ -589,9 +588,9 @@ namespace DungeonForge.AlgoScript
 
             for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
             {
-                for (int y = 0; y < gridArr.GetLength(0); y++)
+                for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
-                    for (int x = 0; x < gridArr.GetLength(1); x++)
+                    for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
                         if (z == 0 || z == RoomHeight - 1) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                         {
@@ -607,7 +606,7 @@ namespace DungeonForge.AlgoScript
                             }
                         }
 
-                        if (gridArr[x, y].tileType == DFTile.TileType.WALL)
+                        if (gridArr[x, y].tileType == DFTile.TileType.WALL  || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                         {
                             var checkVector = new Vector2Int(x, y);
 
@@ -616,8 +615,6 @@ namespace DungeonForge.AlgoScript
                             if (checkVector.x < 0 || checkVector.y < 0 || checkVector.x >= gridArr.GetLength(1) || checkVector.y >= gridArr.GetLength(0))
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
-
-
 
                                 objRef.transform.position = new Vector3(x, z, y);
                                 objRef.transform.Rotate(0, 90, 0);
@@ -778,7 +775,7 @@ namespace DungeonForge.AlgoScript
                         }
                         else
                         {
-                            if (gridArr[x, y].tileType == DFTile.TileType.WALL)
+                            if (gridArr[x, y].tileType == DFTile.TileType.WALL || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                             {
                                 var objRef = Instantiate(WallsTiles.Count > 1 ? WallsTiles[RatioBasedChoice(WallsTiles)].Tile : WallsTiles[0].Tile, this.transform);
 

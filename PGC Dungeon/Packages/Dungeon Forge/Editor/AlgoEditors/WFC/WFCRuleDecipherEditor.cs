@@ -1,6 +1,7 @@
 
 namespace DungeonForge.Editor
 {
+    using DungeonForge.Utils;
     using System.Collections.Generic;
     using UnityEditor;
     using UnityEngine;
@@ -21,11 +22,11 @@ namespace DungeonForge.Editor
         {
             base.OnInspectorGUI();
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             WFCRuleDecipher ruleDec = (WFCRuleDecipher)target;
 
-            DFGeneralUtil.SpacesUILayout(3);
+            DFEditorUtil.SpacesUILayout(3);
 
             #region explanation
 
@@ -49,7 +50,7 @@ namespace DungeonForge.Editor
 
             #endregion
 
-            DFGeneralUtil.SpacesUILayout(3);
+            DFEditorUtil.SpacesUILayout(3);
 
             ruleDec.tileSetFileName = EditorGUILayout.TextField(new GUIContent() { text = "TileSet Objects File Name: " }, ruleDec.tileSetFileName);
             if (GUILayout.Button("Load TileSet"))
@@ -85,12 +86,12 @@ namespace DungeonForge.Editor
                 }
             }
 
-            DFGeneralUtil.SpacesUILayout(1);
+            DFEditorUtil.SpacesUILayout(1);
             //EditorGUILayout.PropertyField(serializedObject.FindProperty("tileSet"));
-            DFGeneralUtil.SpacesUILayout(3);
+            DFEditorUtil.SpacesUILayout(3);
 
             ruleDec.useText = EditorGUILayout.Toggle(new GUIContent() { text = "use texture" }, ruleDec.useText);
-            DFGeneralUtil.SpacesUILayout(2);
+            DFEditorUtil.SpacesUILayout(2);
             if (ruleDec.useText)
             {
                 ruleDec.texture = (Texture2D)EditorGUILayout.ObjectField("Texture2D", ruleDec.texture, typeof(Texture2D), false);
@@ -497,7 +498,7 @@ namespace DungeonForge.Editor
                         }
                     }
                 }
-                DFGeneralUtil.SpacesUILayout(1);
+                DFEditorUtil.SpacesUILayout(1);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("ruleSet"));
             }
         }

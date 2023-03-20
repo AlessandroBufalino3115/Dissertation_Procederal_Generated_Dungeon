@@ -48,7 +48,7 @@ namespace DungeonForge.AlgoScript
 
 
         [HideInInspector]
-        public DFGeneralUtil.PathFindingType pathFindingType;
+        public DFEditorUtil.PathFindingType pathFindingType;
         [HideInInspector]
         public bool pathType = false;
 

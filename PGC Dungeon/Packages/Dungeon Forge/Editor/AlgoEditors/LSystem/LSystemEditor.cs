@@ -5,7 +5,7 @@ namespace DungeonForge.Editor
     using UnityEditor;
     using UnityEngine;
     using DungeonForge.AlgoScript;
-
+    using DungeonForge.Utils;
 
     [CustomEditor(typeof(LSystem))]
     public class LSystemEditor : Editor
@@ -22,7 +22,7 @@ namespace DungeonForge.Editor
             #region explanation
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
             showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
 
@@ -41,7 +41,7 @@ namespace DungeonForge.Editor
 
 
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
 
             #endregion
@@ -105,7 +105,7 @@ namespace DungeonForge.Editor
 
                 }
 
-                DFGeneralUtil.SpacesUILayout(2);
+                DFEditorUtil.SpacesUILayout(2);
 
                 EditorGUI.BeginDisabledGroup(ruleDec.loaded == false || ruleDec.axium == string.Empty);
 
@@ -125,9 +125,9 @@ namespace DungeonForge.Editor
                     ruleDec.generated = false;
                 }
 
-                 DFGeneralUtil.SpacesUILayout(2);
+                 DFEditorUtil.SpacesUILayout(2);
 
-                 DFGeneralUtil.SaveGridDataToGenerate(ruleDec.PcgManager, saveMapFileName, out saveMapFileName);
+                 DFEditorUtil.SaveGridDataToGenerate(ruleDec.PcgManager, saveMapFileName, out saveMapFileName);
             }
         }
     }

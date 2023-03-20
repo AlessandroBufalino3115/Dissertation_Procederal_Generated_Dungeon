@@ -50,6 +50,12 @@ namespace DungeonForge.AlgoScript
                     for (int j = 0; j < serializableMap.GetLength(0); j++)
                     {
                         map[j, i] = new DFTile(serializableMap[j, i].position, serializableMap[j, i].tileWeight, serializableMap[j, i].cost, serializableMap[j, i].tileType);
+
+                        if (map[j, i].tileType == DFTile.TileType.WALLCORRIDOR)
+                            map[j, i].tileType = DFTile.TileType.WALL;
+
+                        if (map[j, i].tileType == DFTile.TileType.FLOORCORRIDOR)
+                            map[j, i].tileType = DFTile.TileType.FLOORROOM;
                     }
                 }
 

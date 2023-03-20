@@ -2641,7 +2641,7 @@ namespace DungeonForge.Utils
             AVOID
         }
 
-        public TileType tileType = 0;
+        public TileType tileType = TileType.VOID;
 
         public DFTile() { }
         public DFTile(DFTile toCopy)

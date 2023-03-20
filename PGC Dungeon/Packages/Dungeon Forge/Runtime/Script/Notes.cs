@@ -18,9 +18,6 @@
  * vvvvvvvvvvvvvvvvvvvvv to do vvvvvvvvvvvvvvvvvvvvv
  * 
  *   
- *   
- *   
- *   
  *  ALGOS NOTES:
  *  
  *  voronoi --   done
@@ -57,4 +54,6 @@ The loader should be a component by it self
  * make the package -- issue with the unityEgnine
  * 
  * fix the issue with some buttons  this happens on the ran room room room gen button
+ * 
+ * there is an issue with the randomw walk or maybe everything idk that the arena doesnt sapwn properly or there ar eno check
  */

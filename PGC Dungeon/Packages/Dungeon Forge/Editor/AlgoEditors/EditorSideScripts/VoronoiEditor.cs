@@ -62,7 +62,7 @@ namespace DungeonForge.Editor
 
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            DFGeneralUtil.SpacesUILayout(4);
+            DFEditorUtil.SpacesUILayout(4);
 
 
             #endregion
@@ -70,11 +70,11 @@ namespace DungeonForge.Editor
 
             switch (mainScript.currUiState)
             {
-                case DFGeneralUtil.UI_STATE.MAIN_ALGO:
+                case DFEditorUtil.UI_STATE.MAIN_ALGO:
                     {
                         typeOfVoronoi = EditorGUILayout.Toggle(new GUIContent() { text = typeOfVoronoi == true ? "Room to Room is selected" : "Random deletion room is selected", tooltip = typeOfVoronoi == true ? $"Will create {vorPoints} number of rooms and connect the rooms with small to no corridors" : $"Random deletion room is selected, will generate {vorPoints} rooms and then randomly delete them untill only {minNumOfRooms} are left" }, typeOfVoronoi);
 
-                        DFGeneralUtil.SpacesUILayout(1);
+                        DFEditorUtil.SpacesUILayout(1);
 
                         vorPoints = (int)EditorGUILayout.Slider(new GUIContent() { text = "Number of voronoi divisions", tooltip = "" }, vorPoints, 8, 40);
                         voronoiCalculation = EditorGUILayout.Toggle(new GUIContent() { text = voronoiCalculation == true ? "Euclidian distance calculation selected" : "Manhattan distance calculation selected", tooltip = "" }, voronoiCalculation);
@@ -127,27 +127,27 @@ namespace DungeonForge.Editor
                         break;
                     }
 
-                case DFGeneralUtil.UI_STATE.CA:
+                case DFEditorUtil.UI_STATE.CA:
                     {
                         mainScript.pcgManager.ClearUndos();
                         mainScript.allowedForward = false;
                         mainScript.currStateIndex++;
-                        mainScript.currUiState = (DFGeneralUtil.UI_STATE)mainScript.currStateIndex;
+                        mainScript.currUiState = (DFEditorUtil.UI_STATE)mainScript.currStateIndex;
 
                         break;
                     }
 
-                case DFGeneralUtil.UI_STATE.ROOM_GEN:
+                case DFEditorUtil.UI_STATE.ROOM_GEN:
                     {
                         mainScript.pcgManager.ClearUndos();
                         mainScript.allowedForward = false;
                         mainScript.currStateIndex++;
-                        mainScript.currUiState = (DFGeneralUtil.UI_STATE)mainScript.currStateIndex;
+                        mainScript.currUiState = (DFEditorUtil.UI_STATE)mainScript.currStateIndex;
 
                         break;
                     }
 
-                case DFGeneralUtil.UI_STATE.EXTRA_ROOM_GEN:
+                case DFEditorUtil.UI_STATE.EXTRA_ROOM_GEN:
                     {
                         if (!typeOfVoronoi)
                         {
@@ -179,7 +179,7 @@ namespace DungeonForge.Editor
                             }
 
 
-                            DFGeneralUtil.SpacesUILayout(2);
+                            DFEditorUtil.SpacesUILayout(2);
 
                             height = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, height, 10, 40);
                             width = (int)EditorGUILayout.Slider(new GUIContent() { text = "Widht", tooltip = "" }, width, 10, 40);
@@ -212,13 +212,13 @@ namespace DungeonForge.Editor
                             mainScript.pcgManager.ClearUndos();
                             mainScript.allowedForward = false;
                             mainScript.currStateIndex++;
-                            mainScript.currUiState = (DFGeneralUtil.UI_STATE)mainScript.currStateIndex;
+                            mainScript.currUiState = (DFEditorUtil.UI_STATE)mainScript.currStateIndex;
 
                         }
                         break;
                     }
 
-                case DFGeneralUtil.UI_STATE.PATHING:
+                case DFEditorUtil.UI_STATE.PATHING:
                     {
                         #region corridor making region
 
@@ -229,14 +229,14 @@ namespace DungeonForge.Editor
 
                             GUILayout.Label("Choose how to order the connection of the rooms");
 
-                            DFGeneralUtil.SpacesUILayout(2);
+                            DFEditorUtil.SpacesUILayout(2);
 
                             GUILayout.BeginVertical("Box");
-                            selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, DFGeneralUtil.selStringsConnectionType, 1);
+                            selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, DFEditorUtil.selStringsConnectionType, 1);
                             GUILayout.EndVertical();
 
                             randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
-                            DFGeneralUtil.SpacesUILayout(2);
+                            DFEditorUtil.SpacesUILayout(2);
 
                             if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                             {
@@ -384,13 +384,13 @@ namespace DungeonForge.Editor
 
                                 GUILayout.Label("Choose the algorithm to create the corridor");
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
                                 GUILayout.BeginVertical("Box");
-                                selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, DFGeneralUtil.selStringPathGenType, 1);
+                                selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, DFEditorUtil.selStringPathGenType, 1);
                                 GUILayout.EndVertical();
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
                                 switch (selGridPathGenType)
                                 {
@@ -405,7 +405,7 @@ namespace DungeonForge.Editor
                                     case 2:   // beizier 
 
                                         bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "beizeir curve thing to change" }, bezierOndulation, 10, 40);
-                                        DFGeneralUtil.SpacesUILayout(1);
+                                        DFEditorUtil.SpacesUILayout(1);
 
                                         mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
 
@@ -459,31 +459,31 @@ namespace DungeonForge.Editor
 
                                 GUILayout.Label("Choose how to order the connection of the rooms");
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
                                 GUILayout.BeginVertical("Box");
-                                selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, DFGeneralUtil.selStringsConnectionType, 1);
+                                selGridConnectionType = GUILayout.SelectionGrid(selGridConnectionType, DFEditorUtil.selStringsConnectionType, 1);
                                 GUILayout.EndVertical();
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
                                 GUILayout.Label("Choose the Thickness of the corridor");
 
                                 corridorThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "Thickness of the corridor", tooltip = "How wide should the corridor be" }, corridorThickness, 2, 5);
 
-                                DFGeneralUtil.SpacesUILayout(3);
+                                DFEditorUtil.SpacesUILayout(3);
 
 
                                 GUILayout.Label("Choose the algorithm to that creates the corridor");
 
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
                                 GUILayout.BeginVertical("Box");
-                                selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, DFGeneralUtil.selStringPathGenType, 1);
+                                selGridPathGenType = GUILayout.SelectionGrid(selGridPathGenType, DFEditorUtil.selStringPathGenType, 1);
                                 GUILayout.EndVertical();
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
 
 
                                 switch (selGridPathGenType)
@@ -500,7 +500,7 @@ namespace DungeonForge.Editor
 
                                         bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, bezierOndulation, 10, 40);
 
-                                        DFGeneralUtil.SpacesUILayout(1);
+                                        DFEditorUtil.SpacesUILayout(1);
                                         mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.pathType);
 
                                         break;
@@ -512,7 +512,7 @@ namespace DungeonForge.Editor
 
                                 EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
-                                DFGeneralUtil.SpacesUILayout(3);
+                                DFEditorUtil.SpacesUILayout(3);
 
                                 switch (selGridConnectionType)
                                 {
@@ -521,7 +521,7 @@ namespace DungeonForge.Editor
                                         if (mainScript.rooms.Count >= 4)
                                         {
                                             randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
-                                            DFGeneralUtil.SpacesUILayout(2);
+                                            DFEditorUtil.SpacesUILayout(2);
                                         }
                                         break;
 
@@ -530,7 +530,7 @@ namespace DungeonForge.Editor
                                         if (mainScript.rooms.Count >= 4)
                                         {
                                             randomAddCorr = (int)EditorGUILayout.Slider(new GUIContent() { text = "Additional random connections", tooltip = "Add another random connection. This number dictates how many times the script is going to TRY to add a new corridor" }, randomAddCorr, 0, mainScript.rooms.Count / 2);
-                                            DFGeneralUtil.SpacesUILayout(2);
+                                            DFEditorUtil.SpacesUILayout(2);
                                         }
                                         break;
 
@@ -539,9 +539,9 @@ namespace DungeonForge.Editor
                                 }
 
 
-                                DFGeneralUtil.SpacesUILayout(1);
+                                DFEditorUtil.SpacesUILayout(1);
                                 EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-                                DFGeneralUtil.SpacesUILayout(1);
+                                DFEditorUtil.SpacesUILayout(1);
 
 
                                 deadEndAmount = (int)EditorGUILayout.Slider(new GUIContent() { text = "Amount of dead end corridors", tooltip = "Dead end corridors start from somewhere in the dungeon and lead to nowhere" }, deadEndAmount, 0, 5);
@@ -550,7 +550,7 @@ namespace DungeonForge.Editor
 
                                 deadEndOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier for dead end", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, deadEndOndulation, 10, 40);
 
-                                DFGeneralUtil.SpacesUILayout(2);
+                                DFEditorUtil.SpacesUILayout(2);
                                 if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                                 {
                                     mainScript.allowedForward = true;
@@ -738,11 +738,11 @@ namespace DungeonForge.Editor
                         break;
                     }
 
-                case DFGeneralUtil.UI_STATE.GENERATION:
+                case DFEditorUtil.UI_STATE.GENERATION:
                     {
                         mainScript.allowedBack = false;
 
-                        DFGeneralUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
+                        DFEditorUtil.SaveGridDataToGenerate(mainScript.pcgManager, saveMapFileName, out saveMapFileName);
                         break;
                     }
 
@@ -752,9 +752,9 @@ namespace DungeonForge.Editor
             }
 
 
-            if (mainScript.currUiState != DFGeneralUtil.UI_STATE.GENERATION)
+            if (mainScript.currUiState != DFEditorUtil.UI_STATE.GENERATION)
             {
-                DFGeneralUtil.SpacesUILayout(4);
+                DFEditorUtil.SpacesUILayout(4);
 
                 EditorGUI.BeginDisabledGroup(mainScript.allowedBack == false);
 
@@ -763,7 +763,7 @@ namespace DungeonForge.Editor
                     mainScript.pcgManager.ClearUndos();
                     mainScript.allowedBack = false;
                     mainScript.currStateIndex--;
-                    mainScript.currUiState = (DFGeneralUtil.UI_STATE)mainScript.currStateIndex;
+                    mainScript.currUiState = (DFEditorUtil.UI_STATE)mainScript.currStateIndex;
                 }
 
                 EditorGUI.EndDisabledGroup();
@@ -775,7 +775,7 @@ namespace DungeonForge.Editor
                     mainScript.pcgManager.ClearUndos();
                     mainScript.allowedForward = false;
                     mainScript.currStateIndex++;
-                    mainScript.currUiState = (DFGeneralUtil.UI_STATE)mainScript.currStateIndex;
+                    mainScript.currUiState = (DFEditorUtil.UI_STATE)mainScript.currStateIndex;
                 }
 
                 EditorGUI.EndDisabledGroup();

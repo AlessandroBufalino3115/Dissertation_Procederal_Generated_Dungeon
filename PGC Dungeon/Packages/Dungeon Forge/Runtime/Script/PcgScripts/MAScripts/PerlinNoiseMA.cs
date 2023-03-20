@@ -102,15 +102,15 @@ namespace DungeonForge.AlgoScript
 
 
         [HideInInspector]
-        public DFGeneralUtil.PathFindingType pathFindingType;
+        public DFEditorUtil.PathFindingType pathFindingType;
 
 
         [HideInInspector]
-        public DFGeneralUtil.UI_STATE currUiState = DFGeneralUtil.UI_STATE.MAIN_ALGO;
+        public DFEditorUtil.UI_STATE currUiState = DFEditorUtil.UI_STATE.MAIN_ALGO;
 
         public void DeleteLastSavedRoom()
         {
-            if (currUiState == DFGeneralUtil.UI_STATE.EXTRA_ROOM_GEN)
+            if (currUiState == DFEditorUtil.UI_STATE.EXTRA_ROOM_GEN)
                 rooms.RemoveAt(rooms.Count - 1);
         }
 
