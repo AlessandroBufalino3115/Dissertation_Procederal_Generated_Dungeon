@@ -6,6 +6,7 @@ namespace DungeonForge.Editor
     using UnityEngine;
     using DungeonForge.Utils;
     using DungeonForge.AlgoScript;
+    using static DungeonForge.AlgoScript.PCGManager;
 
     [CustomEditor(typeof(LoadMapMA))]
     public class LoadMapEditor : Editor
@@ -13,7 +14,6 @@ namespace DungeonForge.Editor
 
         public bool showRules = false;
 
-        public string fileName = "";
 
         int selGridGenType = 0;
         GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
@@ -21,9 +21,10 @@ namespace DungeonForge.Editor
         bool succesfullLoading = false;
         bool blockGeneration = false;
 
+        float keepPercentage = 0.2f;
+        float radiusPoissant = 1f;
 
-
-
+        GameObject heightTester;
 
         // this is where i wish the more design positioning thing oriented design goes but it will be tough
 
@@ -53,12 +54,12 @@ namespace DungeonForge.Editor
 
             DFEditorUtil.SpacesUILayout(4);
 
-            fileName = EditorGUILayout.TextField("Save file name: ", fileName);
+            mainScript.fileName = EditorGUILayout.TextField("Save file name: ", mainScript.fileName);
 
             if (GUILayout.Button(new GUIContent() { text = "load Data" }))
             {
                 succesfullLoading = false;
-                var map = mainScript.LoadDataCall(fileName);
+                var map = mainScript.LoadDataCall(mainScript.fileName);
 
 
                 if (map == null) { }
@@ -82,18 +83,6 @@ namespace DungeonForge.Editor
             }
 
 
-            if (GUILayout.Button(new GUIContent() { text = "test poissant" }))
-            {
-                var poissant = DFAlgoBank.GeneratePossiantPoints(mainScript.PcgManager.gridArr.GetLength(0), mainScript.PcgManager.gridArr.GetLength(1), 4);
-                var acceptedPointed = DFAlgoBank.RunPoissantCheckOnCurrentTileMap(poissant, mainScript.PcgManager.gridArr, 0.2f);
-
-                for (int i = 0; i < acceptedPointed.Count; i++)
-                {
-                    Instantiate(mainScript.debris, new Vector3(acceptedPointed[i].x, 0, acceptedPointed[i].y), Quaternion.identity);
-                }
-            }
-
-
             DFEditorUtil.SpacesUILayout(4);
 
 
@@ -108,6 +97,8 @@ namespace DungeonForge.Editor
 
             if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
             {
+                mainScript.generatedMap = true;
+
                 switch (selGridGenType)
                 {
                     case 0:
@@ -146,6 +137,64 @@ namespace DungeonForge.Editor
                 mainScript.PcgManager.ChunkHeight = (int)EditorGUILayout.Slider(new GUIContent() { text = "This is for the chunk size", tooltip = "" }, mainScript.PcgManager.ChunkHeight, 10, 30);
                 mainScript.PcgManager.ChunkWidth = mainScript.PcgManager.ChunkHeight;
             }
+
+
+
+            DFEditorUtil.SpacesUILayout(4);
+
+            EditorGUI.BeginDisabledGroup(mainScript.generatedMap == false);
+
+
+            if (GUILayout.Button(new GUIContent() { text = "Generate Poissant preview height object" }))
+            {
+                if (heightTester != null)
+                    DestroyImmediate(heightTester);
+
+                Vector3 middleOfMap = new Vector3(0f, 0f, 0f);
+
+                heightTester = new GameObject("HeightTesterForPoissant");
+
+                heightTester.transform.position = middleOfMap;
+            }
+
+            keepPercentage = EditorGUILayout.Slider(new GUIContent() { text = "keep percentage", tooltip = "" }, keepPercentage, 0f, 1f);
+            radiusPoissant = EditorGUILayout.Slider(new GUIContent() { text = "radius Poissant", tooltip = "" }, radiusPoissant, 0.5f, 10f);
+
+            if (GUILayout.Button(new GUIContent() { text = "Generate Poissant Objects" }))
+            {
+
+                var poissant = DFAlgoBank.GeneratePossiantPoints(mainScript.PcgManager.gridArr.GetLength(0), mainScript.PcgManager.gridArr.GetLength(1), radiusPoissant);
+
+                var acceptedPointed = DFAlgoBank.RunPoissantCheckOnCurrentTileMap(poissant, mainScript.PcgManager.gridArr, keepPercentage);
+
+                for (int i = 0; i < acceptedPointed.Count; i++)
+                {
+                    int collidedIndex = -1;
+                    var objRef = Instantiate(mainScript.mapRandomObjects.Count == 1 ? mainScript.mapRandomObjects[0].objectPrefab : mainScript.mapRandomObjects[mainScript.PcgManager.RatioBasedChoice(mainScript.mapRandomObjects)].objectPrefab, new Vector3(acceptedPointed[i].x, heightTester == null ? 0 : heightTester.transform.position.y, acceptedPointed[i].y), Quaternion.identity);
+
+                    for (int j = 0; j < mainScript.PcgManager.chunks.Count; j++)
+                    {
+                        if (mainScript.PcgManager.AABBCol(objRef.transform.position, mainScript.PcgManager.chunks[j]))
+                        {
+                            collidedIndex = j;
+                            break;
+                        }
+                    }
+
+                    if (collidedIndex == -1)
+                    {
+                        Debug.Log($"no index found");
+                        DestroyImmediate(objRef);
+                    }
+                    else
+                    {
+                        objRef.transform.parent = mainScript.PcgManager.chunkObjs[collidedIndex];
+                    }
+                }
+            }
+
+            EditorGUI.EndDisabledGroup();
+
 
             EditorGUI.EndDisabledGroup();
         }

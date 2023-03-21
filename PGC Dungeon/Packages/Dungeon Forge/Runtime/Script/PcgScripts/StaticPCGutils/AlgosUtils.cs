@@ -1963,6 +1963,15 @@ namespace DungeonForge.Utils
 
         #region Poissant
 
+
+        /// <summary>
+        /// runs the poissant algo and gives back position that are allowed
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="radius"></param>
+        /// <param name="numSamplesBeforeRejection"></param>
+        /// <returns></returns>
         public static List<Vector2> GeneratePossiantPoints(float width, float height, float radius, int numSamplesBeforeRejection = 30)
         {
             float cellSize = radius / (float)Math.Sqrt(2);
@@ -2038,6 +2047,14 @@ namespace DungeonForge.Utils
             return true;
         }
 
+
+        /// <summary>
+        /// checks against the map
+        /// </summary>
+        /// <param name="poissantPositions"></param>
+        /// <param name="gridArr"></param>
+        /// <param name="perc"></param>
+        /// <returns></returns>
         public static List<Vector2> RunPoissantCheckOnCurrentTileMap(List<Vector2> poissantPositions, DFTile[,] gridArr, float perc)
         {
             var acceptedPoissantList = new List<Vector2>();

@@ -156,21 +156,21 @@ namespace DungeonForge.Editor
 
                         foreach (var item in tileRules.WallsTiles)
                         {
-                            mainScript.WallsTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.WallsTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, objectPrefab = item.Tile });
                             //mainScript.WallsTilesOccurance.Add(item.occurance);
                             //mainScript.WallsTilesGameobject.Add(item.Tile);
                         }
 
                         foreach (var item in tileRules.FloorTiles)
                         {
-                            mainScript.FloorTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.FloorTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, objectPrefab = item.Tile });
                             //mainScript.FloorTilesOccurance.Add(item.occurance);
                             //mainScript.FloorTilesGameobject.Add(item.Tile);
                         }
 
                         foreach (var item in tileRules.CeilingTiles)
                         {
-                            mainScript.CeilingTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, Tile = item.Tile });
+                            mainScript.CeilingTiles.Add(new PCGManager.TileRuleSetPCG() { occurance = item.occurance, objectPrefab = item.Tile });
                             //    mainScript.CeilingTilesOccurance.Add(item.occurance);
                             //    mainScript.CeilingTilesGameObject.Add(item.Tile);
                         }
@@ -283,14 +283,6 @@ namespace DungeonForge.Editor
 
             EditorGUI.EndDisabledGroup();
 
-
-            if (GUILayout.Button(new GUIContent() { text = "this button is for tests", tooltip = "" }))
-            {
-                mainScript.TestFunc();
-                //GeneralUtil.SetUpColorBasedOnType(mainScript.gridArr);
-
-                //mainScript.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(mainScript.gridArr);
-            }
         }
     }
 

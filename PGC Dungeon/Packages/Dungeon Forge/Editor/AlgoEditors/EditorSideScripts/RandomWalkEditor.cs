@@ -160,11 +160,9 @@ namespace DungeonForge.Editor
 
                                 bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "beizeir curve thing to change" }, bezierOndulation, 10, 40);
 
-
                                 DFEditorUtil.SpacesUILayout(1);
 
                                 mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
-
 
                                 break;
 
@@ -231,6 +229,7 @@ namespace DungeonForge.Editor
                             mainScript.allowedBack = true;
                         }
                     }
+
                     else if (mainScript.rooms.Count > 2)
                     {
 
@@ -276,9 +275,6 @@ namespace DungeonForge.Editor
                             case 2:   // beizier 
 
                                 bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, bezierOndulation, 10, 40);
-
-                                //DFEditorUtil.SpacesUILayout(1);
-                                //mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.pathType);
 
                                 break;
 
@@ -400,14 +396,6 @@ namespace DungeonForge.Editor
                                     {
 
                                         DFAlgoBank.ShuffleList(mainScript.rooms);
-
-                                        //centerPoints = new List<Vector2>();
-                                        //foreach (var room in mainScript.rooms)
-                                        //{
-                                        //    roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
-                                        //    centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
-                                        //}
-
 
                                         foreach (var item in roomDict.Keys)
                                         {
@@ -535,6 +523,7 @@ namespace DungeonForge.Editor
                             mainScript.allowedBack = true;
                         }
                     }
+
                     else
                     {
                         GUILayout.Label("To access the corridor making function you need to\nGenerate the rooms first");

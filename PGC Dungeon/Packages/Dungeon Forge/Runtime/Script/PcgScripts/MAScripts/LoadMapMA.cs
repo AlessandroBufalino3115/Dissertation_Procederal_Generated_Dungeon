@@ -1,19 +1,29 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEditor;
-using UnityEngine;
 
 
 namespace DungeonForge.AlgoScript
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using UnityEditor;
+    using UnityEngine;
 
+    using Random = UnityEngine.Random;
     using DungeonForge.Utils;
+    using System;
+    using static DungeonForge.AlgoScript.PCGManager;
 
     public class LoadMapMA : MonoBehaviour
     {
+        [SerializeField]
+        public List<TileRuleSetPCG> mapRandomObjects = new List<TileRuleSetPCG>();
 
-        public GameObject debris;
+
+        [HideInInspector]
+        public string fileName;
+
+        [HideInInspector]
+        public bool generatedMap = false;
 
 
         [HideInInspector]
@@ -67,7 +77,6 @@ namespace DungeonForge.AlgoScript
             }
             return null;
         }
-
 
     }
 }

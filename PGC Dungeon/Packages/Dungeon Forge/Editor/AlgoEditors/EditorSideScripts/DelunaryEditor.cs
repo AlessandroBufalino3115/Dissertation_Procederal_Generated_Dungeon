@@ -29,8 +29,6 @@ namespace DungeonForge.Editor
         int heightFrom=5;
         int heightTo=10;
 
-        //int selGridGenType = 0;
-        //bool blockGeneration = false;
         string saveMapFileName = "";
 
         int width;
@@ -510,7 +508,6 @@ namespace DungeonForge.Editor
 
                 EditorGUI.EndDisabledGroup();
             }
-
         }
     }
 }

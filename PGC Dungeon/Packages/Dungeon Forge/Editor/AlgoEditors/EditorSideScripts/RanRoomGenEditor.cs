@@ -563,6 +563,7 @@ namespace DungeonForge.Editor
                                 }
 
                             }
+
                             else if (mainScript.rooms.Count > 2)
                             {
 
@@ -608,9 +609,6 @@ namespace DungeonForge.Editor
                                     case 2:   // beizier 
 
                                         bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, bezierOndulation, 10, 40);
-
-                                        DFEditorUtil.SpacesUILayout(1);
-                                        mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "Pathfinding will prioritize the creation of straight corridors" }, mainScript.PathType);
 
                                         break;
 
@@ -660,19 +658,23 @@ namespace DungeonForge.Editor
                                 deadEndOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier for dead end", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, deadEndOndulation, 10, 40);
 
                                 DFEditorUtil.SpacesUILayout(2);
+
+
+                                EditorGUI.BeginDisabledGroup(mainScript.PcgManager.prevGridArray2D.Count == 1);
+
                                 if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                                 {
-                                    mainScript.allowedForward = true;
-
                                     mainScript.PcgManager.CreateBackUpGrid();
 
-                                    mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.PcgManager.gridArr);
+                                    mainScript.rooms = DFAlgoBank.GetAllRooms(mainScript.PcgManager.gridArr, true);
                                     var centerPoints = new List<Vector2>();
-                                    var roomDict = new Dictionary<Vector2, List<DFTile>>();
+                                    var roomDict = new Dictionary<Vector2Int, List<DFTile>>();
                                     foreach (var room in mainScript.rooms)
                                     {
-                                        roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
-                                        centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
+                                        var centerPoint = DFGeneralUtil.FindMiddlePoint(room);
+
+                                        roomDict.Add(new Vector2Int(Mathf.FloorToInt(centerPoint.x), Mathf.FloorToInt(centerPoint.y)), room);
+                                        centerPoints.Add(new Vector2Int(Mathf.FloorToInt(centerPoint.x), Mathf.FloorToInt(centerPoint.y)));
                                     }
 
                                     switch (selGridConnectionType)
@@ -726,20 +728,18 @@ namespace DungeonForge.Editor
 
                                         case 2://ran
                                             {
+
                                                 DFAlgoBank.ShuffleList(mainScript.rooms);
 
-                                                centerPoints = new List<Vector2>();
-                                                roomDict = new Dictionary<Vector2, List<DFTile>>();
-                                                foreach (var room in mainScript.rooms)
+                                                foreach (var item in roomDict.Keys)
                                                 {
-                                                    roomDict.Add(DFGeneralUtil.FindMiddlePoint(room), room);
-                                                    centerPoints.Add(DFGeneralUtil.FindMiddlePoint(room));
+                                                    Debug.Log(item);
                                                 }
 
                                                 for (int i = 0; i < centerPoints.Count; i++)
                                                 {
                                                     if (i == centerPoints.Count - 1) { continue; }
-                                                    mainScript.edges.Add(new Edge(new Vector3(centerPoints[i].x, centerPoints[i].y, 0), new Vector3(centerPoints[i + 1].x, centerPoints[i + 1].y, 0)));
+                                                    mainScript.edges.Add(new Edge(new Vector3(Mathf.FloorToInt(centerPoints[i].x), Mathf.FloorToInt(centerPoints[i].y), 0), new Vector3(Mathf.FloorToInt(centerPoints[i + 1].x), Mathf.FloorToInt(centerPoints[i + 1].y), 0)));
                                                 }
 
                                                 if (randomAddCorr > 0)
@@ -763,6 +763,8 @@ namespace DungeonForge.Editor
                                             break;
                                     }
 
+                                    //its a roudning error
+
                                     switch (selGridPathGenType)
                                     {
                                         case 0:   //A* pathfingin
@@ -770,8 +772,8 @@ namespace DungeonForge.Editor
                                             foreach (var edge in mainScript.edges)
                                             {
                                                 //use where so we get soemthing its not the wall but not necessary
-                                                var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
-                                                var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
+                                                var tileA = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))].Count)].position;
+                                                var tileB = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))].Count)].position;
 
                                                 var path = DFAlgoBank.A_StarPathfinding2D(mainScript.PcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType, useWeights: useWeights, arrWeights: mainScript.PcgManager.tileCosts);
 
@@ -782,8 +784,8 @@ namespace DungeonForge.Editor
                                         case 1:  //dijistra
                                             foreach (var edge in mainScript.edges)
                                             {
-                                                var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
-                                                var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
+                                                var tileA = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))].Count)].position;
+                                                var tileB = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))].Count)].position;
 
                                                 var path = DFAlgoBank.DijstraPathfinding(mainScript.PcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
 
@@ -791,11 +793,14 @@ namespace DungeonForge.Editor
                                             }
 
                                             break;
+
                                         case 2://  beizier curve
                                             foreach (var edge in mainScript.edges)
                                             {
-                                                var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
-                                                var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
+                                                //  Debug.Log(new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].z));
+
+                                                var tileA = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))].Count)].position;
+                                                var tileB = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))].Count)].position;
 
                                                 DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.PcgManager.gridArr, !mainScript.PathType);
                                             }
@@ -819,7 +824,6 @@ namespace DungeonForge.Editor
 
                                             if (tile.tileWeight == 0)
                                             {
-
                                                 randomTileOutsideOfRoom = tile;
 
                                                 var tileA = randomTileOutsideOfRoom.position;
@@ -836,7 +840,24 @@ namespace DungeonForge.Editor
 
                                     mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
                                 }
+
+                                EditorGUI.EndDisabledGroup();
+
+
+                                if (mainScript.PcgManager.prevGridArray2D.Count == 1)
+                                {
+                                    mainScript.allowedForward = true;
+
+                                    mainScript.allowedBack = false;
+                                }
+                                else
+                                {
+                                    mainScript.allowedForward = false;
+
+                                    mainScript.allowedBack = true;
+                                }
                             }
+
                             else
                             {
                                 GUILayout.Label("To access the corridor making function you need to\nGenerate the rooms first");
