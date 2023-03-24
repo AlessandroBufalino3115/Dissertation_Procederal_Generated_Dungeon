@@ -25,6 +25,7 @@ namespace DungeonForge.AlgoScript
             STAGE_2,
             GENERATION
         }
+
         [HideInInspector]
         public UI_STATE state;
 

@@ -18,24 +18,59 @@ namespace DungeonForge.AlgoScript
         [SerializeField]
         public List<TileRuleSetPCG> mapRandomObjects = new List<TileRuleSetPCG>();
 
-
-        [HideInInspector]
-        public string fileName;
-
         [HideInInspector]
         public bool generatedMap = false;
 
 
         [HideInInspector]
-        public PCGManager PcgManager;
+        public PCGManager pcgManager;
 
         [HideInInspector]
         public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
+
+        [HideInInspector]
+        public bool singleStringSelected = false;
+        [HideInInspector]
+        public string fileName = "";
+        [HideInInspector]
+        public List<string> stringList = new List<string>();
+        [HideInInspector]
+        public int stringListSize = 1;
+        [HideInInspector]
+        public bool manualEditingMode = false;
+        [HideInInspector]
+        public GameObject pointerObj;
+
+        [HideInInspector]
+        public int currStateIndex;
+
+        [HideInInspector]
+        public bool allowedBack = false;
+
+        [HideInInspector]
+        public bool allowedForward = false;
+
+
+        [HideInInspector]
+        public Vector2Int pointerPosition = new Vector2Int(0,0);
+
+        public enum UI_STATE
+        {
+            PICKING_FILE,
+            SELF_EDITING,
+            GENERATE
+        }
+
+        [HideInInspector]
+        public UI_STATE state;
+
+
         public void InspectorAwake()
         {
-            PcgManager = this.transform.GetComponent<PCGManager>();
+            pcgManager = this.transform.GetComponent<PCGManager>();
         }
+
 
         public DFTile[,] LoadDataCall(string fileName)
         {
@@ -76,6 +111,109 @@ namespace DungeonForge.AlgoScript
                 EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
             }
             return null;
+        }
+
+        public void AddOnGridData(DFTile[,] gridToAddOn, bool wallDominance) 
+        {
+
+            for (int y = 0; y < pcgManager.gridArr.GetLength(1); y++)
+            {
+                for (int x = 0; x < pcgManager.gridArr.GetLength(0); x++)
+                {
+                    if (x >= gridToAddOn.GetLength(0) || y >= gridToAddOn.GetLength(1)) 
+                    {
+                        continue;
+                    }
+
+                    switch (gridToAddOn[x, y].tileType)
+                    {
+                        case DFTile.TileType.VOID:
+                            {
+                                
+                                break;
+                            }
+
+                        case DFTile.TileType.WALL:
+                            {
+                                if (wallDominance)
+                                {
+                                    pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                }
+                                else 
+                                {
+                                    if (pcgManager.gridArr[x,y].tileType == DFTile.TileType.VOID) 
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+
+                                break;
+                            }
+                        case DFTile.TileType.WALLCORRIDOR:
+                            {
+                                if (wallDominance)
+                                {
+                                    pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                }
+                                else
+                                {
+                                    if (pcgManager.gridArr[x, y].tileType == DFTile.TileType.VOID)
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+
+                                break;
+                            }
+
+                        case DFTile.TileType.FLOORROOM:
+                            {
+
+                                if (!wallDominance)
+                                {
+                                    if (pcgManager.gridArr[x, y].tileType == DFTile.TileType.VOID || pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALL || pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+                                else
+                                {
+                                    if (pcgManager.gridArr[x, y].tileType == DFTile.TileType.VOID )
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+
+                                break;
+                            }
+                        case DFTile.TileType.FLOORCORRIDOR:
+                            {
+
+                                if (!wallDominance)
+                                {
+                                    if (pcgManager.gridArr[x, y].tileType == DFTile.TileType.VOID || pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALL || pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+                                else
+                                {
+                                    if (pcgManager.gridArr[x, y].tileType == DFTile.TileType.VOID)
+                                    {
+                                        pcgManager.gridArr[x, y] = new DFTile(gridToAddOn[x, y]);
+                                    }
+                                }
+                                break;
+                            }
+
+                        default:
+                            break;
+                    }
+
+
+                }
+            }
+
         }
 
     }

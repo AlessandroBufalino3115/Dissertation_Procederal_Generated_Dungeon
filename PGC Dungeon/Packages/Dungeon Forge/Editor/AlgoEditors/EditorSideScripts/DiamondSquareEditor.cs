@@ -76,7 +76,7 @@ namespace DungeonForge.Editor
                     {
                         EditorGUILayout.HelpBox("To run this algorithm a specific size of a map is needed, use the slider below", MessageType.Warning);
 
-                        power = (int)EditorGUILayout.Slider(new GUIContent() { text = "Height", tooltip = "" }, power, 6, 10);
+                        power = (int)EditorGUILayout.Slider(new GUIContent() { text = "Size", tooltip = "" }, power, 6, 10);
                         GUILayout.TextArea($"The current size of the new plane is will be {Mathf.Pow(2, power) + 1} by {Mathf.Pow(2, power) + 1}");
 
                         mainScript.allowedBack = false;
