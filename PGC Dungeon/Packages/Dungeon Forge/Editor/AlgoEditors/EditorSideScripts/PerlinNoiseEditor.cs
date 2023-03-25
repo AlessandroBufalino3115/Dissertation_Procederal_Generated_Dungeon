@@ -13,7 +13,7 @@ namespace DungeonForge.Editor
         bool showRules = false;
 
         bool useWeights = false;
-        bool DjAvoidWalls = false;
+       // bool DjAvoidWalls = false;
 
         int corridorThickness = 2;
 
@@ -88,246 +88,6 @@ namespace DungeonForge.Editor
             //}
 
 
-            #endregion
-
-
-            #region
-            //if (mainScript.Started)
-            //{
-
-            //    GeneralUtil.SpacesUILayout(4);
-
-
-            //    #region showCA region
-
-            //    showCA = EditorGUILayout.BeginFoldoutHeaderGroup(showCA, "Use Cellular Automata(CA) to tidy up");
-
-            //    if (showCA)
-            //    {
-
-            //        GUILayout.Label(new GUIContent() { text = "Neighbours needed", tooltip = "To run the CA algortihm a set number of neighbours needs to be given as a rule" });
-            //        mainScript.NeighboursNeeded = (int)EditorGUILayout.Slider(mainScript.NeighboursNeeded, 3, 5);
-
-            //        if (GUILayout.Button(new GUIContent() { text = "Clean Up using CA", tooltip = "Run half of the CA algortihm to only take out tiles, to help slim down the result" }))
-            //        {
-            //            AlgosUtils.CleanUp2dCA(mainScript.PcgManager.gridArr, mainScript.NeighboursNeeded);
-
-            //            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArr);
-            //        }
-            //        if (GUILayout.Button(new GUIContent() { text = "Use CA algorithm", tooltip = "Run the full CA algorithm on the current iteration of the grid" }))
-            //        {
-            //            AlgosUtils.RunCaIteration2D(mainScript.PcgManager.gridArr, mainScript.NeighboursNeeded);
-            //            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColAnchor(mainScript.PcgManager.gridArr);
-            //        }
-
-            //    }
-
-            //    if (!Selection.activeTransform)
-            //    {
-            //        showCA = false;
-            //    }
-
-            //    EditorGUILayout.EndFoldoutHeaderGroup();
-
-            //    #endregion
-
-
-            //    GeneralUtil.SpacesUILayout(4);
-
-
-            //    #region Room Region
-
-            //    showRooms = EditorGUILayout.BeginFoldoutHeaderGroup(showRooms, "Rooms section");
-
-            //    if (showRooms)
-            //    {
-
-            //        if (GUILayout.Button("Get all rooms"))
-            //        {
-            //            mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArr, true);
-            //            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextSelfCol(mainScript.PcgManager.gridArr);
-            //        }
-
-
-            //        mainScript.MinSize = (int)EditorGUILayout.Slider(mainScript.MinSize, 30, 200);
-
-            //        GUILayout.Label($"Delete all the rooms beneath {mainScript.MinSize} tiles big");
-
-            //        if (GUILayout.Button("Delete small rooms"))
-            //        {
-
-            //            mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArr, true);
-
-            //            foreach (var room in mainScript.rooms)
-            //            {
-            //                if (room.Count < mainScript.MinSize)
-            //                {
-            //                    foreach (var tile in room)
-            //                    {
-            //                        tile.tileWeight = 0;
-            //                        tile.tileType = Tile.TileType.VOID;
-            //                    }
-            //                }
-            //            }
-
-            //            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
-            //        }
-
-            //    }
-
-            //    if (!Selection.activeTransform)
-            //    {
-            //        showRooms = false;
-            //    }
-
-            //    EditorGUILayout.EndFoldoutHeaderGroup();
-
-
-            //    #endregion
-
-
-            //    GeneralUtil.SpacesUILayout(4);
-
-
-            //    #region corridor making region
-
-            //    if (mainScript.rooms.Count > 1)
-            //    {
-            //        showPath = EditorGUILayout.BeginFoldoutHeaderGroup(showPath, "Pathfinding Settings");
-
-            //        if (showPath)
-            //        {
-            //            GUILayout.Label("Decide What Pathfinding Algorithm to use");
-
-            //            EditorGUILayout.Space();
-            //            EditorGUILayout.Space();
-
-            //            GUILayout.BeginVertical("Box");
-            //            selGridPathType = GUILayout.SelectionGrid(selGridPathType, selStringsPathType, 1);
-            //            GUILayout.EndVertical();
-
-            //            EditorGUILayout.Space();
-            //            EditorGUILayout.Space();
-
-            //            mainScript.PathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.PathType);
-
-
-            //            if (GUILayout.Button("Connect all the rooms"))// gen something
-            //            {
-
-            //                mainScript.rooms = AlgosUtils.GetAllRooms(mainScript.PcgManager.gridArr, true);
-            //                var centerPoints = new List<Vector2>();
-            //                var roomDict = new Dictionary<Vector2, List<Tile>>();
-            //                foreach (var room in mainScript.rooms)
-            //                {
-            //                    roomDict.Add(AlgosUtils.FindMiddlePoint(room), room);
-            //                    centerPoints.Add(AlgosUtils.FindMiddlePoint(room));
-            //                }
-
-            //                //there is 4 ways 
-
-            //                switch (selGridPathType)
-            //                {
-            //                    case 0:
-            //                        mainScript.edges = AlgosUtils.PrimAlgoNoDelu(centerPoints);
-            //                        break;
-            //                    case 1:
-            //                        mainScript.edges = AlgosUtils.DelunayTriangulation2D(centerPoints).Item2;
-            //                        break;
-            //                    case 2://prim ran
-            //                        break;
-            //                    case 3://ran
-            //                        break;
-            //                }
-
-
-
-            //                foreach (var edge in mainScript.edges)
-            //                {
-
-            //                    //use where so we get soemthing its not the wall but not necessary
-            //                    var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
-            //                    var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
-
-
-            //                    var path = AlgosUtils.A_StarPathfinding2DNorm(mainScript.PcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), !mainScript.PathType);
-
-
-            //                    foreach (var tile in path.Item1)
-            //                    {
-            //                        if (tile.tileType != Tile.TileType.FLOORROOM)
-            //                            tile.tileType = Tile.TileType.FLOORCORRIDOR;
-
-            //                        tile.tileWeight = 0.75f;
-            //                    }
-            //                }
-
-
-
-
-            //                AlgosUtils.SetUpTileTypesCorridor(mainScript.PcgManager.gridArr);
-            //                AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArr);
-
-            //                mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (GUILayout.Button("Generate walls"))
-            //        {
-            //            AlgosUtils.SetUpTileTypesFloorWall(mainScript.PcgManager.gridArr);
-            //            mainScript.PcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = GeneralUtil.SetUpTextBiColShade(mainScript.PcgManager.gridArr, 0, 1, true);
-            //        }
-            //    }
-
-
-            //    if (!Selection.activeTransform)
-            //    {
-            //        showPath = false;
-            //    }
-
-            //    EditorGUILayout.EndFoldoutHeaderGroup();
-
-            //    EditorGUILayout.Space();
-            //    EditorGUILayout.Space();
-            //    EditorGUILayout.Space();
-            //    EditorGUILayout.Space();
-
-
-            //    #endregion
-
-
-            //    GeneralUtil.SpacesUILayout(4);
-
-
-            //    #region Dungeon Generation region
-
-
-            //    GUILayout.BeginVertical("Box");
-            //    selGridGenType = GUILayout.SelectionGrid(selGridGenType, selStringsGenType, 1);
-            //    GUILayout.EndVertical();
-
-            //    EditorGUILayout.Space();
-            //    EditorGUILayout.Space();
-
-            //    if (GUILayout.Button(new GUIContent() { text = "Generate YOUR Dungeon!" }))
-            //    {
-            //        switch (selGridGenType)
-            //        {
-            //            case 0:
-            //                mainScript.PcgManager.FormObject(AlgosUtils.MarchingCubesAlgo(AlgosUtils.ExtrapolateMarchingCubes(mainScript.PcgManager.gridArr, mainScript.PcgManager.RoomHeight), false));
-            //                break;
-
-            //            case 1:
-            //                mainScript.PcgManager.DrawTileMapDirectionalWalls();
-            //                break;
-            //        }
-            //    }
-
-
-            //    #endregion
-            //}
             #endregion
 
 
@@ -426,17 +186,15 @@ namespace DungeonForge.Editor
                                 break;
 
                             case 1:   // djistra 
-                                DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
+                                //DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
                                 break;
                             case 2:   // beizier 
 
                                 bezierOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier", tooltip = "beizeir curve thing to change" }, bezierOndulation, 10, 40);
 
-
                                 DFEditorUtil.SpacesUILayout(1);
 
-                                mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
-
+                                //mainScript.pathType = EditorGUILayout.Toggle(new GUIContent() { text = "Use Straight corridors", tooltip = "PathFinding will prioritize the creation of straight corridors" }, mainScript.pathType);
 
                                 break;
 
@@ -468,7 +226,7 @@ namespace DungeonForge.Editor
                                     break;
                                 case 1:  //dijistra
 
-                                    var pathD = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
+                                    var pathD = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y));
 
                                     DFAlgoBank.SetUpCorridorWithPath(pathD);
 
@@ -476,7 +234,7 @@ namespace DungeonForge.Editor
                                     break;
                                 case 2://  beizier curve
 
-                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr);
 
                                     break;
 
@@ -547,7 +305,7 @@ namespace DungeonForge.Editor
                                 break;
 
                             case 1:   // djistra 
-                                DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
+                                //DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
                                 break;
                             case 2:   // beizier 
 
@@ -728,7 +486,7 @@ namespace DungeonForge.Editor
                                         var tileA = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))].Count)].position;
                                         var tileB = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))].Count)].position;
 
-                                        var path = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
+                                        var path = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y));
 
                                         DFAlgoBank.SetUpCorridorWithPath(path);
                                     }
@@ -743,7 +501,7 @@ namespace DungeonForge.Editor
                                         var tileA = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[0].x), Mathf.FloorToInt(edge.edge[0].y))].Count)].position;
                                         var tileB = roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))][Random.Range(0, roomDict[new Vector2Int(Mathf.FloorToInt(edge.edge[1].x), Mathf.FloorToInt(edge.edge[1].y))].Count)].position;
 
-                                        DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                        DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr);
                                     }
                                     break;
 

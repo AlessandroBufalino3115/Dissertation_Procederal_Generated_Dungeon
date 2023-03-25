@@ -31,7 +31,7 @@ namespace DungeonForge.Editor
         int radius = 10;
 
         bool useWeights = false;
-        bool DjAvoidWalls = false;
+        //bool DjAvoidWalls = false;
 
         int bezierOndulation = 5;
         int deadEndOndulation = 5;
@@ -344,7 +344,7 @@ namespace DungeonForge.Editor
                                 {
                                     var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                     var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
-                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), 5, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                    DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), 5, mainScript.pcgManager.gridArr);
                                 }
 
 
@@ -400,7 +400,7 @@ namespace DungeonForge.Editor
                                         break;
 
                                     case 1:   // djistra 
-                                        DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
+                                        //DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
                                         break;
                                     case 2:   // beizier 
 
@@ -435,13 +435,13 @@ namespace DungeonForge.Editor
                                             break;
                                         case 1:  //dijistra
 
-                                            var pathD = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
+                                            var pathD = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y));
                                             DFAlgoBank.SetUpCorridorWithPath(pathD);
 
                                             break;
                                         case 2://  beizier curve
 
-                                            DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                            DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr);
 
                                             break;
 
@@ -494,7 +494,7 @@ namespace DungeonForge.Editor
                                         break;
 
                                     case 1:   // djistra 
-                                        DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
+                                        //DjAvoidWalls = EditorGUILayout.Toggle(new GUIContent() { text = "Avoid Walls", tooltip = "" }, DjAvoidWalls);
                                         break;
                                     case 2:   // beizier 
 
@@ -551,6 +551,7 @@ namespace DungeonForge.Editor
                                 deadEndOndulation = (int)EditorGUILayout.Slider(new GUIContent() { text = "Curve Multiplier for dead end", tooltip = "A higher multiplier is going to equal to a a more extreme curver" }, deadEndOndulation, 10, 40);
 
                                 DFEditorUtil.SpacesUILayout(2);
+
                                 if (GUILayout.Button("Connect all the rooms"))// dfor the corridor making
                                 {
                                     mainScript.allowedForward = true;
@@ -676,7 +677,7 @@ namespace DungeonForge.Editor
                                                 var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                                 var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
-                                                var path = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), DjAvoidWalls);
+                                                var path = DFAlgoBank.DijstraPathfinding(mainScript.pcgManager.gridArr, new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y));
 
                                                 DFAlgoBank.SetUpCorridorWithPath(path);
                                             }
@@ -688,7 +689,7 @@ namespace DungeonForge.Editor
                                                 var tileA = roomDict[edge.edge[0]][Random.Range(0, roomDict[edge.edge[0]].Count)].position;
                                                 var tileB = roomDict[edge.edge[1]][Random.Range(0, roomDict[edge.edge[1]].Count)].position;
 
-                                                DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr, !mainScript.pathType);
+                                                DFAlgoBank.BezierCurvePathing(new Vector2Int(tileA.x, tileA.y), new Vector2Int(tileB.x, tileB.y), bezierOndulation, mainScript.pcgManager.gridArr);
                                             }
                                             break;
 

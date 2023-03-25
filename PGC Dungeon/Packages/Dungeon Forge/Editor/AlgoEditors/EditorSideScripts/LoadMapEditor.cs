@@ -27,8 +27,6 @@ namespace DungeonForge.Editor
         float keepPercentage = 0.2f;
         float radiusPoissant = 1f;
 
-        GameObject heightTester;
-
         // this is where i wish the more design positioning thing oriented design goes but it will be tough
 
 
@@ -58,7 +56,6 @@ namespace DungeonForge.Editor
 
             switch (mainScript.state)
             {
-
 
                 case LoadMapMA.UI_STATE.PICKING_FILE:
                     {
@@ -183,22 +180,22 @@ namespace DungeonForge.Editor
                         mainScript.allowedForward = true;
                         mainScript.allowedBack = true;
 
-                        if (GUILayout.Button(new GUIContent() { text = "Up" }))
+                        if (GUILayout.Button(new GUIContent() { text = "Left" }))
                         {
                             if (mainScript.pointerPosition.y + 1 < mainScript.pcgManager.gridArr.GetLength(1))
                                 mainScript.pointerPosition = new Vector2Int(mainScript.pointerPosition.x, mainScript.pointerPosition.y + 1);
                         }
-                        if (GUILayout.Button(new GUIContent() { text = "Down" }))
+                        if (GUILayout.Button(new GUIContent() { text = "Right" }))
                         {
-                            if (mainScript.pointerPosition.y - 1 < 0)
+                            if (mainScript.pointerPosition.y - 1 >= 0)
                                 mainScript.pointerPosition = new Vector2Int(mainScript.pointerPosition.x, mainScript.pointerPosition.y - 1);
                         }
-                        if (GUILayout.Button(new GUIContent() { text = "Left" }))
+                        if (GUILayout.Button(new GUIContent() { text = "Up" }))
                         {
-                            if (mainScript.pointerPosition.x - 1 < 0)
+                            if (mainScript.pointerPosition.x - 1 >= 0)
                                 mainScript.pointerPosition = new Vector2Int(mainScript.pointerPosition.x - 1, mainScript.pointerPosition.y);
                         }
-                        if (GUILayout.Button(new GUIContent() { text = "Right" }))
+                        if (GUILayout.Button(new GUIContent() { text = "Down" }))
                         {
                             if (mainScript.pointerPosition.x + 1 < mainScript.pcgManager.gridArr.GetLength(0))
                                 mainScript.pointerPosition = new Vector2Int(mainScript.pointerPosition.x + 1, mainScript.pointerPosition.y);
@@ -290,24 +287,14 @@ namespace DungeonForge.Editor
 
                         EditorGUI.BeginDisabledGroup(mainScript.generatedMap == false);
 
-                        if (GUILayout.Button(new GUIContent() { text = "Generate Poissant preview height object" }))
-                        {
-                            if (heightTester != null)
-                                DestroyImmediate(heightTester);
-
-                            Vector3 middleOfMap = new Vector3(0f, 0f, 0f);
-
-                            heightTester = new GameObject("HeightTesterForPoissant");
-
-                            heightTester.transform.position = middleOfMap;
-                        }
-
                         keepPercentage = EditorGUILayout.Slider(new GUIContent() { text = "keep percentage", tooltip = "" }, keepPercentage, 0f, 1f);
                         radiusPoissant = EditorGUILayout.Slider(new GUIContent() { text = "radius Poissant", tooltip = "" }, radiusPoissant, 0.5f, 10f);
 
+                        mainScript.heigthPoissant = EditorGUILayout.Slider(new GUIContent() { text = "Poissant Height", tooltip = "" }, mainScript.heigthPoissant, 0, 10);
+
+
                         if (GUILayout.Button(new GUIContent() { text = "Generate Poissant Objects" }))
                         {
-
                             var poissant = DFAlgoBank.GeneratePossiantPoints(mainScript.pcgManager.gridArr.GetLength(0), mainScript.pcgManager.gridArr.GetLength(1), radiusPoissant);
 
                             var acceptedPointed = DFAlgoBank.RunPoissantCheckOnCurrentTileMap(poissant, mainScript.pcgManager.gridArr, keepPercentage);
@@ -315,7 +302,7 @@ namespace DungeonForge.Editor
                             for (int i = 0; i < acceptedPointed.Count; i++)
                             {
                                 int collidedIndex = -1;
-                                var objRef = Instantiate(mainScript.mapRandomObjects.Count == 1 ? mainScript.mapRandomObjects[0].objectPrefab : mainScript.mapRandomObjects[mainScript.pcgManager.RatioBasedChoice(mainScript.mapRandomObjects)].objectPrefab, new Vector3(acceptedPointed[i].x, heightTester == null ? 0 : heightTester.transform.position.y, acceptedPointed[i].y), Quaternion.identity);
+                                var objRef = Instantiate(mainScript.mapRandomObjects.Count == 1 ? mainScript.mapRandomObjects[0].objectPrefab : mainScript.mapRandomObjects[mainScript.pcgManager.RatioBasedChoice(mainScript.mapRandomObjects)].objectPrefab, new Vector3(acceptedPointed[i].x, mainScript.heigthPoissant, acceptedPointed[i].y), Quaternion.identity);
 
                                 for (int j = 0; j < mainScript.pcgManager.chunks.Count; j++)
                                 {

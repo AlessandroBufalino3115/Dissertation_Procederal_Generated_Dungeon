@@ -461,7 +461,7 @@ namespace DungeonForge.Utils
             return Tuple.Create(point2, point3);
         }
 
-        public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, DFTile[,] gridArr, bool pathing = false)
+        public static void BezierCurvePathing(Vector2Int tileA, Vector2Int tileB, int margin, DFTile[,] gridArr)
         {
             var startPos = new Vector2Int(tileA.x, tileA.y);
             var endPos = new Vector2Int(tileB.x, tileB.y);
@@ -475,7 +475,7 @@ namespace DungeonForge.Utils
 
             var firstBezierPoint = CubicBeizier(startPos, mid1Pos, mid2Pos, endPos, 0);
 
-            var pathB = A_StarPathfinding2D(gridArr, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)), !pathing);
+            var pathB = A_StarPathfinding2D(gridArr, startPos, new Vector2Int((int)MathF.Round(firstBezierPoint.x), (int)MathF.Round(firstBezierPoint.z)));
 
             SetUpCorridorWithPath(pathB.Item1);
 
@@ -514,14 +514,14 @@ namespace DungeonForge.Utils
                     currCord.z = gridArr.GetLength(1) - 1;
                 }
 
-                pathB = A_StarPathfinding2D(gridArr, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)), !pathing);
+                pathB = A_StarPathfinding2D(gridArr, prevCoord, new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z)));
 
                 prevCoord = new Vector2Int((int)MathF.Round(currCord.x), (int)MathF.Round(currCord.z));
 
                 SetUpCorridorWithPath(pathB.Item1);
             }
 
-            pathB = A_StarPathfinding2D(gridArr, prevCoord, endPos, !pathing);
+            pathB = A_StarPathfinding2D(gridArr, prevCoord, endPos);
 
             SetUpCorridorWithPath(pathB.Item1);
         }

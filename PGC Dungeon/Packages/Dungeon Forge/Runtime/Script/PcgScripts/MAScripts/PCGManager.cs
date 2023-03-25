@@ -204,7 +204,9 @@ namespace DungeonForge.AlgoScript
             plane.transform.position = Vector3.zero;
             plane.transform.parent = this.transform;
 
-            plane.transform.localScale = new Vector3(width / 4, 1, height / 4);
+            plane.transform.localScale = new Vector3(width/10f, 1, height/10f);
+
+            plane.transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
 
             gridArr = new DFTile[width, height];
             for (int y = 0; y < height; y++)
