@@ -88,9 +88,9 @@ namespace DungeonForge.Editor
                 }
 
                 DFEditorUtil.SpacesUILayout(2);
-                percentageOfStick = EditorGUILayout.Slider(new GUIContent() { text = "cycles", tooltip = "" }, percentageOfStick, 0.05f, 1f);
+                percentageOfStick = EditorGUILayout.Slider(new GUIContent() { text = "percentage of stick", tooltip = "" }, percentageOfStick, 0.05f, 1f);
 
-                percOfSpawn = EditorGUILayout.Slider(new GUIContent() { text = "perc of spawn", tooltip = "" }, percOfSpawn, 0.15f, 0.7f);
+                percOfSpawn = EditorGUILayout.Slider(new GUIContent() { text = "percentage of spawn", tooltip = "" }, percOfSpawn, 0.15f, 0.7f);
 
                 DFEditorUtil.SpacesUILayout(2);
 
