@@ -74,12 +74,11 @@ namespace DungeonForge.Editor
                     {
                         mainScript.allowedBack = false;
 
-                        length = (int)EditorGUILayout.Slider(new GUIContent() { text = "worm max length", tooltip = "" }, length, 0, 500);
-                        turnMulti = EditorGUILayout.Slider(new GUIContent() { text = "turn Multiplier", tooltip = "" }, turnMulti, 0.2f, 0.8f);
+                        length = (int)EditorGUILayout.Slider(new GUIContent() { text = "Worm Maximum Length", tooltip = "" }, length, 0, 500);
+                        turnMulti = EditorGUILayout.Slider(new GUIContent() { text = "Turn Multiplier", tooltip = "The higher the number the more twisty the worm will look" }, turnMulti, 0.2f, 1.5f);
 
                         mainScript.offsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.offsetX, 0, 10000);
                         mainScript.offsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.offsetY, 0, 10000);
-
 
                         mainScript.scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.scale, 3f, 35f);
                         mainScript.octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.octaves, 1, 8);
@@ -89,7 +88,7 @@ namespace DungeonForge.Editor
 
                         DFEditorUtil.SpacesUILayout(2);
 
-                        if (GUILayout.Button("Add one Worm"))
+                        if (GUILayout.Button("Generate One Worm"))
                         {
                             mainScript.numberOfWorms++;
 
@@ -116,20 +115,20 @@ namespace DungeonForge.Editor
                             }
 
                             mainScript.pcgManager.Plane.GetComponent<Renderer>().sharedMaterial.mainTexture = DFGeneralUtil.SetUpTextBiColAnchor(mainScript.pcgManager.gridArr);
+
                         }
 
                         if (GUILayout.Button("Restart"))
                         {
                             mainScript.pcgManager.Restart();
                             mainScript.numberOfWorms = 0;
-
                         }
 
 
                         DFEditorUtil.SpacesUILayout(2);
 
 
-                        wormThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "worm thickness", tooltip = "" }, wormThickness, 2, 5);
+                        wormThickness = (int)EditorGUILayout.Slider(new GUIContent() { text = "Worm Thickness", tooltip = "" }, wormThickness, 2, 5);
 
 
                         if (mainScript.numberOfWorms == 0)
@@ -148,7 +147,7 @@ namespace DungeonForge.Editor
                         mainScript.allowedForward = true;
                         mainScript.allowedBack = false;
 
-                        DFEditorUtil.ExtraRoomEditorSelection(mainScript.pcgManager, mainScript.rooms, radius, height, width, out height, out width, out radius);
+                        DFEditorUtil.ExtraRoomEditorSelection(mainScript.pcgManager, mainScript.rooms, ref radius, ref height, ref width);
                     }
                     break;
                 case PerlinWormsMA.UI_STATE.PATHING:
@@ -160,6 +159,9 @@ namespace DungeonForge.Editor
                     {
                         mainScript.allowedForward = true;
                         GUILayout.Label("Only one room detected, Corridor making is not possible");
+
+
+
                     }
                     else if (mainScript.rooms.Count == 2)
                     {

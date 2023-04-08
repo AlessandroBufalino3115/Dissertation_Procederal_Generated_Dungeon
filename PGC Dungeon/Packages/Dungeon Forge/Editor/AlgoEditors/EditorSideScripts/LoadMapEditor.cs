@@ -316,7 +316,8 @@ namespace DungeonForge.Editor
                                 if (collidedIndex == -1)
                                 {
                                     Debug.Log($"no index found");
-                                    DestroyImmediate(objRef);
+                                    //DestroyImmediate(objRef);
+                                    objRef.transform.parent = mainScript.transform;
                                 }
                                 else
                                 {

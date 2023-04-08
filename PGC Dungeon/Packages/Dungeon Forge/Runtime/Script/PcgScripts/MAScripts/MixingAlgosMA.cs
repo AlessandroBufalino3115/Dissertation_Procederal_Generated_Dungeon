@@ -6,9 +6,6 @@ using UnityEngine;
 
 namespace DungeonForge.AlgoScript
 {
-
-
-
     public class MixingAlgosMA : MonoBehaviour
     {
         [HideInInspector]
@@ -16,8 +13,6 @@ namespace DungeonForge.AlgoScript
 
         [HideInInspector]
         public List<List<DFTile>> rooms = new List<List<DFTile>>();
-
-
 
         public void InspectorAwake()
         {

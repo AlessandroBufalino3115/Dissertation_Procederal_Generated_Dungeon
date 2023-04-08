@@ -81,13 +81,9 @@ namespace DungeonForge.AlgoScript
             get { return roomsListBPSAlgo; }
         }
 
-
-        private bool pathType = false;
-        public bool PathType
-        {
-            get { return pathType; }
-            set { pathType = value; }
-        }
+        [HideInInspector]
+        public bool pathType = false;
+       
 
         private int minSizeRoom = 40;
         public int MinSizeRoom

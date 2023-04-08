@@ -43,7 +43,7 @@ namespace DungeonForge.Editor
             if (GUILayout.Button(new GUIContent() { text = mainScript.Plane == null ? "Generate Plane" : "Refresh Plane", tooltip = mainScript.Plane == null ? "Generate The canvas where the PCG will be reinprinted" : "Restart the Canvas" }))
             {
 
-                if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
+                if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WAVE_FUNCTION_COLLAPSE || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_YOUR_DUNGEON)
                 {
                 }
                 else
@@ -62,11 +62,11 @@ namespace DungeonForge.Editor
                 }
             }
 
-            if (mainScript.Plane != null || mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
+            if (mainScript.Plane != null || mainScript.mainAlgorithm == PCGManager.MainAlgo.WAVE_FUNCTION_COLLAPSE || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_YOUR_DUNGEON)
             {
                 if (GUILayout.Button(new GUIContent() { text = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgorithm ? "Refresh Main Algorithm Component" : "Load New Algorithm Component", tooltip = mainScript.CurrMainAlgoIDX == (int)mainScript.mainAlgorithm ? "Refresh the algorithm component" : "Load the choosen algorithm component to start to use it" }))
                 {
-                    if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WFC || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_DUNGEON)
+                    if (mainScript.mainAlgorithm == PCGManager.MainAlgo.WAVE_FUNCTION_COLLAPSE || mainScript.mainAlgorithm == PCGManager.MainAlgo.GENERATE_YOUR_DUNGEON)
                     {
                         if (mainScript.Plane != null)
                         {

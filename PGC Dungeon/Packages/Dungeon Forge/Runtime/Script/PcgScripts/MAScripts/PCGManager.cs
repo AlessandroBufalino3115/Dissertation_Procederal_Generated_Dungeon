@@ -51,13 +51,13 @@ namespace DungeonForge.AlgoScript
             ROOM_GEN = 2,
             CELLULAR_AUTOMATA = 3,
             L_SYSTEM = 4,
-            DELUNARY = 5,
-            WFC = 6,
+            DELUNAY = 5,
+            WAVE_FUNCTION_COLLAPSE = 6,
             PERLIN_NOISE = 7,
             PERLIN_WORM = 8,
             DIAMOND_SQUARE = 9,
-            DIFF_LIM_AGGR = 10,
-            GENERATE_DUNGEON = 11
+            DIFFUSION_LIMITATION_AGGREGATION = 10,
+            GENERATE_YOUR_DUNGEON = 11
         }
 
         [Space(10)]
@@ -69,12 +69,8 @@ namespace DungeonForge.AlgoScript
         
         [SerializeField]
         public List<TileRuleSetPCG> FloorTiles = new List<TileRuleSetPCG>();
-
-       
         [SerializeField]
         public List<TileRuleSetPCG> CeilingTiles = new List<TileRuleSetPCG>();
-
-        
         [SerializeField]
         public List<TileRuleSetPCG> WallsTiles = new List<TileRuleSetPCG>();
 
@@ -267,13 +263,13 @@ namespace DungeonForge.AlgoScript
                         comp.InspectorAwake();
                     }
                     break;
-                case MainAlgo.DELUNARY:
+                case MainAlgo.DELUNAY:
                     {
                         var comp = gameObject.AddComponent<DelunaryMA>();
                         comp.InspectorAwake();
                     }
                     break;
-                case MainAlgo.WFC:
+                case MainAlgo.WAVE_FUNCTION_COLLAPSE:
                     {
                         gameObject.AddComponent<WFCRuleDecipher>();
 
@@ -299,13 +295,13 @@ namespace DungeonForge.AlgoScript
                         comp.InspectorAwake();
                     }
                     break;
-                case MainAlgo.DIFF_LIM_AGGR:
+                case MainAlgo.DIFFUSION_LIMITATION_AGGREGATION:
                     {
                         var comp = gameObject.AddComponent<DiffLimAggMA>();
                         comp.InspectorAwake();
                     }
                     break;
-                case MainAlgo.GENERATE_DUNGEON:
+                case MainAlgo.GENERATE_YOUR_DUNGEON:
                     {
                         var comp = gameObject.AddComponent<LoadMapMA>();
                         comp.InspectorAwake();
@@ -584,7 +580,7 @@ namespace DungeonForge.AlgoScript
 
             if (WallsTiles.Count == 0 || CeilingTiles.Count == 0 || FloorTiles.Count == 0)
             {
-                EditorUtility.DisplayDialog("Invalid tile Rules given", "Please make sure you have loaded all of the tile object correctly and all the 3 lists have at least one object in them to use this Generation method", "OK!");
+                EditorUtility.DisplayDialog("Invalid tile Rules given", "Please make sure you have loaded all of the tile object correctly and all the 3 lists have at least one object in them to use this generation method", "OK!");
                 return;
             }
 
