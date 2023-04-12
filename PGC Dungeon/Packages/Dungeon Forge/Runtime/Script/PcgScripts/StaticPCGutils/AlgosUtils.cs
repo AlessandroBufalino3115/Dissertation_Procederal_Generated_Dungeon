@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditor;
 
+
 namespace DungeonForge.Utils
 {
     public static class DFAlgoBank
@@ -541,7 +542,7 @@ namespace DungeonForge.Utils
             List<DjNode> openListDjNodes = new List<DjNode>();
             DjNode[,] DjNodesArr = new DjNode[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-            for (int y = 0; y < gridArr.GetLength(1); y++)
+            Parallel.For(0, gridArr.GetLength(1), y =>
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -563,7 +564,7 @@ namespace DungeonForge.Utils
                         openListDjNodes.Add(newRef);
                     }
                 }
-            }
+            });
 
             DjNode lastNode = null;
 
@@ -894,13 +895,13 @@ namespace DungeonForge.Utils
         {
             PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            for (int x = 0; x < gridArr.GetLength(0); x++)
+            Parallel.For(0, gridArr.GetLength(0), x =>
             {
                 for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
                     gridArr[x, y].tileWeight = Mathf.SmoothStep(0, 1, gridArr[x, y].tileWeight);
                 }
-            }
+            });
         }
 
 
@@ -919,7 +920,7 @@ namespace DungeonForge.Utils
         {
             PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            for (int x = 0; x < gridArr.GetLength(0); x++)
+            Parallel.For(0, gridArr.GetLength(0), x =>
             {
                 for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
@@ -942,7 +943,7 @@ namespace DungeonForge.Utils
                             break;
                     }
                 }
-            }
+            });
         }
 
         public static float QuadraticEasingOut(float t) => 1f - Mathf.Pow(1f - t, 2f);
@@ -968,13 +969,13 @@ namespace DungeonForge.Utils
         {
             PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            for (int x = 0; x < gridArr.GetLength(0); x++)
+            Parallel.For(0, gridArr.GetLength(0), x =>
             {
                 for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
                     gridArr[x, y].tileWeight = MathF.Pow(gridArr[x, y].tileWeight, 2);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -992,14 +993,14 @@ namespace DungeonForge.Utils
         {
             PerlinNoise(gridArr, scale, octaves, persistance, lacu, offsetX, offsetY);
 
-            for (int x = 0; x < gridArr.GetLength(0); x++)
+            Parallel.For(0, gridArr.GetLength(0), x =>
             {
                 for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
                     if (gridArr[x, y].tileWeight < absoluteValue)
                         gridArr[x, y].tileWeight = 1 - gridArr[x, y].tileWeight;
                 }
-            }
+            });
         }
 
         #endregion
@@ -1505,6 +1506,7 @@ namespace DungeonForge.Utils
 
             List<Vector2Int> openCoords = new List<Vector2Int>();  // this has all the tile coords of the tiles that are considered roomable
 
+            //Parallel.For(0, gridArr.GetLength(1), y =>
             for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
@@ -1520,7 +1522,8 @@ namespace DungeonForge.Utils
                             openCoords.Add(new Vector2Int(x, y));
                     }
                 }
-            }
+            }//);
+
 
             while (openCoords.Count > 2)   // until there is stuff in the open coords  then
             {
@@ -1542,7 +1545,7 @@ namespace DungeonForge.Utils
 
                 List<DFTile> roomBasicTile = new List<DFTile>();
 
-                for (int y = 0; y < gridArr.GetLength(1); y++)
+                Parallel.For(0, gridArr.GetLength(1), y =>
                 {
                     for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
@@ -1555,7 +1558,8 @@ namespace DungeonForge.Utils
                             }
                         }
                     }
-                }
+                });
+
                 rooms.Add(roomBasicTile);
             }
 
@@ -2413,7 +2417,7 @@ namespace DungeonForge.Utils
 
             for (int i = 0; i < width - 1; i++)
             {
-                for (int y = 0; y < gridArr.GetLength(1); y++)
+                Parallel.For(0, gridArr.GetLength(1), y =>
                 {
                     for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
@@ -2425,7 +2429,7 @@ namespace DungeonForge.Utils
                         {
                         }
                     }
-                }
+                });
 
                 SetUpTileTypesCorridor(gridArr);
             }
@@ -2445,7 +2449,7 @@ namespace DungeonForge.Utils
 
             childPosArry = DFGeneralUtil.childPosArry4Side;
 
-            for (int y = 0; y < gridArr.GetLength(1); y++)
+            Parallel.For(0, gridArr.GetLength(1), y =>
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -2486,7 +2490,7 @@ namespace DungeonForge.Utils
                         }
                     }
                 }
-            }
+            });
 
             var copyArr = new DFTile[gridArr.GetLength(0), gridArr.GetLength(1)];
 

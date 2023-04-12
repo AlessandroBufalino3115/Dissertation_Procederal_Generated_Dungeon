@@ -471,7 +471,6 @@ namespace DungeonForge.Utils
                                             }
                                         }
 
-
                                         if (toAdd)
                                         {
                                             edges.Add(newEdge);
@@ -488,11 +487,6 @@ namespace DungeonForge.Utils
                                 {
 
                                     DFAlgoBank.ShuffleList(rooms);
-
-                                    foreach (var item in roomDict.Keys)
-                                    {
-                                        Debug.Log(item);
-                                    }
 
                                     for (int i = 0; i < centerPoints.Count; i++)
                                     {

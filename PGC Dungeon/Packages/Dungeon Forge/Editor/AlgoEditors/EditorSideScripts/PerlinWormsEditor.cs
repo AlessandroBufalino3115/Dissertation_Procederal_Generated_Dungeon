@@ -76,15 +76,15 @@ namespace DungeonForge.Editor
                         length = (int)EditorGUILayout.Slider(new GUIContent() { text = "Worm Maximum Length", tooltip = "" }, length, 0, 500);
                         turnMulti = EditorGUILayout.Slider(new GUIContent() { text = "Turn Multiplier", tooltip = "The higher the number the more twisty the worm will look" }, turnMulti, 0.2f, 1.5f);
 
-                        mainScript.offsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "" }, mainScript.offsetX, 0, 10000);
-                        mainScript.offsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "" }, mainScript.offsetY, 0, 10000);
-
-                        mainScript.scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "" }, mainScript.scale, 3f, 35f);
-                        mainScript.octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "" }, mainScript.octaves, 1, 8);
-
-                        mainScript.persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "" }, mainScript.persistance, 0.1f, 0.9f);
-                        mainScript.lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "" }, mainScript.lacunarity, 0.5f, 10f);
-
+                        mainScript.offsetX = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset X", tooltip = "The X offset of the Perlin noise pattern" }, mainScript.offsetX, 0, 10000);
+                        mainScript.offsetY = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Offset Y", tooltip = "The Y offset of the Perlin noise pattern" }, mainScript.offsetY, 0, 10000);
+                        
+                        mainScript.scale = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Scale", tooltip = "The scale of the Perlin noise pattern" }, mainScript.scale, 3f, 35f);
+                        mainScript.octaves = (int)EditorGUILayout.Slider(new GUIContent() { text = "Perlin Octaves", tooltip = "The number of layers of Perlin noise to combine" }, mainScript.octaves, 1, 8);
+                        
+                        mainScript.persistance = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Persitance", tooltip = "The rate at which the amplitude decreases for each successive octave" }, mainScript.persistance, 0.1f, 0.9f);
+                        mainScript.lacunarity = EditorGUILayout.Slider(new GUIContent() { text = "Perlin Lacunarity", tooltip = "The rate at which the frequency increases for each successive octave" }, mainScript.lacunarity, 0.5f, 10f);
+                        
                         DFEditorUtil.SpacesUILayout(2);
 
                         if (GUILayout.Button("Generate One Worm"))

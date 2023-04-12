@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 namespace DungeonForge.AlgoScript
 {
     using DungeonForge.Utils;
+    using System.Threading.Tasks;
 
     public class PCGManager : MonoBehaviour
     {
@@ -586,7 +587,8 @@ namespace DungeonForge.AlgoScript
 
             for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
             {
-                for (int y = 0; y < gridArr.GetLength(1); y++)
+                //for (int y = 0; y < gridArr.GetLength(1); y++)
+                Parallel.For(0, gridArr.GetLength(1), y =>
                 {
                     for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
@@ -603,7 +605,7 @@ namespace DungeonForge.AlgoScript
                             }
                         }
 
-                        if (gridArr[x, y].tileType == DFTile.TileType.WALL  || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
+                        if (gridArr[x, y].tileType == DFTile.TileType.WALL || gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
                         {
                             var checkVector = new Vector2Int(x + 1, y);// right check
 
@@ -705,7 +707,7 @@ namespace DungeonForge.AlgoScript
                             }
                         }
                     }
-                }
+                });
             }
         }
 
@@ -721,9 +723,10 @@ namespace DungeonForge.AlgoScript
 
             for (int z = 0; z < RoomHeight; z++)  // this is the heihgt of the room
             {
-                for (int y = 0; y < gridArr.GetLength(0); y++)
+                //for (int y = 0; y < gridArr.GetLength(0); y++)
+                Parallel.For(0, gridArr.GetLength(1), y =>
                 {
-                    for (int x = 0; x < gridArr.GetLength(1); x++)
+                    for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
                         if (z == 0) //we draw everything as this is the ceiling and the floor       THIS IS WHERE THE CEILING SHOULD BE
                         {
@@ -761,7 +764,7 @@ namespace DungeonForge.AlgoScript
                             }
                         }
                     }
-                }
+                });
             }
         }
 
