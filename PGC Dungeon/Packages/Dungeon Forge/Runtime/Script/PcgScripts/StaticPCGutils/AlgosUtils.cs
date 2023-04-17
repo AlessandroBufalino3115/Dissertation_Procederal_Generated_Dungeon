@@ -285,7 +285,17 @@ namespace DungeonForge.Utils
         #region PathFinding
 
         #region A*
-
+        /// <summary>
+        /// Run the pathfinding algorithm on the grid
+        /// </summary>
+        /// <param name="tileArray2D">grid reference</param>
+        /// <param name="start">starting coordinate</param>
+        /// <param name="end">ending coordinate</param>
+        /// <param name="euclideanDis">us ehte euclidian distance calculation = true, or manhattan = false</param>
+        /// <param name="diagonalTiles">allow diagonal pathing</param>
+        /// <param name="useWeights">use the weights</param>
+        /// <param name="arrWeights">given weight ruleset</param>
+        /// <returns></returns>
         public static Tuple<List<DFTile>, List<DFTile>> A_StarPathfinding2D(DFTile[,] tileArray2D, Vector2Int start, Vector2Int end, bool euclideanDis = true, bool diagonalTiles = false, bool useWeights = false, float[] arrWeights = null)
         {
             bool checkForUse = useWeights == true && arrWeights != null ? true : false;
@@ -542,7 +552,7 @@ namespace DungeonForge.Utils
             List<DjNode> openListDjNodes = new List<DjNode>();
             DjNode[,] DjNodesArr = new DjNode[gridArr.GetLength(0), gridArr.GetLength(1)];
 
-            Parallel.For(0, gridArr.GetLength(1), y =>
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -564,7 +574,7 @@ namespace DungeonForge.Utils
                         openListDjNodes.Add(newRef);
                     }
                 }
-            });
+            }
 
             DjNode lastNode = null;
 
@@ -1545,7 +1555,7 @@ namespace DungeonForge.Utils
 
                 List<DFTile> roomBasicTile = new List<DFTile>();
 
-                Parallel.For(0, gridArr.GetLength(1), y =>
+                for (int y = 0; y < gridArr.GetLength(1); y++)
                 {
                     for (int x = 0; x < gridArr.GetLength(0); x++)
                     {
@@ -1558,7 +1568,7 @@ namespace DungeonForge.Utils
                             }
                         }
                     }
-                });
+                }
 
                 rooms.Add(roomBasicTile);
             }
@@ -1579,7 +1589,7 @@ namespace DungeonForge.Utils
         /// <returns></returns>
         public static void SpawnRandomPointsOnTheGrid(DFTile[,] gridArr, float percentageOfSpawn = 0.5f, float weight = 1)
         {
-            Parallel.For(0, gridArr.GetLength(1), y =>
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -1592,7 +1602,7 @@ namespace DungeonForge.Utils
                         gridArr[x, y].tileWeight = weight;
                     }
                 }
-            });
+            }
         }
 
         /// <summary>
@@ -1602,7 +1612,6 @@ namespace DungeonForge.Utils
         /// <param name="neighboursNeeded">The Number of alive neighbour a cell needs to be alive</param>
         public static void RunCaIteration2D(DFTile[,] gridArr, int neighboursNeeded)
         {
-
             float[,] copyArrayStorage = new float[gridArr.GetLength(0), gridArr.GetLength(1)];
 
             for (int y = 0; y < gridArr.GetLength(1); y++)
@@ -1613,7 +1622,7 @@ namespace DungeonForge.Utils
                 }
             }
 
-            Parallel.For(0, gridArr.GetLength(1), y =>
+            for (int y = 0; y < gridArr.GetLength(1); y++)
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -1642,7 +1651,7 @@ namespace DungeonForge.Utils
                         gridArr[x, y].tileWeight = 0;
                     }
                 }
-            });
+            }
 
         }
 

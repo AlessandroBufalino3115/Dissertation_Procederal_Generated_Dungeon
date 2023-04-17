@@ -67,7 +67,6 @@ namespace DungeonForge.Editor
 
             #endregion
 
-
             switch (mainScript.currUiState)
             {
                 case DFEditorUtil.UI_STATE.MAIN_ALGO:

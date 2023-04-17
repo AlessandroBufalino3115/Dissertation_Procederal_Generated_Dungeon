@@ -644,11 +644,10 @@ namespace DungeonForge.Utils
             DFS
         }
 
-
-        public static GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualar path that traverses the whole dungeon" }, new GUIContent() { text = "Delunary trig", tooltip = "One rooms can have many corridors" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridor connections" } };
+        public static GUIContent[] selStringsConnectionType = { new GUIContent() { text = "Prims's algo", tooltip = "Create a singualar path that traverses the whole dungeon" }, new GUIContent() { text = "Delaunay trig", tooltip = "One rooms can have many corridors" }, new GUIContent() { text = "Random", tooltip = "Completly random allocation of corridor connections" } };
 
         public static GUIContent[] selStringsGenType = { new GUIContent() { text = "Vertice Generation", tooltip = "Using the algorithm marching cubes create a mesh object which can be exported to other 3D softwares" }, new GUIContent() { text = "TileSet Generation", tooltip = "Generate the Dungeon using the tileset provided" } };
 
-        public static GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "Weights are available for this algortihm, remember to create the ruleSet" }, new GUIContent() { text = "Dijistra", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "Create curved corridors" } };
+        public static GUIContent[] selStringPathGenType = { new GUIContent() { text = "A* pathfinding", tooltip = "Weights are available for this algortihm, remember to create the ruleSet" }, new GUIContent() { text = "Dijkstra", tooltip = "" }, new GUIContent() { text = "Beizier Curve", tooltip = "Create curved corridors" } };
     }
 }

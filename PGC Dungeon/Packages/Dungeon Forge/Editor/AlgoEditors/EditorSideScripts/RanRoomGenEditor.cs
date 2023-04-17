@@ -20,7 +20,7 @@ namespace DungeonForge.Editor
         bool showRules = false;
 
         int selDungGenType = 0;
-        GUIContent[] selStringsDungGenType = { new GUIContent() { text = "BPS", tooltip = "" }, new GUIContent() { text = "Random", tooltip = "" }, new GUIContent() { text = "Room to Room", tooltip = "" } };
+        GUIContent[] selStringsDungGenType = { new GUIContent() { text = "BPS", tooltip = "Binary Partition System" }, new GUIContent() { text = "Random", tooltip = "Randomly places the rooms on the canvas, some can get connectd" }, new GUIContent() { text = "Room to Room", tooltip = "Room attached to room very small corridos" } };
 
         int selGridGenType = 0;
 
