@@ -24,6 +24,8 @@ namespace DungeonForge.AlgoScript
         [HideInInspector]
         public List<List<DFTile>> rooms = new List<List<DFTile>>();
 
+        [HideInInspector]
+        public List<Edge> edges = new List<Edge>();
 
         [HideInInspector]
         public bool singleStringSelected = true;
@@ -51,6 +53,7 @@ namespace DungeonForge.AlgoScript
 
         [HideInInspector]
         public float heigthPoissant = 0;
+
 
         public enum UI_STATE
         {
@@ -195,5 +198,6 @@ namespace DungeonForge.AlgoScript
 
             generatedPoissantObjList.Clear();
         }
+
     }
 }

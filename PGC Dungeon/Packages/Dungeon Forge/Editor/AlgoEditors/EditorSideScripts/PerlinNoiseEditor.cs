@@ -25,7 +25,6 @@ namespace DungeonForge.Editor
         int deadEndOndulation = 20;
 
         int deadEndAmount = 0;
-        int deadEndCorridorThickness = 3;
 
         int radius = 10;
 
@@ -42,12 +41,11 @@ namespace DungeonForge.Editor
 
             #region explanation
 
-            showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
+            showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Introduction");
 
             if (showRules)
             {
-                GUILayout.TextArea("You have choosen Perlin noise Generation  ---   to write");
-
+                GUILayout.TextArea("Perlin Noise is a procedural noise function that can generate coherent, continuous noise patterns. By using thresholds, the algorithm can convert this noise into binary data, creating distinct regions for rooms and corridors. This results in a dungeon with a smooth, organic appearance and is suitable for generating natural-looking cave systems or dungeons with a fluid layout.\n\nFor more information visit the wiki: https://github.com/AlessandroBufalino3115/Dungeon-Forge/wiki/Using-the-Pack#3-perlin-noise");
             }
 
             if (!Selection.activeTransform)
@@ -88,7 +86,6 @@ namespace DungeonForge.Editor
 
 
             #endregion
-
 
             switch (mainScript.currUiState)
             {
@@ -158,8 +155,7 @@ namespace DungeonForge.Editor
                     mainScript.allowedBack = true;
 
                     DFEditorUtil.GenerateCorridorsEditorSection(mainScript.pcgManager, mainScript.rooms, ref mainScript.allowedForward, ref mainScript.allowedBack, ref corridorThickness
-                     , ref selGridConnectionType, ref selGridPathGenType, ref useWeights, ref bezierOndulation, ref mainScript.pathType, ref randomAddCorr, ref deadEndAmount, ref deadEndCorridorThickness, ref deadEndOndulation, ref mainScript.edges);
-
+                     , ref selGridConnectionType, ref selGridPathGenType, ref useWeights, ref bezierOndulation, ref mainScript.pathType, ref randomAddCorr, ref deadEndAmount,  ref deadEndOndulation, ref mainScript.edges);
 
                     #endregion
 

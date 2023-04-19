@@ -5,6 +5,8 @@ namespace DungeonForge.Editor
     using DungeonForge.Utils;
     using DungeonForge.AlgoScript;
     using log4net.Util;
+    using System.Diagnostics.Eventing.Reader;
+    using System.Collections.Generic;
 
     [CustomEditor(typeof(LoadMapMA))]
     public class LoadMapEditor : Editor
@@ -23,20 +25,21 @@ namespace DungeonForge.Editor
         float keepPercentage = 0.2f;
         float radiusPoissant = 1f;
 
-        // this is where i wish the more design positioning thing oriented design goes but it will be tough
 
+        // this is where i wish the more design positioning thing oriented design goes but it will be tough
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             LoadMapMA mainScript = (LoadMapMA)target;
+
             #region explanation
 
             showRules = EditorGUILayout.BeginFoldoutHeaderGroup(showRules, "Instructions");
 
             if (showRules)
             {
-                GUILayout.TextArea("");
+                GUILayout.TextArea("Here you can generate your dungeon from the saved layouts you have made. \n\nVisit the wiki to see how to generate your dungeon corretly https://github.com/AlessandroBufalino3115/Dungeon-Forge/wiki/Using-the-Pack#generation-methods-and-how-to-use-them");
             }
 
             if (!Selection.activeTransform)
@@ -55,7 +58,6 @@ namespace DungeonForge.Editor
 
                 case LoadMapMA.UI_STATE.PICKING_FILE:
                     {
-
                         mainScript.allowedBack = false;
 
                         mainScript.singleStringSelected = EditorGUILayout.Toggle("Single File", mainScript.singleStringSelected);
@@ -63,12 +65,15 @@ namespace DungeonForge.Editor
                         if (mainScript.singleStringSelected)
                         {
                             EditorGUILayout.LabelField("Single String Input", EditorStyles.boldLabel);
+
+                            DFEditorUtil.SpacesUILayout(2);
                             mainScript.fileName = EditorGUILayout.TextField("File Name", mainScript.fileName);
                         }
                         else
                         {
-                            overWriteFloor = EditorGUILayout.Toggle("over Write Walls", overWriteFloor);
+                            overWriteFloor = EditorGUILayout.Toggle("Over write walls", overWriteFloor);
 
+                            DFEditorUtil.SpacesUILayout(2);
                             EditorGUILayout.LabelField("List of file Names", EditorStyles.boldLabel);
                             mainScript.stringListSize = EditorGUILayout.IntField("How many files", mainScript.stringListSize);
 
@@ -93,11 +98,9 @@ namespace DungeonForge.Editor
                             }
                         }
 
-
                         DFEditorUtil.SpacesUILayout(4);
 
-
-                        if (GUILayout.Button(new GUIContent() { text = "load Data" }))
+                        if (GUILayout.Button(new GUIContent() { text = "Load Data" }))
                         {
                             if (mainScript.singleStringSelected)
                             {
@@ -130,7 +133,7 @@ namespace DungeonForge.Editor
 
                                 for (int i = 0; i < mainScript.stringList.Count; i++)
                                 {
-                                    var map = DFAlgoBank.LoadTileArrayData(mainScript.fileName);
+                                    var map = DFAlgoBank.LoadTileArrayData(mainScript.stringList[i]);
 
                                     if (map == null)
                                     {
@@ -157,7 +160,7 @@ namespace DungeonForge.Editor
 
                                     for (int i = 0; i < mainScript.stringList.Count; i++)
                                     {
-                                        var map = DFAlgoBank.LoadTileArrayData(mainScript.fileName);
+                                        var map = DFAlgoBank.LoadTileArrayData(mainScript.stringList[i]);
 
                                         mainScript.AddOnGridData(map, overWriteFloor);
                                     }
@@ -169,6 +172,7 @@ namespace DungeonForge.Editor
 
                         break;
                     }
+            
 
                 case LoadMapMA.UI_STATE.SELF_EDITING:
                     {
@@ -245,33 +249,35 @@ namespace DungeonForge.Editor
                             switch (selGridGenType)
                             {
                                 case 0:
-
-                                    for (int y = 0; y < mainScript.pcgManager.gridArr.GetLength(1); y++)
                                     {
-                                        for (int x = 0; x < mainScript.pcgManager.gridArr.GetLength(0); x++)
+                                        for (int y = 0; y < mainScript.pcgManager.gridArr.GetLength(1); y++)
                                         {
-                                            if (mainScript.pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
+                                            for (int x = 0; x < mainScript.pcgManager.gridArr.GetLength(0); x++)
                                             {
-                                                mainScript.pcgManager.gridArr[x, y].tileType = DFTile.TileType.FLOORCORRIDOR;
+                                                if (mainScript.pcgManager.gridArr[x, y].tileType == DFTile.TileType.WALLCORRIDOR)
+                                                {
+                                                    mainScript.pcgManager.gridArr[x, y].tileType = DFTile.TileType.FLOORCORRIDOR;
+                                                }
                                             }
                                         }
+
+                                        DFAlgoBank.SetUpTileTypesCorridor(mainScript.pcgManager.gridArr);
+
+                                        mainScript.pcgManager.FormObject(DFAlgoBank.MarchingCubesAlgo(DFAlgoBank.ExtrapolateMarchingCubes(mainScript.pcgManager.gridArr, mainScript.pcgManager.RoomHeight), false));
+
+                                        break;
                                     }
 
-                                    DFAlgoBank.SetUpTileTypesCorridor(mainScript.pcgManager.gridArr);
-
-                                    mainScript.pcgManager.FormObject(DFAlgoBank.MarchingCubesAlgo(DFAlgoBank.ExtrapolateMarchingCubes(mainScript.pcgManager.gridArr, mainScript.pcgManager.RoomHeight), false));
-
-                                    break;
-
                                 case 1:
+                                    {
+                                        if (blockGeneration)
+                                            mainScript.pcgManager.DrawTileMapBlockType();
+                                        else
+                                            mainScript.pcgManager.DrawTileMapDirectionalWalls();
 
-                                    if (blockGeneration)
-                                        mainScript.pcgManager.DrawTileMapBlockType();
-                                    else
-                                        mainScript.pcgManager.DrawTileMapDirectionalWalls();
-
-                                    mainScript.generatedMap = true;
-                                    break;
+                                        mainScript.generatedMap = true;
+                                        break;
+                                    }
                             }
                         }
 
@@ -283,15 +289,14 @@ namespace DungeonForge.Editor
                             mainScript.pcgManager.ChunkWidth = mainScript.pcgManager.ChunkHeight;
                         }
 
-
                         DFEditorUtil.SpacesUILayout(4);
 
                         EditorGUI.BeginDisabledGroup(mainScript.generatedMap == false);
 
-                        keepPercentage = EditorGUILayout.Slider(new GUIContent() { text = "keep percentage", tooltip = "" }, keepPercentage, 0f, 1f);
-                        radiusPoissant = EditorGUILayout.Slider(new GUIContent() { text = "radius Poissant", tooltip = "" }, radiusPoissant, 0.5f, 10f);
+                        keepPercentage = EditorGUILayout.Slider(new GUIContent() { text = "Keep percentage", tooltip = "The chance which the object will spawn" }, keepPercentage, 0f, 1f);
+                        radiusPoissant = EditorGUILayout.Slider(new GUIContent() { text = "Radius Poissant", tooltip = "The radii at which each object is disatnced from one another" }, radiusPoissant, 0.5f, 10f);
 
-                        mainScript.heigthPoissant = EditorGUILayout.Slider(new GUIContent() { text = "Poissant Height", tooltip = "" }, mainScript.heigthPoissant, 0, 10);
+                        mainScript.heigthPoissant = EditorGUILayout.Slider(new GUIContent() { text = "Poissant Height", tooltip = "The Y height of the generation" }, mainScript.heigthPoissant, 0, 10);
 
                         if (GUILayout.Button(new GUIContent() { text = "Generate Poissant Objects", tooltip = mainScript.generatedMap == true ? "Generate debires around the map" : "This is disabled due to this option only working for tile generation" }))
                         {
@@ -329,7 +334,6 @@ namespace DungeonForge.Editor
                             }
                         }
 
-
                         EditorGUI.BeginDisabledGroup(mainScript.generatedPoissantObjList.Count == 0);
 
                         if (GUILayout.Button(new GUIContent() { text = "Delete Poissant Objects Generated", tooltip = "Delete all the objects generated by the poissant algorithm" }))
@@ -338,7 +342,6 @@ namespace DungeonForge.Editor
                         }
 
                         EditorGUI.EndDisabledGroup();
-
 
                         EditorGUI.EndDisabledGroup();
 
@@ -371,15 +374,16 @@ namespace DungeonForge.Editor
 
                 if (GUILayout.Button(new GUIContent() { text = "Continue", tooltip = mainScript.allowedForward == true ? "Press this to continue to the next step" : "You need to finish this step to continue" }))// gen something
                 {
-                    if (mainScript.state == LoadMapMA.UI_STATE.PICKING_FILE) 
+                    if (mainScript.state == LoadMapMA.UI_STATE.PICKING_FILE)
                     {
-                        mainScript.pointerPosition = new Vector2Int(mainScript.pcgManager.gridArr.GetLength(0)/2, mainScript.pcgManager.gridArr.GetLength(1)/2);    
+                        mainScript.pointerPosition = new Vector2Int(mainScript.pcgManager.gridArr.GetLength(0) / 2, mainScript.pcgManager.gridArr.GetLength(1) / 2);
                     }
 
                     mainScript.pcgManager.ClearUndos();
                     mainScript.allowedForward = false;
                     mainScript.currStateIndex++;
                     mainScript.state = (LoadMapMA.UI_STATE)mainScript.currStateIndex;
+
                 }
 
                 EditorGUI.EndDisabledGroup();

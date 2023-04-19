@@ -777,7 +777,9 @@ namespace DungeonForge.AlgoScript
         [Serializable]
         public class TileRuleSetPCG
         {
+            [Tooltip("Occurange is the ratio at which this object will spawn in respect to other objects if they are present")]
             public int occurance = 1;
+            [Tooltip("Object to spawn")]
             public GameObject objectPrefab;
         }
 

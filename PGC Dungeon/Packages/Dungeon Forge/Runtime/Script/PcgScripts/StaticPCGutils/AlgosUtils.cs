@@ -15,7 +15,6 @@ namespace DungeonForge.Utils
 {
     public static class DFAlgoBank
     {
-
         #region marching Cubes Rule
 
         //http://paulbourke.net/geometry/polygonise/
@@ -1589,7 +1588,7 @@ namespace DungeonForge.Utils
         /// <returns></returns>
         public static void SpawnRandomPointsOnTheGrid(DFTile[,] gridArr, float percentageOfSpawn = 0.5f, float weight = 1)
         {
-            for (int y = 0; y < gridArr.GetLength(1); y++)
+            Parallel.For(0, gridArr.GetLength(1), y =>
             {
                 for (int x = 0; x < gridArr.GetLength(0); x++)
                 {
@@ -1602,7 +1601,7 @@ namespace DungeonForge.Utils
                         gridArr[x, y].tileWeight = weight;
                     }
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1844,7 +1843,7 @@ namespace DungeonForge.Utils
         {
             if (stickingProbability <= 0 || stickingProbability > 1) 
             {
-                Debug.Log($"The given probabiliy of sticking for DDiffusion-Limited Aggregation is not accepted and should be between 0 and 1 or 1");
+                Debug.Log($"The given probabiliy of sticking for Diffusion-Limited Aggregation is not accepted and should be between 0 and 1 or 1");
                 return false;
             }
 
@@ -2652,7 +2651,7 @@ namespace DungeonForge.Utils
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                EditorUtility.DisplayDialog("Error", "The file name given is not valie", "OK");
+                EditorUtility.DisplayDialog("Error", $"The file name {fileName} given is not valid", "OK");
                 return null;
             }
 
